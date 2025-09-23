@@ -1,5 +1,33 @@
+// src/utils/supabase/middleware.ts
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+
+/**
+ * Middleware to keep Supabase sessions in sync between client and server.
+ *
+ * Why is this needed?
+ * - Supabase uses cookies to persist sessions, but on the server we must
+ *   explicitly handle them so the browser and server stay aligned.
+ * - This middleware refreshes auth cookies on each request, preventing
+ *   users from being logged out unexpectedly.
+ *
+ * How it works:
+ * 1. Creates a Supabase server client bound to the request/response cycle.
+ * 2. Defines custom cookie handlers (`getAll`, `setAll`) so Supabase can
+ *    read and update cookies.
+ * 3. Calls `supabase.auth.getUser()` immediately — this is required to
+ *    trigger session refresh. Skipping it can cause random logouts.
+ * 4. Redirects to `/login` if no user is found and the request path is not
+ *    `/login`, `/auth`, or `/error`.
+ *
+ * ⚠️ Important:
+ * - Always return the `supabaseResponse` object.
+ * - If creating a new response with `NextResponse.next()`, you must:
+ *   (1) pass the original request,
+ *   (2) copy cookies from `supabaseResponse`,
+ *   (3) only then apply modifications.
+ *   Otherwise, cookies may desync and terminate the session.
+ */
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
