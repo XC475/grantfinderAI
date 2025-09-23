@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/card";
 
 interface LoginPageProps {
-  searchParams: { message?: string };
+  searchParams: Promise<{ message?: string }>;
 }
 
-export default function LoginPage({ searchParams }: LoginPageProps) {
-  const message = searchParams.message;
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const { message } = await searchParams;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
