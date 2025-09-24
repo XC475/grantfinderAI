@@ -56,48 +56,48 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: "/chat",
+      url: "/private/chat",
       icon: Home,
     },
     {
       title: "Grants",
-      url: "/grants",
+      url: "/private/grants",
       icon: FileText,
     },
-    {
-      title: "Org Profile",
-      url: "/org-profile",
-      icon: Building2,
-    },
-    {
-      title: "Applications",
-      url: "/applications",
-      icon: ClipboardList,
-    },
-    {
-      title: "Projects",
-      url: "/projects",
-      icon: FolderOpen,
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "Account",
-          url: "/settings/account",
-        },
-        {
-          title: "Billing",
-          url: "/settings/billing",
-        },
-        {
-          title: "Organizations",
-          url: "/settings/organizations",
-        },
-      ],
-    },
+    // {
+    //   title: "Org Profile",
+    //   url: "/org-profile",
+    //   icon: Building2,
+    // },
+    // {
+    //   title: "Applications",
+    //   url: "/applications",
+    //   icon: ClipboardList,
+    // },
+    // {
+    //   title: "Projects",
+    //   url: "/projects",
+    //   icon: FolderOpen,
+    // },
+    // {
+    //   title: "Settings",
+    //   url: "#",
+    //   icon: Settings2,
+    //   items: [
+    //     {
+    //       title: "Account",
+    //       url: "/settings/account",
+    //     },
+    //     {
+    //       title: "Billing",
+    //       url: "/settings/billing",
+    //     },
+    //     {
+    //       title: "Organizations",
+    //       url: "/settings/organizations",
+    //     },
+    //   ],
+    // },
   ],
 };
 
