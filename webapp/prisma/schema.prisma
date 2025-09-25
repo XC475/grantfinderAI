@@ -1,15 +1,115 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas   = ["app", "public"]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model agencies {
+  id                 Int                  @id @default(autoincrement())
+  code               String               @db.VarChar
+  name               String               @db.VarChar
+  source             String               @default("grants.gov") @db.VarChar
+  opportunity_agency opportunity_agency[]
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model alembic_version {
+  version_num String @id(map: "alembic_version_pkc") @db.VarChar(32)
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model cfda_programs {
+  id               Int                @id @default(autoincrement())
+  number           String             @unique @db.VarChar
+  title            String             @db.VarChar
+  opportunity_cfda opportunity_cfda[]
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model opportunities {
+  id                   Int                     @id @default(autoincrement())
+  source               String                  @db.VarChar
+  state_code           String?                 @db.VarChar
+  opportunity_number   String                  @db.VarChar
+  status               opportunity_status_enum
+  title                String                  @db.VarChar
+  description          String?
+  category             String?                 @db.VarChar
+  fiscal_year          Int?
+  post_date            DateTime?               @db.Date
+  est_post_date        DateTime?               @db.Date
+  close_date           DateTime?               @db.Date
+  award_date           DateTime?               @db.Date
+  award_ceiling        Int?
+  award_floor          Int?
+  total_funding_amount Int?
+  number_of_awards     Int?
+  eligibility          String?
+  last_updated         DateTime?               @db.Timestamp(6)
+  contact_name         String?                 @db.VarChar
+  contact_email        String?                 @db.VarChar
+  contact_phone        String?                 @db.VarChar
+  version              Int?
+  url                  String?                 @db.VarChar
+  extra                Json?                   @db.Json
+  opportunity_agency   opportunity_agency[]
+  opportunity_cfda     opportunity_cfda[]
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model opportunity_agency {
+  opportunity_id Int
+  agency_id      Int
+  agencies       agencies      @relation(fields: [agency_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  opportunities  opportunities @relation(fields: [opportunity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([opportunity_id, agency_id])
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model opportunity_cfda {
+  opportunity_id Int
+  cfda_id        Int
+  cfda_programs  cfda_programs @relation(fields: [cfda_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  opportunities  opportunities @relation(fields: [opportunity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([opportunity_id, cfda_id])
+  @@schema("public")
+}
+
+enum opportunity_status_enum {
+  forecasted
+  posted
+  closed
+  archive
+
+  @@schema("public")
+}
+
+// User model in separate 'app' schema
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+  @@schema("app")
 }
