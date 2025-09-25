@@ -1,10 +1,10 @@
-# backend/models_sql/agency.py
-from db import Base
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import relationship
-from .opportunity import opportunity_agency
+from flask_server.db import db
+from .opportunity import opportunity_agency  # import the updated association table
 
-class Agency(Base):
+class Agency(db.Model):
     __tablename__ = "agencies"
 
     id = Column(Integer, primary_key=True, autoincrement=True)

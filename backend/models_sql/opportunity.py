@@ -1,21 +1,20 @@
-# backend/models_sql/opportunity.py
-
-from db import Base
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import JSON, DateTime, Enum, Column, String, Date, Integer, Text, ForeignKey, Table, null
 from sqlalchemy.orm import relationship
+from flask_server.db import db
 from enum import Enum as PyEnum
 
 # --- Association tables for many-to-many relationships ---
 opportunity_agency = Table(
     "opportunity_agency",
-    Base.metadata,  # use Base.metadata
+    db.Model.metadata,  # use db.Model.metadata
     Column("opportunity_id", ForeignKey("opportunities.id"), primary_key=True),
     Column("agency_id", ForeignKey("agencies.id"), primary_key=True),
 )
 
 opportunity_cfda = Table(
     "opportunity_cfda",
-    Base.metadata,
+    db.Model.metadata,
     Column("opportunity_id", ForeignKey("opportunities.id"), primary_key=True),
     Column("cfda_id", ForeignKey("cfda_programs.id"), primary_key=True),
 )
@@ -26,7 +25,7 @@ class OpportunityStatusEnum(str, PyEnum):
     closed = "closed"
     archive = "archive"
 
-class Opportunity(Base):
+class Opportunity(db.Model):
     __tablename__ = "opportunities"
 
     id = Column(Integer, primary_key=True, autoincrement=True)

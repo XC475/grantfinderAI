@@ -1,11 +1,10 @@
-# backend/models_sql/cfda_program.py
-
-from db import Base
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import relationship
+from flask_server.db import db
 from .opportunity import opportunity_cfda  # make sure this imports the updated association table
 
-class CFDAProgram(Base):
+class CFDAProgram(db.Model):
     __tablename__ = "cfda_programs"
 
     id = Column(Integer, primary_key=True, autoincrement=True)

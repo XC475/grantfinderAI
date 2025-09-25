@@ -1,25 +1,21 @@
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime, date, timedelta
-import sys
+from datetime import datetime
 import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
+
+from flask_server import __main__ as server
+from flask_server.db import db
+from models_sql import Opportunity, Agency, OpportunityStatusEnum
 import re
-import logging
+from datetime import date, timedelta
 
-# Add the parent directory to the path to import from backend
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from db import db_manager
-from models_sql.opportunity import Opportunity, OpportunityStatusEnum
-from models_sql.agency import Agency
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# --- Flask app context setup ---
+flask_app = server.create_app()
 
 def parse_date(date_str):
-    """Parse a date string into a date object, various formats"""
-
     if not date_str:
         return None
     # Try multiple formats
@@ -41,8 +37,6 @@ def parse_date(date_str):
 
     
 def extract_funding_amount(text):
-    """Extract funding amount from text, return as integer"""
-
     if not text:
         return None
     # Look for patterns like $80,000 or $1,234,567.89
@@ -56,9 +50,7 @@ def extract_funding_amount(text):
 
 
 def upsert_mass_dese_grant(grant, session):
-    """Upsert a Mass DESE grant opportunity into the database"""
-
-    # Handle multiple fund codes separated by '/' or ',' or ';'
+     # Handle multiple fund codes separated by '/' or ',' or ';'
     fund_code_raw = grant[0]
     if len(fund_code_raw) > 4:
         # Split on '/', ',', or ';'
@@ -131,7 +123,7 @@ def upsert_mass_dese_grant(grant, session):
         
         last_updated_date = opportunity.last_updated.date() if hasattr(opportunity.last_updated, 'date') else opportunity.last_updated
         if last_updated_date and last_updated_date == parsed_last_updated:
-            logger.info(f"Skipping {opportunity.opportunity_number}, no update.")
+            print(f"Skipping {opportunity.opportunity_number}, no update.")
             return  # Skip this grant
         opportunity.last_updated = parsed_last_updated
 
@@ -170,13 +162,11 @@ def upsert_mass_dese_grant(grant, session):
         opportunity.contact_phone = details.get('Phone Number:', opportunity.contact_phone)
         opportunity.total_funding_amount = extract_funding_amount(details.get('Funding:', opportunity.total_funding_amount))
     
-    logger.info(f"Upserting opportunity {opportunity.opportunity_number} - {opportunity.title}")
-    session.flush()  # Flush to ensure changes are pending
+    print(f"Upserting opportunity {opportunity.opportunity_number} - {opportunity.title}")
+    session.add(opportunity)
 
 
 def main():
-    """Main function to fetch and upsert Mass DESE grants"""
-
     url = "https://www.doe.mass.edu/grants/current.html"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
@@ -207,47 +197,31 @@ def main():
             continue
         grants.append(cell_text)
 
-    logger.info("Starting Mass DESE grants fetch process...")
-    
-    # Test database connection
-    if not db_manager.test_connection():
-        logger.error("Database connection failed. Exiting.")
-        return
-    
-    try:
-        with db_manager.get_session() as session:
-            current_opportunity_numbers = set()
-            for grant in grants:
-                try:
-                    # Compute fund_code as in upsert_mass_dese_grant
-                    fund_code_raw = grant[0]
-                    if len(fund_code_raw) > 4:
-                        fund_codes = [fc.strip() for fc in re.split(r'[/,;]', fund_code_raw) if fc.strip()]
-                        fund_code = '-'.join(fund_codes)
-                    else:
-                        fund_code = fund_code_raw.strip()
-                    current_opportunity_numbers.add(fund_code)
-                    upsert_mass_dese_grant(grant, session)
-                except Exception as e:
-                    logger.error(f"Error processing grant {grant[0] if grant else 'unknown'}: {e}")
-                    continue
+    with flask_app.app_context():
+        session = db.session
+        current_opportunity_numbers = set()
+        for grant in grants:
+            # Compute fund_code as in upsert_mass_dese_grant
+            fund_code_raw = grant[0]
+            if len(fund_code_raw) > 4:
+                fund_codes = [fc.strip() for fc in re.split(r'[/,;]', fund_code_raw) if fc.strip()]
+                fund_code = '-'.join(fund_codes)
+            else:
+                fund_code = fund_code_raw.strip()
+            current_opportunity_numbers.add(fund_code)
+            upsert_mass_dese_grant(grant, session)
 
-            # Mark stale grants as closed if their close_date is today or earlier
-            stale_grants = session.query(Opportunity).filter(
-                Opportunity.source == "doe.mass.edu",
-                Opportunity.status == OpportunityStatusEnum.posted,
-                ~Opportunity.opportunity_number.in_(current_opportunity_numbers)
-            ).all()
-            for opp in stale_grants:
-                if opp.close_date and opp.close_date <= date.today():
-                    opp.status = OpportunityStatusEnum.closed
-                    logger.info(f"Marked stale grant as closed: {opp.opportunity_number} - {opp.title}")
-            
-        logger.info("Mass DESE grants fetch process completed successfully")
-        
-    except Exception as e:
-        logger.error(f"Error in main process: {e}")
-        raise
+        # Mark stale grants as closed if their close_date is today or earlier
+        stale_grants = session.query(Opportunity).filter(
+            Opportunity.source == "doe.mass.edu",
+            Opportunity.status == OpportunityStatusEnum.posted,
+            ~Opportunity.opportunity_number.in_(current_opportunity_numbers)
+        ).all()
+        for opp in stale_grants:
+            if opp.close_date and opp.close_date <= date.today():
+                opp.status = OpportunityStatusEnum.closed
+                print(f"Marked stale grant as closed: {opp.opportunity_number} - {opp.title}")
+        session.commit()
 
 if __name__ == "__main__":
     main()

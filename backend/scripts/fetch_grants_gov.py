@@ -1,31 +1,23 @@
 import requests
 from datetime import datetime, date
-import sys
 import os
+import sys
 
-# Add the parent directory to the path to import from backend
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
-from db import db_manager
-from models_sql.opportunity import Opportunity, OpportunityStatusEnum
-from models_sql.agency import Agency
-from models_sql.cfda_program import CFDAProgram
+from flask_server import __main__ as server
+from flask_server.db import db
+from models_sql import Opportunity, Agency, CFDAProgram, OpportunityStatusEnum
 import json
-import logging
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 # --- API Setup ---
+flask_app = server.create_app()
 HEADERS = {"Content-Type": "application/json"}
 SEARCH_URL = "https://api.grants.gov/v1/api/search2"
 FETCH_URL = "https://api.grants.gov/v1/api/fetchOpportunity"
 
 
 def parse_date(date_str):
-    """Parse date string in multiple formats to datetime object"""
-
     if not date_str:
         return None
     try:
@@ -44,8 +36,6 @@ def parse_date(date_str):
 
 
 def upsert_forecasted_grant(op, session):
-    """Upsert a forecasted grant opportunity into the database"""
-
     forecast = op.get("forecast", {}) or {}
 
     # --- Opportunity ---
@@ -78,7 +68,7 @@ def upsert_forecasted_grant(op, session):
         opportunity = Opportunity(opportunity_number=opp_number, source="grants.gov", state_code="US", status="forecasted", title= op.get("opportunityTitle"))
         session.add(opportunity)
     
-    # --- Agency ---
+     # --- Agency ---
     agency_code = op.get("owningAgencyCode")
     agency_name = (
         op.get("agencyDetails", {}).get("agencyName")
@@ -136,11 +126,10 @@ def upsert_forecasted_grant(op, session):
         cfda_objs.append(cfda_obj)
     opportunity.cfda_programs = cfda_objs
 
-    session.flush()  # Flush to get the ID, but don't commit yet
-    logger.info(f"Upserted forecasted grant {opportunity.opportunity_number}: {opportunity.title}")
+    session.commit()
+    print(f"Upserted {opportunity.opportunity_number}: {opportunity.title}")
 
 def upsert_grant(op, opp_status, session):
-    """Upsert a posted grant opportunity into the database"""
 
     synopsis = op.get("synopsis", {}) or {}
 
@@ -242,14 +231,13 @@ def upsert_grant(op, opp_status, session):
         cfda_objs.append(cfda_obj)
     opportunity.cfda_programs = cfda_objs
 
-    session.flush()  # Flush to get the ID, but don't commit yet
-    logger.info(f"Upserted grant {opportunity.opportunity_number}: {opportunity.title}")
+    session.commit()
+    print(f"Upserted {opportunity.opportunity_number}: {opportunity.title}")
 
 
 
 def update_expired(session):
     """Mark expired opportunities as closed."""
-
     today = date.today()
     expired = (
         session.query(Opportunity)
@@ -261,60 +249,36 @@ def update_expired(session):
     )
     for opp in expired:
         opp.status = OpportunityStatusEnum.closed
-        logger.info(f"Marked {opp.opportunity_number} as closed (expired).")
-    session.flush()  # Flush changes, commit happens in context manager
+        print(f"Marked {opp.opportunity_number} as closed (expired).")
+    session.commit()
 
 
 def main():
-    """Main function to fetch grants from grants.gov"""
+    with flask_app.app_context():
+        session = db.session
 
-    logger.info("Starting grants.gov fetch process...")
-    
-    # Test database connection
-    if not db_manager.test_connection():
-        logger.error("Database connection failed. Exiting.")
-        return
-    
-    try:
-        with db_manager.get_session() as session:
-            # Search for opportunities
-            response = requests.post(
-                SEARCH_URL,
-                json={"oppStatuses": "forecasted|posted", "eligibilities": "05", "dateRange": "", "rows": 5000},
-                headers=HEADERS,
-            )
-            response.raise_for_status()
-            opps = response.json().get("data", {}).get("oppHits", [])
-            logger.info(f"Found {len(opps)} opportunities.")
+        response = requests.post(
+            SEARCH_URL,
+            json={"oppStatuses": "forecasted|posted", "eligibilities": "05", "dateRange": "", "rows": 5000},
+            headers=HEADERS,
+        )
+        response.raise_for_status()
+        opps = response.json().get("data", {}).get("oppHits", [])
+        print(f"Found {len(opps)} opportunities.")
 
-            # Process each opportunity
-            for opp_summary in opps:
-                try:
-                    opp_id = opp_summary["id"]
-                    opp_status = opp_summary["oppStatus"]
-                    
-                    # Fetch detailed opportunity data
-                    detail_resp = requests.post(FETCH_URL, json={"opportunityId": opp_id}, headers=HEADERS)
-                    detail_resp.raise_for_status()
-                    detail = detail_resp.json().get("data", {})
+        for opp_summary in opps:
+            opp_id = opp_summary["id"]
+            opp_status = opp_summary["oppStatus"]
+            detail_resp = requests.post(FETCH_URL, json={"opportunityId": opp_id}, headers=HEADERS)
+            detail_resp.raise_for_status()
+            detail = detail_resp.json().get("data", {})
 
-                    if opp_status == "forecasted":
-                        upsert_forecasted_grant(detail, session)
-                    else:
-                        upsert_grant(detail, opp_status, session)
-                        
-                except Exception as e:
-                    logger.error(f"Error processing opportunity {opp_summary.get('id', 'unknown')}: {e}")
-                    continue
+            if opp_status == "forecasted":
+                upsert_forecasted_grant(detail, session)
+            else:
+                upsert_grant(detail, opp_status, session)
 
-            # Update expired opportunities
-            update_expired(session)
-            
-        logger.info("Grants.gov fetch process completed successfully")
-        
-    except Exception as e:
-        logger.error(f"Error in main process: {e}")
-        raise
+        update_expired(session)
 
 
 if __name__ == "__main__":
