@@ -1,16 +1,34 @@
 #!/bin/bash
 
-# This script calls all grant fetching scripts
+# This script calls all grant fetching scripts and tracks errors
 
 # Navigate to the backend directory
 cd "$(dirname "$0")/.."
 
+# Initialize a status variable
+STATUS=0
+
 # Run the fetch_grants_mass_dese.py script
 echo "Running fetch_grants_mass_dese.py..."
 python scripts/fetch_grants_mass_dese.py
+if [ $? -ne 0 ]; then
+  echo "Error: fetch_grants_mass_dese.py failed."
+  STATUS=1
+fi
 
 # Run the fetch_grants_gov.py script
 echo "Running fetch_grants_gov.py..."
 python scripts/fetch_grants_gov.py
+if [ $? -ne 0 ]; then
+  echo "Error: fetch_grants_gov.py failed."
+  STATUS=1
+fi
 
-echo "All grant-fetching scripts executed successfully."
+# Final status
+if [ $STATUS -ne 0 ]; then
+  echo "One or more scripts failed."
+  exit 1
+else
+  echo "All grant-fetching scripts executed successfully."
+  exit 0
+fi
