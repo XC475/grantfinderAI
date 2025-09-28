@@ -104,7 +104,7 @@ enum opportunity_status_enum {
 
 // User model in separate 'app' schema
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @db.Uuid
   email     String   @unique
   name      String
   createdAt DateTime @default(now())

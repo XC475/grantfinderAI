@@ -1,4 +1,4 @@
-import { login } from "@/app/login/actions";
+import { signup } from "@/app/register/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,11 +12,13 @@ import {
 import Link from "next/link";
 import { ToastHandler } from "@/components/toast-handler";
 
-interface LoginPageProps {
+interface RegisterPageProps {
   searchParams: Promise<{ message?: string }>;
 }
 
-export default async function LoginPage({ searchParams }: LoginPageProps) {
+export default async function RegisterPage({
+  searchParams,
+}: RegisterPageProps) {
   const { message } = await searchParams;
 
   return (
@@ -25,10 +27,10 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            Welcome back
+            Create an account
           </CardTitle>
           <CardDescription className="text-center">
-            Enter your credentials to access your account
+            Enter your details to create your account
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -38,7 +40,17 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </div>
           )}
 
-          <form action={login} className="space-y-4">
+          <form action={signup} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                required
+                placeholder="Enter your full name"
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -56,19 +68,20 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                 name="password"
                 type="password"
                 required
-                placeholder="Enter your password"
+                placeholder="Create a password"
+                minLength={6}
               />
             </div>
             <Button type="submit" className="w-full">
-              Sign In
+              Create Account
             </Button>
           </form>
 
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{" "}
-              <Link href="/register" className="text-blue-600 hover:underline">
-                Create one
+              Already have an account?{" "}
+              <Link href="/login" className="text-blue-600 hover:underline">
+                Sign in
               </Link>
             </p>
           </div>
