@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { parseToastFromUrl, showToast } from "@/lib/toast";
 
@@ -11,11 +11,14 @@ import { parseToastFromUrl, showToast } from "@/lib/toast";
 export function ToastHandler() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const hasShownToast = useRef(false);
 
   useEffect(() => {
     const toastMessage = parseToastFromUrl(searchParams);
 
-    if (toastMessage) {
+    if (toastMessage && !hasShownToast.current) {
+      hasShownToast.current = true;
+
       // Show the toast
       showToast(toastMessage.type, toastMessage.message);
 
@@ -32,6 +35,14 @@ export function ToastHandler() {
       router.replace(newUrl);
     }
   }, [searchParams, router]);
+
+  // Reset the ref when search params change (new toast message)
+  useEffect(() => {
+    const toastMessage = parseToastFromUrl(searchParams);
+    if (!toastMessage) {
+      hasShownToast.current = false;
+    }
+  }, [searchParams]);
 
   return null; // This component doesn't render anything
 }

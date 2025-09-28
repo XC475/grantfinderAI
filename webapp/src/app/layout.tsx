@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/ui/navbar";
 import { Toaster } from "@/components/ui/sonner";
+import { ToastHandler } from "@/components/toast-handler";
 import { headers } from "next/headers";
 
 const geistSans = Geist({
@@ -33,6 +34,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <ToastHandler />
         {!pathname.startsWith("/private") && <Navbar />}
         {children}
         <Toaster />
