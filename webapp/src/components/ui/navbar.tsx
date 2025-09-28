@@ -1,8 +1,5 @@
-"use client";
-
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -14,6 +11,8 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/server";
+import { logout } from "@/app/login/actions";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -33,16 +32,24 @@ const components: { title: string; href: string; description: string }[] = [
   },
 ];
 
-export function Navbar() {
-  const pathname = usePathname();
+export async function Navbar() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center justify-center">
-        <div className="flex items-center space-x-8">
+      <div className="container flex h-14 items-center justify-between">
+        {/* Logo on the left */}
+        <div className="ml-6 flex items-center">
           <Link href="/" className="flex items-center space-x-2">
             <span className="font-bold text-lg">GrantFinder AI</span>
           </Link>
+        </div>
+
+        {/* Menu items centered */}
+        <div className="flex items-center">
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
@@ -58,28 +65,34 @@ export function Navbar() {
                 </NavigationMenuContent>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/about" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                <NavigationMenuLink asChild>
+                  <Link href="/about" className={navigationMenuTriggerStyle()}>
                     About
-                  </NavigationMenuLink>
-                </Link>
+                  </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/contact" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/contact"
+                    className={navigationMenuTriggerStyle()}
+                  >
                     Contact
-                  </NavigationMenuLink>
-                </Link>
+                  </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
         </div>
-        <div className="absolute right-4">
+        {/* Login/Logout button on the right */}
+        <div className="flex items-center">
           <nav className="flex items-center space-x-2">
-            {pathname === "/login" ? (
-              <Button asChild>
-                <Link href="/private">Dashboard</Link>
-              </Button>
+            {user ? (
+              <form action={logout}>
+                <Button type="submit" variant="outline">
+                  Logout
+                </Button>
+              </form>
             ) : (
               <Button asChild variant="outline">
                 <Link href="/login">Login</Link>
