@@ -8,6 +8,8 @@ import { Message } from "@/components/ui/chat-message";
 
 type ChatDemoProps = {
   initialMessages?: Message[];
+  chatId?: string;
+  onChatIdChange?: (chatId: string) => void;
 };
 
 export function ChatDemo(props: ChatDemoProps) {
@@ -16,7 +18,9 @@ export function ChatDemo(props: ChatDemoProps) {
   );
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [chatId] = useState(() => `chat_${Date.now()}`);
+  const [chatId, setChatId] = useState(
+    () => props.chatId || `chat_${Date.now()}`
+  );
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -58,12 +62,18 @@ export function ChatDemo(props: ChatDemoProps) {
           body: JSON.stringify({
             messages: apiMessages,
             chatId: chatId,
-            userId: "user-123", // You can replace this with actual user ID from auth
           }),
         });
 
         if (!response.ok) {
           throw new Error(`API responded with status: ${response.status}`);
+        }
+
+        // Get chat ID from response headers (for new chats)
+        const responseChatId = response.headers.get("X-Chat-Id");
+        if (responseChatId && responseChatId !== chatId) {
+          setChatId(responseChatId);
+          props.onChatIdChange?.(responseChatId);
         }
 
         // Handle streaming response
@@ -118,7 +128,7 @@ export function ChatDemo(props: ChatDemoProps) {
         setIsLoading(false);
       }
     },
-    [input, messages, isLoading]
+    [input, messages, isLoading, chatId, props]
   );
 
   const stop = useCallback(() => {

@@ -1,37 +1,90 @@
 import { NextRequest } from "next/server";
+import { createClient } from "@/utils/supabase/server";
+import prisma from "@/lib/prisma";
 
 // Your n8n webhook URL - replace with your actual webhook URL
 const N8N_WEBHOOK_URL = process.env.N8N_SEARCH_AGENT_TEST_URL!;
 
 export async function POST(req: NextRequest) {
-  const { messages, chatId, userId } = await req.json();
+  const { messages, chatId, userId, workspaceId } = await req.json();
+
+  // Get authenticated user
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
+  // Get user's workspace
+  const userWorkspaceId = workspaceId || (await getUserWorkspaceId(user.id));
 
   // Get the last user message
-  const last = [...messages].filter((m: any) => m.role === "user").pop();
-  if (!last) return new Response("No user message", { status: 400 });
+  const lastUserMessage = [...messages]
+    .filter((m: any) => m.role === "user")
+    .pop();
+  if (!lastUserMessage) return new Response("No user message", { status: 400 });
 
   // Check if N8N webhook URL is configured
   if (!N8N_WEBHOOK_URL) {
     return new Response("N8N webhook URL not configured", { status: 500 });
   }
 
-  // Create n8n message format with app identification
-  const n8nMessage = {
-    app_source: "grantfinder-ai-webapp",
-    user_id: userId || "user-123",
-    chat_id: chatId || `chat_${Date.now()}`,
-    conversation_id: chatId || `conv_${userId || "anonymous"}_${Date.now()}`,
-    message: last.content,
-    timestamp: Date.now().toString(),
-    message_id: `msg_${Date.now()}`,
-    // Include full conversation history for context
-    conversation_history: messages,
-  };
-
   try {
+    // 1. Create or get existing chat
+    let chat;
+    if (chatId && chatId !== `chat_${Date.now()}`) {
+      // Try to find existing chat
+      chat = await prisma.aiChat.findUnique({
+        where: { id: chatId },
+        include: { messages: true },
+      });
+    }
+
+    if (!chat) {
+      // Create new chat
+      chat = await prisma.aiChat.create({
+        data: {
+          id: chatId || undefined, // Let Prisma generate if not provided
+          title: generateChatTitle(lastUserMessage.content),
+          context: "GENERAL",
+          userId: user.id,
+          workspaceId: userWorkspaceId,
+        },
+        include: { messages: true },
+      });
+    }
+
+    // 2. Save user message
+    const userMessage = await prisma.aiChatMessage.create({
+      data: {
+        role: "USER",
+        content: lastUserMessage.content,
+        chatId: chat.id,
+        metadata: {
+          timestamp: Date.now(),
+          source: "webapp",
+        },
+      },
+    });
+
+    // 3. Send to N8N
+    const n8nMessage = {
+      app_source: "grantfinder-ai-webapp",
+      user_id: user.id,
+      chat_id: chat.id,
+      conversation_id: chat.id,
+      message: lastUserMessage.content,
+      timestamp: Date.now().toString(),
+      message_id: userMessage.id,
+      conversation_history: messages,
+    };
+
     console.log("🔍 [Grant Finder API] Sending to n8n:", n8nMessage);
 
-    // Send the message to n8n
     const response = await fetch(N8N_WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -55,12 +108,56 @@ export async function POST(req: NextRequest) {
 
     console.log("🔍 [Grant Finder API] n8n response:", text);
 
+    // 4. Save assistant response
+    await prisma.aiChatMessage.create({
+      data: {
+        role: "ASSISTANT",
+        content: text,
+        chatId: chat.id,
+        metadata: {
+          timestamp: Date.now(),
+          model: "n8n-agent",
+          source: "n8n",
+        },
+      },
+    });
+
+    // 5. Update chat's updatedAt
+    await prisma.aiChat.update({
+      where: { id: chat.id },
+      data: { updatedAt: new Date() },
+    });
+
     // Return the response to the client (chat component expects text)
     return new Response(text, {
-      headers: { "Content-Type": "text/plain; charset=utf-8" },
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Chat-Id": chat.id,
+      },
     });
   } catch (error) {
-    console.error("❌ [Grant Finder API] Error calling N8N webhook:", error);
+    console.error("❌ [Grant Finder API] Error:", error);
     return new Response("Error processing request", { status: 500 });
   }
+}
+
+// Helper functions
+async function getUserWorkspaceId(userId: string): Promise<string> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { personalWorkspaceId: true },
+  });
+
+  if (!user?.personalWorkspaceId) {
+    throw new Error("User workspace not found");
+  }
+
+  return user.personalWorkspaceId;
+}
+
+function generateChatTitle(firstMessage: string): string {
+  // Simple title generation - take first 50 chars
+  return firstMessage.length > 50
+    ? firstMessage.substring(0, 47) + "..."
+    : firstMessage;
 }
