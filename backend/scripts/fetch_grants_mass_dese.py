@@ -3,12 +3,22 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import os
 import sys
+from openai import OpenAI
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.getenv("OPENROUTER_API_KEY"),
+)
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
 from flask_server import __main__ as server
 from flask_server.db import db
-from models_sql import Opportunity, Agency, OpportunityStatusEnum
+from models_sql import Opportunity, OpportunityStatusEnum
 import re
 from datetime import date, timedelta
 
@@ -35,22 +45,60 @@ def parse_date(date_str):
     except Exception:
         return None
 
-    
-def extract_funding_amount(text):
-    if not text:
-        return None
-    # Look for patterns like $80,000 or $1,234,567.89
-    match = re.search(r'\$([\d,]+(?:\.\d{1,2})?)', text)
-    if match:
-        amount_str = match.group(1).replace(',', '')
-        if '.' in amount_str:
-            return int(float(amount_str))
-        return int(amount_str)
-    return None
+def ai_extract_data(details, current_opportunity):
+    """Extract relevant data from the scraped details using AI techniques."""
+    # Placeholder for AI extraction logic
+    # This could involve using NLP models to identify and extract key information
+    """
+    Send scraped grant data to OpenRouter for parsing and processing.
+    """
+    prompt = f"""
+        You are an AI agent specialized in processing grant data from the Massachusetts Department of Education grants website. You will be given a partially populated grant object along with the full details content. Your task is to extract, summarize, and organize key information into a structured JSON object.
 
+        The data to process is as follows, be sure to try to extract more relevant details from links that are given:
+        {details}
+
+        The current partially loaded context is:
+        {current_opportunity}
+
+        Instructions:
+        - Summarize the grant description in a clear and easily understandable way in the field 'description_summary'.
+        - Summarize the eligibility requirements in a clear and easily understandable way in the field 'eligibility_summary' and capture any specific criteria or conditions.
+        - Extract numeric values for award_min, award_max, and total_funding_amount as integers only, if available, otherwise return "None" for those fields.
+        - Include contact details if available: contact_name and contact_phone, if not return "None" for those fields.
+        - Include any links attachments or related documents in the 'attachments' JSON object with 'name' and 'url' which includes the attachment name and the url link.
+        - Include any additional relevant information not captured above in the 'extra' field as a JSON object.
+        - Never make up information, if it is not present in the details, return "None" for that field, do not use "null".
+        - Ensure the output is valid JSON that can be parsed directly.
+
+        Return ONLY a JSON object with the following keys:
+        - description_summary
+        - eligibility_summary
+        - award_min
+        - award_max
+        - total_funding_amount
+        - contact_name
+        - contact_phone
+        - attachments
+        - extra
+    """
+    try:
+        response = client.chat.completions.create(
+            model="google/gemini-2.5-flash-preview-09-2025",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"Error communicating with OpenRouter: {e}")
+        return None
 
 def upsert_mass_dese_grant(grant, session):
-     # Handle multiple fund codes separated by '/' or ',' or ';'
+    """Upsert a single grant from the Mass DESE grants table."""
+
+    # Handle multiple fund codes separated by '/' or ',' or ';'
     fund_code_raw = grant[0]
     if len(fund_code_raw) > 4:
         # Split on '/', ',', or ';'
@@ -60,7 +108,7 @@ def upsert_mass_dese_grant(grant, session):
         fund_code = fund_code_raw.strip()
     program_name = grant[1]
     date_posted = parse_date(grant[2])
-    date_due = parse_date(grant[3].replace('Friday, ', '').replace('Tuesday, ', ''))
+    date_due = parse_date(grant[3])
     grant_type = grant[4]
     funding_type = grant[5]
     program_unit = grant[6]
@@ -81,19 +129,12 @@ def upsert_mass_dese_grant(grant, session):
             fiscal_year = None
 
     # --- Agency ---
-    agency_code = program_unit.strip().lower().replace(' ', '_').replace(',', '')[:32] if program_unit else None
     agency_name = program_unit.strip() if program_unit else None
-    agency = None
-    if agency_code:
-        agency = session.query(Agency).filter_by(code=agency_code, source="doe.mass.edu").first()
-        if not agency:
-            agency = Agency(code=agency_code, name=agency_name, source="doe.mass.edu")
-            session.add(agency)
 
     # --- Opportunity ---
-    opportunity = session.query(Opportunity).filter_by(opportunity_number=fund_code, source="doe.mass.edu").first()
+    opportunity = session.query(Opportunity).filter_by(source_grant_id=fund_code, source="doe.mass.edu").first()
     if not opportunity:
-        opportunity = Opportunity(opportunity_number=fund_code, source="doe.mass.edu", state_code="MA", status=OpportunityStatusEnum.posted, title=program_name)
+        opportunity = Opportunity(source_grant_id=fund_code, source="doe.mass.edu", state_code="MA", status=OpportunityStatusEnum.posted, title=program_name)
         session.add(opportunity)
 
     opportunity.category = grant_type
@@ -104,8 +145,9 @@ def upsert_mass_dese_grant(grant, session):
     url =  f"https://www.doe.mass.edu/grants/{fiscal_year}/{fund_code}" if fiscal_year else None
     opportunity.url = url
     opportunity.status = OpportunityStatusEnum.posted
-    if agency:
-        opportunity.agencies = [agency]
+    opportunity.contact_email = contact
+    opportunity.agency = agency_name
+    opportunity.funding_instrument = "grant"
 
     if not url:
         return
@@ -123,7 +165,7 @@ def upsert_mass_dese_grant(grant, session):
         
         last_updated_date = opportunity.last_updated.date() if hasattr(opportunity.last_updated, 'date') else opportunity.last_updated
         if last_updated_date and last_updated_date == parsed_last_updated:
-            print(f"Skipping {opportunity.opportunity_number}, no update.")
+            print(f"Skipping {opportunity.source_grant_id}, no update.")
             return  # Skip this grant
         opportunity.last_updated = parsed_last_updated
 
@@ -131,38 +173,68 @@ def upsert_mass_dese_grant(grant, session):
     if dl:
         dt_tags = dl.find_all("dt")
         dd_tags = dl.find_all("dd")
-        details = {dt.get_text(strip=True): dd.get_text(strip=True) for dt, dd in zip(dt_tags, dd_tags)}
+        details = {}
+        for dt, dd in zip(dt_tags, dd_tags):
+            key = dt.get_text(strip=True)
+            # If the dd contains links, append their URLs in parentheses after the text
+            links = dd.find_all("a", href=True)
+            text = dd.get_text(strip=True)
+            link_texts = []
+            if links:
+                link_texts = [f"{a.get_text(strip=True)} ({a['href']})" for a in links]
+            # If the text doesn't already include the link text, append it
+            if text:
+                text += " " + " ".join(link_texts)
+            else:
+                text = " ".join(link_texts)
+            details[key] = text
 
         # Map details to Opportunity fields
         opportunity.eligibility = details.get('Eligibility:', opportunity.eligibility)
         opportunity.description = details.get('Purpose:', opportunity.description)
-        # Clean up contact_name: remove emails, phone numbers, and extra whitespace
-        raw_contact = details.get('Contact:', opportunity.contact_name)
-        if raw_contact:
-            # Remove emails
-            cleaned = re.sub(r'\b[\w\.-]+@[\w\.-]+\.\w+\b', '', raw_contact)
-            # Extract phone numbers (formats like 781-338-3525, (781) 338-3525, 781.338.3525, etc.)
-            phone_matches = re.findall(r'(\(?\d{3}\)?[\s\.-]?\d{3}[\s\.-]?\d{4})', cleaned)
-            # Remove phone numbers from contact_name
-            cleaned = re.sub(r'(\(?\d{3}\)?[\s\.-]?\d{3}[\s\.-]?\d{4})', '', cleaned)
-            # Remove "or" followed by phone
-            cleaned = re.sub(r'or\s+\d{3}[\s\.-]?\d{3}[\s\.-]?\d{4}', '', cleaned, flags=re.IGNORECASE)
-            # Remove "contact:" and similar phrases
-            cleaned = re.sub(r'for submission.*?contact:', '', cleaned, flags=re.IGNORECASE)
-            # Remove extra whitespace and stray punctuation
-            cleaned = re.sub(r'[;,]+', ',', cleaned)
-            cleaned = re.sub(r'\s+', ' ', cleaned).strip(' ,;')
-            opportunity.contact_name = cleaned if cleaned else None
-            # Set contact_phone to the extracted phone numbers, joined by comma if multiple
-            opportunity.contact_phone = ', '.join(phone_matches) if phone_matches else None
-        else:
-            opportunity.contact_name = None
-            opportunity.contact_phone = None
-
-        opportunity.contact_phone = details.get('Phone Number:', opportunity.contact_phone)
-        opportunity.total_funding_amount = extract_funding_amount(details.get('Funding:', opportunity.total_funding_amount))
     
-    print(f"Upserting opportunity {opportunity.opportunity_number} - {opportunity.title}")
+    ai_extract_data_result = ai_extract_data(details, {
+        "grant_id": opportunity.source_grant_id,
+        "title": opportunity.title,
+        "description": opportunity.description,
+        "agency": opportunity.agency,
+        "post_date": str(opportunity.post_date),
+        "close_date": str(opportunity.close_date),
+        "fiscal_year": opportunity.fiscal_year,
+        "contact_email": opportunity.contact_email,
+    })
+
+    # strip ```json ... ``` if present
+    if ai_extract_data_result and ai_extract_data_result.startswith("```json"):
+        ai_extract_data_result = ai_extract_data_result.replace("```json", "").replace("```", "").strip()
+
+    print(f"AI Extracted Data: {ai_extract_data_result}")
+
+    if ai_extract_data_result:
+        try:
+            ai_data = eval(ai_extract_data_result)  # Use eval to parse the JSON-like string
+            if 'description_summary' in ai_data:
+                opportunity.description_summary = ai_data['description_summary']
+            if 'eligibility_summary' in ai_data:
+                opportunity.eligibility_summary = ai_data['eligibility_summary']
+            if 'award_min' in ai_data:
+                opportunity.award_min = int(ai_data['award_min']) if ai_data['award_min'] != "None" else None
+            if 'award_max' in ai_data:
+                opportunity.award_max = int(ai_data['award_max']) if ai_data['award_max'] != "None" else None
+            if 'total_funding_amount' in ai_data:
+                opportunity.total_funding_amount = int(ai_data['total_funding_amount']) if ai_data['total_funding_amount'] != "None" else None
+            if 'contact_name' in ai_data:
+                opportunity.contact_name = ai_data['contact_name']
+            if 'contact_phone' in ai_data:
+                opportunity.contact_phone = ai_data['contact_phone']
+            if 'attachments' in ai_data:
+                opportunity.attachments = ai_data['attachments']
+            if 'extra' in ai_data:
+                opportunity.extra = ai_data['extra']
+        except Exception as e:
+            print(f"Error parsing AI extracted data: {e}")
+
+    print(f"Upserting opportunity {opportunity.source_grant_id} - {opportunity.title}")
     session.add(opportunity)
 
 
@@ -170,17 +242,6 @@ def main():
     url = "https://www.doe.mass.edu/grants/current.html"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
-
-    last_updated_element = soup.find("p", id="last-updated-date")
-    
-    # Parse last updated date label, skip update if main page not updated in last 3 days
-    if last_updated_element:
-        last_updated_text = last_updated_element.get_text(strip=True).replace("Last Updated:", "").strip()
-        last_updated_date = parse_date(last_updated_text)
-        
-        if not last_updated_date or abs((date.today() - last_updated_date).days) > 4:
-            print(f"Skipping update: last updated date {last_updated_date} is not within 3 days of today.")
-            return
     
     table = soup.find("table", id="ctl00_ctl00_ContentPlaceHolder1_cphMain_GridViewDateDue")
     rows = table.find_all("tr")
@@ -215,12 +276,12 @@ def main():
         stale_grants = session.query(Opportunity).filter(
             Opportunity.source == "doe.mass.edu",
             Opportunity.status == OpportunityStatusEnum.posted,
-            ~Opportunity.opportunity_number.in_(current_opportunity_numbers)
+            ~Opportunity.source_grant_id.in_(current_opportunity_numbers)
         ).all()
         for opp in stale_grants:
             if opp.close_date and opp.close_date <= date.today():
                 opp.status = OpportunityStatusEnum.closed
-                print(f"Marked stale grant as closed: {opp.opportunity_number} - {opp.title}")
+                print(f"Marked stale grant as closed: {opp.source_grant_id} - {opp.title}")
         session.commit()
 
 if __name__ == "__main__":

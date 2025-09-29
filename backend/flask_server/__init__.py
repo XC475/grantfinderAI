@@ -31,7 +31,7 @@ def create_app():
 
     db.init_app(app)
 
-    from models_sql import Opportunity, Agency, CFDAProgram
+    from models_sql import Opportunity
     migrate.init_app(app, db)
 
     return app
