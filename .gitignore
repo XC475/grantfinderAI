@@ -80,3 +80,5 @@ grant_collection.log
 # database
 *.db
 *.sqlite
+
+.ruff_cache/

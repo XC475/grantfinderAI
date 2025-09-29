@@ -1,7 +1,6 @@
 # flask_server/__init__.py
 import os
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 from .db import db
@@ -10,6 +9,7 @@ from dotenv import load_dotenv
 migrate = Migrate()
 
 load_dotenv()
+
 
 def create_app():
     """Create Flask app."""
@@ -31,7 +31,7 @@ def create_app():
 
     db.init_app(app)
 
-    from models_sql import Opportunity
+
     migrate.init_app(app, db)
 
     return app
