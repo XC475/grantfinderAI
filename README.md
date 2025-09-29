@@ -1,2 +1,2 @@
-# grantfinderAI
-GrantfinderAI repo
+# GrantWare
+GrantWare repo
