@@ -29,6 +29,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { createClient } from "@/utils/supabase/client";
 
 // This is sample data.
 const data = {
@@ -110,12 +111,61 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
+  const [user, setUser] = React.useState<{
+    name: string;
+    email: string;
+    avatar: string;
+  } | null>(null);
+  const [workspaces, setWorkspaces] = React.useState<
+    Array<{
+      id: string;
+      name: string;
+      slug: string;
+      type: string;
+    }>
+  >([]);
+  const [loadingWorkspaces, setLoadingWorkspaces] = React.useState(true);
 
   // Extract workspace slug from pathname: /private/[slug]/...
   const workspaceSlug = React.useMemo(() => {
     const match = pathname.match(/^\/private\/([^\/]+)/);
     return match ? match[1] : null;
   }, [pathname]);
+
+  // Fetch actual user data and workspaces
+  React.useEffect(() => {
+    const fetchUserAndWorkspaces = async () => {
+      const supabase = createClient();
+      const {
+        data: { user: authUser },
+      } = await supabase.auth.getUser();
+
+      if (authUser) {
+        setUser({
+          name:
+            authUser.user_metadata?.full_name ||
+            authUser.email?.split("@")[0] ||
+            "User",
+          email: authUser.email || "",
+          avatar: authUser.user_metadata?.avatar_url || "",
+        });
+
+        // Fetch user's workspaces
+        try {
+          const response = await fetch("/api/workspaces");
+          if (response.ok) {
+            const data = await response.json();
+            setWorkspaces(data);
+          }
+        } catch (error) {
+          console.error("Error fetching workspaces:", error);
+        } finally {
+          setLoadingWorkspaces(false);
+        }
+      }
+    };
+    fetchUserAndWorkspaces();
+  }, []);
 
   // Build navigation items with workspace slug
   const navItems = React.useMemo(() => {
@@ -130,15 +180,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher
+          workspaces={workspaces}
+          currentSlug={workspaceSlug}
+          loading={loadingWorkspaces}
+        />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navItems} />
         <NavChats workspaceSlug={workspaceSlug} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
+      <SidebarFooter>{user && <NavUser user={user} />}</SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

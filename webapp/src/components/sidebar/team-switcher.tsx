@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronsUpDown, Plus, Loader2 } from "lucide-react";
+import { ChevronsUpDown, Plus, Loader2, User, Building2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -10,7 +10,6 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -20,26 +19,45 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
+interface Workspace {
+  id: string;
+  name: string;
+  slug: string;
+  type: string;
+}
+
 interface TeamSwitcherProps {
-  teams: {
-    name: string;
-    logo: React.ElementType;
-    plan: string;
-  }[];
+  workspaces: Workspace[];
+  currentSlug: string | null;
   loading?: boolean;
 }
 
-export function TeamSwitcher({ teams, loading = false }: TeamSwitcherProps) {
+export function TeamSwitcher({
+  workspaces,
+  currentSlug,
+  loading = false,
+}: TeamSwitcherProps) {
   const { isMobile } = useSidebar();
   const router = useRouter();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
 
-  // Update active team when teams change
-  React.useEffect(() => {
-    if (teams.length > 0 && !activeTeam) {
-      setActiveTeam(teams[0]);
-    }
-  }, [teams, activeTeam]);
+  // Find current workspace based on slug
+  const currentWorkspace = React.useMemo(() => {
+    return workspaces.find((w) => w.slug === currentSlug) || workspaces[0];
+  }, [workspaces, currentSlug]);
+
+  const getWorkspaceIcon = (type: string) => {
+    return type === "PERSONAL" ? User : Building2;
+  };
+
+  const getWorkspaceDisplayName = (workspace: Workspace) => {
+    return workspace.type === "PERSONAL"
+      ? "Personal Workspace"
+      : workspace.name;
+  };
+
+  const handleSwitchWorkspace = (workspace: Workspace) => {
+    router.push(`/private/${workspace.slug}/chat`);
+  };
 
   const handleAddOrganization = () => {
     router.push("/settings/organizations");
@@ -63,7 +81,7 @@ export function TeamSwitcher({ teams, loading = false }: TeamSwitcherProps) {
     );
   }
 
-  if (!activeTeam) {
+  if (!currentWorkspace) {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
@@ -72,7 +90,7 @@ export function TeamSwitcher({ teams, loading = false }: TeamSwitcherProps) {
               <Plus className="size-4" />
             </div>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">No Organizations</span>
+              <span className="truncate font-medium">No Workspaces</span>
               <span className="truncate text-xs">Click to add</span>
             </div>
           </SidebarMenuButton>
@@ -80,6 +98,8 @@ export function TeamSwitcher({ teams, loading = false }: TeamSwitcherProps) {
       </SidebarMenu>
     );
   }
+
+  const WorkspaceIcon = getWorkspaceIcon(currentWorkspace.type);
 
   return (
     <SidebarMenu>
@@ -91,11 +111,17 @@ export function TeamSwitcher({ teams, loading = false }: TeamSwitcherProps) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <activeTeam.logo className="size-4" />
+                <WorkspaceIcon className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{activeTeam.name}</span>
-                <span className="truncate text-xs">{activeTeam.plan}</span>
+                <span className="truncate font-medium">
+                  {getWorkspaceDisplayName(currentWorkspace)}
+                </span>
+                <span className="truncate text-xs">
+                  {currentWorkspace.type === "PERSONAL"
+                    ? "Personal"
+                    : "Organization"}
+                </span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
@@ -107,21 +133,30 @@ export function TeamSwitcher({ teams, loading = false }: TeamSwitcherProps) {
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-muted-foreground text-xs">
-              Organizations
+              Workspaces
             </DropdownMenuLabel>
-            {teams.map((team, index) => (
-              <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
-                className="gap-2 p-2"
-              >
-                <div className="flex size-6 items-center justify-center rounded-md border">
-                  <team.logo className="size-3.5 shrink-0" />
-                </div>
-                {team.name}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            ))}
+            {workspaces.map((workspace) => {
+              const Icon = getWorkspaceIcon(workspace.type);
+              const isActive = workspace.slug === currentSlug;
+              return (
+                <DropdownMenuItem
+                  key={workspace.id}
+                  onClick={() => handleSwitchWorkspace(workspace)}
+                  className="gap-2 p-2"
+                  disabled={isActive}
+                >
+                  <div className="flex size-6 items-center justify-center rounded-md border">
+                    <Icon className="size-3.5 shrink-0" />
+                  </div>
+                  {getWorkspaceDisplayName(workspace)}
+                  {isActive && (
+                    <span className="ml-auto text-xs text-muted-foreground">
+                      Active
+                    </span>
+                  )}
+                </DropdownMenuItem>
+              );
+            })}
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="gap-2 p-2"
