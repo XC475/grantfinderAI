@@ -40,7 +40,7 @@ export default function AccountSettingsPage() {
 
       if (user) {
         setUser(user);
-        setFullName(user.user_metadata?.full_name || "");
+        setFullName(user.user_metadata?.name || "");
         setEmail(user.email || "");
       }
     } catch (error) {
@@ -59,7 +59,7 @@ export default function AccountSettingsPage() {
       const supabase = createClient();
       const { error } = await supabase.auth.updateUser({
         data: {
-          full_name: fullName,
+          name: fullName,
         },
       });
 
