@@ -1,16 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -18,35 +12,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Bookmark,
-  BookmarkCheck,
-  Search,
-  Filter,
-  X,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+import { Search, Filter, X, ChevronDown, ChevronUp } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
-import { Loading, Spinner } from "@/components/ui/spinner";
+import { Loading } from "@/components/ui/spinner";
+import { GrantCard, GrantCardData } from "@/components/grants/GrantCard";
 
-interface Grant {
-  id: number;
-  title: string;
-  description: string;
-  source_grant_id: string;
-  status: string;
-  category: string;
-  total_funding_amount: number | null;
-  award_min: number | null;
-  award_max: number | null;
-  close_date: string | null;
+interface Grant extends GrantCardData {
   contact_name: string | null;
   contact_email: string | null;
-  url: string | null;
   post_date: string | null;
-  agency: string | null;
   funding_instrument: string | null;
   eligibility_summary: string | null;
   description_summary: string | null;
@@ -76,6 +51,8 @@ interface SearchResponse {
 }
 
 function GrantsSearchPage() {
+  const params = useParams();
+  const slug = params.slug as string;
   const [grants, setGrants] = useState<Grant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -664,114 +641,16 @@ function GrantsSearchPage() {
             </div>
           </div>
         ) : (
-          grants.map((grant) => {
-            const isSaved = savedGrants.includes(grant.id);
-            const isLoading = savingGrant === grant.id;
-
-            return (
-              <Card
-                key={grant.id}
-                className="hover:shadow-md transition-shadow"
-              >
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg mb-2">
-                        {grant.title}
-                      </CardTitle>
-                      <CardDescription className="text-sm text-gray-600 mb-3">
-                        {grant.source_grant_id}
-                      </CardDescription>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge className={getStatusColor(grant.status)}>
-                        {grant.status}
-                      </Badge>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleSaveGrant(grant.id)}
-                        disabled={isLoading}
-                        className="h-8 w-8 p-0"
-                      >
-                        {isLoading ? (
-                          <Spinner size="sm" />
-                        ) : isSaved ? (
-                          <BookmarkCheck className="h-4 w-4 text-primary" />
-                        ) : (
-                          <Bookmark className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div
-                      className="text-sm text-gray-700 line-clamp-3"
-                      dangerouslySetInnerHTML={{ __html: grant.description }}
-                    />
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <span className="font-medium">Total Funding:</span>
-                        <p>{formatCurrency(grant.total_funding_amount)}</p>
-                      </div>
-                      <div>
-                        <span className="font-medium">Award Range:</span>
-                        <p>
-                          {grant.award_min && grant.award_max
-                            ? `${formatCurrency(
-                                grant.award_min
-                              )} - ${formatCurrency(grant.award_max)}`
-                            : grant.award_max
-                            ? `Up to ${formatCurrency(grant.award_max)}`
-                            : grant.award_min
-                            ? `From ${formatCurrency(grant.award_min)}`
-                            : "Not specified"}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium">Close Date:</span>
-                        <p>{formatDate(grant.close_date)}</p>
-                      </div>
-                    </div>
-
-                    {grant.agency && (
-                      <div className="text-sm">
-                        <span className="font-medium">Agency:</span>{" "}
-                        {grant.agency}
-                      </div>
-                    )}
-
-                    {grant.contact_name && (
-                      <div className="text-sm">
-                        <span className="font-medium">Contact:</span>{" "}
-                        {grant.contact_name}
-                        {grant.contact_email && (
-                          <span> ({grant.contact_email})</span>
-                        )}
-                      </div>
-                    )}
-
-                    {grant.url && (
-                      <div>
-                        <Button asChild variant="outline" size="sm">
-                          <a
-                            href={grant.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            View Full Details
-                          </a>
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })
+          grants.map((grant) => (
+            <GrantCard
+              key={grant.id}
+              grant={grant}
+              workspaceSlug={slug}
+              isSaved={savedGrants.includes(grant.id)}
+              isLoading={savingGrant === grant.id}
+              onToggleBookmark={handleSaveGrant}
+            />
+          ))
         )}
       </div>
 

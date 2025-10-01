@@ -1,64 +1,21 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { BookmarkMinus } from "lucide-react";
+import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { Loading } from "@/components/ui/spinner";
-
-type Opportunity = {
-  id: number; // opportunity id from public.opportunities
-  title: string;
-  description: string | null;
-  agency: string | null;
-  source: string;
-  total_funding_amount: number | null;
-  award_min: number | null;
-  award_max: number | null;
-  close_date: string | null;
-  url: string | null;
-  category: string | null;
-  status: string;
-  source_grant_id: string;
-};
+import { GrantCard, GrantCardData } from "@/components/grants/GrantCard";
 
 type Bookmark = {
   id: string;
   createdAt: string;
   opportunityId: number;
-  opportunity: Opportunity | null;
+  opportunity: GrantCardData | null;
 };
 
-function formatCurrency(amount: number | string | null) {
-  if (amount === null || amount === undefined || amount === "")
-    return "Not specified";
-  const n = typeof amount === "string" ? parseFloat(amount) : amount;
-  if (Number.isNaN(n)) return "Not specified";
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-  }).format(n);
-}
-
-function formatDate(dateString: string | null) {
-  if (!dateString) return "Not specified";
-  try {
-    return new Date(dateString).toLocaleDateString();
-  } catch {
-    return "Not specified";
-  }
-}
-
 export default function BookmarksPage() {
+  const params = useParams();
+  const slug = params.slug as string;
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -115,88 +72,13 @@ export default function BookmarksPage() {
             if (!opp) return null;
 
             return (
-              <Card key={b.id} className="hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg mb-2">
-                        {opp.title}
-                      </CardTitle>
-                      <CardDescription className="text-sm text-gray-600 mb-3">
-                        {opp.agency || opp.source} • {opp.source_grant_id}
-                      </CardDescription>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline">{opp.status}</Badge>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeBookmark(b.opportunityId)}
-                        className="h-8 w-8 p-0"
-                        aria-label="Remove bookmark"
-                      >
-                        <BookmarkMinus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {opp.description && (
-                      <div
-                        className="text-sm text-gray-700 line-clamp-3"
-                        dangerouslySetInnerHTML={{ __html: opp.description }}
-                      />
-                    )}
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <span className="font-medium">Total Funding:</span>
-                        <p>{formatCurrency(opp.total_funding_amount)}</p>
-                      </div>
-                      <div>
-                        <span className="font-medium">Award Range:</span>
-                        <p>
-                          {opp.award_min && opp.award_max
-                            ? `${formatCurrency(
-                                opp.award_min
-                              )} - ${formatCurrency(opp.award_max)}`
-                            : opp.award_max
-                            ? `Up to ${formatCurrency(opp.award_max)}`
-                            : opp.award_min
-                            ? `From ${formatCurrency(opp.award_min)}`
-                            : "Not specified"}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium">Deadline:</span>
-                        <p>{formatDate(opp.close_date)}</p>
-                      </div>
-                    </div>
-
-                    {opp.category && (
-                      <div className="text-sm">
-                        <span className="font-medium">Category:</span>{" "}
-                        {opp.category}
-                      </div>
-                    )}
-
-                    {opp.url && (
-                      <div>
-                        <Button asChild variant="outline" size="sm">
-                          <a
-                            href={opp.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            View Full Details
-                          </a>
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+              <GrantCard
+                key={b.id}
+                grant={opp}
+                workspaceSlug={slug}
+                isSaved={true}
+                onToggleBookmark={removeBookmark}
+              />
             );
           })}
         </div>

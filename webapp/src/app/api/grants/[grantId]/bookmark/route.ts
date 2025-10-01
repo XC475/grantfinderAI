@@ -11,6 +11,45 @@ async function getUserWorkspaceId(userId: string): Promise<string> {
   return user.personalWorkspaceId;
 }
 
+// GET /api/grants/[grantId]/bookmark - Check if grant is bookmarked
+export async function GET(
+  _req: NextRequest,
+  context: { params: Promise<{ grantId: string }> }
+) {
+  const { grantId } = await context.params;
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+  if (error || !user) return new Response("Unauthorized", { status: 401 });
+
+  if (!grantId) return new Response("Missing grantId", { status: 400 });
+
+  try {
+    const workspaceId = await getUserWorkspaceId(user.id);
+    const opportunityId = parseInt(grantId);
+    if (isNaN(opportunityId)) {
+      return new Response("Invalid opportunity ID", { status: 400 });
+    }
+
+    const bookmark = await prisma.grantBookmark.findUnique({
+      where: {
+        userId_opportunityId_workspaceId: {
+          userId: user.id,
+          opportunityId,
+          workspaceId,
+        },
+      },
+    });
+
+    return Response.json({ bookmarked: !!bookmark });
+  } catch (e: any) {
+    console.error("Error checking bookmark:", e);
+    return new Response("Error checking bookmark", { status: 500 });
+  }
+}
+
 // POST /api/grants/[grantId]/bookmark
 export async function POST(
   _req: NextRequest,
