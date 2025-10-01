@@ -72,7 +72,6 @@ model User {
   projectCollaborations ProjectCollaborator[]
   tasksAssigned         ProjectTask[]
   projectsCreated       Project[]
-  searchHistory         SearchHistory[]
   personalWorkspace     Workspace             @relation("PersonalWorkspace", fields: [personalWorkspaceId], references: [id], onDelete: Cascade)
 
   @@map("users")
@@ -92,7 +91,6 @@ model Workspace {
   eligibilityAnalyses GrantEligibilityAnalysis[]
   organization        Organization?
   projects            Project[]
-  searchHistory       SearchHistory[]
   personalUser        User?                      @relation("PersonalWorkspace")
 
   @@map("workspaces")
@@ -200,21 +198,6 @@ model GrantEligibilityAnalysis {
 
   @@unique([opportunityId, workspaceId])
   @@map("grant_eligibility_analyses")
-  @@schema("app")
-}
-
-model SearchHistory {
-  id           String    @id @default(cuid())
-  query        String
-  filters      Json?
-  resultsCount Int?
-  createdAt    DateTime  @default(now())
-  workspaceId  String
-  userId       String    @db.Uuid
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@map("search_history")
   @@schema("app")
 }
 
