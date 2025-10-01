@@ -171,64 +171,34 @@ model DistrictProfile {
   @@schema("app")
 }
 
-model Grant {
-  id                  String                     @id @default(cuid())
-  title               String
-  funder              String
-  funderType          GrantFunderType
-  amount              BigInt?
-  deadline            DateTime?
-  description         String?
-  eligibility         String?
-  requirements        Json?
-  sourceUrl           String
-  applicationUrl      String?
-  guidelinesUrl       String?
-  categories          String[]
-  keywords            String[]
-  aiSummary           String?
-  lastAnalyzed        DateTime?
-  isActive            Boolean                    @default(true)
-  createdAt           DateTime                   @default(now())
-  updatedAt           DateTime                   @updatedAt
-  bookmarks           GrantBookmark[]
-  eligibilityAnalyses GrantEligibilityAnalysis[]
-  projects            Project[]
-
-  @@map("grants")
-  @@schema("app")
-}
-
 model GrantBookmark {
-  id          String    @id @default(cuid())
-  notes       String?
-  createdAt   DateTime  @default(now())
-  workspaceId String
-  grantId     String
-  userId      String    @db.Uuid
-  grant       Grant     @relation(fields: [grantId], references: [id], onDelete: Cascade)
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  id            String    @id @default(cuid())
+  notes         String?
+  createdAt     DateTime  @default(now())
+  workspaceId   String
+  opportunityId Int       // References public.opportunities.id
+  userId        String    @db.Uuid
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace     Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, grantId, workspaceId])
+  @@unique([userId, opportunityId, workspaceId])
   @@map("grant_bookmarks")
   @@schema("app")
 }
 
 model GrantEligibilityAnalysis {
-  id          String         @id @default(cuid())
-  matchScore  Int
-  goNoGo      GoNoGoDecision
-  rationale   String
-  risks       String?
-  confidence  Float?
-  createdAt   DateTime       @default(now())
-  grantId     String
-  workspaceId String
-  grant       Grant          @relation(fields: [grantId], references: [id], onDelete: Cascade)
-  workspace   Workspace      @relation(fields: [workspaceId], references: [id])
+  id            String         @id @default(cuid())
+  matchScore    Int
+  goNoGo        GoNoGoDecision
+  rationale     String
+  risks         String?
+  confidence    Float?
+  createdAt     DateTime       @default(now())
+  opportunityId Int            // References public.opportunities.id
+  workspaceId   String
+  workspace     Workspace      @relation(fields: [workspaceId], references: [id])
 
-  @@unique([grantId, workspaceId])
+  @@unique([opportunityId, workspaceId])
   @@map("grant_eligibility_analyses")
   @@schema("app")
 }
@@ -260,14 +230,13 @@ model Project {
   documents       Json?
   createdAt       DateTime              @default(now())
   updatedAt       DateTime              @updatedAt
-  grantId         String
+  opportunityId   Int                   // References public.opportunities.id
   workspaceId     String
   createdByUserId String                @db.Uuid
   aiChats         AiChat[]
   collaborators   ProjectCollaborator[]
   tasks           ProjectTask[]
   createdBy       User                  @relation(fields: [createdByUserId], references: [id])
-  grant           Grant                 @relation(fields: [grantId], references: [id])
   workspace       Workspace             @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@map("projects")
@@ -365,16 +334,6 @@ enum ProjectRole {
   EDITOR
   COLLABORATOR
   VIEWER
-
-  @@schema("app")
-}
-
-enum GrantFunderType {
-  FEDERAL
-  STATE
-  FOUNDATION
-  CORPORATE
-  OTHER
 
   @@schema("app")
 }

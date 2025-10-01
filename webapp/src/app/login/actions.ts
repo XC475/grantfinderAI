@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { redirectWithToast } from "@/lib/toast";
+import { getUserWorkspace } from "@/lib/workspace";
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
@@ -15,7 +16,9 @@ export async function login(formData: FormData) {
     password: formData.get("password") as string,
   };
 
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const { error, data: authData } = await supabase.auth.signInWithPassword(
+    data
+  );
 
   if (error) {
     redirect(
@@ -25,6 +28,29 @@ export async function login(formData: FormData) {
         error.message || "Invalid email or password"
       )
     );
+  }
+
+  // Get user's workspace and redirect to it
+  if (authData.user) {
+    try {
+      const workspace = await getUserWorkspace(authData.user.id);
+      revalidatePath("/", "layout");
+      redirect(
+        redirectWithToast(
+          `/private/${workspace.slug}/chat`,
+          "success",
+          "Welcome back!"
+        )
+      );
+    } catch (error) {
+      // Re-throw redirect errors (they're not actual errors)
+      if ((error as any)?.digest?.startsWith("NEXT_REDIRECT")) {
+        throw error;
+      }
+      console.error("Error fetching workspace:", error);
+      revalidatePath("/", "layout");
+      redirect(redirectWithToast("/private", "success", "Welcome back!"));
+    }
   }
 
   revalidatePath("/", "layout");

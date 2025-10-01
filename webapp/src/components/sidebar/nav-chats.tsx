@@ -19,7 +19,7 @@ interface Chat {
   _count: { messages: number };
 }
 
-export function NavChats() {
+export function NavChats({ workspaceSlug }: { workspaceSlug: string | null }) {
   const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
@@ -60,8 +60,11 @@ export function NavChats() {
       if (response.ok) {
         setChats((prev) => prev.filter((chat) => chat.id !== chatId));
         // If we're currently viewing this chat, redirect to new chat
-        if (pathname === `/private/chat?chatId=${chatId}`) {
-          window.location.href = "/private/chat";
+        const chatUrl = workspaceSlug
+          ? `/private/${workspaceSlug}/chat`
+          : "/private/chat";
+        if (pathname.includes(`chatId=${chatId}`)) {
+          window.location.href = chatUrl;
         }
       }
     } catch (error) {
@@ -106,7 +109,11 @@ export function NavChats() {
       <div className="flex items-center justify-between">
         <SidebarGroupLabel>Chats</SidebarGroupLabel>
         <Button variant="ghost" size="sm" asChild className="h-6 w-6 p-0">
-          <Link href="/private/chat">
+          <Link
+            href={
+              workspaceSlug ? `/private/${workspaceSlug}/chat` : "/private/chat"
+            }
+          >
             <Plus className="h-4 w-4" />
           </Link>
         </Button>
@@ -125,7 +132,11 @@ export function NavChats() {
             >
               <MessageSquare className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
               <Link
-                href={`/private/chat?chatId=${chat.id}`}
+                href={
+                  workspaceSlug
+                    ? `/private/${workspaceSlug}/chat?chatId=${chat.id}`
+                    : `/private/chat?chatId=${chat.id}`
+                }
                 className="flex-1 min-w-0"
               >
                 <div className="font-medium truncate">{chat.title}</div>

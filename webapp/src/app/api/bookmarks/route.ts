@@ -13,13 +13,23 @@ export async function GET() {
   try {
     const bookmarks = await prisma.grantBookmark.findMany({
       where: { userId: user.id },
-      include: {
-        grant: true,
-      },
       orderBy: { createdAt: "desc" },
     });
 
-    return Response.json(bookmarks);
+    // Fetch opportunity details for each bookmark
+    const bookmarksWithOpportunities = await Promise.all(
+      bookmarks.map(async (bookmark) => {
+        const opportunity = await prisma.$queryRaw<any[]>`
+          SELECT * FROM public.opportunities WHERE id = ${bookmark.opportunityId} LIMIT 1
+        `;
+        return {
+          ...bookmark,
+          opportunity: opportunity[0] || null,
+        };
+      })
+    );
+
+    return Response.json(bookmarksWithOpportunities);
   } catch (e) {
     console.error("Error listing bookmarks:", e);
     return new Response("Error listing bookmarks", { status: 500 });

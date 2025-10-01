@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
 import {
   AudioWaveform,
   Command,
@@ -108,14 +109,32 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname();
+
+  // Extract workspace slug from pathname: /private/[slug]/...
+  const workspaceSlug = React.useMemo(() => {
+    const match = pathname.match(/^\/private\/([^\/]+)/);
+    return match ? match[1] : null;
+  }, [pathname]);
+
+  // Build navigation items with workspace slug
+  const navItems = React.useMemo(() => {
+    if (!workspaceSlug) return data.navMain;
+
+    return data.navMain.map((item) => ({
+      ...item,
+      url: `/private/${workspaceSlug}${item.url.replace("/private", "")}`,
+    }));
+  }, [workspaceSlug]);
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavChats />
+        <NavMain items={navItems} />
+        <NavChats workspaceSlug={workspaceSlug} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

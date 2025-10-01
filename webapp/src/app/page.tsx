@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { getUserWorkspace } from "@/lib/workspace";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -11,9 +12,20 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // If logged in, redirect to private area
+  // If logged in, redirect to their workspace
   if (user) {
-    redirect("/private/chat");
+    try {
+      const workspace = await getUserWorkspace(user.id);
+      redirect(`/private/${workspace.slug}/chat`);
+    } catch (error) {
+      // Re-throw redirect errors (they're not actual errors)
+      if ((error as any)?.digest?.startsWith("NEXT_REDIRECT")) {
+        throw error;
+      }
+      console.error("Error fetching workspace:", error);
+      // Fallback to old route if workspace not found
+      redirect("/private/chat");
+    }
   }
 
   // Landing page for non-authenticated users

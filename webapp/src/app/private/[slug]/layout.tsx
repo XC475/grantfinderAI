@@ -1,3 +1,6 @@
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
+import { verifyWorkspaceAccess, getWorkspaceBySlug } from "@/lib/workspace";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { Separator } from "@/components/ui/separator";
@@ -10,11 +13,41 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-export default function PrivateLayout({
+export default async function WorkspaceLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ slug: string }>;
 }) {
+  const supabase = await createClient();
+  const { slug } = await params;
+
+  // Check authentication
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    redirect("/login");
+  }
+
+  // Verify workspace exists and user has access
+  let workspace;
+  try {
+    workspace = await getWorkspaceBySlug(slug);
+    const hasAccess = await verifyWorkspaceAccess(user.id, slug);
+
+    if (!hasAccess) {
+      // User doesn't have access to this workspace
+      redirect("/");
+    }
+  } catch (error) {
+    console.error("Workspace access error:", error);
+    redirect("/");
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -25,7 +58,9 @@ export default function PrivateLayout({
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/private">GrantFinder</BreadcrumbLink>
+                  <BreadcrumbLink href={`/private/${slug}`}>
+                    {workspace.name}
+                  </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>

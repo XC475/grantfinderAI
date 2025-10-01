@@ -27,28 +27,38 @@ export async function POST(
   if (!grantId) return new Response("Missing grantId", { status: 400 });
 
   try {
-    // Ensure grant exists
-    const grant = await prisma.grant.findUnique({ where: { id: grantId } });
-    if (!grant) return new Response("Grant not found", { status: 404 });
-
     const workspaceId = await getUserWorkspaceId(user.id);
 
-    // Upsert bookmark (unique on userId, grantId, workspaceId)
+    // grantId is actually an opportunity ID (integer from public.opportunities)
+    const opportunityId = parseInt(grantId);
+    if (isNaN(opportunityId)) {
+      return new Response("Invalid opportunity ID", { status: 400 });
+    }
+
+    // Check if opportunity exists
+    const opportunity = await prisma.$queryRaw<any[]>`
+      SELECT id FROM public.opportunities WHERE id = ${opportunityId} LIMIT 1
+    `;
+
+    if (!opportunity || opportunity.length === 0) {
+      return new Response("Opportunity not found", { status: 404 });
+    }
+
+    // Create bookmark directly with opportunity ID
     const bookmark = await prisma.grantBookmark.upsert({
       where: {
-        userId_grantId_workspaceId: {
+        userId_opportunityId_workspaceId: {
           userId: user.id,
-          grantId,
+          opportunityId,
           workspaceId,
         },
       },
       update: {},
       create: {
         userId: user.id,
-        grantId,
+        opportunityId,
         workspaceId,
       },
-      include: { grant: true },
     });
 
     return Response.json(bookmark, { status: 201 });
@@ -79,11 +89,16 @@ export async function DELETE(
   try {
     const workspaceId = await getUserWorkspaceId(user.id);
 
+    const opportunityId = parseInt(grantId);
+    if (isNaN(opportunityId)) {
+      return new Response("Invalid opportunity ID", { status: 400 });
+    }
+
     await prisma.grantBookmark.delete({
       where: {
-        userId_grantId_workspaceId: {
+        userId_opportunityId_workspaceId: {
           userId: user.id,
-          grantId,
+          opportunityId,
           workspaceId,
         },
       },
