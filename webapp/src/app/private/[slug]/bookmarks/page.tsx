@@ -12,6 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { BookmarkMinus } from "lucide-react";
 import { toast } from "sonner";
+import { Loading } from "@/components/ui/spinner";
 
 type Opportunity = {
   id: number; // opportunity id from public.opportunities
@@ -97,19 +98,16 @@ export default function BookmarksPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Saved Grants</h1>
         <p className="text-gray-600">Your bookmarked grant opportunities.</p>
       </div>
 
       {loading && bookmarks.length === 0 ? (
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading bookmarks...</p>
-        </div>
+        <Loading message="Loading bookmarks..." />
       ) : bookmarks.length === 0 ? (
-        <div className="text-center py-16 text-gray-600">No bookmarks yet.</div>
+        <div className="py-16 text-gray-600">No bookmarks yet.</div>
       ) : (
         <div className="space-y-4">
           {bookmarks.map((b) => {

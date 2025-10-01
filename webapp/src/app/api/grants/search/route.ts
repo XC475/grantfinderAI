@@ -90,6 +90,14 @@ export async function GET(req: NextRequest) {
     const category = searchParams.get("category") || "";
     const minAmount = searchParams.get("minAmount");
     const maxAmount = searchParams.get("maxAmount");
+    const stateCode = searchParams.get("stateCode") || "";
+    const agency = searchParams.get("agency") || "";
+    const fundingInstrument = searchParams.get("fundingInstrument") || "";
+    const costSharing = searchParams.get("costSharing");
+    const fiscalYear = searchParams.get("fiscalYear");
+    const source = searchParams.get("source") || "";
+    const closeDateFrom = searchParams.get("closeDateFrom");
+    const closeDateTo = searchParams.get("closeDateTo");
     let limit = parseInt(searchParams.get("limit") || "50");
     let offset = parseInt(searchParams.get("offset") || "0");
 
@@ -99,6 +107,14 @@ export async function GET(req: NextRequest) {
       category,
       minAmount,
       maxAmount,
+      stateCode,
+      agency,
+      fundingInstrument,
+      costSharing,
+      fiscalYear,
+      source,
+      closeDateFrom,
+      closeDateTo,
       limit,
       offset,
     });
@@ -154,6 +170,64 @@ export async function GET(req: NextRequest) {
       supabaseQuery = supabaseQuery.lte("total_funding_amount", maxAmountNum);
     }
 
+    // Add state filter
+    if (stateCode) {
+      console.log(`🔍 [${requestId}] Adding state filter: "${stateCode}"`);
+      supabaseQuery = supabaseQuery.eq("state_code", stateCode);
+    }
+
+    // Add agency filter
+    if (agency) {
+      console.log(`🔍 [${requestId}] Adding agency filter: "${agency}"`);
+      supabaseQuery = supabaseQuery.eq("agency", agency);
+    }
+
+    // Add funding instrument filter
+    if (fundingInstrument) {
+      console.log(
+        `🔍 [${requestId}] Adding funding instrument filter: "${fundingInstrument}"`
+      );
+      supabaseQuery = supabaseQuery.eq("funding_instrument", fundingInstrument);
+    }
+
+    // Add cost sharing filter
+    if (costSharing !== null && costSharing !== undefined) {
+      const requiresCostSharing = costSharing === "true";
+      console.log(
+        `🔍 [${requestId}] Adding cost sharing filter: ${requiresCostSharing}`
+      );
+      supabaseQuery = supabaseQuery.eq("cost_sharing", requiresCostSharing);
+    }
+
+    // Add fiscal year filter
+    if (fiscalYear) {
+      const fiscalYearNum = parseInt(fiscalYear);
+      console.log(
+        `🔍 [${requestId}] Adding fiscal year filter: ${fiscalYearNum}`
+      );
+      supabaseQuery = supabaseQuery.eq("fiscal_year", fiscalYearNum);
+    }
+
+    // Add source filter
+    if (source) {
+      console.log(`🔍 [${requestId}] Adding source filter: "${source}"`);
+      supabaseQuery = supabaseQuery.eq("source", source);
+    }
+
+    // Add close date range filters
+    if (closeDateFrom) {
+      console.log(
+        `🔍 [${requestId}] Adding close date from filter: "${closeDateFrom}"`
+      );
+      supabaseQuery = supabaseQuery.gte("close_date", closeDateFrom);
+    }
+    if (closeDateTo) {
+      console.log(
+        `🔍 [${requestId}] Adding close date to filter: "${closeDateTo}"`
+      );
+      supabaseQuery = supabaseQuery.lte("close_date", closeDateTo);
+    }
+
     // Add pagination
     console.log(
       `🔍 [${requestId}] Adding pagination: offset=${offset}, limit=${limit}`
@@ -188,7 +262,21 @@ export async function GET(req: NextRequest) {
 
     // Get total count for pagination
     let totalCount = 0;
-    if (query || status || category || minAmount || maxAmount) {
+    if (
+      query ||
+      status ||
+      category ||
+      minAmount ||
+      maxAmount ||
+      stateCode ||
+      agency ||
+      fundingInstrument ||
+      costSharing ||
+      fiscalYear ||
+      source ||
+      closeDateFrom ||
+      closeDateTo
+    ) {
       console.log(`🔍 [${requestId}] Getting filtered count...`);
       let countQuery = supabaseServer
         .from("opportunities")
@@ -213,6 +301,32 @@ export async function GET(req: NextRequest) {
       if (maxAmount) {
         const maxAmountNum = parseInt(maxAmount);
         countQuery = countQuery.lte("total_funding_amount", maxAmountNum);
+      }
+      if (stateCode) {
+        countQuery = countQuery.eq("state_code", stateCode);
+      }
+      if (agency) {
+        countQuery = countQuery.eq("agency", agency);
+      }
+      if (fundingInstrument) {
+        countQuery = countQuery.eq("funding_instrument", fundingInstrument);
+      }
+      if (costSharing !== null && costSharing !== undefined) {
+        const requiresCostSharing = costSharing === "true";
+        countQuery = countQuery.eq("cost_sharing", requiresCostSharing);
+      }
+      if (fiscalYear) {
+        const fiscalYearNum = parseInt(fiscalYear);
+        countQuery = countQuery.eq("fiscal_year", fiscalYearNum);
+      }
+      if (source) {
+        countQuery = countQuery.eq("source", source);
+      }
+      if (closeDateFrom) {
+        countQuery = countQuery.gte("close_date", closeDateFrom);
+      }
+      if (closeDateTo) {
+        countQuery = countQuery.lte("close_date", closeDateTo);
       }
 
       const { count: filteredCount } = await countQuery;

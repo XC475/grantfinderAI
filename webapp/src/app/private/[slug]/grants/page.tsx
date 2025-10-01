@@ -18,9 +18,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Bookmark, BookmarkCheck, Search, Filter, X } from "lucide-react";
+import {
+  Bookmark,
+  BookmarkCheck,
+  Search,
+  Filter,
+  X,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
+import { Loading, Spinner } from "@/components/ui/spinner";
 
 interface Grant {
   id: number;
@@ -75,8 +84,30 @@ function GrantsSearchPage() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [minAmount, setMinAmount] = useState("");
   const [maxAmount, setMaxAmount] = useState("");
+  const [stateCode, setStateCode] = useState("");
+  const [agency, setAgency] = useState("");
+  const [fundingInstrument, setFundingInstrument] = useState("");
+  const [costSharing, setCostSharing] = useState("");
+  const [fiscalYear, setFiscalYear] = useState("");
+  const [source, setSource] = useState("");
+  const [closeDateFrom, setCloseDateFrom] = useState("");
+  const [closeDateTo, setCloseDateTo] = useState("");
   const [savedGrants, setSavedGrants] = useState<number[]>([]);
   const [savingGrant, setSavingGrant] = useState<number | null>(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  // Filter options from API
+  const [filterOptions, setFilterOptions] = useState<{
+    states: string[];
+    agencies: string[];
+    sources: string[];
+    fiscalYears: number[];
+  }>({
+    states: [],
+    agencies: [],
+    sources: [],
+    fiscalYears: [],
+  });
   const [pagination, setPagination] = useState({
     total: 0,
     limit: 10,
@@ -97,6 +128,22 @@ function GrantsSearchPage() {
     getUser();
   }, []);
 
+  // Fetch filter options
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        const response = await fetch("/api/grants/filters");
+        if (response.ok) {
+          const data = await response.json();
+          setFilterOptions(data);
+        }
+      } catch (error) {
+        console.error("Error fetching filter options:", error);
+      }
+    };
+    fetchFilterOptions();
+  }, []);
+
   const fetchGrants = async (resetOffset = true) => {
     try {
       setLoading(true);
@@ -108,6 +155,15 @@ function GrantsSearchPage() {
       if (categoryFilter) params.append("category", categoryFilter);
       if (minAmount) params.append("minAmount", minAmount);
       if (maxAmount) params.append("maxAmount", maxAmount);
+      if (stateCode) params.append("stateCode", stateCode);
+      if (agency) params.append("agency", agency);
+      if (fundingInstrument)
+        params.append("fundingInstrument", fundingInstrument);
+      if (costSharing) params.append("costSharing", costSharing);
+      if (fiscalYear) params.append("fiscalYear", fiscalYear);
+      if (source) params.append("source", source);
+      if (closeDateFrom) params.append("closeDateFrom", closeDateFrom);
+      if (closeDateTo) params.append("closeDateTo", closeDateTo);
       params.append("limit", pagination.limit.toString());
       params.append("offset", resetOffset ? "0" : pagination.offset.toString());
 
@@ -212,6 +268,14 @@ function GrantsSearchPage() {
     setCategoryFilter("");
     setMinAmount("");
     setMaxAmount("");
+    setStateCode("");
+    setAgency("");
+    setFundingInstrument("");
+    setCostSharing("");
+    setFiscalYear("");
+    setSource("");
+    setCloseDateFrom("");
+    setCloseDateTo("");
     setPagination((prev) => ({ ...prev, offset: 0 }));
     fetchGrants(true);
   };
@@ -255,25 +319,23 @@ function GrantsSearchPage() {
       {/* Search Form */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Search className="h-5 w-5" />
-            Search Grants
-          </CardTitle>
+          <CardTitle>Search Grants</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSearch} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Search Query
-                </label>
-                <Input
-                  placeholder="Search grants..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
+            {/* Search Bar - Full Width */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                placeholder="Search grants by title, description, or grant number..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="text-base pl-10"
+              />
+            </div>
 
+            {/* Basic Filters */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-2">Status</label>
                 <Select
@@ -336,8 +398,203 @@ function GrantsSearchPage() {
                   />
                 </div>
               </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">State</label>
+                <Select
+                  value={stateCode || "all"}
+                  onValueChange={(value) =>
+                    setStateCode(value === "all" ? "" : value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="All states" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All states</SelectItem>
+                    {filterOptions.states.map((state) => (
+                      <SelectItem key={state} value={state}>
+                        {state}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
+            {/* Advanced Filters Toggle */}
+            <div>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="flex items-center gap-2"
+              >
+                {showAdvanced ? (
+                  <>
+                    <ChevronUp className="h-4 w-4" />
+                    Hide Advanced Filters
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="h-4 w-4" />
+                    Show Advanced Filters
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {/* Advanced Filters */}
+            {showAdvanced && (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Agency
+                    </label>
+                    <Select
+                      value={agency || "all"}
+                      onValueChange={(value) =>
+                        setAgency(value === "all" ? "" : value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="All agencies" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All agencies</SelectItem>
+                        {filterOptions.agencies.map((agencyName) => (
+                          <SelectItem key={agencyName} value={agencyName}>
+                            {agencyName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Funding Instrument
+                    </label>
+                    <Select
+                      value={fundingInstrument || "all"}
+                      onValueChange={(value) =>
+                        setFundingInstrument(value === "all" ? "" : value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="All types" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All types</SelectItem>
+                        <SelectItem value="Grant">Grant</SelectItem>
+                        <SelectItem value="Cooperative Agreement">
+                          Cooperative Agreement
+                        </SelectItem>
+                        <SelectItem value="Procurement Contract">
+                          Procurement Contract
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Cost Sharing
+                    </label>
+                    <Select
+                      value={costSharing || "all"}
+                      onValueChange={(value) =>
+                        setCostSharing(value === "all" ? "" : value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Any" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Any</SelectItem>
+                        <SelectItem value="true">Required</SelectItem>
+                        <SelectItem value="false">Not Required</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Fiscal Year
+                    </label>
+                    <Select
+                      value={fiscalYear || "all"}
+                      onValueChange={(value) =>
+                        setFiscalYear(value === "all" ? "" : value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="All years" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All years</SelectItem>
+                        {filterOptions.fiscalYears.map((year) => (
+                          <SelectItem key={year} value={year.toString()}>
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Source
+                    </label>
+                    <Select
+                      value={source || "all"}
+                      onValueChange={(value) =>
+                        setSource(value === "all" ? "" : value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="All sources" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All sources</SelectItem>
+                        {filterOptions.sources.map((sourceName) => (
+                          <SelectItem key={sourceName} value={sourceName}>
+                            {sourceName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Close Date From
+                    </label>
+                    <Input
+                      type="date"
+                      value={closeDateFrom}
+                      onChange={(e) => setCloseDateFrom(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Close Date To
+                    </label>
+                    <Input
+                      type="date"
+                      value={closeDateTo}
+                      onChange={(e) => setCloseDateTo(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Action Buttons */}
             <div className="flex gap-2">
               <Button type="submit" disabled={loading}>
                 {loading ? "Searching..." : "Search"}
@@ -371,7 +628,15 @@ function GrantsSearchPage() {
           statusFilter ||
           categoryFilter ||
           minAmount ||
-          maxAmount) && (
+          maxAmount ||
+          stateCode ||
+          agency ||
+          fundingInstrument ||
+          costSharing ||
+          fiscalYear ||
+          source ||
+          closeDateFrom ||
+          closeDateTo) && (
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <Filter className="h-4 w-4" />
             Filters applied
@@ -382,10 +647,7 @@ function GrantsSearchPage() {
       {/* Grants List */}
       <div className="space-y-4">
         {loading && grants.length === 0 ? (
-          <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-            <p className="mt-2 text-gray-600">Loading grants...</p>
-          </div>
+          <Loading message="Loading grants..." />
         ) : grants.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-600 mb-4">
@@ -433,7 +695,7 @@ function GrantsSearchPage() {
                         className="h-8 w-8 p-0"
                       >
                         {isLoading ? (
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                          <Spinner size="sm" />
                         ) : isSaved ? (
                           <BookmarkCheck className="h-4 w-4 text-primary" />
                         ) : (

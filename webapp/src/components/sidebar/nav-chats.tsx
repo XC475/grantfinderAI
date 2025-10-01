@@ -10,6 +10,7 @@ import {
   SidebarGroupLabel,
   SidebarMenu,
 } from "@/components/ui/sidebar";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Chat {
   id: string;
@@ -99,7 +100,9 @@ export function NavChats({ workspaceSlug }: { workspaceSlug: string | null }) {
         <div className="flex items-center justify-between">
           <SidebarGroupLabel>Chats</SidebarGroupLabel>
         </div>
-        <div className="text-sm text-muted-foreground px-2">Loading...</div>
+        <div className="flex items-center justify-center py-4">
+          <Spinner size="sm" />
+        </div>
       </SidebarGroup>
     );
   }
