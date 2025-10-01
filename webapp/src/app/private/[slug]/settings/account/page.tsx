@@ -19,7 +19,7 @@ export default function AccountSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [user, setUser] = useState<any>(null);
-  
+
   // Form state
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -118,7 +118,7 @@ export default function AccountSettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Account</h1>
         <p className="text-gray-600">
@@ -130,9 +130,7 @@ export default function AccountSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Profile Information</CardTitle>
-          <CardDescription>
-            Update your personal information
-          </CardDescription>
+          <CardDescription>Update your personal information</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleUpdateProfile} className="space-y-4">
@@ -224,9 +222,7 @@ export default function AccountSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Account Information</CardTitle>
-          <CardDescription>
-            Your account details
-          </CardDescription>
+          <CardDescription>Your account details</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -252,4 +248,3 @@ export default function AccountSettingsPage() {
     </div>
   );
 }
-

@@ -12,7 +12,7 @@ import { CreditCard } from "lucide-react";
 
 export default function BillingSettingsPage() {
   return (
-    <div className="space-y-6">
+    <div className="p-4 space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Billing</h1>
         <p className="text-gray-600">
@@ -24,9 +24,7 @@ export default function BillingSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Current Plan</CardTitle>
-          <CardDescription>
-            You are currently on the Free plan
-          </CardDescription>
+          <CardDescription>You are currently on the Free plan</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
@@ -45,9 +43,7 @@ export default function BillingSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Payment Methods</CardTitle>
-          <CardDescription>
-            Manage your payment methods
-          </CardDescription>
+          <CardDescription>Manage your payment methods</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-8 text-center">
@@ -77,4 +73,3 @@ export default function BillingSettingsPage() {
     </div>
   );
 }
-

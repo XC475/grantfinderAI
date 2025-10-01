@@ -77,7 +77,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto px-4">
       <div className="mb-6">
         <h1 className="text-3xl font-bold">AI Chat</h1>
         {currentChatId && (

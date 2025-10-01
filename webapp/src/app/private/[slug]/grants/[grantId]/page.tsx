@@ -155,7 +155,7 @@ export default function GrantDetailPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4">
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-start justify-between gap-4 mb-4">

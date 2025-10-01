@@ -55,7 +55,7 @@ export default function BookmarksPage() {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Saved Grants</h1>
         <p className="text-gray-600">Your bookmarked grant opportunities.</p>
