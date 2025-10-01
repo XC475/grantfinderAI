@@ -7,8 +7,9 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
+  Settings,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 // import { toast } from "sonner";
 import { XCircle } from "lucide-react";
 
@@ -28,6 +29,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { logout } from "@/app/login/actions";
 
 export function NavUser({
   user,
@@ -39,6 +41,36 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Extract workspace slug from pathname
+  const workspaceSlug = pathname.match(/^\/private\/([^\/]+)/)?.[1];
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      // Logout redirects, so errors are expected
+      console.error("Logout error:", error);
+    }
+  };
+
+  // Generate initials from name or email
+  const getInitials = (name: string, email: string) => {
+    if (name && name !== "User") {
+      const parts = name.trim().split(" ");
+      if (parts.length >= 2) {
+        return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+      }
+      return name.substring(0, 2).toUpperCase();
+    }
+    // Fallback to email initials
+    return email.substring(0, 2).toUpperCase();
+  };
+
+  const initials = getInitials(user.name, user.email);
 
   return (
     <SidebarMenu>
@@ -50,8 +82,12 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                {user.avatar && (
+                  <AvatarImage src={user.avatar} alt={user.name} />
+                )}
+                <AvatarFallback className="rounded-lg">
+                  {initials}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
@@ -69,8 +105,12 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  {user.avatar && (
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                  )}
+                  <AvatarFallback className="rounded-lg">
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
@@ -87,21 +127,18 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
+              <DropdownMenuItem
+                onClick={() =>
+                  workspaceSlug &&
+                  router.push(`/private/${workspaceSlug}/settings`)
+                }
+              >
+                <Settings />
+                Settings
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

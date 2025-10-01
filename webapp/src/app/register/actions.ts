@@ -22,7 +22,11 @@ export async function signup(formData: FormData) {
     const { data: signUpData, error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
-      // NOTE: not setting user metadata here to avoid changing behavior; just logging
+      options: {
+        data: {
+          name: data.name,
+        },
+      },
     });
 
     console.log("[signup] signUpData", {

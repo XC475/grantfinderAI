@@ -5,6 +5,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Trash2, MessageSquare, Plus } from "lucide-react";
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+} from "@/components/ui/sidebar";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Chat {
   id: string;
@@ -14,7 +20,7 @@ interface Chat {
   _count: { messages: number };
 }
 
-export function NavChats() {
+export function NavChats({ workspaceSlug }: { workspaceSlug: string | null }) {
   const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
@@ -55,8 +61,11 @@ export function NavChats() {
       if (response.ok) {
         setChats((prev) => prev.filter((chat) => chat.id !== chatId));
         // If we're currently viewing this chat, redirect to new chat
-        if (pathname === `/private/chat?chatId=${chatId}`) {
-          window.location.href = "/private/chat";
+        const chatUrl = workspaceSlug
+          ? `/private/${workspaceSlug}/chat`
+          : "/private/chat";
+        if (pathname.includes(`chatId=${chatId}`)) {
+          window.location.href = chatUrl;
         }
       }
     } catch (error) {
@@ -87,32 +96,38 @@ export function NavChats() {
 
   if (loading) {
     return (
-      <div className="space-y-2">
+      <SidebarGroup>
         <div className="flex items-center justify-between">
-          <h3 className="font-medium text-sm text-muted-foreground">Chats</h3>
+          <SidebarGroupLabel>Chats</SidebarGroupLabel>
         </div>
-        <div className="text-sm text-muted-foreground">Loading...</div>
-      </div>
+        <div className="flex items-center justify-center py-4">
+          <Spinner size="sm" />
+        </div>
+      </SidebarGroup>
     );
   }
 
   return (
-    <div className="space-y-2">
+    <SidebarGroup>
       <div className="flex items-center justify-between">
-        <h3 className="font-medium text-sm text-muted-foreground">Chats</h3>
+        <SidebarGroupLabel>Chats</SidebarGroupLabel>
         <Button variant="ghost" size="sm" asChild className="h-6 w-6 p-0">
-          <Link href="/private/chat">
+          <Link
+            href={
+              workspaceSlug ? `/private/${workspaceSlug}/chat` : "/private/chat"
+            }
+          >
             <Plus className="h-4 w-4" />
           </Link>
         </Button>
       </div>
 
       {chats.length === 0 ? (
-        <div className="text-sm text-muted-foreground py-4">
+        <div className="text-sm text-muted-foreground py-4 px-2">
           No chats yet. Start a new conversation!
         </div>
       ) : (
-        <div className="space-y-1">
+        <SidebarMenu>
           {chats.map((chat) => (
             <div
               key={chat.id}
@@ -120,7 +135,11 @@ export function NavChats() {
             >
               <MessageSquare className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
               <Link
-                href={`/private/chat?chatId=${chat.id}`}
+                href={
+                  workspaceSlug
+                    ? `/private/${workspaceSlug}/chat?chatId=${chat.id}`
+                    : `/private/chat?chatId=${chat.id}`
+                }
                 className="flex-1 min-w-0"
               >
                 <div className="font-medium truncate">{chat.title}</div>
@@ -140,9 +159,9 @@ export function NavChats() {
               </Button>
             </div>
           ))}
-        </div>
+        </SidebarMenu>
       )}
-    </div>
+    </SidebarGroup>
   );
 }
 

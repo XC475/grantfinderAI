@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChatDemo } from "@/components/chat/Chat";
 import { Message } from "@/components/ui/chat-message";
+import { Loading } from "@/components/ui/spinner";
 
 interface ChatData {
   id: string;
@@ -69,16 +70,14 @@ export default function ChatPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-lg">Loading chat...</div>
-        </div>
+      <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
+        <Loading message="Loading chat..." />
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto px-4">
       <div className="mb-6">
         <h1 className="text-3xl font-bold">AI Chat</h1>
         {currentChatId && (
