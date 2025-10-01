@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
   // Get the last user message
   const lastUserMessage = [...messages]
-    .filter((m: any) => m.role === "user")
+    .filter((m: { role: string }) => m.role === "user")
     .pop();
   if (!lastUserMessage) return new Response("No user message", { status: 400 });
 

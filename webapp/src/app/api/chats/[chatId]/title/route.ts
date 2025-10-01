@@ -4,8 +4,9 @@ import prisma from "@/lib/prisma";
 // PATCH /api/chats/[chatId]/title - Update chat title
 export async function PATCH(
   req: Request,
-  { params }: { params: { chatId: string } }
+  { params }: { params: Promise<{ chatId: string }> }
 ) {
+  const { chatId } = await params;
   const supabase = await createClient();
   const {
     data: { user },
@@ -26,7 +27,7 @@ export async function PATCH(
     // Verify user owns this chat before updating
     const chat = await prisma.aiChat.findFirst({
       where: {
-        id: params.chatId,
+        id: chatId,
         userId: user.id,
       },
     });
@@ -37,7 +38,7 @@ export async function PATCH(
 
     // Update the chat title
     const updatedChat = await prisma.aiChat.update({
-      where: { id: params.chatId },
+      where: { id: chatId },
       data: {
         title: title.substring(0, 100), // Limit title length
         updatedAt: new Date(),

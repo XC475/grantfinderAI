@@ -91,7 +91,7 @@ function GrantsSearchPage() {
     offset: 0,
     hasMore: false,
   });
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
 
   // Get user session
   useEffect(() => {

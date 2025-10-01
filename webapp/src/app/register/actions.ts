@@ -43,15 +43,15 @@ export async function signup(formData: FormData) {
     if (error) {
       console.error("[signup] supabase.auth.signUp error", {
         message: error.message,
-        name: (error as any)?.name,
-        status: (error as any)?.status,
-        stack: (error as any)?.stack,
+        name: error && typeof error === "object" && "name" in error ? error.name : undefined,
+        status: error && typeof error === "object" && "status" in error ? error.status : undefined,
+        stack: error && typeof error === "object" && "stack" in error ? error.stack : undefined,
       });
       redirect(
         redirectWithToast(
           "/register",
           "error",
-          error.message || "Failed to create account"
+          (error instanceof Error ? error.message : String(error)) || "Failed to create account"
         )
       );
     }
@@ -82,8 +82,11 @@ export async function signup(formData: FormData) {
     );
   } catch (err) {
     if (
-      (err as any)?.digest &&
-      String((err as any).digest).startsWith("NEXT_REDIRECT")
+      err &&
+      typeof err === "object" &&
+      "digest" in err &&
+      typeof err.digest === "string" &&
+      err.digest.startsWith("NEXT_REDIRECT")
     ) {
       throw err;
     }

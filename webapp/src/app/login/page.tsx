@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Link from "next/link";
 
 interface LoginPageProps {
   searchParams: Promise<{ message?: string }>;
@@ -64,10 +63,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{" "}
-              <Link href="/register" className="text-blue-600 hover:underline">
-                Create one
-              </Link>
+              Contact your administrator for account access
             </p>
           </div>
         </CardContent>

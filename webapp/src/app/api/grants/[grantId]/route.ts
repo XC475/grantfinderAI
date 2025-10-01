@@ -15,7 +15,7 @@ export async function GET(
     }
 
     // Fetch the grant from public.opportunities
-    const grant = await prisma.$queryRaw<any[]>`
+    const grant = await prisma.$queryRaw<Array<Record<string, unknown>>>`
       SELECT * FROM public.opportunities WHERE id = ${opportunityId} LIMIT 1
     `;
 

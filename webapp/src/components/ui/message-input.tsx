@@ -62,7 +62,7 @@ export function MessageInput({
   } = useAudioRecording({
     transcribeAudio,
     onTranscriptionComplete: (text) => {
-      props.onChange?.({ target: { value: text } } as any)
+      props.onChange?.({ target: { value: text } } as React.ChangeEvent<HTMLTextAreaElement>)
     },
   })
 

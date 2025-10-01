@@ -4,8 +4,9 @@ import prisma from "@/lib/prisma";
 // GET /api/chats/[chatId] - Get specific chat with messages
 export async function GET(
   req: Request,
-  { params }: { params: { chatId: string } }
+  { params }: { params: Promise<{ chatId: string }> }
 ) {
+  const { chatId } = await params;
   const supabase = await createClient();
   const {
     data: { user },
@@ -19,7 +20,7 @@ export async function GET(
   try {
     const chat = await prisma.aiChat.findFirst({
       where: {
-        id: params.chatId,
+        id: chatId,
         userId: user.id, // Ensure user owns this chat
       },
       include: {
@@ -43,8 +44,9 @@ export async function GET(
 // DELETE /api/chats/[chatId] - Delete a chat
 export async function DELETE(
   req: Request,
-  { params }: { params: { chatId: string } }
+  { params }: { params: Promise<{ chatId: string }> }
 ) {
+  const { chatId } = await params;
   const supabase = await createClient();
   const {
     data: { user },
@@ -59,7 +61,7 @@ export async function DELETE(
     // Verify user owns this chat before deleting
     const chat = await prisma.aiChat.findFirst({
       where: {
-        id: params.chatId,
+        id: chatId,
         userId: user.id,
       },
     });
@@ -70,7 +72,7 @@ export async function DELETE(
 
     // Delete the chat (messages will be deleted due to cascade)
     await prisma.aiChat.delete({
-      where: { id: params.chatId },
+      where: { id: chatId },
     });
 
     return new Response("Chat deleted", { status: 200 });

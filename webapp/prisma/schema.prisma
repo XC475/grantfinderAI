@@ -73,6 +73,7 @@ model User {
   tasksAssigned         ProjectTask[]
   projectsCreated       Project[]
   personalWorkspace     Workspace             @relation("PersonalWorkspace", fields: [personalWorkspaceId], references: [id], onDelete: Cascade)
+  role                  UserRole              @default(USER)  // <- ADD THIS LINE
 
   @@map("users")
   @@schema("app")
@@ -355,6 +356,13 @@ enum MessageRole {
   USER
   ASSISTANT
   SYSTEM
+
+  @@schema("app")
+}
+
+enum UserRole {
+  USER
+  ADMIN
 
   @@schema("app")
 }
