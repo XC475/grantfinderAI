@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bookmark, BookmarkCheck, ArrowLeft, ExternalLink } from "lucide-react";
+import { Bookmark, BookmarkCheck, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { Loading } from "@/components/ui/spinner";
 
@@ -68,7 +68,6 @@ function formatDate(dateString: string | null) {
 
 export default function GrantDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const grantId = params.grantId as string;
   const slug = params.slug as string;
 
@@ -147,9 +146,8 @@ export default function GrantDetailPage() {
           <p className="text-gray-600 mb-6">
             The grant you're looking for doesn't exist or has been removed.
           </p>
-          <Button onClick={() => router.push(`/private/${slug}/grants`)}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Grants
+          <Button asChild>
+            <a href={`/private/${slug}/grants`}>Back to Grants</a>
           </Button>
         </div>
       </div>
@@ -158,12 +156,6 @@ export default function GrantDetailPage() {
 
   return (
     <div className="p-6">
-      {/* Back Button */}
-      <Button variant="ghost" onClick={() => router.back()} className="mb-6">
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Back
-      </Button>
-
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-start justify-between gap-4 mb-4">
