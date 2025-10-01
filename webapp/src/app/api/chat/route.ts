@@ -6,7 +6,7 @@ import prisma from "@/lib/prisma";
 const N8N_WEBHOOK_URL = process.env.N8N_SEARCH_AGENT_TEST_URL!;
 
 export async function POST(req: NextRequest) {
-  const { messages, chatId, userId, workspaceId } = await req.json();
+  const { messages, chatId, workspaceId } = await req.json();
 
   // Get authenticated user
   const supabase = await createClient();

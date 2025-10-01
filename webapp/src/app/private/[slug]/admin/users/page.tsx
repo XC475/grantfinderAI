@@ -47,7 +47,6 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
 
   // Form state
   const [newUser, setNewUser] = useState({
@@ -60,6 +59,7 @@ export default function AdminUsersPage() {
   useEffect(() => {
     checkAdminAccess();
     fetchUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkAdminAccess = async () => {
@@ -78,8 +78,6 @@ export default function AdminUsersPage() {
     if (response.status === 403) {
       toast.error("Access denied - Admin only");
       router.back();
-    } else if (response.ok) {
-      setCurrentUserRole("ADMIN");
     }
   };
 
@@ -96,7 +94,10 @@ export default function AdminUsersPage() {
       setUsers(data);
     } catch (error) {
       console.error("Error fetching users:", error);
-      toast.error((error instanceof Error ? error.message : String(error)) || "Failed to load users");
+      toast.error(
+        (error instanceof Error ? error.message : String(error)) ||
+          "Failed to load users"
+      );
     } finally {
       setLoading(false);
     }
@@ -125,7 +126,10 @@ export default function AdminUsersPage() {
       fetchUsers();
     } catch (error) {
       console.error("Error creating user:", error);
-      toast.error((error instanceof Error ? error.message : String(error)) || "Failed to create user");
+      toast.error(
+        (error instanceof Error ? error.message : String(error)) ||
+          "Failed to create user"
+      );
     } finally {
       setCreating(false);
     }
@@ -154,7 +158,10 @@ export default function AdminUsersPage() {
       fetchUsers();
     } catch (error) {
       console.error("Error deleting user:", error);
-      toast.error((error instanceof Error ? error.message : String(error)) || "Failed to delete user");
+      toast.error(
+        (error instanceof Error ? error.message : String(error)) ||
+          "Failed to delete user"
+      );
     }
   };
 
@@ -181,7 +188,10 @@ export default function AdminUsersPage() {
       fetchUsers();
     } catch (error) {
       console.error("Error updating user role:", error);
-      toast.error((error instanceof Error ? error.message : String(error)) || "Failed to update user role");
+      toast.error(
+        (error instanceof Error ? error.message : String(error)) ||
+          "Failed to update user role"
+      );
     }
   };
 

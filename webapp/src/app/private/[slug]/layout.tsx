@@ -27,9 +27,8 @@ export default async function WorkspaceLayout({
   }
 
   // Verify workspace exists and user has access
-  let workspace;
   try {
-    workspace = await getWorkspaceBySlug(slug);
+    await getWorkspaceBySlug(slug);
     const hasAccess = await verifyWorkspaceAccess(user.id, slug);
 
     if (!hasAccess) {

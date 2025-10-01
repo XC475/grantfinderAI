@@ -183,6 +183,7 @@ function GrantsSearchPage() {
 
   useEffect(() => {
     fetchGrants();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -257,32 +258,33 @@ function GrantsSearchPage() {
     fetchGrants(true);
   };
 
-  const formatCurrency = (amount: number | null) => {
-    if (!amount) return "Not specified";
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
+  // Utility functions - kept for potential future use
+  // const formatCurrency = (amount: number | null) => {
+  //   if (!amount) return "Not specified";
+  //   return new Intl.NumberFormat("en-US", {
+  //     style: "currency",
+  //     currency: "USD",
+  //     minimumFractionDigits: 0,
+  //   }).format(amount);
+  // };
 
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "Not specified";
-    return new Date(dateString).toLocaleDateString();
-  };
+  // const formatDate = (dateString: string | null) => {
+  //   if (!dateString) return "Not specified";
+  //   return new Date(dateString).toLocaleDateString();
+  // };
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "posted":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "forecasted":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "closed":
-        return "bg-gray-100 text-gray-800 border-gray-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
+  // const getStatusColor = (status: string) => {
+  //   switch (status.toLowerCase()) {
+  //     case "posted":
+  //       return "bg-green-100 text-green-800 border-green-200";
+  //     case "forecasted":
+  //       return "bg-blue-100 text-blue-800 border-blue-200";
+  //     case "closed":
+  //       return "bg-gray-100 text-gray-800 border-gray-200";
+  //     default:
+  //       return "bg-gray-100 text-gray-800 border-gray-200";
+  //   }
+  // };
 
   return (
     <div className="p-4 max-w-7xl mx-auto">

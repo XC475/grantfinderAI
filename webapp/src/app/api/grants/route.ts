@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from("opportunities").select("*");
@@ -11,7 +11,8 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json(data, { status: 200 });
-  } catch (error) {
+  } catch (err) {
+    console.error("Error fetching grants:", err);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

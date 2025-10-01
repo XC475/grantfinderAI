@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
 // GET /api/grants/filters - Get unique filter values
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     // Get distinct values for dropdown filters
     const [states, agencies, sources, fiscalYears] = await Promise.all([

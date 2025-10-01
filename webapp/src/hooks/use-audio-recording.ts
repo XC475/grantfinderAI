@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { recordAudio } from "@/lib/audio-utils";
+// import { recordAudio } from "@/lib/audio-utils";
 
 interface UseAudioRecordingOptions {
   transcribeAudio?: (blob: Blob) => Promise<string>;
@@ -9,7 +9,7 @@ interface UseAudioRecordingOptions {
 
 export function useAudioRecording({
   transcribeAudio,
-  onTranscriptionComplete,
+  // onTranscriptionComplete,
 }: UseAudioRecordingOptions) {
   const [isListening, setIsListening] = useState(false);
   const [isSpeechSupported, setIsSpeechSupported] = useState(!!transcribeAudio);

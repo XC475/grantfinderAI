@@ -1,17 +1,7 @@
 "use client";
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-  Settings,
-} from "lucide-react";
+import { ChevronsUpDown, LogOut, Sparkles, Settings } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
-// import { toast } from "sonner";
-import { XCircle } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
