@@ -29,6 +29,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { logout } from "@/app/login/actions";
 
 export function NavUser({
   user,
@@ -45,6 +46,16 @@ export function NavUser({
 
   // Extract workspace slug from pathname
   const workspaceSlug = pathname.match(/^\/private\/([^\/]+)/)?.[1];
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      // Logout redirects, so errors are expected
+      console.error("Logout error:", error);
+    }
+  };
 
   // Generate initials from name or email
   const getInitials = (name: string, email: string) => {
@@ -127,7 +138,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>
