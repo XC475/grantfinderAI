@@ -11,6 +11,7 @@ import {
   PieChart,
   Settings2,
   FileText,
+  Bookmark,
   Building2,
   ClipboardList,
   FolderOpen,
@@ -63,6 +64,11 @@ const data = {
       title: "Grants",
       url: "/private/grants",
       icon: FileText,
+    },
+    {
+      title: "Bookmarks",
+      url: "/private/bookmarks",
+      icon: Bookmark,
     },
     // {
     //   title: "Org Profile",

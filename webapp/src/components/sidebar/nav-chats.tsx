@@ -5,6 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Trash2, MessageSquare, Plus } from "lucide-react";
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+} from "@/components/ui/sidebar";
 
 interface Chat {
   id: string;
@@ -87,19 +92,19 @@ export function NavChats() {
 
   if (loading) {
     return (
-      <div className="space-y-2">
+      <SidebarGroup>
         <div className="flex items-center justify-between">
-          <h3 className="font-medium text-sm text-muted-foreground">Chats</h3>
+          <SidebarGroupLabel>Chats</SidebarGroupLabel>
         </div>
-        <div className="text-sm text-muted-foreground">Loading...</div>
-      </div>
+        <div className="text-sm text-muted-foreground px-2">Loading...</div>
+      </SidebarGroup>
     );
   }
 
   return (
-    <div className="space-y-2">
+    <SidebarGroup>
       <div className="flex items-center justify-between">
-        <h3 className="font-medium text-sm text-muted-foreground">Chats</h3>
+        <SidebarGroupLabel>Chats</SidebarGroupLabel>
         <Button variant="ghost" size="sm" asChild className="h-6 w-6 p-0">
           <Link href="/private/chat">
             <Plus className="h-4 w-4" />
@@ -108,11 +113,11 @@ export function NavChats() {
       </div>
 
       {chats.length === 0 ? (
-        <div className="text-sm text-muted-foreground py-4">
+        <div className="text-sm text-muted-foreground py-4 px-2">
           No chats yet. Start a new conversation!
         </div>
       ) : (
-        <div className="space-y-1">
+        <SidebarMenu>
           {chats.map((chat) => (
             <div
               key={chat.id}
@@ -140,9 +145,9 @@ export function NavChats() {
               </Button>
             </div>
           ))}
-        </div>
+        </SidebarMenu>
       )}
-    </div>
+    </SidebarGroup>
   );
 }
 

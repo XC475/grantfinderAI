@@ -11,29 +11,8 @@ datasource db {
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model agencies {
-  id                 Int                  @id @default(autoincrement())
-  code               String               @db.VarChar
-  name               String               @db.VarChar
-  source             String               @default("grants.gov") @db.VarChar
-  opportunity_agency opportunity_agency[]
-
-  @@schema("public")
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model alembic_version {
   version_num String @id(map: "alembic_version_pkc") @db.VarChar(32)
-
-  @@schema("public")
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model cfda_programs {
-  id               Int                @id @default(autoincrement())
-  number           String             @unique @db.VarChar
-  title            String             @db.VarChar
-  opportunity_cfda opportunity_cfda[]
 
   @@schema("public")
 }
@@ -43,54 +22,318 @@ model opportunities {
   id                   Int                     @id @default(autoincrement())
   source               String                  @db.VarChar
   state_code           String?                 @db.VarChar
-  opportunity_number   String                  @db.VarChar
   status               opportunity_status_enum
   title                String                  @db.VarChar
   description          String?
   category             String?                 @db.VarChar
   fiscal_year          Int?
   post_date            DateTime?               @db.Date
-  est_post_date        DateTime?               @db.Date
   close_date           DateTime?               @db.Date
-  award_date           DateTime?               @db.Date
-  award_ceiling        Int?
-  award_floor          Int?
   total_funding_amount Int?
-  number_of_awards     Int?
   eligibility          String?
   last_updated         DateTime?               @db.Timestamp(6)
   contact_name         String?                 @db.VarChar
   contact_email        String?                 @db.VarChar
   contact_phone        String?                 @db.VarChar
-  version              Int?
   url                  String?                 @db.VarChar
   extra                Json?                   @db.Json
-  opportunity_agency   opportunity_agency[]
-  opportunity_cfda     opportunity_cfda[]
+  source_grant_id      String                  @db.VarChar
+  agency               String?                 @db.VarChar
+  funding_instrument   String?                 @db.VarChar
+  archive_date         DateTime?               @db.Date
+  cost_sharing         Boolean?
+  award_max            Int?
+  award_min            Int?
+  eligibility_summary  String?                 @db.VarChar
+  attachments          Json?                   @db.Json
+  description_summary  String?                 @db.VarChar
 
   @@schema("public")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model opportunity_agency {
-  opportunity_id Int
-  agency_id      Int
-  agencies       agencies      @relation(fields: [agency_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  opportunities  opportunities @relation(fields: [opportunity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+//////// APP SCHEMA ////////
+model User {
+  id                    String                @id @db.Uuid
+  email                 String                @unique
+  name                  String?
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  avatarUrl             String?
+  lastActiveAt          DateTime              @default(now())
+  personalWorkspaceId   String                @unique
+  stripeCustomerId      String?
+  subscriptionStatus    String?
+  subscriptionTier      String?
+  trialEndsAt           DateTime?
+  aiChats               AiChat[]
+  grantBookmarks        GrantBookmark[]
+  invitesSent           OrganizationInvite[]
+  organizationMembers   OrganizationMember[]
+  projectCollaborations ProjectCollaborator[]
+  tasksAssigned         ProjectTask[]
+  projectsCreated       Project[]
+  searchHistory         SearchHistory[]
+  personalWorkspace     Workspace             @relation("PersonalWorkspace", fields: [personalWorkspaceId], references: [id], onDelete: Cascade)
 
-  @@id([opportunity_id, agency_id])
-  @@schema("public")
+  @@map("users")
+  @@schema("app")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model opportunity_cfda {
-  opportunity_id Int
-  cfda_id        Int
-  cfda_programs  cfda_programs @relation(fields: [cfda_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  opportunities  opportunities @relation(fields: [opportunity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+model Workspace {
+  id                  String                     @id @default(cuid())
+  name                String
+  slug                String                     @unique
+  type                WorkspaceType              @default(PERSONAL)
+  createdAt           DateTime                   @default(now())
+  updatedAt           DateTime                   @updatedAt
+  aiChats             AiChat[]
+  districtProfile     DistrictProfile?
+  grantBookmarks      GrantBookmark[]
+  eligibilityAnalyses GrantEligibilityAnalysis[]
+  organization        Organization?
+  projects            Project[]
+  searchHistory       SearchHistory[]
+  personalUser        User?                      @relation("PersonalWorkspace")
 
-  @@id([opportunity_id, cfda_id])
-  @@schema("public")
+  @@map("workspaces")
+  @@schema("app")
+}
+
+model Organization {
+  id                 String               @id @default(cuid())
+  name               String
+  domain             String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  stripeCustomerId   String?
+  subscriptionStatus String?
+  subscriptionTier   String?
+  trialEndsAt        DateTime?
+  seatCount          Int                  @default(5)
+  workspaceId        String               @unique
+  invites            OrganizationInvite[]
+  members            OrganizationMember[]
+  workspace          Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("organizations")
+  @@schema("app")
+}
+
+model OrganizationMember {
+  id             String           @id @default(cuid())
+  role           OrganizationRole @default(MEMBER)
+  joinedAt       DateTime         @default(now())
+  organizationId String
+  userId         String           @db.Uuid
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+  @@map("organization_members")
+  @@schema("app")
+}
+
+model OrganizationInvite {
+  id              String           @id @default(cuid())
+  email           String
+  role            OrganizationRole @default(MEMBER)
+  token           String           @unique
+  expiresAt       DateTime
+  createdAt       DateTime         @default(now())
+  organizationId  String
+  invitedByUserId String           @db.Uuid
+  invitedBy       User             @relation(fields: [invitedByUserId], references: [id])
+  organization    Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, email])
+  @@map("organization_invites")
+  @@schema("app")
+}
+
+model DistrictProfile {
+  id             String    @id @default(cuid())
+  districtName   String
+  state          String
+  enrollment     Int?
+  grades         String[]
+  frplPercent    Float?
+  mllPercent     Float?
+  swdPercent     Float?
+  testScores     Json?
+  priorities     String[]
+  previousAwards Json?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  workspaceId    String    @unique
+  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("district_profiles")
+  @@schema("app")
+}
+
+model Grant {
+  id                  String                     @id @default(cuid())
+  title               String
+  funder              String
+  funderType          GrantFunderType
+  amount              BigInt?
+  deadline            DateTime?
+  description         String?
+  eligibility         String?
+  requirements        Json?
+  sourceUrl           String
+  applicationUrl      String?
+  guidelinesUrl       String?
+  categories          String[]
+  keywords            String[]
+  aiSummary           String?
+  lastAnalyzed        DateTime?
+  isActive            Boolean                    @default(true)
+  createdAt           DateTime                   @default(now())
+  updatedAt           DateTime                   @updatedAt
+  bookmarks           GrantBookmark[]
+  eligibilityAnalyses GrantEligibilityAnalysis[]
+  projects            Project[]
+
+  @@map("grants")
+  @@schema("app")
+}
+
+model GrantBookmark {
+  id          String    @id @default(cuid())
+  notes       String?
+  createdAt   DateTime  @default(now())
+  workspaceId String
+  grantId     String
+  userId      String    @db.Uuid
+  grant       Grant     @relation(fields: [grantId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, grantId, workspaceId])
+  @@map("grant_bookmarks")
+  @@schema("app")
+}
+
+model GrantEligibilityAnalysis {
+  id          String         @id @default(cuid())
+  matchScore  Int
+  goNoGo      GoNoGoDecision
+  rationale   String
+  risks       String?
+  confidence  Float?
+  createdAt   DateTime       @default(now())
+  grantId     String
+  workspaceId String
+  grant       Grant          @relation(fields: [grantId], references: [id], onDelete: Cascade)
+  workspace   Workspace      @relation(fields: [workspaceId], references: [id])
+
+  @@unique([grantId, workspaceId])
+  @@map("grant_eligibility_analyses")
+  @@schema("app")
+}
+
+model SearchHistory {
+  id           String    @id @default(cuid())
+  query        String
+  filters      Json?
+  resultsCount Int?
+  createdAt    DateTime  @default(now())
+  workspaceId  String
+  userId       String    @db.Uuid
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("search_history")
+  @@schema("app")
+}
+
+model Project {
+  id              String                @id @default(cuid())
+  name            String
+  description     String?
+  status          ProjectStatus         @default(PLANNING)
+  deadline        DateTime?
+  submittedAt     DateTime?
+  budget          BigInt?
+  narrative       String?
+  documents       Json?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  grantId         String
+  workspaceId     String
+  createdByUserId String                @db.Uuid
+  aiChats         AiChat[]
+  collaborators   ProjectCollaborator[]
+  tasks           ProjectTask[]
+  createdBy       User                  @relation(fields: [createdByUserId], references: [id])
+  grant           Grant                 @relation(fields: [grantId], references: [id])
+  workspace       Workspace             @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("projects")
+  @@schema("app")
+}
+
+model ProjectTask {
+  id               String    @id @default(cuid())
+  title            String
+  description      String?
+  completed        Boolean   @default(false)
+  dueDate          DateTime?
+  createdAt        DateTime  @default(now())
+  projectId        String
+  assignedToUserId String?   @db.Uuid
+  assignedTo       User?     @relation(fields: [assignedToUserId], references: [id])
+  project          Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_tasks")
+  @@schema("app")
+}
+
+model ProjectCollaborator {
+  id          String      @id @default(cuid())
+  role        ProjectRole @default(COLLABORATOR)
+  permissions Json?
+  addedAt     DateTime    @default(now())
+  projectId   String
+  userId      String      @db.Uuid
+  project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@map("project_collaborators")
+  @@schema("app")
+}
+
+model AiChat {
+  id          String          @id @default(cuid())
+  title       String?
+  context     AiChatContext
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  workspaceId String
+  projectId   String?
+  userId      String          @db.Uuid
+  messages    AiChatMessage[]
+  project     Project?        @relation(fields: [projectId], references: [id])
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("ai_chats")
+  @@schema("app")
+}
+
+model AiChatMessage {
+  id        String      @id @default(cuid())
+  role      MessageRole
+  content   String
+  metadata  Json?
+  createdAt DateTime    @default(now())
+  chatId    String
+  chat      AiChat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@map("ai_chat_messages")
+  @@schema("app")
 }
 
 enum opportunity_status_enum {
@@ -102,438 +345,18 @@ enum opportunity_status_enum {
   @@schema("public")
 }
 
-// ========================================
-// APP SCHEMA - Your application models
-// ========================================
-
-// model User {
-//   id        String   @id @db.Uuid
-//   email     String   @unique
-//   name      String
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   // new fields
-//   avatarUrl String?
-//   lastActiveAt DateTime @default(now())
-
-//   // Personal workspace (always exists)
-//   personalWorkspaceId String @unique
-//   personalWorkspace   Workspace @relation("PersonalWorkspace", fields: [personalWorkspaceId], references: [id], onDelete: Cascade)
-
-
-
-//   @@map("users")
-//   @@schema("app")
-// }
-
-// ======================
-// USER & AUTH
-// ======================
-
-model User {
-  id            String   @id @db.Uuid
-  email         String   @unique
-  name          String?
-  avatarUrl     String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  lastActiveAt  DateTime @default(now())
-  
-  // Subscription & billing (individual level)
-  stripeCustomerId String?
-  subscriptionStatus String? // active, canceled, past_due, etc.
-  subscriptionTier String? // free, pro, enterprise
-  trialEndsAt   DateTime?
-  
-  // Personal workspace (always exists)
-  personalWorkspaceId String @unique
-  personalWorkspace   Workspace @relation("PersonalWorkspace", fields: [personalWorkspaceId], references: [id], onDelete: Cascade)
-  
-  // Organization memberships
-  organizationMembers OrganizationMember[]
-  
-  // Direct relationships (for personal use)
-  aiChats       AiChat[]
-  grantBookmarks GrantBookmark[]
-  searchHistory SearchHistory[]
-  
-  // Additional back-relations
-  invitesSent  OrganizationInvite[]
-  projectsCreated Project[]
-  tasksAssigned ProjectTask[]
-  projectCollaborations ProjectCollaborator[]
-  
-  @@map("users")
-  @@schema("app")
-}
-
-// ======================
-// ORGANIZATIONS & WORKSPACES  
-// ======================
-
-// Workspace = the working context (personal or org)
-model Workspace {
-  id          String   @id @default(cuid())
-  name        String
-  slug        String   @unique
-  type        WorkspaceType @default(PERSONAL) // PERSONAL or ORGANIZATION
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  // For personal workspaces
-  personalUser User? @relation("PersonalWorkspace")
-  
-  // For organization workspaces  
-  organization Organization?
-  
-  // District Profile (shared across workspace)
-  districtProfile DistrictProfile?
-  
-  // Workspace data
-  projects      Project[]
-  aiChats       AiChat[]
-  grantBookmarks GrantBookmark[]
-  searchHistory SearchHistory[]
-  eligibilityAnalyses GrantEligibilityAnalysis[]
-  
-  @@map("workspaces")
-  @@schema("app")
-}
-
-model Organization {
-  id          String   @id @default(cuid())
-  name        String
-  domain      String?  // for org email verification
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  // Billing
-  stripeCustomerId String?
-  subscriptionStatus String?
-  subscriptionTier String? // team, enterprise
-  trialEndsAt   DateTime?
-  seatCount     Int @default(5)
-  
-  // One workspace per organization
-  workspaceId String @unique
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  
-  // Members
-  members     OrganizationMember[]
-  invites     OrganizationInvite[]
-  
-  @@map("organizations")
-  @@schema("app")
-}
-
-model OrganizationMember {
-  id       String @id @default(cuid())
-  role     OrganizationRole @default(MEMBER)
-  joinedAt DateTime @default(now())
-  
-  userId String @db.Uuid
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
-  @@unique([userId, organizationId])
-  @@map("organization_members")
-  @@schema("app")
-}
-
-model OrganizationInvite {
-  id        String   @id @default(cuid())
-  email     String
-  role      OrganizationRole @default(MEMBER)
-  token     String   @unique
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
-  invitedByUserId String @db.Uuid
-  invitedBy       User @relation(fields: [invitedByUserId], references: [id])
-  
-  @@unique([organizationId, email])
-  @@map("organization_invites")
-  @@schema("app")
-}
-
-// ======================
-// DISTRICT PROFILE & DATA
-// ======================
-
-model DistrictProfile {
-  id          String   @id @default(cuid())
-  
-  // Basic Info
-  districtName String
-  state       String
-  enrollment  Int?
-  grades      String[] // ["K", "1", "2", ..., "12"]
-  
-  // Demographics (for grant matching)
-  frplPercent Float? // Free/Reduced Price Lunch
-  mllPercent  Float? // Multilingual Learners 
-  swdPercent  Float? // Students with Disabilities
-  
-  // Academic Performance
-  testScores  Json?   // Flexible JSON for various test scores
-  
-  // Program Priorities (for matching)
-  priorities  String[] // ["STEM", "Literacy", "Mental Health", etc.]
-  
-  // Grant History
-  previousAwards Json? // Past successful grants
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  workspaceId String @unique
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  
-  @@map("district_profiles")
-  @@schema("app")
-}
-
-// ======================
-// GRANTS & SEARCH
-// ======================
-
-model Grant {
-  id          String   @id @default(cuid())
-  
-  // Grant Details
-  title       String
-  funder      String
-  funderType  GrantFunderType // FEDERAL, STATE, FOUNDATION, CORPORATE
-  amount      BigInt?
-  deadline    DateTime?
-  description String?
-  eligibility String?
-  requirements Json?
-  
-  // URLs and Source Info
-  sourceUrl   String
-  applicationUrl String?
-  guidelinesUrl String?
-  
-  // Categorization
-  categories  String[] // ["Technology", "STEM", "Special Education"]
-  keywords    String[]
-  
-  // AI Analysis Cache
-  aiSummary   String?
-  lastAnalyzed DateTime?
-  
-  // Metadata
-  isActive    Boolean @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  // Relationships
-  bookmarks   GrantBookmark[]
-  projects    Project[]
-  eligibilityAnalyses GrantEligibilityAnalysis[]
-  
-  @@map("grants")
-  @@schema("app")
-}
-
-model GrantBookmark {
-  id          String   @id @default(cuid())
-  notes       String?
-  createdAt   DateTime @default(now())
-  
-  userId      String @db.Uuid
-  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  
-  grantId     String
-  grant       Grant @relation(fields: [grantId], references: [id], onDelete: Cascade)
-  
-  @@unique([userId, grantId, workspaceId])
-  @@map("grant_bookmarks")
-  @@schema("app")
-}
-
-model GrantEligibilityAnalysis {
-  id          String   @id @default(cuid())
-  
-  matchScore  Int      // 0-100
-  goNoGo      GoNoGoDecision
-  rationale   String
-  risks       String?
-  confidence  Float?   // 0.0-1.0
-  
-  createdAt   DateTime @default(now())
-  
-  grantId     String
-  grant       Grant @relation(fields: [grantId], references: [id], onDelete: Cascade)
-  
-  workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  
-  @@unique([grantId, workspaceId])
-  @@map("grant_eligibility_analyses")
-  @@schema("app")
-}
-
-model SearchHistory {
-  id          String   @id @default(cuid())
-  query       String
-  filters     Json?
-  resultsCount Int?
-  createdAt   DateTime @default(now())
-  
-  userId      String @db.Uuid
-  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  
-  @@map("search_history")
-  @@schema("app")
-}
-
-// ======================
-// PROJECTS & COLLABORATION
-// ======================
-
-model Project {
-  id          String   @id @default(cuid())
-  
-  name        String
-  description String?
-  status      ProjectStatus @default(PLANNING)
-  
-  // Key Dates
-  deadline    DateTime?
-  submittedAt DateTime?
-  
-  // Project Data
-  budget      BigInt?
-  narrative   String?
-  documents   Json? // File references
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  // Relationships
-  grantId     String
-  grant       Grant @relation(fields: [grantId], references: [id])
-  
-  workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  
-  createdByUserId String @db.Uuid
-  createdBy   User @relation(fields: [createdByUserId], references: [id])
-  
-  tasks       ProjectTask[]
-  collaborators ProjectCollaborator[]
-  aiChats     AiChat[]
-  
-  @@map("projects")
-  @@schema("app")
-}
-
-model ProjectTask {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  completed   Boolean @default(false)
-  dueDate     DateTime?
-  createdAt   DateTime @default(now())
-  
-  projectId   String
-  project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  
-  assignedToUserId String? @db.Uuid
-  assignedTo  User? @relation(fields: [assignedToUserId], references: [id])
-  
-  @@map("project_tasks")
-  @@schema("app")
-}
-
-model ProjectCollaborator {
-  id          String   @id @default(cuid())
-  role        ProjectRole @default(COLLABORATOR)
-  permissions Json? // Granular permissions
-  addedAt     DateTime @default(now())
-  
-  projectId   String
-  project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  
-  userId      String @db.Uuid
-  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@unique([projectId, userId])
-  @@map("project_collaborators")
-  @@schema("app")
-}
-
-// ======================
-// AI CHATS & CONVERSATIONS
-// ======================
-
-model AiChat {
-  id          String   @id @default(cuid())
-  title       String?  // Auto-generated or user-set
-  context     AiChatContext // GENERAL, PROJECT, GRANT_ANALYSIS, DRAFTING
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  userId      String @db.Uuid
-  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  
-  // Optional context linking
-  projectId   String?
-  project     Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
-  
-  messages    AiChatMessage[]
-  
-  @@map("ai_chats")
-  @@schema("app")
-}
-
-model AiChatMessage {
-  id        String   @id @default(cuid())
-  role      MessageRole // USER, ASSISTANT, SYSTEM
-  content   String
-  metadata  Json?    // Token count, model used, etc.
-  createdAt DateTime @default(now())
-  
-  chatId    String
-  chat      AiChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
-  
-  @@map("ai_chat_messages")
-  @@schema("app")
-}
-
-// ======================
-// ENUMS
-// ======================
-
 enum WorkspaceType {
   PERSONAL
   ORGANIZATION
-  
+
   @@schema("app")
 }
 
 enum OrganizationRole {
   OWNER
-  ADMIN  
+  ADMIN
   MEMBER
-  
+
   @@schema("app")
 }
 
@@ -542,17 +365,17 @@ enum ProjectRole {
   EDITOR
   COLLABORATOR
   VIEWER
-  
+
   @@schema("app")
 }
 
 enum GrantFunderType {
   FEDERAL
-  STATE  
+  STATE
   FOUNDATION
   CORPORATE
   OTHER
-  
+
   @@schema("app")
 }
 
@@ -560,7 +383,7 @@ enum GoNoGoDecision {
   GO
   NO_GO
   MAYBE
-  
+
   @@schema("app")
 }
 
@@ -572,17 +395,17 @@ enum ProjectStatus {
   AWARDED
   REJECTED
   CANCELLED
-  
+
   @@schema("app")
 }
 
 enum AiChatContext {
   GENERAL
   PROJECT
-  GRANT_ANALYSIS  
+  GRANT_ANALYSIS
   DRAFTING
   ELIGIBILITY
-  
+
   @@schema("app")
 }
 
@@ -590,8 +413,6 @@ enum MessageRole {
   USER
   ASSISTANT
   SYSTEM
-  
+
   @@schema("app")
 }
-
-

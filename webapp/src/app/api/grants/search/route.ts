@@ -12,7 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
  * @returns JSON response with grants data, pagination info, and search metadata
  *
  * Query Parameters:
- * - q (string): Search query for text matching in title, description, and opportunity_number
+ * - q (string): Search query for text matching in title, description, and source_grant_id
  * - status (string): Filter by grant status - options: "posted", "forecasted", "closed"
  * - category (string): Filter by grant category - options: "Discretionary", "Entitlement/Allocation"
  * - minAmount (number): Minimum funding amount filter
@@ -49,11 +49,12 @@ import { NextRequest, NextResponse } from "next/server";
  *   id: number,                      // Unique grant identifier
  *   title: string,                   // Grant title
  *   description: string,             // Grant description (HTML)
- *   opportunity_number: string,      // Official opportunity number
+ *   source_grant_id: string,         // Official grant identifier from source
  *   status: string,                  // Current status (posted/forecasted/closed)
  *   category: string,                // Grant category
  *   total_funding_amount: number,    // Total funding available
- *   number_of_awards: number,        // Number of awards available
+ *   award_min: number,               // Minimum award amount
+ *   award_max: number,               // Maximum award amount
  *   close_date: string,              // Application deadline (ISO date)
  *   contact_name: string,            // Contact person name
  *   contact_email: string,           // Contact email address
@@ -121,7 +122,7 @@ export async function GET(req: NextRequest) {
     if (query) {
       console.log(`🔍 [${requestId}] Adding text search for: "${query}"`);
       supabaseQuery = supabaseQuery.or(
-        `title.ilike.%${query}%,description.ilike.%${query}%,opportunity_number.ilike.%${query}%`
+        `title.ilike.%${query}%,description.ilike.%${query}%,source_grant_id.ilike.%${query}%`
       );
     }
 
@@ -196,7 +197,7 @@ export async function GET(req: NextRequest) {
       // Apply the same filters to count query
       if (query) {
         countQuery = countQuery.or(
-          `title.ilike.%${query}%,description.ilike.%${query}%,opportunity_number.ilike.%${query}%`
+          `title.ilike.%${query}%,description.ilike.%${query}%,source_grant_id.ilike.%${query}%`
         );
       }
       if (status) {

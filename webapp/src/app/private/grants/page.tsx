@@ -26,16 +26,21 @@ interface Grant {
   id: number;
   title: string;
   description: string;
-  opportunity_number: string;
+  source_grant_id: string;
   status: string;
   category: string;
   total_funding_amount: number | null;
-  number_of_awards: number | null;
+  award_min: number | null;
+  award_max: number | null;
   close_date: string | null;
   contact_name: string | null;
   contact_email: string | null;
   url: string | null;
   post_date: string | null;
+  agency: string | null;
+  funding_instrument: string | null;
+  eligibility_summary: string | null;
+  description_summary: string | null;
 }
 
 interface SearchResponse {
@@ -167,14 +172,30 @@ function GrantsSearchPage() {
     setSavingGrant(grantId);
     try {
       const isSaved = savedGrants.includes(grantId);
-
+      // Optimistic UI
       if (isSaved) {
-        // Remove from saved grants
         setSavedGrants((prev) => prev.filter((id) => id !== grantId));
+        const res = await fetch(`/api/grants/${grantId}/bookmark`, {
+          method: "DELETE",
+        });
+        if (!res.ok && res.status !== 204) {
+          // rollback
+          setSavedGrants((prev) => [...prev, grantId]);
+          const msg = await res.text();
+          throw new Error(msg || "Failed to remove bookmark");
+        }
         toast.success("Grant removed from saved grants");
       } else {
-        // Add to saved grants
         setSavedGrants((prev) => [...prev, grantId]);
+        const res = await fetch(`/api/grants/${grantId}/bookmark`, {
+          method: "POST",
+        });
+        if (!res.ok) {
+          // rollback
+          setSavedGrants((prev) => prev.filter((id) => id !== grantId));
+          const msg = await res.text();
+          throw new Error(msg || "Failed to save bookmark");
+        }
         toast.success("Grant saved to your collection");
       }
     } catch (error) {
@@ -397,7 +418,7 @@ function GrantsSearchPage() {
                         {grant.title}
                       </CardTitle>
                       <CardDescription className="text-sm text-gray-600 mb-3">
-                        {grant.opportunity_number}
+                        {grant.source_grant_id}
                       </CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
@@ -431,18 +452,35 @@ function GrantsSearchPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                       <div>
-                        <span className="font-medium">Funding Amount:</span>
+                        <span className="font-medium">Total Funding:</span>
                         <p>{formatCurrency(grant.total_funding_amount)}</p>
                       </div>
                       <div>
-                        <span className="font-medium">Number of Awards:</span>
-                        <p>{grant.number_of_awards || "Not specified"}</p>
+                        <span className="font-medium">Award Range:</span>
+                        <p>
+                          {grant.award_min && grant.award_max
+                            ? `${formatCurrency(
+                                grant.award_min
+                              )} - ${formatCurrency(grant.award_max)}`
+                            : grant.award_max
+                            ? `Up to ${formatCurrency(grant.award_max)}`
+                            : grant.award_min
+                            ? `From ${formatCurrency(grant.award_min)}`
+                            : "Not specified"}
+                        </p>
                       </div>
                       <div>
                         <span className="font-medium">Close Date:</span>
                         <p>{formatDate(grant.close_date)}</p>
                       </div>
                     </div>
+
+                    {grant.agency && (
+                      <div className="text-sm">
+                        <span className="font-medium">Agency:</span>{" "}
+                        {grant.agency}
+                      </div>
+                    )}
 
                     {grant.contact_name && (
                       <div className="text-sm">
