@@ -144,7 +144,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       if (authUser) {
         setUser({
           name:
-            authUser.user_metadata?.full_name ||
+            authUser.user_metadata?.name ||
             authUser.email?.split("@")[0] ||
             "User",
           email: authUser.email || "",
