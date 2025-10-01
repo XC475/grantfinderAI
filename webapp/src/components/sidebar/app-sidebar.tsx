@@ -21,6 +21,7 @@ import {
 import { NavMain } from "@/components/sidebar/nav-main";
 import { NavChats } from "@/components/sidebar/nav-chats";
 import { NavUser } from "@/components/sidebar/nav-user";
+import { NavSettings } from "@/components/sidebar/nav-settings";
 import { TeamSwitcher } from "@/components/sidebar/team-switcher";
 import {
   Sidebar,
@@ -177,6 +178,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }));
   }, [workspaceSlug]);
 
+  // Check if we're on a settings page
+  const isOnSettingsPage = pathname.includes("/settings");
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -187,8 +191,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navItems} />
-        <NavChats workspaceSlug={workspaceSlug} />
+        {isOnSettingsPage ? (
+          <NavSettings workspaceSlug={workspaceSlug} />
+        ) : (
+          <>
+            <NavMain items={navItems} />
+            <NavChats workspaceSlug={workspaceSlug} />
+          </>
+        )}
       </SidebarContent>
       <SidebarFooter>{user && <NavUser user={user} />}</SidebarFooter>
       <SidebarRail />

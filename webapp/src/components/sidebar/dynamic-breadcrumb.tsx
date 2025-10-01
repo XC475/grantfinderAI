@@ -80,6 +80,12 @@ export function DynamicBreadcrumb({ workspaceSlug }: DynamicBreadcrumbProps) {
         href: `/private/${workspaceSlug}/bookmarks`,
         isLast: true,
       });
+    } else if (segments[0] === "settings") {
+      items.push({
+        label: "Settings",
+        href: `/private/${workspaceSlug}/settings`,
+        isLast: true,
+      });
     } else {
       // For other pages, show the path
       segments.forEach((segment, index) => {

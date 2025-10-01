@@ -7,8 +7,9 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
+  Settings,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 // import { toast } from "sonner";
 import { XCircle } from "lucide-react";
 
@@ -39,6 +40,11 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Extract workspace slug from pathname
+  const workspaceSlug = pathname.match(/^\/private\/([^\/]+)/)?.[1];
 
   // Generate initials from name or email
   const getInitials = (name: string, email: string) => {
@@ -110,17 +116,14 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
+              <DropdownMenuItem
+                onClick={() =>
+                  workspaceSlug &&
+                  router.push(`/private/${workspaceSlug}/settings`)
+                }
+              >
+                <Settings />
+                Settings
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
