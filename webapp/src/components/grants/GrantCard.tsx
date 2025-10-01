@@ -35,6 +35,7 @@ interface GrantCardProps {
   isSaved: boolean;
   isLoading?: boolean;
   onToggleBookmark: (grantId: number) => void;
+  fromBookmarks?: boolean;
 }
 
 function formatCurrency(amount: number | string | null) {
@@ -77,15 +78,17 @@ export function GrantCard({
   isSaved,
   isLoading = false,
   onToggleBookmark,
+  fromBookmarks = false,
 }: GrantCardProps) {
+  const grantUrl = fromBookmarks
+    ? `/private/${workspaceSlug}/grants/${grant.id}?from=bookmarks`
+    : `/private/${workspaceSlug}/grants/${grant.id}`;
+
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardHeader>
         <div className="flex justify-between items-start">
-          <Link
-            href={`/private/${workspaceSlug}/grants/${grant.id}`}
-            className="flex-1 cursor-pointer"
-          >
+          <Link href={grantUrl} className="flex-1 cursor-pointer">
             <CardTitle className="text-lg mb-2 hover:text-primary transition-colors">
               {grant.title}
             </CardTitle>

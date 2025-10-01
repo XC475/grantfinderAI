@@ -78,6 +78,7 @@ export default function BookmarksPage() {
                 workspaceSlug={slug}
                 isSaved={true}
                 onToggleBookmark={removeBookmark}
+                fromBookmarks={true}
               />
             );
           })}
