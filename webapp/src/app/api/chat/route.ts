@@ -22,6 +22,18 @@ export async function POST(req: NextRequest) {
   // Get user's workspace
   const userWorkspaceId = workspaceId || (await getUserWorkspaceId(user.id));
 
+  // Fetch workspace with school district data
+  const workspace = await prisma.workspace.findUnique({
+    where: { id: userWorkspaceId },
+    include: {
+      schoolDistrict: true, // Include the full district data
+    },
+  });
+
+  if (!workspace) {
+    return new Response("Workspace not found", { status: 404 });
+  }
+
   // Get the last user message
   const lastUserMessage = [...messages]
     .filter((m: { role: string }) => m.role === "user")
@@ -71,7 +83,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // 3. Send to N8N
+    // 3. Send to N8N with district information
     const n8nMessage = {
       app_source: "grantfinder-ai-webapp",
       user_id: user.id,
@@ -81,9 +93,38 @@ export async function POST(req: NextRequest) {
       timestamp: Date.now().toString(),
       message_id: userMessage.id,
       conversation_history: messages,
+      // District information for personalized grant recommendations
+      district_info: workspace.schoolDistrict
+        ? {
+            id: workspace.schoolDistrict.id,
+            leaId: workspace.schoolDistrict.leaId,
+            name: workspace.schoolDistrict.name,
+            stateCode: workspace.schoolDistrict.stateCode,
+            stateLeaId: workspace.schoolDistrict.stateLeaId,
+            city: workspace.schoolDistrict.city,
+            zipCode: workspace.schoolDistrict.zipCode,
+            countyName: workspace.schoolDistrict.countyName,
+            enrollment: workspace.schoolDistrict.enrollment,
+            numberOfSchools: workspace.schoolDistrict.numberOfSchools,
+            lowestGrade: workspace.schoolDistrict.lowestGrade,
+            highestGrade: workspace.schoolDistrict.highestGrade,
+            urbanCentricLocale: workspace.schoolDistrict.urbanCentricLocale,
+            year: workspace.schoolDistrict.year,
+          }
+        : null,
+      // Workspace context
+      workspace_info: {
+        id: workspace.id,
+        name: workspace.name,
+        type: workspace.type,
+        district_linked: !!workspace.schoolDistrict,
+      },
     };
 
-    console.log("🔍 [Grant Finder API] Sending to n8n:", n8nMessage);
+    console.log("🔍 [Grant Finder API] Sending to n8n with district info:", {
+      ...n8nMessage,
+      district_name: workspace.schoolDistrict?.name || "No district linked",
+    });
 
     const response = await fetch(N8N_WEBHOOK_URL, {
       method: "POST",
