@@ -73,7 +73,7 @@ model User {
   tasksAssigned         ProjectTask[]
   projectsCreated       Project[]
   personalWorkspace     Workspace             @relation("PersonalWorkspace", fields: [personalWorkspaceId], references: [id], onDelete: Cascade)
-  role                  UserRole              @default(USER)  // <- ADD THIS LINE
+  role                  UserRole              @default(USER)
 
   @@map("users")
   @@schema("app")
@@ -149,22 +149,51 @@ model OrganizationInvite {
   @@schema("app")
 }
 
+model SchoolDistrict {
+  id                 String            @id @default(cuid())
+  leaId              String            @unique // NCES LEA ID
+  name               String
+  stateCode          String            // 2-letter state code
+  stateLeaId         String?           // State-assigned ID
+  city               String?
+  zipCode            String?
+  phone              String?
+  latitude           Float?
+  longitude          Float?
+  countyName         String?
+  enrollment         Int?
+  numberOfSchools    Int?
+  lowestGrade        Int?
+  highestGrade       Int?
+  urbanCentricLocale Int?
+  lastSynced         DateTime          @default(now())
+  year               Int               @default(2022)
+  districtProfiles   DistrictProfile[]
+
+  @@index([stateCode])
+  @@index([name])
+  @@map("school_districts")
+  @@schema("app")
+}
+
 model DistrictProfile {
-  id             String    @id @default(cuid())
-  districtName   String
-  state          String
-  enrollment     Int?
-  grades         String[]
-  frplPercent    Float?
-  mllPercent     Float?
-  swdPercent     Float?
-  testScores     Json?
-  priorities     String[]
-  previousAwards Json?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  workspaceId    String    @unique
-  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  id               String          @id @default(cuid())
+  districtName     String
+  state            String
+  enrollment       Int?
+  grades           String[]
+  frplPercent      Float?
+  mllPercent       Float?
+  swdPercent       Float?
+  testScores       Json?
+  priorities       String[]
+  previousAwards   Json?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  workspaceId      String          @unique
+  schoolDistrictId String?
+  workspace        Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  schoolDistrict   SchoolDistrict? @relation(fields: [schoolDistrictId], references: [id], onDelete: SetNull)
 
   @@map("district_profiles")
   @@schema("app")

@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { email, name, password, role = "USER" } = body;
+    const { email, name, password, role = "USER", schoolDistrictId } = body;
 
     // Validate input
     if (!email || !name || !password) {
@@ -39,6 +39,21 @@ export async function POST(request: NextRequest) {
         { error: "Email, name, and password are required" },
         { status: 400 }
       );
+    }
+
+    // Validate schoolDistrictId if provided
+    let schoolDistrict = null;
+    if (schoolDistrictId) {
+      schoolDistrict = await prisma.schoolDistrict.findUnique({
+        where: { id: schoolDistrictId },
+      });
+
+      if (!schoolDistrict) {
+        return NextResponse.json(
+          { error: "Invalid school district ID" },
+          { status: 400 }
+        );
+      }
     }
 
     // Create user in Supabase Auth with admin API
@@ -96,6 +111,33 @@ export async function POST(request: NextRequest) {
 
     console.log(`[Admin] User ${email} role set to ${role}`);
 
+    // Create DistrictProfile if schoolDistrictId is provided
+    if (schoolDistrictId && schoolDistrict) {
+      try {
+        await prisma.districtProfile.create({
+          data: {
+            workspaceId: newUser.personalWorkspace.id,
+            schoolDistrictId: schoolDistrictId,
+            districtName: schoolDistrict.name,
+            state: schoolDistrict.stateCode,
+            enrollment: schoolDistrict.enrollment,
+            grades: [], // Can be populated later
+            priorities: [],
+          },
+        });
+
+        console.log(
+          `[Admin] District profile created for ${email} with district ${schoolDistrict.name}`
+        );
+      } catch (profileError) {
+        console.error(
+          `[Admin] Failed to create district profile for ${email}:`,
+          profileError
+        );
+        // Don't fail the user creation, just log the error
+      }
+    }
+
     // Send welcome email with credentials
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
     const workspaceSlug = updatedUser.personalWorkspace?.slug;
@@ -126,18 +168,28 @@ export async function POST(request: NextRequest) {
         name: updatedUser.name,
         role: updatedUser.role,
         workspaceSlug: updatedUser.personalWorkspace?.slug,
+        schoolDistrict: schoolDistrict
+          ? {
+              id: schoolDistrict.id,
+              name: schoolDistrict.name,
+              stateCode: schoolDistrict.stateCode,
+            }
+          : null,
       },
     });
   } catch (error) {
     console.error("[Admin] Error creating user:", error);
     return NextResponse.json(
-      { error: (error instanceof Error ? error.message : String(error)) || "Failed to create user" },
+      {
+        error: "Failed to create user",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }
 }
 
-// GET /api/admin/users - Get all users (admin only)
+// GET /api/admin/users - List all users (admin only)
 export async function GET() {
   const supabase = await createClient();
 
@@ -149,6 +201,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Check admin role
   const dbUser = await prisma.user.findUnique({
     where: { id: currentUser.id },
     select: { role: true },
@@ -170,13 +223,34 @@ export async function GET() {
         role: true,
         createdAt: true,
         lastActiveAt: true,
+        personalWorkspace: {
+          select: {
+            slug: true,
+            districtProfile: {
+              select: {
+                districtName: true,
+                state: true,
+                schoolDistrict: {
+                  select: {
+                    id: true,
+                    name: true,
+                    stateCode: true,
+                    city: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
-    return NextResponse.json(users);
+    return NextResponse.json({ users });
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error("[Admin] Error fetching users:", error);
     return NextResponse.json(
       { error: "Failed to fetch users" },
       { status: 500 }

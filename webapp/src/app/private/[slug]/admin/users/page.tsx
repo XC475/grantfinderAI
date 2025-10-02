@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Shield } from "lucide-react";
+import { Loader2, Plus, Trash2, Shield, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface User {
@@ -39,6 +39,29 @@ interface User {
   role: string;
   createdAt: string;
   lastActiveAt: string;
+  personalWorkspace?: {
+    slug: string;
+    districtProfile?: {
+      districtName: string;
+      state: string;
+      schoolDistrict?: {
+        id: string;
+        name: string;
+        stateCode: string;
+        city: string;
+      };
+    };
+  };
+}
+
+interface SchoolDistrict {
+  id: string;
+  leaId: string;
+  name: string;
+  stateCode: string;
+  city: string | null;
+  enrollment: number | null;
+  countyName: string | null;
 }
 
 export default function AdminUsersPage() {
@@ -48,12 +71,20 @@ export default function AdminUsersPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [creating, setCreating] = useState(false);
 
+  // School districts state
+  const [districts, setDistricts] = useState<SchoolDistrict[]>([]);
+  const [loadingDistricts, setLoadingDistricts] = useState(false);
+  const [districtSearch, setDistrictSearch] = useState("");
+  const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
+  const [selectedStateFilter, setSelectedStateFilter] = useState<string>("");
+
   // Form state
   const [newUser, setNewUser] = useState({
     email: "",
     name: "",
     password: "",
     role: "USER",
+    schoolDistrictId: "",
   });
 
   useEffect(() => {
@@ -61,6 +92,14 @@ export default function AdminUsersPage() {
     fetchUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Fetch districts when dialog opens or state filter changes
+  useEffect(() => {
+    if (isDialogOpen && (selectedStateFilter || districtSearch.length > 2)) {
+      fetchDistricts();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedStateFilter, isDialogOpen]);
 
   const checkAdminAccess = async () => {
     const supabase = createClient();
@@ -91,7 +130,7 @@ export default function AdminUsersPage() {
       }
 
       const data = await response.json();
-      setUsers(data);
+      setUsers(data.users || []);
     } catch (error) {
       console.error("Error fetching users:", error);
       toast.error(
@@ -101,6 +140,50 @@ export default function AdminUsersPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchDistricts = async () => {
+    try {
+      setLoadingDistricts(true);
+      const params = new URLSearchParams();
+      if (selectedStateFilter) {
+        params.append("state", selectedStateFilter);
+      }
+      if (districtSearch && districtSearch.length > 2) {
+        params.append("search", districtSearch);
+      }
+
+      const response = await fetch(`/api/school-districts?${params}`);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch districts");
+      }
+
+      const data = await response.json();
+      setDistricts(data.data || []);
+    } catch (error) {
+      console.error("Error fetching districts:", error);
+      toast.error("Failed to load school districts");
+    } finally {
+      setLoadingDistricts(false);
+    }
+  };
+
+  const handleSearchDistricts = (search: string) => {
+    setDistrictSearch(search);
+    if (search.length > 2) {
+      // Debounce search
+      const timer = setTimeout(() => {
+        fetchDistricts();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  };
+
+  const handleSelectDistrict = (district: SchoolDistrict) => {
+    setNewUser({ ...newUser, schoolDistrictId: district.id });
+    setDistrictSearch(`${district.name}, ${district.stateCode}`);
+    setShowDistrictDropdown(false);
   };
 
   const handleCreateUser = async (e: React.FormEvent) => {
@@ -122,7 +205,15 @@ export default function AdminUsersPage() {
 
       toast.success("User created successfully");
       setIsDialogOpen(false);
-      setNewUser({ email: "", name: "", password: "", role: "USER" });
+      setNewUser({
+        email: "",
+        name: "",
+        password: "",
+        role: "USER",
+        schoolDistrictId: "",
+      });
+      setDistrictSearch("");
+      setSelectedStateFilter("");
       fetchUsers();
     } catch (error) {
       console.error("Error creating user:", error);
@@ -195,6 +286,10 @@ export default function AdminUsersPage() {
     }
   };
 
+  const selectedDistrict = districts.find(
+    (d) => d.id === newUser.schoolDistrictId
+  );
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -202,6 +297,59 @@ export default function AdminUsersPage() {
       </div>
     );
   }
+
+  const US_STATES = [
+    "AL",
+    "AK",
+    "AZ",
+    "AR",
+    "CA",
+    "CO",
+    "CT",
+    "DE",
+    "FL",
+    "GA",
+    "HI",
+    "ID",
+    "IL",
+    "IN",
+    "IA",
+    "KS",
+    "KY",
+    "LA",
+    "ME",
+    "MD",
+    "MA",
+    "MI",
+    "MN",
+    "MS",
+    "MO",
+    "MT",
+    "NE",
+    "NV",
+    "NH",
+    "NJ",
+    "NM",
+    "NY",
+    "NC",
+    "ND",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UT",
+    "VT",
+    "VA",
+    "WA",
+    "WV",
+    "WI",
+    "WY",
+  ];
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -222,7 +370,7 @@ export default function AdminUsersPage() {
                 Add User
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Create New User</DialogTitle>
                 <DialogDescription>
@@ -284,6 +432,120 @@ export default function AdminUsersPage() {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {/* School District Selection */}
+                  <div className="space-y-2">
+                    <Label htmlFor="district">School District (Optional)</Label>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Filter by state first, then search for the district
+                    </p>
+
+                    {/* State Filter */}
+                    <Select
+                      value={selectedStateFilter}
+                      onValueChange={setSelectedStateFilter}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a state..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {US_STATES.map((state) => (
+                          <SelectItem key={state} value={state}>
+                            {state}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {/* District Search */}
+                    {selectedStateFilter && (
+                      <div className="relative">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            id="district"
+                            placeholder="Search for school district..."
+                            value={districtSearch}
+                            onChange={(e) =>
+                              handleSearchDistricts(e.target.value)
+                            }
+                            onFocus={() => setShowDistrictDropdown(true)}
+                            className="pl-9"
+                          />
+                        </div>
+
+                        {/* District Dropdown */}
+                        {showDistrictDropdown &&
+                          districtSearch.length > 2 &&
+                          !selectedDistrict && (
+                            <div className="absolute z-50 w-full mt-1 bg-background border rounded-md shadow-lg max-h-60 overflow-y-auto">
+                              {loadingDistricts ? (
+                                <div className="p-4 text-center">
+                                  <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                                </div>
+                              ) : districts.length > 0 ? (
+                                <div className="py-1">
+                                  {districts.map((district) => (
+                                    <button
+                                      key={district.id}
+                                      type="button"
+                                      className="w-full px-4 py-2 text-left hover:bg-accent text-sm"
+                                      onClick={() =>
+                                        handleSelectDistrict(district)
+                                      }
+                                    >
+                                      <div className="font-medium">
+                                        {district.name}
+                                      </div>
+                                      <div className="text-xs text-muted-foreground">
+                                        {district.city}, {district.stateCode}
+                                        {district.enrollment &&
+                                          ` • ${district.enrollment.toLocaleString()} students`}
+                                      </div>
+                                    </button>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="p-4 text-center text-sm text-muted-foreground">
+                                  No districts found. Try a different search.
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                        {/* Selected District Display */}
+                        {selectedDistrict && (
+                          <div className="mt-2 p-3 bg-accent rounded-md">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <p className="font-medium">
+                                  {selectedDistrict.name}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  {selectedDistrict.city},{" "}
+                                  {selectedDistrict.stateCode}
+                                </p>
+                              </div>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setNewUser({
+                                    ...newUser,
+                                    schoolDistrictId: "",
+                                  });
+                                  setDistrictSearch("");
+                                }}
+                              >
+                                Clear
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <DialogFooter>
                   <Button
@@ -312,6 +574,7 @@ export default function AdminUsersPage() {
                   <th className="p-4 text-left font-medium">Name</th>
                   <th className="p-4 text-left font-medium">Email</th>
                   <th className="p-4 text-left font-medium">Role</th>
+                  <th className="p-4 text-left font-medium">District</th>
                   <th className="p-4 text-left font-medium">Created</th>
                   <th className="p-4 text-right font-medium">Actions</th>
                 </tr>
@@ -331,6 +594,32 @@ export default function AdminUsersPage() {
                       >
                         {user.role}
                       </span>
+                    </td>
+                    <td className="p-4 text-sm">
+                      {user.personalWorkspace?.districtProfile
+                        ?.schoolDistrict ? (
+                        <div>
+                          <div className="font-medium">
+                            {
+                              user.personalWorkspace.districtProfile
+                                .schoolDistrict.name
+                            }
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {
+                              user.personalWorkspace.districtProfile
+                                .schoolDistrict.city
+                            }
+                            ,{" "}
+                            {
+                              user.personalWorkspace.districtProfile
+                                .schoolDistrict.stateCode
+                            }
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
                     </td>
                     <td className="p-4">
                       {new Date(user.createdAt).toLocaleDateString()}
