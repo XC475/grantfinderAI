@@ -9,6 +9,7 @@ import {
   Home,
   FileText,
   Bookmark,
+  ClipboardList,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
@@ -65,6 +66,11 @@ const data = {
       title: "Bookmarks",
       url: "/private/bookmarks",
       icon: Bookmark,
+    },
+    {
+      title: "Applications",
+      url: "/private/applications",
+      icon: ClipboardList,
     },
     // {
     //   title: "Org Profile",
