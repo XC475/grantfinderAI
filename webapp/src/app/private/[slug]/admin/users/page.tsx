@@ -41,27 +41,35 @@ interface User {
   lastActiveAt: string;
   personalWorkspace?: {
     slug: string;
-    districtProfile?: {
-      districtName: string;
-      state: string;
-      schoolDistrict?: {
-        id: string;
-        name: string;
-        stateCode: string;
-        city: string;
-      };
+    schoolDistrict?: {
+      id: string;
+      leaId: string;
+      name: string;
+      stateCode: string;
+      city: string | null;
+      enrollment: number | null;
+      countyName: string | null;
     };
   };
 }
 
 interface SchoolDistrict {
-  id: string;
   leaId: string;
   name: string;
   stateCode: string;
   city: string | null;
   enrollment: number | null;
   countyName: string | null;
+  stateLeaId?: string | null;
+  zipCode?: string | null;
+  phone?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  numberOfSchools?: number | null;
+  lowestGrade?: number | null;
+  highestGrade?: number | null;
+  urbanCentricLocale?: number | null;
+  year?: number;
 }
 
 export default function AdminUsersPage() {
@@ -84,7 +92,7 @@ export default function AdminUsersPage() {
     name: "",
     password: "",
     role: "USER",
-    schoolDistrictId: "",
+    districtData: null as SchoolDistrict | null,
   });
 
   useEffect(() => {
@@ -181,7 +189,7 @@ export default function AdminUsersPage() {
   };
 
   const handleSelectDistrict = (district: SchoolDistrict) => {
-    setNewUser({ ...newUser, schoolDistrictId: district.id });
+    setNewUser({ ...newUser, districtData: district });
     setDistrictSearch(`${district.name}, ${district.stateCode}`);
     setShowDistrictDropdown(false);
   };
@@ -203,14 +211,16 @@ export default function AdminUsersPage() {
         throw new Error(data.error || "Failed to create user");
       }
 
-      toast.success("User created successfully");
+      toast.success(
+        `User created successfully${data.emailSent ? " and welcome email sent" : ""}`
+      );
       setIsDialogOpen(false);
       setNewUser({
         email: "",
         name: "",
         password: "",
         role: "USER",
-        schoolDistrictId: "",
+        districtData: null,
       });
       setDistrictSearch("");
       setSelectedStateFilter("");
@@ -286,9 +296,7 @@ export default function AdminUsersPage() {
     }
   };
 
-  const selectedDistrict = districts.find(
-    (d) => d.id === newUser.schoolDistrictId
-  );
+  const selectedDistrict = newUser.districtData;
 
   if (loading) {
     return (
@@ -487,7 +495,7 @@ export default function AdminUsersPage() {
                                 <div className="py-1">
                                   {districts.map((district) => (
                                     <button
-                                      key={district.id}
+                                      key={district.leaId}
                                       type="button"
                                       className="w-full px-4 py-2 text-left hover:bg-accent text-sm"
                                       onClick={() =>
@@ -533,7 +541,7 @@ export default function AdminUsersPage() {
                                 onClick={() => {
                                   setNewUser({
                                     ...newUser,
-                                    schoolDistrictId: "",
+                                    districtData: null,
                                   });
                                   setDistrictSearch("");
                                 }}
@@ -596,25 +604,16 @@ export default function AdminUsersPage() {
                       </span>
                     </td>
                     <td className="p-4 text-sm">
-                      {user.personalWorkspace?.districtProfile
-                        ?.schoolDistrict ? (
+                      {user.personalWorkspace?.schoolDistrict ? (
                         <div>
                           <div className="font-medium">
-                            {
-                              user.personalWorkspace.districtProfile
-                                .schoolDistrict.name
-                            }
+                            {user.personalWorkspace.schoolDistrict.name}
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            {
-                              user.personalWorkspace.districtProfile
-                                .schoolDistrict.city
-                            }
-                            ,{" "}
-                            {
-                              user.personalWorkspace.districtProfile
-                                .schoolDistrict.stateCode
-                            }
+                            {user.personalWorkspace.schoolDistrict.city},{" "}
+                            {user.personalWorkspace.schoolDistrict.stateCode}
+                            {user.personalWorkspace.schoolDistrict.enrollment &&
+                              ` • ${user.personalWorkspace.schoolDistrict.enrollment.toLocaleString()} students`}
                           </div>
                         </div>
                       ) : (
