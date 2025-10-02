@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
 
 // Urban Institute Education Data API base URL
 const URBAN_API_BASE = "https://educationdata.urban.org/api/v1";
-const CACHE_DURATION_DAYS = 30;
 
 interface UrbanAPIDistrict {
   year: number;
@@ -31,57 +29,22 @@ interface UrbanAPIResponse {
   results: UrbanAPIDistrict[];
 }
 
-// GET /api/school-districts - Fetch school districts
+// GET /api/school-districts - Search school districts from Urban API
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const state = searchParams.get("state"); // Optional state filter
   const search = searchParams.get("search"); // Optional search term
-  const forceRefresh = searchParams.get("refresh") === "true";
 
   try {
-    // Check if we have cached data that's recent
-    if (!forceRefresh) {
-      const cacheDate = new Date();
-      cacheDate.setDate(cacheDate.getDate() - CACHE_DURATION_DAYS);
-
-      const cachedDistricts = await prisma.schoolDistrict.findMany({
-        where: {
-          ...(state && { stateCode: state }),
-          ...(search && {
-            name: {
-              contains: search,
-              mode: "insensitive",
-            },
-          }),
-          lastSynced: {
-            gte: cacheDate,
-          },
-        },
-        select: {
-          id: true,
-          leaId: true,
-          name: true,
-          stateCode: true,
-          city: true,
-          enrollment: true,
-          numberOfSchools: true,
-          countyName: true,
-        },
-        orderBy: [{ name: "asc" }],
-        take: 1000, // Limit results for performance
-      });
-
-      if (cachedDistricts.length > 0) {
-        return NextResponse.json({
-          data: cachedDistricts,
-          cached: true,
-          count: cachedDistricts.length,
-        });
-      }
+    // Require either state or search for reasonable queries
+    if (!state && (!search || search.length < 3)) {
+      return NextResponse.json(
+        { error: "Please provide a state or search term (min 3 characters)" },
+        { status: 400 }
+      );
     }
 
-    // If no cache or force refresh, fetch from Urban API
-    console.log("[School Districts] Fetching from Urban API...");
+    console.log("[School Districts] Searching Urban API...", { state, search });
 
     const year = 2022; // Use most recent year available
     let apiUrl = `${URBAN_API_BASE}/school-districts/ccd/directory/${year}/`;
@@ -121,8 +84,17 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Transform and cache the districts
-    const districtsToCache = allDistricts.map((d) => ({
+    // Filter by search term if provided
+    let filteredDistricts = allDistricts;
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filteredDistricts = allDistricts.filter((d) =>
+        d.lea_name.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Transform to frontend format
+    const responseData = filteredDistricts.map((d) => ({
       leaId: d.leaid,
       name: d.lea_name,
       stateCode: d.state_location,
@@ -139,40 +111,10 @@ export async function GET(request: NextRequest) {
       highestGrade: d.highest_grade_offered,
       urbanCentricLocale: d.urban_centric_locale,
       year: d.year,
-      lastSynced: new Date(),
-    }));
-
-    // Batch upsert to database (cache for future use)
-    // Use createMany with skipDuplicates for better performance
-    await prisma.schoolDistrict.createMany({
-      data: districtsToCache,
-      skipDuplicates: true,
-    });
-
-    // Filter by search term if provided
-    let filteredDistricts = districtsToCache;
-    if (search) {
-      const searchLower = search.toLowerCase();
-      filteredDistricts = districtsToCache.filter((d) =>
-        d.name.toLowerCase().includes(searchLower)
-      );
-    }
-
-    // Return transformed data
-    const responseData = filteredDistricts.map((d) => ({
-      id: d.leaId, // Will be updated after insert, but using leaId as temp ID
-      leaId: d.leaId,
-      name: d.name,
-      stateCode: d.stateCode,
-      city: d.city,
-      enrollment: d.enrollment,
-      numberOfSchools: d.numberOfSchools,
-      countyName: d.countyName,
     }));
 
     return NextResponse.json({
       data: responseData.slice(0, 1000), // Limit response size
-      cached: false,
       count: responseData.length,
       total: data.count,
     });
