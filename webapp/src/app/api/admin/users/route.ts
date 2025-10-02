@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { email, name, password, role = "USER", schoolDistrictId } = body;
+    const { email, name, password, role = "USER", districtData } = body;
 
     // Validate input
     if (!email || !name || !password) {
@@ -41,19 +41,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate schoolDistrictId if provided
+    // Create or find school district if provided
+    let schoolDistrictId = null;
     let schoolDistrict = null;
-    if (schoolDistrictId) {
+    if (districtData && districtData.leaId) {
+      // Check if district already exists
       schoolDistrict = await prisma.schoolDistrict.findUnique({
-        where: { id: schoolDistrictId },
+        where: { leaId: districtData.leaId },
       });
 
+      // If not, create it
       if (!schoolDistrict) {
-        return NextResponse.json(
-          { error: "Invalid school district ID" },
-          { status: 400 }
-        );
+        schoolDistrict = await prisma.schoolDistrict.create({
+          data: {
+            leaId: districtData.leaId,
+            name: districtData.name,
+            stateCode: districtData.stateCode,
+            stateLeaId: districtData.stateLeaId,
+            city: districtData.city,
+            zipCode: districtData.zipCode,
+            phone: districtData.phone,
+            latitude: districtData.latitude,
+            longitude: districtData.longitude,
+            countyName: districtData.countyName,
+            enrollment: districtData.enrollment,
+            numberOfSchools: districtData.numberOfSchools,
+            lowestGrade: districtData.lowestGrade,
+            highestGrade: districtData.highestGrade,
+            urbanCentricLocale: districtData.urbanCentricLocale,
+            year: districtData.year || 2022,
+          },
+        });
       }
+
+      schoolDistrictId = schoolDistrict.id;
     }
 
     // Create user in Supabase Auth with admin API
@@ -102,41 +123,26 @@ export async function POST(request: NextRequest) {
       `[Admin] User ${email} created with workspace ${newUser.personalWorkspace.slug}`
     );
 
-    // Update user role if needed (trigger creates with default USER role)
+    // Update user role and link workspace to school district
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: { role },
       include: { personalWorkspace: true },
     });
 
-    console.log(`[Admin] User ${email} role set to ${role}`);
+    // Link workspace to school district if provided
+    if (schoolDistrictId) {
+      await prisma.workspace.update({
+        where: { id: newUser.personalWorkspace.id },
+        data: { schoolDistrictId },
+      });
 
-    // Create DistrictProfile if schoolDistrictId is provided
-    if (schoolDistrictId && schoolDistrict) {
-      try {
-        await prisma.districtProfile.create({
-          data: {
-            workspaceId: newUser.personalWorkspace.id,
-            schoolDistrictId: schoolDistrictId,
-            districtName: schoolDistrict.name,
-            state: schoolDistrict.stateCode,
-            enrollment: schoolDistrict.enrollment,
-            grades: [], // Can be populated later
-            priorities: [],
-          },
-        });
-
-        console.log(
-          `[Admin] District profile created for ${email} with district ${schoolDistrict.name}`
-        );
-      } catch (profileError) {
-        console.error(
-          `[Admin] Failed to create district profile for ${email}:`,
-          profileError
-        );
-        // Don't fail the user creation, just log the error
-      }
+      console.log(
+        `[Admin] Workspace linked to district ${schoolDistrict?.name}`
+      );
     }
+
+    console.log(`[Admin] User ${email} role set to ${role}`);
 
     // Send welcome email with credentials
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -226,18 +232,15 @@ export async function GET() {
         personalWorkspace: {
           select: {
             slug: true,
-            districtProfile: {
+            schoolDistrict: {
               select: {
-                districtName: true,
-                state: true,
-                schoolDistrict: {
-                  select: {
-                    id: true,
-                    name: true,
-                    stateCode: true,
-                    city: true,
-                  },
-                },
+                id: true,
+                leaId: true,
+                name: true,
+                stateCode: true,
+                city: true,
+                enrollment: true,
+                countyName: true,
               },
             },
           },
