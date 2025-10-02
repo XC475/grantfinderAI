@@ -25,7 +25,7 @@ export async function login(formData: FormData) {
       redirectWithToast(
         "/login",
         "error",
-        error.message || "Invalid email or password"
+        (error instanceof Error ? error.message : String(error)) || "Invalid email or password"
       )
     );
   }
@@ -44,7 +44,7 @@ export async function login(formData: FormData) {
       );
     } catch (error) {
       // Re-throw redirect errors (they're not actual errors)
-      if ((error as any)?.digest?.startsWith("NEXT_REDIRECT")) {
+      if (error && typeof error === "object" && "digest" in error && typeof error.digest === "string" && error.digest.startsWith("NEXT_REDIRECT")) {
         throw error;
       }
       console.error("Error fetching workspace:", error);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { ChatDemo } from "@/components/chat/Chat";
 import { Message } from "@/components/ui/chat-message";
 import { Loading } from "@/components/ui/spinner";
@@ -19,7 +19,6 @@ interface ChatData {
 
 export default function ChatPage() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const chatId = searchParams.get("chatId");
 
   const [initialMessages, setInitialMessages] = useState<Message[]>([]);

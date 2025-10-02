@@ -3,13 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bookmark, BookmarkCheck, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
@@ -79,6 +73,7 @@ export default function GrantDetailPage() {
   useEffect(() => {
     fetchGrant();
     checkBookmarkStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grantId]);
 
   const fetchGrant = async () => {
@@ -144,7 +139,8 @@ export default function GrantDetailPage() {
         <div className="text-center py-16">
           <h2 className="text-2xl font-bold mb-4">Grant Not Found</h2>
           <p className="text-gray-600 mb-6">
-            The grant you're looking for doesn't exist or has been removed.
+            The grant you&apos;re looking for doesn&apos;t exist or has been
+            removed.
           </p>
           <Button asChild>
             <a href={`/private/${slug}/grants`}>Back to Grants</a>
@@ -221,10 +217,10 @@ export default function GrantDetailPage() {
                       grant.award_max
                     )}`
                   : grant.award_max
-                  ? `Up to ${formatCurrency(grant.award_max)}`
-                  : grant.award_min
-                  ? `From ${formatCurrency(grant.award_min)}`
-                  : "Not specified"}
+                    ? `Up to ${formatCurrency(grant.award_max)}`
+                    : grant.award_min
+                      ? `From ${formatCurrency(grant.award_min)}`
+                      : "Not specified"}
               </p>
             </div>
             <div>

@@ -237,7 +237,7 @@ export async function GET(req: NextRequest) {
       .order("post_date", { ascending: false });
 
     console.log(`🔍 [${requestId}] Executing Supabase query...`);
-    const { data, error, count } = await supabaseQuery;
+    const { data, error } = await supabaseQuery;
 
     if (error) {
       console.error(`❌ [${requestId}] Supabase query error:`, error);
@@ -395,7 +395,7 @@ export async function GET(req: NextRequest) {
 }
 
 // Handle CORS preflight requests
-export async function OPTIONS(req: NextRequest) {
+export async function OPTIONS() {
   console.log(`🔍 CORS preflight request received`);
   return new NextResponse(null, {
     status: 200,

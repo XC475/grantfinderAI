@@ -44,7 +44,7 @@ export async function GET(
     });
 
     return Response.json({ bookmarked: !!bookmark });
-  } catch (e: any) {
+  } catch (e) {
     console.error("Error checking bookmark:", e);
     return new Response("Error checking bookmark", { status: 500 });
   }
@@ -75,7 +75,7 @@ export async function POST(
     }
 
     // Check if opportunity exists
-    const opportunity = await prisma.$queryRaw<any[]>`
+    const opportunity = await prisma.$queryRaw<Array<{ id: number }>>`
       SELECT id FROM public.opportunities WHERE id = ${opportunityId} LIMIT 1
     `;
 
@@ -101,8 +101,8 @@ export async function POST(
     });
 
     return Response.json(bookmark, { status: 201 });
-  } catch (e: any) {
-    if (e?.code === "P2002") {
+  } catch (e) {
+    if (typeof e === "object" && e !== null && "code" in e && e.code === "P2002") {
       return new Response("Already bookmarked", { status: 409 });
     }
     console.error("Error bookmarking grant:", e);
@@ -144,8 +144,8 @@ export async function DELETE(
     });
 
     return new Response(null, { status: 204 });
-  } catch (e: any) {
-    if (e?.code === "P2025") {
+  } catch (e) {
+    if (typeof e === "object" && e !== null && "code" in e && e.code === "P2025") {
       return new Response("Bookmark not found", { status: 404 });
     }
     console.error("Error removing bookmark:", e);

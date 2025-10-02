@@ -19,7 +19,7 @@ export default async function Home() {
       redirect(`/private/${workspace.slug}/chat`);
     } catch (error) {
       // Re-throw redirect errors (they're not actual errors)
-      if ((error as any)?.digest?.startsWith("NEXT_REDIRECT")) {
+      if (typeof error === "object" && error !== null && "digest" in error && typeof error.digest === "string" && error.digest.startsWith("NEXT_REDIRECT")) {
         throw error;
       }
       console.error("Error fetching workspace:", error);

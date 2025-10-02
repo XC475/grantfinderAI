@@ -27,6 +27,7 @@ export function NavChats({ workspaceSlug }: { workspaceSlug: string | null }) {
 
   useEffect(() => {
     fetchChats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchChats = async () => {

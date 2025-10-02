@@ -19,7 +19,7 @@ export async function GET() {
     // Fetch opportunity details for each bookmark
     const bookmarksWithOpportunities = await Promise.all(
       bookmarks.map(async (bookmark) => {
-        const opportunity = await prisma.$queryRaw<any[]>`
+        const opportunity = await prisma.$queryRaw<Array<Record<string, unknown>>>`
           SELECT * FROM public.opportunities WHERE id = ${bookmark.opportunityId} LIMIT 1
         `;
         return {

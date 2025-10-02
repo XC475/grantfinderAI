@@ -18,7 +18,7 @@ import { Loader2 } from "lucide-react";
 export default function AccountSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ id: string; email?: string; created_at?: string } | null>(null);
 
   // Form state
   const [fullName, setFullName] = useState("");
@@ -67,9 +67,9 @@ export default function AccountSettingsPage() {
 
       toast.success("Profile updated successfully");
       fetchUser(); // Refresh user data
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error updating profile:", error);
-      toast.error(error.message || "Failed to update profile");
+      toast.error((error instanceof Error ? error.message : String(error)) || "Failed to update profile");
     } finally {
       setSaving(false);
     }
@@ -101,9 +101,9 @@ export default function AccountSettingsPage() {
       toast.success("Password changed successfully");
       setNewPassword("");
       setConfirmPassword("");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error changing password:", error);
-      toast.error(error.message || "Failed to change password");
+      toast.error((error instanceof Error ? error.message : String(error)) || "Failed to change password");
     } finally {
       setSaving(false);
     }

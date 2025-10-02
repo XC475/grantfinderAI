@@ -5,17 +5,10 @@ import { usePathname } from "next/navigation";
 import {
   AudioWaveform,
   Command,
-  Frame,
   GalleryVerticalEnd,
   Home,
-  Map,
-  PieChart,
-  Settings2,
   FileText,
   Bookmark,
-  Building2,
-  ClipboardList,
-  FolderOpen,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
