@@ -53,27 +53,24 @@ model opportunities {
 
 //////// APP SCHEMA ////////
 model User {
-  id                    String                @id @db.Uuid
-  email                 String                @unique
-  name                  String?
-  createdAt             DateTime              @default(now())
-  updatedAt             DateTime              @updatedAt
-  avatarUrl             String?
-  lastActiveAt          DateTime              @default(now())
-  personalWorkspaceId   String                @unique
-  stripeCustomerId      String?
-  subscriptionStatus    String?
-  subscriptionTier      String?
-  trialEndsAt           DateTime?
-  aiChats               AiChat[]
-  grantBookmarks        GrantBookmark[]
-  invitesSent           OrganizationInvite[]
-  organizationMembers   OrganizationMember[]
-  projectCollaborations ProjectCollaborator[]
-  tasksAssigned         ProjectTask[]
-  projectsCreated       Project[]
-  personalWorkspace     Workspace             @relation("PersonalWorkspace", fields: [personalWorkspaceId], references: [id], onDelete: Cascade)
-  role                  UserRole              @default(USER)
+  id                  String                @id @db.Uuid
+  email               String                @unique
+  name                String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  avatarUrl           String?
+  lastActiveAt        DateTime              @default(now())
+  personalWorkspaceId String                @unique
+  stripeCustomerId    String?
+  subscriptionStatus  String?
+  subscriptionTier    String?
+  trialEndsAt         DateTime?
+  aiChats             AiChat[]
+  grantBookmarks      GrantBookmark[]
+  invitesSent         OrganizationInvite[]
+  organizationMembers OrganizationMember[]
+  personalWorkspace   Workspace             @relation("PersonalWorkspace", fields: [personalWorkspaceId], references: [id], onDelete: Cascade)
+  role                UserRole              @default(USER)
 
   @@map("users")
   @@schema("app")
@@ -91,7 +88,7 @@ model Workspace {
   grantBookmarks      GrantBookmark[]
   eligibilityAnalyses GrantEligibilityAnalysis[]
   organization        Organization?
-  projects            Project[]
+  applications        Application[]
   personalUser        User?                      @relation("PersonalWorkspace")
   schoolDistrict      SchoolDistrict?            @relation(fields: [schoolDistrictId], references: [id], onDelete: SetNull)
 
@@ -209,75 +206,51 @@ model GrantEligibilityAnalysis {
   @@schema("app")
 }
 
-model Project {
-  id              String                @id @default(cuid())
-  name            String
-  description     String?
-  status          ProjectStatus         @default(PLANNING)
-  deadline        DateTime?
-  submittedAt     DateTime?
-  budget          BigInt?
-  narrative       String?
-  documents       Json?
-  createdAt       DateTime              @default(now())
-  updatedAt       DateTime              @updatedAt
-  opportunityId   Int                   // References public.opportunities.id
-  workspaceId     String
-  createdByUserId String                @db.Uuid
-  aiChats         AiChat[]
-  collaborators   ProjectCollaborator[]
-  tasks           ProjectTask[]
-  createdBy       User                  @relation(fields: [createdByUserId], references: [id])
-  workspace       Workspace             @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+model Application {
+  id           String            @id @default(cuid())
+  opportunityId Int              // References public.opportunities.id
+  workspaceId  String
+  status       ApplicationStatus @default(DRAFT)
 
-  @@map("projects")
-  @@schema("app")
-}
+  // Rich text application content (Tiptap/ProseMirror JSON)
+  content     Json?   // Tiptap document JSON format
+  contentHtml String? // Optional: HTML version for easier display/search
 
-model ProjectTask {
-  id               String    @id @default(cuid())
-  title            String
-  description      String?
-  completed        Boolean   @default(false)
-  dueDate          DateTime?
-  createdAt        DateTime  @default(now())
-  projectId        String
-  assignedToUserId String?   @db.Uuid
-  assignedTo       User?     @relation(fields: [assignedToUserId], references: [id])
-  project          Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  // Metadata
+  title     String? // Optional custom title (defaults to grant name)
+  notes     String? // Internal notes (separate from main content)
+  documents Json?   // Array of uploaded document references/URLs
 
-  @@map("project_tasks")
-  @@schema("app")
-}
+  // Dates & tracking
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  submittedAt  DateTime? // When it was submitted
+  lastEditedAt DateTime @default(now()) // Track when content was last edited
 
-model ProjectCollaborator {
-  id          String      @id @default(cuid())
-  role        ProjectRole @default(COLLABORATOR)
-  permissions Json?
-  addedAt     DateTime    @default(now())
-  projectId   String
-  userId      String      @db.Uuid
-  project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Relations
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  aiChats   AiChat[]
 
-  @@unique([projectId, userId])
-  @@map("project_collaborators")
+  @@unique([opportunityId, workspaceId])
+  @@index([workspaceId, status])
+  @@index([updatedAt])
+  @@map("applications")
   @@schema("app")
 }
 
 model AiChat {
-  id          String          @id @default(cuid())
-  title       String?
-  context     AiChatContext
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  workspaceId String
-  projectId   String?
-  userId      String          @db.Uuid
-  messages    AiChatMessage[]
-  project     Project?        @relation(fields: [projectId], references: [id])
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workspace   Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  id            String          @id @default(cuid())
+  title         String?
+  context       AiChatContext
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  workspaceId   String
+  applicationId String?
+  userId        String          @db.Uuid
+  messages      AiChatMessage[]
+  application   Application?    @relation(fields: [applicationId], references: [id])
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace     Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@map("ai_chats")
   @@schema("app")
@@ -320,15 +293,6 @@ enum OrganizationRole {
   @@schema("app")
 }
 
-enum ProjectRole {
-  OWNER
-  EDITOR
-  COLLABORATOR
-  VIEWER
-
-  @@schema("app")
-}
-
 enum GoNoGoDecision {
   GO
   NO_GO
@@ -337,21 +301,22 @@ enum GoNoGoDecision {
   @@schema("app")
 }
 
-enum ProjectStatus {
-  PLANNING
+enum ApplicationStatus {
+  DRAFT
   IN_PROGRESS
-  UNDER_REVIEW
+  READY_TO_SUBMIT
   SUBMITTED
+  UNDER_REVIEW
   AWARDED
   REJECTED
-  CANCELLED
+  WITHDRAWN
 
   @@schema("app")
 }
 
 enum AiChatContext {
   GENERAL
-  PROJECT
+  APPLICATION
   GRANT_ANALYSIS
   DRAFTING
   ELIGIBILITY

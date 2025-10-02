@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bookmark, BookmarkCheck } from "lucide-react";
+import { Bookmark, BookmarkCheck, FileText, CheckCircle2 } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 
 export type GrantCardData = {
@@ -33,8 +33,11 @@ interface GrantCardProps {
   grant: GrantCardData;
   workspaceSlug: string;
   isSaved: boolean;
+  hasApplication?: boolean;
   isLoading?: boolean;
+  isCreatingApplication?: boolean;
   onToggleBookmark: (grantId: number) => void;
+  onCreateApplication?: (grantId: number) => void;
   fromBookmarks?: boolean;
 }
 
@@ -76,8 +79,11 @@ export function GrantCard({
   grant,
   workspaceSlug,
   isSaved,
+  hasApplication = false,
   isLoading = false,
+  isCreatingApplication = false,
   onToggleBookmark,
+  onCreateApplication,
   fromBookmarks = false,
 }: GrantCardProps) {
   const grantUrl = fromBookmarks
@@ -119,6 +125,37 @@ export function GrantCard({
                 <Bookmark className="h-4 w-4" />
               )}
             </Button>
+            {onCreateApplication && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (!hasApplication) {
+                    onCreateApplication(grant.id);
+                  }
+                }}
+                disabled={isCreatingApplication || hasApplication}
+                className="h-8 px-3"
+                aria-label={
+                  hasApplication ? "Application exists" : "Create application"
+                }
+              >
+                {isCreatingApplication ? (
+                  <Spinner size="sm" />
+                ) : hasApplication ? (
+                  <>
+                    <CheckCircle2 className="h-4 w-4 mr-1" />
+                    Added
+                  </>
+                ) : (
+                  <>
+                    <FileText className="h-4 w-4 mr-1" />
+                    Apply
+                  </>
+                )}
+              </Button>
+            )}
           </div>
         </div>
       </CardHeader>
@@ -144,10 +181,10 @@ export function GrantCard({
                       grant.award_max
                     )}`
                   : grant.award_max
-                  ? `Up to ${formatCurrency(grant.award_max)}`
-                  : grant.award_min
-                  ? `From ${formatCurrency(grant.award_min)}`
-                  : "Not specified"}
+                    ? `Up to ${formatCurrency(grant.award_max)}`
+                    : grant.award_min
+                      ? `From ${formatCurrency(grant.award_min)}`
+                      : "Not specified"}
               </p>
             </div>
             <div>
