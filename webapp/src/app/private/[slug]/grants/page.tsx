@@ -73,6 +73,12 @@ function GrantsSearchPage() {
   const [savingGrant, setSavingGrant] = useState<number | null>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
+  // Application tracking
+  const [grantApplications, setGrantApplications] = useState<number[]>([]);
+  const [creatingApplication, setCreatingApplication] = useState<number | null>(
+    null
+  );
+
   // Filter options from API
   const [filterOptions, setFilterOptions] = useState<{
     states: string[];
@@ -104,6 +110,27 @@ function GrantsSearchPage() {
     };
     getUser();
   }, []);
+
+  // Fetch applications for this workspace
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const response = await fetch(`/api/applications?workspaceSlug=${slug}`);
+        if (response.ok) {
+          const data = await response.json();
+          const opportunityIds = data.applications.map(
+            (app: any) => app.opportunityId
+          );
+          setGrantApplications(opportunityIds);
+        }
+      } catch (error) {
+        console.error("Error fetching applications:", error);
+      }
+    };
+    if (slug) {
+      fetchApplications();
+    }
+  }, [slug]);
 
   // Fetch filter options
   useEffect(() => {
@@ -240,6 +267,53 @@ function GrantsSearchPage() {
     }
   };
 
+  const handleCreateApplication = async (grantId: number) => {
+    if (!user?.email) {
+      toast.error("Please sign in to create applications");
+      return;
+    }
+
+    setCreatingApplication(grantId);
+    try {
+      const response = await fetch("/api/applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          opportunityId: grantId,
+          workspaceSlug: slug,
+          alsoBookmark: true, // Also bookmark when creating application
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 409) {
+        toast.info("Application already exists for this grant");
+        setGrantApplications((prev) => [...prev, grantId]);
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create application");
+      }
+
+      // Update local state
+      setGrantApplications((prev) => [...prev, grantId]);
+      if (data.alsoBookmarked) {
+        setSavedGrants((prev) => [...prev, grantId]);
+      }
+
+      toast.success("Application created successfully!");
+    } catch (error) {
+      console.error("Error creating application:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create application"
+      );
+    } finally {
+      setCreatingApplication(null);
+    }
+  };
+
   const clearFilters = () => {
     setSearchQuery("");
     setStatusFilter("");
@@ -257,34 +331,6 @@ function GrantsSearchPage() {
     setPagination((prev) => ({ ...prev, offset: 0 }));
     fetchGrants(true);
   };
-
-  // Utility functions - kept for potential future use
-  // const formatCurrency = (amount: number | null) => {
-  //   if (!amount) return "Not specified";
-  //   return new Intl.NumberFormat("en-US", {
-  //     style: "currency",
-  //     currency: "USD",
-  //     minimumFractionDigits: 0,
-  //   }).format(amount);
-  // };
-
-  // const formatDate = (dateString: string | null) => {
-  //   if (!dateString) return "Not specified";
-  //   return new Date(dateString).toLocaleDateString();
-  // };
-
-  // const getStatusColor = (status: string) => {
-  //   switch (status.toLowerCase()) {
-  //     case "posted":
-  //       return "bg-green-100 text-green-800 border-green-200";
-  //     case "forecasted":
-  //       return "bg-blue-100 text-blue-800 border-blue-200";
-  //     case "closed":
-  //       return "bg-gray-100 text-gray-800 border-gray-200";
-  //     default:
-  //       return "bg-gray-100 text-gray-800 border-gray-200";
-  //   }
-  // };
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
@@ -649,8 +695,11 @@ function GrantsSearchPage() {
               grant={grant}
               workspaceSlug={slug}
               isSaved={savedGrants.includes(grant.id)}
+              hasApplication={grantApplications.includes(grant.id)}
               isLoading={savingGrant === grant.id}
+              isCreatingApplication={creatingApplication === grant.id}
               onToggleBookmark={handleSaveGrant}
+              onCreateApplication={handleCreateApplication}
             />
           ))
         )}
