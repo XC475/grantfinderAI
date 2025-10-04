@@ -5,6 +5,7 @@ import os
 import sys
 import re
 from datetime import datetime, date, timedelta
+import json
 
 import requests
 from bs4 import BeautifulSoup
@@ -75,7 +76,7 @@ def upsert_mass_dese_grant(grant, session, fund_code):
     opportunity.contact_email = contact
     opportunity.agency = agency_name
     opportunity.funding_instrument = "grant"
-
+    opportunity.relevance_score = 100
     # Construct URL to the detailed grant page
     url = (
         f"https://www.doe.mass.edu/grants/{fiscal_year}/{fund_code}"
@@ -133,7 +134,7 @@ def upsert_mass_dese_grant(grant, session, fund_code):
             if links:
                 link_texts = []
                 for a in links:
-                    href = a['href']
+                    href = a["href"]
                     # Skip mailto links
                     if href.startswith("mailto:"):
                         continue
@@ -179,11 +180,11 @@ def upsert_mass_dese_grant(grant, session, fund_code):
         Instructions:
         - Summarize the grant description in a clear and easily understandable way in the field 'description_summary'.
         - Summarize the eligibility requirements in a clear and easily understandable way in the field 'eligibility_summary' and capture any specific criteria or conditions.
-        - Extract numeric values for award_min, award_max, and total_funding_amount as integers only, if available, otherwise return "None" for those fields.
-        - Include contact details if available: contact_name and contact_phone, if not return "None" for those fields.
+        - Extract numeric values for award_min, award_max, and total_funding_amount as integers only, if available, otherwise return null for those fields.
+        - Include contact details if available: contact_name and contact_phone, if not return null for those fields.
         - Include any links attachments or related documents in the 'attachments' JSON object with 'name' and 'url' which includes the attachment name and the url link.
         - Include any additional relevant information not captured above in the 'extra' field as a JSON object.
-        - Never make up information, if it is not present in the details, return "None" for that field, do not use "null".
+        - Never make up information, if it is not present in the details, return null for that field.
         - Ensure the output is valid JSON that can be parsed directly. Only return the JSON object, do not include any additional text or explanation.
 
         Return ONLY a JSON object with the following keys:
@@ -207,35 +208,28 @@ def upsert_mass_dese_grant(grant, session, fund_code):
     if ai_extract_data_result and ai_extract_data_result.startswith("```json"):
         ai_extract_data_result = (
             ai_extract_data_result.replace("```json", "").replace("```", "").strip()
-        ) 
+        )
 
     # Validate essential fields from ai response
     if ai_extract_data_result:
         try:
-            ai_data = eval(
-                ai_extract_data_result
-            )  # Use eval to parse the JSON-like string
+            ai_data = json.loads(ai_extract_data_result)
+
             if "description_summary" in ai_data:
                 opportunity.description_summary = ai_data["description_summary"]
             if "eligibility_summary" in ai_data:
                 opportunity.eligibility_summary = ai_data["eligibility_summary"]
             if "award_min" in ai_data:
                 opportunity.award_min = (
-                    int(ai_data["award_min"])
-                    if ai_data["award_min"] != "None"
-                    else None
+                    int(ai_data["award_min"]) if ai_data["award_min"] is not None else None
                 )
             if "award_max" in ai_data:
                 opportunity.award_max = (
-                    int(ai_data["award_max"])
-                    if ai_data["award_max"] != "None"
-                    else None
+                    int(ai_data["award_max"]) if ai_data["award_max"] is not None else None
                 )
             if "total_funding_amount" in ai_data:
                 opportunity.total_funding_amount = (
-                    int(ai_data["total_funding_amount"])
-                    if ai_data["total_funding_amount"] != "None"
-                    else None
+                    int(ai_data["total_funding_amount"]) if ai_data["total_funding_amount"] is not None else None
                 )
             if "contact_name" in ai_data:
                 opportunity.contact_name = ai_data["contact_name"]
@@ -245,11 +239,12 @@ def upsert_mass_dese_grant(grant, session, fund_code):
                 opportunity.attachments = ai_data["attachments"]
             if "extra" in ai_data:
                 opportunity.extra = ai_data["extra"]
-        except Exception as e:
+        except json.JSONDecodeError as e:
             print(f"Error parsing AI extracted data: {e}")
 
     print(f"Upserting opportunity {opportunity.source_grant_id} - {opportunity.title}")
     session.add(opportunity)
+    session.commit()
 
 
 def calculate_fund_code(fund_code_raw):

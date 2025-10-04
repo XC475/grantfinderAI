@@ -30,7 +30,7 @@ def parse_date(date_str: str) -> Union[datetime.date, None]:
         "%B %d, %Y",
         "%A, %B %d, %Y",
         "%b %d, %Y %I:%M:%S %p %Z",  # e.g. "Oct 25, 2026 12:00:00 AM EDT"
-        "%Y-%m-%d-%H-%M-%S",         # e.g. "2026-09-25-00-00-00"
+        "%Y-%m-%d-%H-%M-%S",  # e.g. "2026-09-25-00-00-00"
     ]
 
     for fmt in formats:

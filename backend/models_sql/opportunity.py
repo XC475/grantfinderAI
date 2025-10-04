@@ -58,6 +58,7 @@ class Opportunity(db.Model):
     url = Column(String)  # URL to the official grant posting
     attachments = Column(JSON)  # List of attachment URLs or metadata
     extra = Column(JSON)
+    relevance_score = Column(Integer)  # 0-100 score of relevance to school districts
 
     def __repr__(self):
         return f"<Opportunity {self.id} {self.title}>"
