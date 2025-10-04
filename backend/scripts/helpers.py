@@ -18,7 +18,8 @@ client = OpenAI(
 
 def parse_date(date_str: str) -> Union[datetime.date, None]:
     """Parse a date string into a date object. Returns None if parsing fails.
-    Supports formats like "MM/DD/YYYY", "Month Day, Year", and "Weekday, Month Day, Year".
+    Supports formats like "MM/DD/YYYY", "Month Day, Year", "Weekday, Month Day, Year",
+    "Mon DD, YYYY HH:MM:SS AM/PM TZ", and "YYYY-MM-DD-HH-MM-SS".
     """
 
     if not date_str:
@@ -28,6 +29,8 @@ def parse_date(date_str: str) -> Union[datetime.date, None]:
         "%m/%d/%Y",
         "%B %d, %Y",
         "%A, %B %d, %Y",
+        "%b %d, %Y %I:%M:%S %p %Z",  # e.g. "Oct 25, 2026 12:00:00 AM EDT"
+        "%Y-%m-%d-%H-%M-%S",         # e.g. "2026-09-25-00-00-00"
     ]
 
     for fmt in formats:
@@ -40,7 +43,11 @@ def parse_date(date_str: str) -> Union[datetime.date, None]:
     if "," in date_str:
         try:
             cleaned = date_str.split(",", 1)[-1].strip()
-            return datetime.strptime(cleaned, "%B %d, %Y").date()
+            # Try with time and timezone
+            try:
+                return datetime.strptime(cleaned, "%b %d, %Y %I:%M:%S %p %Z").date()
+            except ValueError:
+                return datetime.strptime(cleaned, "%B %d, %Y").date()
         except ValueError:
             pass
 
@@ -55,7 +62,7 @@ def ai_extract_data(prompt: str, model: str) -> str | None:
 
     try:
         response = client.chat.completions.create(
-            model,
+            model=model,
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": prompt},

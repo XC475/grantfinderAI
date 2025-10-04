@@ -131,7 +131,16 @@ def upsert_mass_dese_grant(grant, session, fund_code):
             link_texts = []
 
             if links:
-                link_texts = [f"{a.get_text(strip=True)} ({a['href']})" for a in links]
+                link_texts = []
+                for a in links:
+                    href = a['href']
+                    # Skip mailto links
+                    if href.startswith("mailto:"):
+                        continue
+                    # If the link begins with a slash, prepend the base URL
+                    if href.startswith("/"):
+                        href = f"https://doe.mass.edu{href}"
+                    link_texts.append(f"{a.get_text(strip=True)} ({href})")
 
             # If the text doesn't already include the link text, append it
             if text:
@@ -162,6 +171,8 @@ def upsert_mass_dese_grant(grant, session, fund_code):
         The data to process is as follows, be sure to try to extract more relevant details from links that are given:
         {details}
 
+        If there are URLs in the provided data details, make sure to visit them to extract any additional relevant information that can be included in the output JSON.
+
         The current partially loaded context is:
         {current_opportunity}
 
@@ -173,7 +184,7 @@ def upsert_mass_dese_grant(grant, session, fund_code):
         - Include any links attachments or related documents in the 'attachments' JSON object with 'name' and 'url' which includes the attachment name and the url link.
         - Include any additional relevant information not captured above in the 'extra' field as a JSON object.
         - Never make up information, if it is not present in the details, return "None" for that field, do not use "null".
-        - Ensure the output is valid JSON that can be parsed directly.
+        - Ensure the output is valid JSON that can be parsed directly. Only return the JSON object, do not include any additional text or explanation.
 
         Return ONLY a JSON object with the following keys:
         - description_summary
@@ -187,16 +198,16 @@ def upsert_mass_dese_grant(grant, session, fund_code):
         - extra
     """
 
-    model = "google/gemini-2.5-flash-preview-09-2025"
+    model = "google/gemini-2.5-flash-preview-09-2025:online"
 
-    # Make context dictionary for AI extraction
+    # Call AI extraction function
     ai_extract_data_result = helpers.ai_extract_data(prompt, model)
 
     # strip ```json ... ``` if present in AI response
     if ai_extract_data_result and ai_extract_data_result.startswith("```json"):
         ai_extract_data_result = (
             ai_extract_data_result.replace("```json", "").replace("```", "").strip()
-        )
+        ) 
 
     # Validate essential fields from ai response
     if ai_extract_data_result:
@@ -266,9 +277,12 @@ def main():
 
     # Collect all grants from the table
     grants = []
-    for _, row in enumerate(rows):
+    for i, row in enumerate(rows):
         cells = row.find_all(["td", "th"])
         cell_text = [cell.get_text(strip=True) for cell in cells]
+        if i == 0:  # Skip the header row
+            continue
+
         if not cell_text or len(cell_text) < 8:
             continue
         grants.append(cell_text)
