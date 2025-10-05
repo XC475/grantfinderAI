@@ -22,55 +22,52 @@ model opportunities {
   id                   Int                     @id @default(autoincrement())
   source               String                  @db.VarChar
   state_code           String?                 @db.VarChar
+  source_grant_id      String                  @db.VarChar
   status               opportunity_status_enum
   title                String                  @db.VarChar
   description          String?
+  description_summary  String?                 @db.VarChar
+  agency               String?                 @db.VarChar
+  funding_instrument   String?                 @db.VarChar
   category             String?                 @db.VarChar
   fiscal_year          Int?
   post_date            DateTime?               @db.Date
   close_date           DateTime?               @db.Date
+  archive_date         DateTime?               @db.Date
+  cost_sharing         Boolean?
+  award_max            Int?
+  award_min            Int?
   total_funding_amount Int?
   eligibility          String?
+  eligibility_summary  String?                 @db.VarChar
   last_updated         DateTime?               @db.Timestamp(6)
   contact_name         String?                 @db.VarChar
   contact_email        String?                 @db.VarChar
   contact_phone        String?                 @db.VarChar
   url                  String?                 @db.VarChar
-  extra                Json?                   @db.Json
-  source_grant_id      String                  @db.VarChar
-  agency               String?                 @db.VarChar
-  funding_instrument   String?                 @db.VarChar
-  archive_date         DateTime?               @db.Date
-  cost_sharing         Boolean?
-  award_max            Int?
-  award_min            Int?
-  eligibility_summary  String?                 @db.VarChar
   attachments          Json?                   @db.Json
-  description_summary  String?                 @db.VarChar
+  extra                Json?                   @db.Json
+  relevance_score      Int?
 
   @@schema("public")
 }
 
-//////// APP SCHEMA ////////
+/// ///// APP SCHEMA ////////
 model User {
-  id                  String                @id @db.Uuid
-  email               String                @unique
+  id                  String               @id @db.Uuid
+  email               String               @unique
   name                String?
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
   avatarUrl           String?
-  lastActiveAt        DateTime              @default(now())
-  personalWorkspaceId String                @unique
-  stripeCustomerId    String?
-  subscriptionStatus  String?
-  subscriptionTier    String?
-  trialEndsAt         DateTime?
+  lastActiveAt        DateTime             @default(now())
+  personalWorkspaceId String               @unique
+  role                UserRole             @default(USER)
   aiChats             AiChat[]
   grantBookmarks      GrantBookmark[]
   invitesSent         OrganizationInvite[]
   organizationMembers OrganizationMember[]
-  personalWorkspace   Workspace             @relation("PersonalWorkspace", fields: [personalWorkspaceId], references: [id], onDelete: Cascade)
-  role                UserRole              @default(USER)
+  personalWorkspace   Workspace            @relation("PersonalWorkspace", fields: [personalWorkspaceId], references: [id], onDelete: Cascade)
 
   @@map("users")
   @@schema("app")
@@ -85,12 +82,12 @@ model Workspace {
   updatedAt           DateTime                   @updatedAt
   schoolDistrictId    String?
   aiChats             AiChat[]
+  applications        Application[]
   grantBookmarks      GrantBookmark[]
   eligibilityAnalyses GrantEligibilityAnalysis[]
   organization        Organization?
-  applications        Application[]
   personalUser        User?                      @relation("PersonalWorkspace")
-  schoolDistrict      SchoolDistrict?            @relation(fields: [schoolDistrictId], references: [id], onDelete: SetNull)
+  schoolDistrict      SchoolDistrict?            @relation(fields: [schoolDistrictId], references: [id])
 
   @@map("workspaces")
   @@schema("app")
@@ -102,10 +99,6 @@ model Organization {
   domain             String?
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
-  stripeCustomerId   String?
-  subscriptionStatus String?
-  subscriptionTier   String?
-  trialEndsAt        DateTime?
   seatCount          Int                  @default(5)
   workspaceId        String               @unique
   invites            OrganizationInvite[]
@@ -149,10 +142,10 @@ model OrganizationInvite {
 
 model SchoolDistrict {
   id                 String      @id @default(cuid())
-  leaId              String      @unique // NCES LEA ID
+  leaId              String      @unique
   name               String
-  stateCode          String      // 2-letter state code
-  stateLeaId         String?     // State-assigned ID
+  stateCode          String
+  stateLeaId         String?
   city               String?
   zipCode            String?
   phone              String?
@@ -179,8 +172,8 @@ model GrantBookmark {
   notes         String?
   createdAt     DateTime  @default(now())
   workspaceId   String
-  opportunityId Int       // References public.opportunities.id
   userId        String    @db.Uuid
+  opportunityId Int
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspace     Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
@@ -197,8 +190,8 @@ model GrantEligibilityAnalysis {
   risks         String?
   confidence    Float?
   createdAt     DateTime       @default(now())
-  opportunityId Int            // References public.opportunities.id
   workspaceId   String
+  opportunityId Int
   workspace     Workspace      @relation(fields: [workspaceId], references: [id])
 
   @@unique([opportunityId, workspaceId])
@@ -207,29 +200,21 @@ model GrantEligibilityAnalysis {
 }
 
 model Application {
-  id           String            @id @default(cuid())
-  opportunityId Int              // References public.opportunities.id
-  workspaceId  String
-  status       ApplicationStatus @default(DRAFT)
-
-  // Rich text application content (Tiptap/ProseMirror JSON)
-  content     Json?   // Tiptap document JSON format
-  contentHtml String? // Optional: HTML version for easier display/search
-
-  // Metadata
-  title     String? // Optional custom title (defaults to grant name)
-  notes     String? // Internal notes (separate from main content)
-  documents Json?   // Array of uploaded document references/URLs
-
-  // Dates & tracking
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  submittedAt  DateTime? // When it was submitted
-  lastEditedAt DateTime @default(now()) // Track when content was last edited
-
-  // Relations
-  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  aiChats   AiChat[]
+  id            String            @id @default(cuid())
+  opportunityId Int
+  workspaceId   String
+  status        ApplicationStatus @default(DRAFT)
+  content       Json?
+  contentHtml   String?
+  title         String?
+  notes         String?
+  documents     Json?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  submittedAt   DateTime?
+  lastEditedAt  DateTime          @default(now())
+  aiChats       AiChat[]
+  workspace     Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@unique([opportunityId, workspaceId])
   @@index([workspaceId, status])
@@ -245,8 +230,8 @@ model AiChat {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   workspaceId   String
-  applicationId String?
   userId        String          @db.Uuid
+  applicationId String?
   messages      AiChatMessage[]
   application   Application?    @relation(fields: [applicationId], references: [id])
   user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
