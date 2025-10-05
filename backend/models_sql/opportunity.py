@@ -1,4 +1,3 @@
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (
     JSON,
     DateTime,
@@ -8,12 +7,8 @@ from sqlalchemy import (
     Date,
     Integer,
     Text,
-    ForeignKey,
-    Table,
     Boolean,
-    null,
 )
-from sqlalchemy.orm import relationship
 from flask_server.db import db
 from enum import Enum as PyEnum
 

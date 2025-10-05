@@ -3,7 +3,7 @@ Fetch and process grant opportunities from grants.gov API.
 """
 
 import requests
-from datetime import datetime, date
+from datetime import date
 import os
 import sys
 import helpers

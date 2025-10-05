@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from typing import Union
 import os
+from dateutil import parser
+import pytz
 
 # Load environment variables
 load_dotenv()
@@ -14,7 +16,6 @@ client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key=os.getenv("OPENROUTER_API_KEY"),
 )
-
 
 def parse_date(date_str: str) -> Union[datetime.date, None]:
     """Parse a date string into a date object. Returns None if parsing fails.
@@ -25,33 +26,20 @@ def parse_date(date_str: str) -> Union[datetime.date, None]:
     if not date_str:
         return None
 
-    formats = [
-        "%m/%d/%Y",
-        "%B %d, %Y",
-        "%A, %B %d, %Y",
-        "%b %d, %Y %I:%M:%S %p %Z",  # e.g. "Oct 25, 2026 12:00:00 AM EDT"
-        "%Y-%m-%d-%H-%M-%S",  # e.g. "2026-09-25-00-00-00"
-    ]
+    try:
+        parsed_datetime = parser.parse(date_str)
+        # Convert to UTC if timezone is present
+        if parsed_datetime.tzinfo:
+            parsed_datetime = parsed_datetime.astimezone(pytz.UTC)
+        return parsed_datetime.date()
+    except ValueError:
+        pass
 
-    for fmt in formats:
-        try:
-            return datetime.strptime(date_str, fmt).date()
-        except ValueError:
-            continue
-
-    # Try removing weekday prefix if present
-    if "," in date_str:
-        try:
-            cleaned = date_str.split(",", 1)[-1].strip()
-            # Try with time and timezone
-            try:
-                return datetime.strptime(cleaned, "%b %d, %Y %I:%M:%S %p %Z").date()
-            except ValueError:
-                return datetime.strptime(cleaned, "%B %d, %Y").date()
-        except ValueError:
-            pass
-
-    return None
+    # Explicitly handle "%Y-%m-%d-%H-%M-%S" format as a fallback
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d-%H-%M-%S").date()
+    except ValueError:
+        return None
 
 
 def ai_extract_data(prompt: str, model: str) -> str | None:
