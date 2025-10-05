@@ -81,6 +81,7 @@ def upsert_forecasted_grant(op, session):
     # Try to parse lastUpdatedDate in multiple formats
     last_updated_str = forecast.get("lastUpdatedDate")
     last_updated = helpers.parse_date(last_updated_str) if last_updated_str else None
+    print("Last Updated Str:", last_updated_str, "Parsed Date:", last_updated)
 
     # Check if opportunity already exists
     opportunity = (
@@ -230,6 +231,7 @@ def upsert_grant(op, opp_status, session):
     # Try to parse lastUpdatedDate
     last_updated_str = synopsis.get("lastUpdatedDate")
     last_updated = helpers.parse_date(last_updated_str) if last_updated_str else None
+    print("Last Updated Str:", last_updated_str, "Parsed Date:", last_updated)
 
     # Check if opportunity already exists
     opportunity = (
