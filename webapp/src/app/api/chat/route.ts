@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 
 // Your n8n webhook URL - replace with your actual webhook URL
-const N8N_WEBHOOK_URL = process.env.N8N_SEARCH_AGENT_TEST_URL!;
+const N8N_WEBHOOK_URL = process.env.N8N_SEARCH_URL!;
 
 export async function POST(req: NextRequest) {
   const { messages, chatId, workspaceId } = await req.json();
