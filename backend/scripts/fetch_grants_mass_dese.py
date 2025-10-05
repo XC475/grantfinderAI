@@ -4,7 +4,7 @@ Script to fetch and process grants from the Massachusetts Department of Educatio
 import os
 import sys
 import re
-from datetime import datetime, date, timedelta
+from datetime import date
 import json
 
 import requests
