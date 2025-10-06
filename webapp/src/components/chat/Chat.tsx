@@ -144,7 +144,7 @@ export function ChatDemo(props: ChatDemoProps) {
   );
 
   return (
-    <div className={cn("flex", "flex-col", "h-[500px]", "w-full")}>
+    <div className={cn("flex", "flex-col", "h-[calc(100vh-200px)]", "w-full")}>
       <Chat
         className="grow"
         messages={messages}
