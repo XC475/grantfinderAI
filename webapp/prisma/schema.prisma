@@ -94,16 +94,16 @@ model Workspace {
 }
 
 model Organization {
-  id                 String               @id @default(cuid())
-  name               String
-  domain             String?
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-  seatCount          Int                  @default(5)
-  workspaceId        String               @unique
-  invites            OrganizationInvite[]
-  members            OrganizationMember[]
-  workspace          Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  id          String               @id @default(cuid())
+  name        String
+  domain      String?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  seatCount   Int                  @default(5)
+  workspaceId String               @unique
+  invites     OrganizationInvite[]
+  members     OrganizationMember[]
+  workspace   Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@map("organizations")
   @@schema("app")
