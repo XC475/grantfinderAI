@@ -76,16 +76,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="container mx-auto px-4">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">AI Chat</h1>
-        {currentChatId && (
-          <p className="text-sm text-muted-foreground mt-2">
-            Chat ID: {currentChatId}
-          </p>
-        )}
-      </div>
-
+    <div className="h-full">
       <ChatDemo
         initialMessages={initialMessages}
         chatId={currentChatId}
