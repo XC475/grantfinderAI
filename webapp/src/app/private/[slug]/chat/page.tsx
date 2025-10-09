@@ -56,6 +56,10 @@ export default function ChatPage() {
         .finally(() => {
           setLoading(false);
         });
+    } else {
+      // No chatId means we're starting a new chat
+      setInitialMessages([]);
+      setCurrentChatId(undefined);
     }
   }, [chatId]);
 
