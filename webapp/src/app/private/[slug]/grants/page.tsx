@@ -50,6 +50,10 @@ interface SearchResponse {
   };
 }
 
+interface ApplicationData {
+  opportunityId: string;
+}
+
 function GrantsSearchPage() {
   const params = useParams();
   const slug = params.slug as string;
@@ -119,7 +123,7 @@ function GrantsSearchPage() {
         if (response.ok) {
           const data = await response.json();
           const opportunityIds = data.applications.map(
-            (app: any) => app.opportunityId
+            (app: ApplicationData) => app.opportunityId
           );
           setGrantApplications(opportunityIds);
         }

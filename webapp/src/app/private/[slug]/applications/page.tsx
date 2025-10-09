@@ -111,8 +111,8 @@ export default function ApplicationsPage({
                 No applications yet
               </h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Start by browsing grants and clicking &ldquo;Apply&rdquo; to create your
-                first application
+                Start by browsing grants and clicking &ldquo;Apply&rdquo; to
+                create your first application
               </p>
               <Button onClick={() => router.push(`/private/${slug}/grants`)}>
                 Browse Grants

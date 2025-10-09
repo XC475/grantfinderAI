@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { UserRole } from "@/generated/prisma";
 
 /**
  * Check if a user has admin role
@@ -10,7 +11,7 @@ export async function isAdmin(userId: string): Promise<boolean> {
       select: { role: true },
     });
 
-    return user?.role === "SYSTEM_ADMIN";
+    return user?.role === UserRole.ADMIN;
   } catch (error) {
     console.error("Error checking admin status:", error);
     return false;
