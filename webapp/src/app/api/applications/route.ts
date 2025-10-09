@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 // POST /api/applications - Create a new application
 export async function POST(request: NextRequest) {
@@ -118,19 +119,15 @@ export async function GET(request: NextRequest) {
     const workspaceSlug = searchParams.get("workspaceSlug");
 
     // Build where clause
-    const whereClause: any = {
+    const whereClause: Prisma.ApplicationWhereInput = {
       workspace: {
         OR: [
           { personalUser: { id: user.id } },
           { organization: { members: { some: { userId: user.id } } } },
         ],
+        ...(workspaceSlug ? { slug: workspaceSlug } : {}),
       },
     };
-
-    // Filter by workspace if provided
-    if (workspaceSlug) {
-      whereClause.workspace.slug = workspaceSlug;
-    }
 
     const applications = await prisma.application.findMany({
       where: whereClause,
