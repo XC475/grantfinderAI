@@ -136,44 +136,116 @@ export async function POST(req: NextRequest) {
       throw new Error(`N8N webhook responded with status: ${response.status}`);
     }
 
-    // Accept either JSON or text from n8n
-    const contentType = response.headers.get("content-type") || "";
-    const data = contentType.includes("application/json")
-      ? await response.json()
-      : await response.text();
+    // Check if response is streaming
+    const reader = response.body?.getReader();
+    if (!reader) {
+      throw new Error("No response body from n8n");
+    }
 
-    const text =
-      typeof data === "string"
-        ? data
-        : data.response || data.message || data.content || "OK";
+    // Create a streaming response to the client
+    let fullText = "";
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+    let buffer = ""; // Buffer for incomplete JSON chunks
 
-    console.log("🔍 [Grant Finder API] n8n response:", text);
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-    // 4. Save assistant response
-    await prisma.aiChatMessage.create({
-      data: {
-        role: "ASSISTANT",
-        content: text,
-        chatId: chat.id,
-        metadata: {
-          timestamp: Date.now(),
-          model: "n8n-agent",
-          source: "n8n",
-        },
+            // Decode the chunk and add to buffer
+            buffer += decoder.decode(value, { stream: true });
+
+            // Split by newlines to get individual JSON objects
+            const lines = buffer.split("\n");
+
+            // Keep the last incomplete line in the buffer
+            buffer = lines.pop() || "";
+
+            // Process each complete line
+            for (const line of lines) {
+              if (!line.trim()) continue;
+
+              try {
+                // Parse the JSON chunk from n8n
+                const jsonChunk = JSON.parse(line);
+
+                // Only process "item" type chunks that have content
+                if (jsonChunk.type === "item" && jsonChunk.content) {
+                  const content = jsonChunk.content;
+                  fullText += content;
+
+                  // Send only the content to client (not the JSON wrapper)
+                  controller.enqueue(encoder.encode(content));
+                }
+                // Log begin/end events for debugging
+                else if (jsonChunk.type === "begin") {
+                  console.log("🔍 [Grant Finder API] Stream started");
+                } else if (jsonChunk.type === "end") {
+                  console.log("🔍 [Grant Finder API] Stream ended");
+                }
+              } catch (parseError) {
+                console.warn(
+                  "⚠️ [Grant Finder API] Failed to parse JSON chunk:",
+                  line
+                );
+              }
+            }
+          }
+
+          // Process any remaining buffer content
+          if (buffer.trim()) {
+            try {
+              const jsonChunk = JSON.parse(buffer);
+              if (jsonChunk.type === "item" && jsonChunk.content) {
+                fullText += jsonChunk.content;
+                controller.enqueue(encoder.encode(jsonChunk.content));
+              }
+            } catch (parseError) {
+              console.warn("⚠️ [Grant Finder API] Failed to parse final chunk");
+            }
+          }
+
+          // Close the stream
+          controller.close();
+
+          // After streaming completes, save to database
+          console.log("🔍 [Grant Finder API] Full n8n response:", fullText);
+
+          // 4. Save assistant response
+          await prisma.aiChatMessage.create({
+            data: {
+              role: "ASSISTANT",
+              content: fullText,
+              chatId: chat.id,
+              metadata: {
+                timestamp: Date.now(),
+                model: "n8n-agent",
+                source: "n8n",
+              },
+            },
+          });
+
+          // 5. Update chat's updatedAt
+          await prisma.aiChat.update({
+            where: { id: chat.id },
+            data: { updatedAt: new Date() },
+          });
+        } catch (error) {
+          console.error("❌ [Grant Finder API] Streaming error:", error);
+          controller.error(error);
+        }
       },
     });
 
-    // 5. Update chat's updatedAt
-    await prisma.aiChat.update({
-      where: { id: chat.id },
-      data: { updatedAt: new Date() },
-    });
-
-    // Return the response to the client (chat component expects text)
-    return new Response(text, {
+    // Return the streaming response to the client
+    return new Response(stream, {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
         "X-Chat-Id": chat.id,
+        "Transfer-Encoding": "chunked",
       },
     });
   } catch (error) {

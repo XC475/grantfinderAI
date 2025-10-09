@@ -169,7 +169,11 @@ function GrantsSearchPage() {
       if (closeDateFrom) params.append("closeDateFrom", closeDateFrom);
       if (closeDateTo) params.append("closeDateTo", closeDateTo);
       params.append("limit", pagination.limit.toString());
-      const offset = resetOffset ? 0 : (customOffset !== undefined ? customOffset : pagination.offset);
+      const offset = resetOffset
+        ? 0
+        : customOffset !== undefined
+          ? customOffset
+          : pagination.offset;
       params.append("offset", offset.toString());
 
       const response = await fetch(`/api/grants/search?${params}`);
