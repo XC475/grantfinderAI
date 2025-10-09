@@ -441,6 +441,21 @@ def main():
     with flask_app.app_context():
         session = db.session
 
+        # Fetch Department of Education opportunities from grants.gov
+        response = requests.post(
+            SEARCH_URL,
+            json={
+                "agencies": "ED|ED-*",
+                "oppStatuses": "forecasted|posted",
+                "dateRange": "",
+                "rows": 5000,
+            }
+        )
+        response.raise_for_status()
+
+        opps = response.json().get("data", {}).get("oppHits", [])
+        print(f"Found {len(opps)} Department of Education opportunities.")
+
         # Fetch opportunities from grants.gov search API
         response = requests.post(
             SEARCH_URL,
@@ -455,8 +470,9 @@ def main():
         response.raise_for_status()
 
         # Extract opportunity summaries
-        opps = response.json().get("data", {}).get("oppHits", [])
-        print(f"Found {len(opps)} opportunities.")
+        rest_opps = response.json().get("data", {}).get("oppHits", [])
+        print(f"Found {len(rest_opps)} opportunities.")
+        opps.extend(rest_opps)
 
         for opp_summary in opps:
             opp_id = opp_summary["id"]
