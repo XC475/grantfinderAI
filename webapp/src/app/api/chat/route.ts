@@ -186,7 +186,7 @@ export async function POST(req: NextRequest) {
                 } else if (jsonChunk.type === "end") {
                   console.log("🔍 [Grant Finder API] Stream ended");
                 }
-              } catch (parseError) {
+              } catch {
                 console.warn(
                   "⚠️ [Grant Finder API] Failed to parse JSON chunk:",
                   line
@@ -203,7 +203,7 @@ export async function POST(req: NextRequest) {
                 fullText += jsonChunk.content;
                 controller.enqueue(encoder.encode(jsonChunk.content));
               }
-            } catch (parseError) {
+            } catch {
               console.warn("⚠️ [Grant Finder API] Failed to parse final chunk");
             }
           }
