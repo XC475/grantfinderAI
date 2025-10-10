@@ -266,6 +266,7 @@ def upsert_nysed_grant(grant_data: Dict, processed_data: Dict, session) -> bool:
         opportunity.attachments = grant_data['attachments']
         opportunity.funding_instrument = "grant"
         opportunity.status = OpportunityStatusEnum.closed
+        opportunity.relevance_score = 100  # NYSED grants are highly relevant to NY school districts
         
         # Parse dates
         if processed_data.get('post_date'):
