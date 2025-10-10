@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 
-// DELETE /api/admin/users/[userId] - Delete a user (admin only)
+// DELETE /api/admin/users/[userId] - Delete a user (admin only).
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
