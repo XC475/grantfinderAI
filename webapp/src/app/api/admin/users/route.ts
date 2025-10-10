@@ -91,6 +91,12 @@ export async function POST(request: NextRequest) {
         email_confirm: true, // Auto-confirm email
         user_metadata: {
           name,
+          ...(schoolDistrict
+            ? {
+                schoolDistrictId: schoolDistrict.id,
+                schoolDistrictName: schoolDistrict.name,
+              }
+            : {}),
         },
       });
 
@@ -131,19 +137,18 @@ export async function POST(request: NextRequest) {
       `[Admin] User ${email} created with organization ${newUser.organization.slug}`
     );
 
-    // Update organization role and link to school district
-    await prisma.organization.update({
-      where: { id: newUser.organization.id },
-      data: {
-        role: organizationRole,
-        ...(schoolDistrictId ? { schoolDistrictId } : {}),
-      },
-    });
+    // Update organization role if different from default
+    if (organizationRole !== "ADMIN") {
+      await prisma.organization.update({
+        where: { id: newUser.organization.id },
+        data: { role: organizationRole },
+      });
+      console.log(`[Admin] Organization role set to ${organizationRole}`);
+    }
 
-    console.log(`[Admin] Organization role set to ${organizationRole}`);
-    if (schoolDistrictId) {
+    if (schoolDistrict) {
       console.log(
-        `[Admin] Organization linked to district ${schoolDistrict?.name}`
+        `[Admin] Organization created for district: ${schoolDistrict.name}`
       );
     }
 

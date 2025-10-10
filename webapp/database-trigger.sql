@@ -6,22 +6,33 @@ returns trigger as $$
 declare
   v_organization_id text := 'org_' || replace(new.id::text, '-', '');
   v_name text := coalesce(new.raw_user_meta_data->>'name', split_part(new.email, '@', 1));
+  v_district_name text := new.raw_user_meta_data->>'schoolDistrictName';
+  v_district_id text := new.raw_user_meta_data->>'schoolDistrictId';
+  v_org_name text;
   v_slug text;
 begin
+  -- Determine organization name: use district name if available, otherwise user name
+  if v_district_name is not null and v_district_name != '' then
+    v_org_name := v_district_name;
+  else
+    v_org_name := v_name || '''s Organization';
+  end if;
+
   -- Properly sanitize the slug - remove ALL spaces and special characters
-  v_slug := lower(trim(v_name));
+  v_slug := lower(trim(coalesce(v_district_name, v_name)));
   v_slug := regexp_replace(v_slug, '[^\w-]', '-', 'g');  -- Replace spaces & special chars with hyphens
   v_slug := regexp_replace(v_slug, '-+', '-', 'g');      -- Replace multiple hyphens with single
   v_slug := regexp_replace(v_slug, '^-+|-+$', '', 'g');  -- Remove leading/trailing hyphens
 
   -- First create the organization (formerly workspace)
-  insert into app.organizations (id, name, slug, type, role, "createdAt", "updatedAt")
+  insert into app.organizations (id, name, slug, type, role, "schoolDistrictId", "createdAt", "updatedAt")
   values (
     v_organization_id,
-    v_name || '''s Organization',
+    v_org_name,
     v_slug,
     'PERSONAL'::app."OrganizationType",
     'ADMIN'::app."OrganizationRole",
+    v_district_id,
     now(),
     now()
   )
