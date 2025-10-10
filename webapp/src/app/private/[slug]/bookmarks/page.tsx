@@ -75,7 +75,7 @@ export default function BookmarksPage() {
               <GrantCard
                 key={b.id}
                 grant={opp}
-                workspaceSlug={slug}
+                organizationSlug={slug}
                 isSaved={true}
                 onToggleBookmark={removeBookmark}
                 fromBookmarks={true}

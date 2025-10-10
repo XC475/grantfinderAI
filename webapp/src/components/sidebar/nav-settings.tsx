@@ -12,28 +12,28 @@ import {
 } from "@/components/ui/sidebar";
 
 interface NavSettingsProps {
-  workspaceSlug: string | null;
+  organizationSlug: string | null;
 }
 
-export function NavSettings({ workspaceSlug }: NavSettingsProps) {
+export function NavSettings({ organizationSlug }: NavSettingsProps) {
   const pathname = usePathname();
 
-  if (!workspaceSlug) return null;
+  if (!organizationSlug) return null;
 
   const settingsItems = [
     {
       title: "Account",
-      url: `/private/${workspaceSlug}/settings/account`,
+      url: `/private/${organizationSlug}/settings/account`,
       icon: BadgeCheck,
     },
     {
       title: "Billing",
-      url: `/private/${workspaceSlug}/settings/billing`,
+      url: `/private/${organizationSlug}/settings/billing`,
       icon: CreditCard,
     },
     {
       title: "Notifications",
-      url: `/private/${workspaceSlug}/settings/notifications`,
+      url: `/private/${organizationSlug}/settings/notifications`,
       icon: Bell,
     },
   ];

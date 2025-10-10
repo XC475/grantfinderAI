@@ -23,7 +23,7 @@ interface Application {
   updatedAt: string;
   submittedAt: string | null;
   lastEditedAt: string;
-  workspace: {
+  organization: {
     slug: string;
     name: string;
   };
@@ -68,7 +68,9 @@ export default function ApplicationsPage({
 
   const fetchApplications = async () => {
     try {
-      const response = await fetch(`/api/applications?workspaceSlug=${slug}`);
+      const response = await fetch(
+        `/api/applications?organizationSlug=${slug}`
+      );
       if (response.ok) {
         const data = await response.json();
         setApplications(data.applications);

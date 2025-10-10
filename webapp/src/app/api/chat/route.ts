@@ -6,7 +6,7 @@ import prisma from "@/lib/prisma";
 const N8N_WEBHOOK_URL = process.env.N8N_SEARCH_URL!;
 
 export async function POST(req: NextRequest) {
-  const { messages, chatId, workspaceId } = await req.json();
+  const { messages, chatId, organizationId } = await req.json();
 
   // Get authenticated user
   const supabase = await createClient();
@@ -19,19 +19,20 @@ export async function POST(req: NextRequest) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  // Get user's workspace
-  const userWorkspaceId = workspaceId || (await getUserWorkspaceId(user.id));
+  // Get user's organization
+  const userOrganizationId =
+    organizationId || (await getUserOrganizationId(user.id));
 
-  // Fetch workspace with school district data
-  const workspace = await prisma.workspace.findUnique({
-    where: { id: userWorkspaceId },
+  // Fetch organization with school district data
+  const organization = await prisma.organization.findUnique({
+    where: { id: userOrganizationId },
     include: {
       schoolDistrict: true, // Include the full district data
     },
   });
 
-  if (!workspace) {
-    return new Response("Workspace not found", { status: 404 });
+  if (!organization) {
+    return new Response("Organization not found", { status: 404 });
   }
 
   // Get the last user message
@@ -64,7 +65,7 @@ export async function POST(req: NextRequest) {
           title: generateChatTitle(lastUserMessage.content),
           context: "GENERAL",
           userId: user.id,
-          workspaceId: userWorkspaceId,
+          organizationId: userOrganizationId,
         },
         include: { messages: true },
       });
@@ -94,36 +95,36 @@ export async function POST(req: NextRequest) {
       message_id: userMessage.id,
       conversation_history: messages,
       // District information for personalized grant recommendations
-      district_info: workspace.schoolDistrict
+      district_info: organization.schoolDistrict
         ? {
-            id: workspace.schoolDistrict.id,
-            leaId: workspace.schoolDistrict.leaId,
-            name: workspace.schoolDistrict.name,
-            stateCode: workspace.schoolDistrict.stateCode,
-            stateLeaId: workspace.schoolDistrict.stateLeaId,
-            city: workspace.schoolDistrict.city,
-            zipCode: workspace.schoolDistrict.zipCode,
-            countyName: workspace.schoolDistrict.countyName,
-            enrollment: workspace.schoolDistrict.enrollment,
-            numberOfSchools: workspace.schoolDistrict.numberOfSchools,
-            lowestGrade: workspace.schoolDistrict.lowestGrade,
-            highestGrade: workspace.schoolDistrict.highestGrade,
-            urbanCentricLocale: workspace.schoolDistrict.urbanCentricLocale,
-            year: workspace.schoolDistrict.year,
+            id: organization.schoolDistrict.id,
+            leaId: organization.schoolDistrict.leaId,
+            name: organization.schoolDistrict.name,
+            stateCode: organization.schoolDistrict.stateCode,
+            stateLeaId: organization.schoolDistrict.stateLeaId,
+            city: organization.schoolDistrict.city,
+            zipCode: organization.schoolDistrict.zipCode,
+            countyName: organization.schoolDistrict.countyName,
+            enrollment: organization.schoolDistrict.enrollment,
+            numberOfSchools: organization.schoolDistrict.numberOfSchools,
+            lowestGrade: organization.schoolDistrict.lowestGrade,
+            highestGrade: organization.schoolDistrict.highestGrade,
+            urbanCentricLocale: organization.schoolDistrict.urbanCentricLocale,
+            year: organization.schoolDistrict.year,
           }
         : null,
-      // Workspace context
-      workspace_info: {
-        id: workspace.id,
-        name: workspace.name,
-        type: workspace.type,
-        district_linked: !!workspace.schoolDistrict,
+      // Organization context
+      organization_info: {
+        id: organization.id,
+        name: organization.name,
+        type: organization.type,
+        district_linked: !!organization.schoolDistrict,
       },
     };
 
     console.log("🔍 [Grant Finder API] Sending to n8n with district info:", {
       ...n8nMessage,
-      district_name: workspace.schoolDistrict?.name || "No district linked",
+      district_name: organization.schoolDistrict?.name || "No district linked",
     });
 
     const response = await fetch(N8N_WEBHOOK_URL, {
@@ -255,17 +256,17 @@ export async function POST(req: NextRequest) {
 }
 
 // Helper functions
-async function getUserWorkspaceId(userId: string): Promise<string> {
+async function getUserOrganizationId(userId: string): Promise<string> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { personalWorkspaceId: true },
+    select: { organizationId: true },
   });
 
-  if (!user?.personalWorkspaceId) {
-    throw new Error("User workspace not found");
+  if (!user?.organizationId) {
+    throw new Error("User organization not found");
   }
 
-  return user.personalWorkspaceId;
+  return user.organizationId;
 }
 
 function generateChatTitle(firstMessage: string): string {

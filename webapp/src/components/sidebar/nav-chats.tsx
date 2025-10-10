@@ -20,7 +20,7 @@ interface Chat {
   _count: { messages: number };
 }
 
-export function NavChats({ workspaceSlug }: { workspaceSlug: string | null }) {
+export function NavChats({ organizationSlug }: { organizationSlug: string | null }) {
   const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
@@ -62,8 +62,8 @@ export function NavChats({ workspaceSlug }: { workspaceSlug: string | null }) {
       if (response.ok) {
         setChats((prev) => prev.filter((chat) => chat.id !== chatId));
         // If we're currently viewing this chat, redirect to new chat
-        const chatUrl = workspaceSlug
-          ? `/private/${workspaceSlug}/chat`
+        const chatUrl = organizationSlug
+          ? `/private/${organizationSlug}/chat`
           : "/private/chat";
         if (pathname.includes(`chatId=${chatId}`)) {
           window.location.href = chatUrl;
@@ -115,7 +115,7 @@ export function NavChats({ workspaceSlug }: { workspaceSlug: string | null }) {
         <Button variant="ghost" size="sm" asChild className="h-6 w-6 p-0">
           <Link
             href={
-              workspaceSlug ? `/private/${workspaceSlug}/chat` : "/private/chat"
+              organizationSlug ? `/private/${organizationSlug}/chat` : "/private/chat"
             }
           >
             <Plus className="h-4 w-4" />
@@ -137,8 +137,8 @@ export function NavChats({ workspaceSlug }: { workspaceSlug: string | null }) {
               <MessageSquare className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
               <Link
                 href={
-                  workspaceSlug
-                    ? `/private/${workspaceSlug}/chat?chatId=${chat.id}`
+                  organizationSlug
+                    ? `/private/${organizationSlug}/chat?chatId=${chat.id}`
                     : `/private/chat?chatId=${chat.id}`
                 }
                 className="flex-1 min-w-0"

@@ -1,12 +1,15 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { verifyWorkspaceAccess, getWorkspaceBySlug } from "@/lib/workspace";
+import {
+  verifyOrganizationAccess,
+  getOrganizationBySlug,
+} from "@/lib/organization";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { DynamicBreadcrumb } from "@/components/sidebar/dynamic-breadcrumb";
 
-export default async function WorkspaceLayout({
+export default async function OrganizationLayout({
   children,
   params,
 }: {
@@ -26,17 +29,17 @@ export default async function WorkspaceLayout({
     redirect("/login");
   }
 
-  // Verify workspace exists and user has access
+  // Verify organization exists and user has access
   try {
-    await getWorkspaceBySlug(slug);
-    const hasAccess = await verifyWorkspaceAccess(user.id, slug);
+    await getOrganizationBySlug(slug);
+    const hasAccess = await verifyOrganizationAccess(user.id, slug);
 
     if (!hasAccess) {
-      // User doesn't have access to this workspace
+      // User doesn't have access to this organization
       redirect("/");
     }
   } catch (error) {
-    console.error("Workspace access error:", error);
+    console.error("Organization access error:", error);
     redirect("/");
   }
 
@@ -47,7 +50,7 @@ export default async function WorkspaceLayout({
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <Separator orientation="vertical" className="mr-2 h-4" />
-            <DynamicBreadcrumb workspaceSlug={slug} />
+            <DynamicBreadcrumb organizationSlug={slug} />
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>

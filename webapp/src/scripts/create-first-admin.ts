@@ -1,5 +1,5 @@
 /**
- * Script to create the first admin user with workspace
+ * Script to create the first admin user with organization
  *
  * Usage:
  * 1. Set environment variables in .env.local:
@@ -91,14 +91,16 @@ async function createFirstAdmin() {
     console.log("✓ Auth user created");
     const userId = authData.user.id;
 
-    // Wait for database trigger to create app.users record and workspace
-    console.log("Waiting for database trigger to create user and workspace...");
+    // Wait for database trigger to create app.users record and organization
+    console.log(
+      "Waiting for database trigger to create user and organization..."
+    );
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Verify user was created by trigger
     const dbUser = await prisma.user.findUnique({
       where: { id: userId },
-      include: { personalWorkspace: true },
+      include: { organization: true },
     });
 
     if (!dbUser) {
@@ -108,39 +110,37 @@ async function createFirstAdmin() {
       process.exit(1);
     }
 
-    if (!dbUser.personalWorkspace) {
-      console.error("\n❌ Error: Database trigger did not create workspace");
+    if (!dbUser.organization) {
+      console.error("\n❌ Error: Database trigger did not create organization");
       console.error("Please check your Supabase trigger is properly set up");
       rl.close();
       process.exit(1);
     }
 
-    console.log("✓ User and workspace created by trigger");
+    console.log("✓ User and organization created by trigger");
 
-    // Update user role to ADMIN
+    // Update user to system admin
     const adminUser = await prisma.user.update({
       where: { id: userId },
-      data: { role: "ADMIN" },
-      include: { personalWorkspace: true },
+      data: { system_admin: true },
+      include: { organization: true },
     });
 
-    console.log("✓ User role set to ADMIN");
+    console.log("✓ User set to system admin");
 
     console.log("\n=== Admin User Created Successfully ===");
     console.log(`ID: ${adminUser.id}`);
     console.log(`Email: ${adminUser.email}`);
     console.log(`Name: ${adminUser.name}`);
-    console.log(`Role: ${adminUser.role}`);
+    console.log(`System Admin: ${adminUser.system_admin}`);
 
-    if (adminUser.personalWorkspace) {
-      console.log(`Workspace: ${adminUser.personalWorkspace.name}`);
-      console.log(`Workspace Slug: ${adminUser.personalWorkspace.slug}`);
+    if (adminUser.organization) {
+      console.log(`Organization: ${adminUser.organization.name}`);
+      console.log(`Organization Slug: ${adminUser.organization.slug}`);
       console.log("\n=== Access URLs ===");
+      console.log(`Dashboard: /private/${adminUser.organization.slug}/chat`);
       console.log(
-        `Dashboard: /private/${adminUser.personalWorkspace.slug}/chat`
-      );
-      console.log(
-        `Admin Panel: /private/${adminUser.personalWorkspace.slug}/admin/users`
+        `Admin Panel: /private/${adminUser.organization.slug}/admin/users`
       );
     }
 

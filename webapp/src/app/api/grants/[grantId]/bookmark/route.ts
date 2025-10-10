@@ -2,13 +2,13 @@ import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
 
-async function getUserWorkspaceId(userId: string): Promise<string> {
+async function getUserOrganizationId(userId: string): Promise<string> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { personalWorkspaceId: true },
+    select: { organizationId: true },
   });
-  if (!user?.personalWorkspaceId) throw new Error("Workspace not found");
-  return user.personalWorkspaceId;
+  if (!user?.organizationId) throw new Error("Organization not found");
+  return user.organizationId;
 }
 
 // GET /api/grants/[grantId]/bookmark - Check if grant is bookmarked
@@ -27,7 +27,7 @@ export async function GET(
   if (!grantId) return new Response("Missing grantId", { status: 400 });
 
   try {
-    const workspaceId = await getUserWorkspaceId(user.id);
+    const organizationId = await getUserOrganizationId(user.id);
     const opportunityId = parseInt(grantId);
     if (isNaN(opportunityId)) {
       return new Response("Invalid opportunity ID", { status: 400 });
@@ -35,10 +35,10 @@ export async function GET(
 
     const bookmark = await prisma.grantBookmark.findUnique({
       where: {
-        userId_opportunityId_workspaceId: {
+        userId_opportunityId_organizationId: {
           userId: user.id,
           opportunityId,
-          workspaceId,
+          organizationId,
         },
       },
     });
@@ -66,7 +66,7 @@ export async function POST(
   if (!grantId) return new Response("Missing grantId", { status: 400 });
 
   try {
-    const workspaceId = await getUserWorkspaceId(user.id);
+    const organizationId = await getUserOrganizationId(user.id);
 
     // grantId is actually an opportunity ID (integer from public.opportunities)
     const opportunityId = parseInt(grantId);
@@ -86,23 +86,28 @@ export async function POST(
     // Create bookmark directly with opportunity ID
     const bookmark = await prisma.grantBookmark.upsert({
       where: {
-        userId_opportunityId_workspaceId: {
+        userId_opportunityId_organizationId: {
           userId: user.id,
           opportunityId,
-          workspaceId,
+          organizationId,
         },
       },
       update: {},
       create: {
         userId: user.id,
         opportunityId,
-        workspaceId,
+        organizationId,
       },
     });
 
     return Response.json(bookmark, { status: 201 });
   } catch (e) {
-    if (typeof e === "object" && e !== null && "code" in e && e.code === "P2002") {
+    if (
+      typeof e === "object" &&
+      e !== null &&
+      "code" in e &&
+      e.code === "P2002"
+    ) {
       return new Response("Already bookmarked", { status: 409 });
     }
     console.error("Error bookmarking grant:", e);
@@ -126,7 +131,7 @@ export async function DELETE(
   if (!grantId) return new Response("Missing grantId", { status: 400 });
 
   try {
-    const workspaceId = await getUserWorkspaceId(user.id);
+    const organizationId = await getUserOrganizationId(user.id);
 
     const opportunityId = parseInt(grantId);
     if (isNaN(opportunityId)) {
@@ -135,17 +140,22 @@ export async function DELETE(
 
     await prisma.grantBookmark.delete({
       where: {
-        userId_opportunityId_workspaceId: {
+        userId_opportunityId_organizationId: {
           userId: user.id,
           opportunityId,
-          workspaceId,
+          organizationId,
         },
       },
     });
 
     return new Response(null, { status: 204 });
   } catch (e) {
-    if (typeof e === "object" && e !== null && "code" in e && e.code === "P2025") {
+    if (
+      typeof e === "object" &&
+      e !== null &&
+      "code" in e &&
+      e.code === "P2025"
+    ) {
       return new Response("Bookmark not found", { status: 404 });
     }
     console.error("Error removing bookmark:", e);

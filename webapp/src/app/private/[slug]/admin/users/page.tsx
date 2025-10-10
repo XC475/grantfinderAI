@@ -36,11 +36,12 @@ interface User {
   id: string;
   email: string;
   name: string;
-  role: string;
+  system_admin: boolean;
   createdAt: string;
   lastActiveAt: string;
-  personalWorkspace?: {
+  organization?: {
     slug: string;
+    role: string;
     schoolDistrict?: {
       id: string;
       leaId: string;
@@ -91,7 +92,7 @@ export default function AdminUsersPage() {
     email: "",
     name: "",
     password: "",
-    role: "USER",
+    organizationRole: "ADMIN",
     districtData: null as SchoolDistrict | null,
   });
 
@@ -120,10 +121,10 @@ export default function AdminUsersPage() {
       return;
     }
 
-    // Fetch user role from your database
+    // Check system admin access
     const response = await fetch("/api/admin/users");
     if (response.status === 403) {
-      toast.error("Access denied - Admin only");
+      toast.error("Access denied - System admin only");
       router.back();
     }
   };
@@ -219,7 +220,7 @@ export default function AdminUsersPage() {
         email: "",
         name: "",
         password: "",
-        role: "USER",
+        organizationRole: "ADMIN",
         districtData: null,
       });
       setDistrictSearch("");
@@ -266,10 +267,15 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleToggleRole = async (userId: string, currentRole: string) => {
-    const newRole = currentRole === "ADMIN" ? "USER" : "ADMIN";
+  const handleToggleSystemAdmin = async (
+    userId: string,
+    currentSystemAdmin: boolean
+  ) => {
+    const newSystemAdmin = !currentSystemAdmin;
 
-    if (!confirm(`Change user role to ${newRole}?`)) {
+    if (
+      !confirm(`${newSystemAdmin ? "Grant" : "Remove"} system admin access?`)
+    ) {
       return;
     }
 
@@ -277,21 +283,51 @@ export default function AdminUsersPage() {
       const response = await fetch(`/api/admin/users/${userId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role: newRole }),
+        body: JSON.stringify({ system_admin: newSystemAdmin }),
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Failed to update user role");
+        throw new Error(data.error || "Failed to update system admin status");
       }
 
-      toast.success("User role updated successfully");
+      toast.success("System admin status updated successfully");
       fetchUsers();
     } catch (error) {
-      console.error("Error updating user role:", error);
+      console.error("Error updating system admin:", error);
       toast.error(
         (error instanceof Error ? error.message : String(error)) ||
-          "Failed to update user role"
+          "Failed to update system admin status"
+      );
+    }
+  };
+
+  const handleToggleOrgRole = async (userId: string, currentRole: string) => {
+    const newRole = currentRole === "ADMIN" ? "MEMBER" : "ADMIN";
+
+    if (!confirm(`Change organization role to ${newRole}?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ organizationRole: newRole }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to update organization role");
+      }
+
+      toast.success("Organization role updated successfully");
+      fetchUsers();
+    } catch (error) {
+      console.error("Error updating organization role:", error);
+      toast.error(
+        (error instanceof Error ? error.message : String(error)) ||
+          "Failed to update organization role"
       );
     }
   };
@@ -424,19 +460,20 @@ export default function AdminUsersPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="role">Role</Label>
+                    <Label htmlFor="organizationRole">Organization Role</Label>
                     <Select
-                      value={newUser.role}
+                      value={newUser.organizationRole}
                       onValueChange={(value) =>
-                        setNewUser({ ...newUser, role: value })
+                        setNewUser({ ...newUser, organizationRole: value })
                       }
                     >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="USER">User</SelectItem>
+                        <SelectItem value="MEMBER">Member</SelectItem>
                         <SelectItem value="ADMIN">Admin</SelectItem>
+                        <SelectItem value="OWNER">Owner</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -593,27 +630,36 @@ export default function AdminUsersPage() {
                     <td className="p-4">{user.name}</td>
                     <td className="p-4">{user.email}</td>
                     <td className="p-4">
-                      <span
-                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          user.role === "ADMIN"
-                            ? "bg-purple-100 text-purple-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
-                      >
-                        {user.role}
-                      </span>
+                      <div className="flex flex-col gap-1">
+                        {user.system_admin && (
+                          <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                            SYSTEM ADMIN
+                          </span>
+                        )}
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            user.organization?.role === "ADMIN"
+                              ? "bg-purple-100 text-purple-800"
+                              : user.organization?.role === "OWNER"
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-gray-100 text-gray-800"
+                          }`}
+                        >
+                          {user.organization?.role || "MEMBER"}
+                        </span>
+                      </div>
                     </td>
                     <td className="p-4 text-sm">
-                      {user.personalWorkspace?.schoolDistrict ? (
+                      {user.organization?.schoolDistrict ? (
                         <div>
                           <div className="font-medium">
-                            {user.personalWorkspace.schoolDistrict.name}
+                            {user.organization.schoolDistrict.name}
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            {user.personalWorkspace.schoolDistrict.city},{" "}
-                            {user.personalWorkspace.schoolDistrict.stateCode}
-                            {user.personalWorkspace.schoolDistrict.enrollment &&
-                              ` • ${user.personalWorkspace.schoolDistrict.enrollment.toLocaleString()} students`}
+                            {user.organization.schoolDistrict.city},{" "}
+                            {user.organization.schoolDistrict.stateCode}
+                            {user.organization.schoolDistrict.enrollment &&
+                              ` • ${user.organization.schoolDistrict.enrollment.toLocaleString()} students`}
                           </div>
                         </div>
                       ) : (
@@ -627,12 +673,14 @@ export default function AdminUsersPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleToggleRole(user.id, user.role)}
-                        title={`Change to ${
-                          user.role === "ADMIN" ? "USER" : "ADMIN"
-                        }`}
+                        onClick={() =>
+                          handleToggleSystemAdmin(user.id, user.system_admin)
+                        }
+                        title={`${user.system_admin ? "Remove" : "Grant"} system admin`}
                       >
-                        <Shield className="h-4 w-4" />
+                        <Shield
+                          className={`h-4 w-4 ${user.system_admin ? "text-red-600" : ""}`}
+                        />
                       </Button>
                       <Button
                         variant="ghost"

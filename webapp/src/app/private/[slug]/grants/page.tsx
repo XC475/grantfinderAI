@@ -115,11 +115,13 @@ function GrantsSearchPage() {
     getUser();
   }, []);
 
-  // Fetch applications for this workspace
+  // Fetch applications for this organization
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const response = await fetch(`/api/applications?workspaceSlug=${slug}`);
+        const response = await fetch(
+          `/api/applications?organizationSlug=${slug}`
+        );
         if (response.ok) {
           const data = await response.json();
           const opportunityIds = data.applications.map(
@@ -289,7 +291,7 @@ function GrantsSearchPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           opportunityId: grantId,
-          workspaceSlug: slug,
+          organizationSlug: slug,
           alsoBookmark: true, // Also bookmark when creating application
         }),
       });
@@ -702,7 +704,7 @@ function GrantsSearchPage() {
             <GrantCard
               key={grant.id}
               grant={grant}
-              workspaceSlug={slug}
+              organizationSlug={slug}
               isSaved={savedGrants.includes(grant.id)}
               hasApplication={grantApplications.includes(grant.id)}
               isLoading={savingGrant === grant.id}

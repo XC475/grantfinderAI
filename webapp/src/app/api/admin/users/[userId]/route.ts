@@ -19,12 +19,12 @@ export async function DELETE(
 
   const dbUser = await prisma.user.findUnique({
     where: { id: currentUser.id },
-    select: { role: true },
+    select: { system_admin: true },
   });
 
-  if (dbUser?.role !== "ADMIN") {
+  if (dbUser?.system_admin !== true) {
     return NextResponse.json(
-      { error: "Forbidden - Admin only" },
+      { error: "Forbidden - System admin only" },
       { status: 403 }
     );
   }
@@ -60,7 +60,11 @@ export async function DELETE(
   } catch (error) {
     console.error("Error deleting user:", error);
     return NextResponse.json(
-      { error: (error instanceof Error ? error.message : String(error)) || "Failed to delete user" },
+      {
+        error:
+          (error instanceof Error ? error.message : String(error)) ||
+          "Failed to delete user",
+      },
       { status: 500 }
     );
   }
@@ -83,12 +87,12 @@ export async function PATCH(
 
   const dbUser = await prisma.user.findUnique({
     where: { id: currentUser.id },
-    select: { role: true },
+    select: { system_admin: true },
   });
 
-  if (dbUser?.role !== "ADMIN") {
+  if (dbUser?.system_admin !== true) {
     return NextResponse.json(
-      { error: "Forbidden - Admin only" },
+      { error: "Forbidden - System admin only" },
       { status: 403 }
     );
   }
@@ -96,36 +100,82 @@ export async function PATCH(
   try {
     const { userId } = await params;
     const body = await request.json();
-    const { role } = body;
+    const { system_admin, organizationRole } = body;
 
     if (!userId) {
       return NextResponse.json({ error: "User ID required" }, { status: 400 });
     }
 
-    if (!role || !["USER", "ADMIN"].includes(role)) {
-      return NextResponse.json({ error: "Invalid role" }, { status: 400 });
+    // Validate inputs
+    if (system_admin !== undefined && typeof system_admin !== "boolean") {
+      return NextResponse.json(
+        { error: "system_admin must be a boolean" },
+        { status: 400 }
+      );
     }
 
-    // Update user role
-    const updatedUser = await prisma.user.update({
+    if (
+      organizationRole &&
+      !["OWNER", "ADMIN", "MEMBER"].includes(organizationRole)
+    ) {
+      return NextResponse.json(
+        { error: "Invalid organization role" },
+        { status: 400 }
+      );
+    }
+
+    // Update user system_admin if provided
+    if (system_admin !== undefined) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { system_admin },
+      });
+    }
+
+    // Update organization role if provided
+    if (organizationRole) {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { organizationId: true },
+      });
+
+      if (user?.organizationId) {
+        await prisma.organization.update({
+          where: { id: user.organizationId },
+          data: { role: organizationRole },
+        });
+      }
+    }
+
+    // Get updated user with organization
+    const updatedUser = await prisma.user.findUnique({
       where: { id: userId },
-      data: { role },
       select: {
         id: true,
         email: true,
         name: true,
-        role: true,
+        system_admin: true,
+        organization: {
+          select: {
+            role: true,
+            slug: true,
+          },
+        },
       },
     });
 
     return NextResponse.json({
-      message: "User role updated successfully",
+      message: "User updated successfully",
       user: updatedUser,
     });
   } catch (error) {
     console.error("Error updating user:", error);
     return NextResponse.json(
-      { error: (error instanceof Error ? error.message : String(error)) || "Failed to update user" },
+      {
+        error:
+          (error instanceof Error ? error.message : String(error)) ||
+          "Failed to update user",
+      },
       { status: 500 }
     );
   }

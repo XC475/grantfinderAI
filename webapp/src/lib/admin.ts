@@ -1,46 +1,28 @@
 import prisma from "@/lib/prisma";
-import { UserRole } from "@/generated/prisma";
 
 /**
- * Check if a user has admin role
+ * Check if a user is a system admin
  */
-export async function isAdmin(userId: string): Promise<boolean> {
+export async function isSystemAdmin(userId: string): Promise<boolean> {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { role: true },
+      select: { system_admin: true },
     });
 
-    return user?.role === UserRole.ADMIN;
+    return user?.system_admin === true;
   } catch (error) {
-    console.error("Error checking admin status:", error);
+    console.error("Error checking system admin status:", error);
     return false;
   }
 }
 
 /**
- * Require admin role - throws error if not admin
+ * Require system admin - throws error if not system admin
  */
-export async function requireAdmin(userId: string): Promise<void> {
-  const admin = await isAdmin(userId);
+export async function requireSystemAdmin(userId: string): Promise<void> {
+  const admin = await isSystemAdmin(userId);
   if (!admin) {
-    throw new Error("Admin access required");
-  }
-}
-
-/**
- * Get user role
- */
-export async function getUserRole(userId: string): Promise<string | null> {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true },
-    });
-
-    return user?.role || null;
-  } catch (error) {
-    console.error("Error getting user role:", error);
-    return null;
+    throw new Error("System admin access required");
   }
 }
