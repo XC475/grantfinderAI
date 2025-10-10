@@ -1,0 +1,269 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas   = ["app", "public"]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model alembic_version {
+  version_num String @id(map: "alembic_version_pkc") @db.VarChar(32)
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model opportunities {
+  id                   Int                     @id @default(autoincrement())
+  source               String                  @db.VarChar
+  state_code           String?                 @db.VarChar
+  source_grant_id      String                  @db.VarChar
+  status               opportunity_status_enum
+  title                String                  @db.VarChar
+  description          String?
+  description_summary  String?                 @db.VarChar
+  agency               String?                 @db.VarChar
+  funding_instrument   String?                 @db.VarChar
+  category             String?                 @db.VarChar
+  fiscal_year          Int?
+  post_date            DateTime?               @db.Date
+  close_date           DateTime?               @db.Date
+  archive_date         DateTime?               @db.Date
+  cost_sharing         Boolean?
+  award_max            Int?
+  award_min            Int?
+  total_funding_amount Int?
+  eligibility          String?
+  eligibility_summary  String?                 @db.VarChar
+  last_updated         DateTime?               @db.Timestamp(6)
+  contact_name         String?                 @db.VarChar
+  contact_email        String?                 @db.VarChar
+  contact_phone        String?                 @db.VarChar
+  url                  String?                 @db.VarChar
+  attachments          Json?                   @db.Json
+  extra                Json?                   @db.Json
+  relevance_score      Int?
+
+  @@schema("public")
+}
+
+/// ///// APP SCHEMA ////////
+model User {
+  id             String          @id @db.Uuid
+  email          String          @unique
+  name           String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  avatarUrl      String?
+  lastActiveAt   DateTime        @default(now())
+  organizationId String          @unique
+  system_admin   Boolean         @default(false)
+  aiChats        AiChat[]
+  grantBookmarks GrantBookmark[]
+  organization   Organization    @relation("UserOrganization", fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("users")
+  @@schema("app")
+}
+
+model Organization {
+  id                  String                     @id @default(cuid())
+  name                String
+  slug                String                     @unique
+  type                OrganizationType           @default(PERSONAL)
+  role                OrganizationRole           @default(MEMBER)
+  createdAt           DateTime                   @default(now())
+  updatedAt           DateTime                   @updatedAt
+  schoolDistrictId    String?
+  aiChats             AiChat[]
+  applications        Application[]
+  grantBookmarks      GrantBookmark[]
+  eligibilityAnalyses GrantEligibilityAnalysis[]
+  user                User?                      @relation("UserOrganization")
+  schoolDistrict      SchoolDistrict?            @relation(fields: [schoolDistrictId], references: [id])
+
+  @@map("organizations")
+  @@schema("app")
+}
+
+model SchoolDistrict {
+  id                 String         @id @default(cuid())
+  leaId              String         @unique
+  name               String
+  stateCode          String
+  stateLeaId         String?
+  city               String?
+  zipCode            String?
+  phone              String?
+  latitude           Float?
+  longitude          Float?
+  countyName         String?
+  enrollment         Int?
+  numberOfSchools    Int?
+  lowestGrade        Int?
+  highestGrade       Int?
+  urbanCentricLocale Int?
+  year               Int            @default(2022)
+  organizations      Organization[]
+
+  @@index([stateCode])
+  @@index([name])
+  @@index([leaId])
+  @@map("school_districts")
+  @@schema("app")
+}
+
+model GrantBookmark {
+  id             String       @id @default(cuid())
+  notes          String?
+  createdAt      DateTime     @default(now())
+  organizationId String
+  userId         String       @db.Uuid
+  opportunityId  Int
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, opportunityId, organizationId])
+  @@map("grant_bookmarks")
+  @@schema("app")
+}
+
+model GrantEligibilityAnalysis {
+  id             String         @id @default(cuid())
+  matchScore     Int
+  goNoGo         GoNoGoDecision
+  rationale      String
+  risks          String?
+  confidence     Float?
+  createdAt      DateTime       @default(now())
+  organizationId String
+  opportunityId  Int
+  organization   Organization   @relation(fields: [organizationId], references: [id])
+
+  @@unique([opportunityId, organizationId])
+  @@map("grant_eligibility_analyses")
+  @@schema("app")
+}
+
+model Application {
+  id             String            @id @default(cuid())
+  opportunityId  Int
+  organizationId String
+  status         ApplicationStatus @default(DRAFT)
+  content        Json?
+  contentHtml    String?
+  title          String?
+  notes          String?
+  documents      Json?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  submittedAt    DateTime?
+  lastEditedAt   DateTime          @default(now())
+  aiChats        AiChat[]
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([opportunityId, organizationId])
+  @@index([organizationId, status])
+  @@index([updatedAt])
+  @@map("applications")
+  @@schema("app")
+}
+
+model AiChat {
+  id             String          @id @default(cuid())
+  title          String?
+  context        AiChatContext
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  organizationId String
+  userId         String          @db.Uuid
+  applicationId  String?
+  messages       AiChatMessage[]
+  application    Application?    @relation(fields: [applicationId], references: [id])
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("ai_chats")
+  @@schema("app")
+}
+
+model AiChatMessage {
+  id        String      @id @default(cuid())
+  role      MessageRole
+  content   String
+  metadata  Json?
+  createdAt DateTime    @default(now())
+  chatId    String
+  chat      AiChat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@map("ai_chat_messages")
+  @@schema("app")
+}
+
+enum opportunity_status_enum {
+  forecasted
+  posted
+  closed
+  archive
+
+  @@schema("public")
+}
+
+enum OrganizationType {
+  PERSONAL
+  ORGANIZATION
+
+  @@schema("app")
+}
+
+enum GoNoGoDecision {
+  GO
+  NO_GO
+  MAYBE
+
+  @@schema("app")
+}
+
+enum ApplicationStatus {
+  DRAFT
+  IN_PROGRESS
+  READY_TO_SUBMIT
+  SUBMITTED
+  UNDER_REVIEW
+  AWARDED
+  REJECTED
+  WITHDRAWN
+
+  @@schema("app")
+}
+
+enum AiChatContext {
+  GENERAL
+  APPLICATION
+  GRANT_ANALYSIS
+  DRAFTING
+  ELIGIBILITY
+
+  @@schema("app")
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+
+  @@schema("app")
+}
+
+enum OrganizationRole {
+  OWNER
+  ADMIN
+  MEMBER
+
+  @@schema("app")
+}
