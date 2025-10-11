@@ -1,7 +1,3 @@
-import { login } from "@/app/login/actions";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -9,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { LoginForm } from "@/components/auth/LoginForm";
 
 interface LoginPageProps {
   searchParams: Promise<{ message?: string }>;
@@ -35,31 +32,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </div>
           )}
 
-          <form action={login} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                required
-                placeholder="Enter your email"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                required
-                placeholder="Enter your password"
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Sign In
-            </Button>
-          </form>
+          <LoginForm />
 
           <div className="text-center">
             <p className="text-sm text-gray-600">
