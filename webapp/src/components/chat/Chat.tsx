@@ -89,6 +89,13 @@ export function ChatDemo(props: ChatDemoProps) {
         if (responseChatId && responseChatId !== chatId) {
           setChatId(responseChatId);
           props.onChatIdChange?.(responseChatId);
+
+          // Dispatch event to notify sidebar that a new chat was created
+          window.dispatchEvent(
+            new CustomEvent("chatCreated", {
+              detail: { chatId: responseChatId },
+            })
+          );
         }
 
         // Handle streaming response
@@ -125,6 +132,13 @@ export function ChatDemo(props: ChatDemoProps) {
               )
             );
           }
+
+          // After streaming is complete, notify sidebar to refresh (for message count and timestamp)
+          window.dispatchEvent(
+            new CustomEvent("chatUpdated", {
+              detail: { chatId: chatId },
+            })
+          );
         } finally {
           reader.releaseLock();
         }

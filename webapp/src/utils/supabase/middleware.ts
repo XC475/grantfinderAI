@@ -4,6 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 /**
  * Middleware to keep Supabase sessions in sync between client and server.
+ * Also supports API key authentication for server-to-server requests.
  *
  * Why is this needed?
  * - Supabase uses cookies to persist sessions, but on the server we must
@@ -12,12 +13,13 @@ import { NextResponse, type NextRequest } from "next/server";
  *   users from being logged out unexpectedly.
  *
  * How it works:
- * 1. Creates a Supabase server client bound to the request/response cycle.
- * 2. Defines custom cookie handlers (`getAll`, `setAll`) so Supabase can
+ * 1. Checks for API key authentication first (bypasses Supabase auth if valid)
+ * 2. Creates a Supabase server client bound to the request/response cycle.
+ * 3. Defines custom cookie handlers (`getAll`, `setAll`) so Supabase can
  *    read and update cookies.
- * 3. Calls `supabase.auth.getUser()` immediately — this is required to
+ * 4. Calls `supabase.auth.getUser()` immediately — this is required to
  *    trigger session refresh. Skipping it can cause random logouts.
- * 4. Redirects to `/login` if no user is found and the request path is not
+ * 5. Redirects to `/login` if no user is found and the request path is not
  *    `/login`, `/auth`, or `/error`.
  *
  * ⚠️ Important:
@@ -30,6 +32,15 @@ import { NextResponse, type NextRequest } from "next/server";
  */
 
 export async function updateSession(request: NextRequest) {
+  // Check for API key authentication first (for server-to-server requests)
+  const apiKey = request.headers.get("x-api-key");
+  if (apiKey && apiKey === process.env.INTERNAL_API_KEY) {
+    console.log("✅ API key authenticated request:", request.nextUrl.pathname);
+    return NextResponse.next({
+      request,
+    });
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
