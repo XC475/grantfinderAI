@@ -12,11 +12,11 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // If logged in, redirect to their organization
+  // If logged in, redirect to their organization dashboard
   if (user) {
     try {
       const organization = await getUserOrganization(user.id);
-      redirect(`/private/${organization.slug}/chat`);
+      redirect(`/private/${organization.slug}/dashboard`);
     } catch (error) {
       // Re-throw redirect errors (they're not actual errors)
       if (

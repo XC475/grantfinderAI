@@ -10,6 +10,7 @@ import {
   FileText,
   Bookmark,
   ClipboardList,
+  LayoutDashboard,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
@@ -53,7 +54,12 @@ const data = {
   },
   navMain: [
     {
-      title: "Home",
+      title: "Dashboard",
+      url: "/private/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      title: "AI Chat",
       url: "/private/chat",
       icon: Home,
     },

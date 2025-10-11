@@ -138,7 +138,9 @@ async function createFirstAdmin() {
       console.log(`Organization: ${adminUser.organization.name}`);
       console.log(`Organization Slug: ${adminUser.organization.slug}`);
       console.log("\n=== Access URLs ===");
-      console.log(`Dashboard: /private/${adminUser.organization.slug}/chat`);
+      console.log(
+        `Dashboard: /private/${adminUser.organization.slug}/dashboard`
+      );
       console.log(
         `Admin Panel: /private/${adminUser.organization.slug}/admin/users`
       );
