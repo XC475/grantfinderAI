@@ -17,6 +17,7 @@ client = OpenAI(
     api_key=os.getenv("OPENROUTER_API_KEY"),
 )
 
+
 def parse_date(date_str: str) -> Union[datetime.date, None]:
     """Parse a date string into a date object. Returns None if parsing fails.
     Supports formats like "MM/DD/YYYY", "Month Day, Year", "Weekday, Month Day, Year",
