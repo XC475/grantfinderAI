@@ -27,7 +27,7 @@ def get_batch_prompt(grants_batch):
     """Generate the prompt for batch AI extraction based on multiple grant opportunities."""
     batch_json = json.dumps(grants_batch, indent=2)
     grant_count = len(grants_batch)
-    
+
     prompt = f"""
         You are an AI agent specialized in processing grant data from grants.gov. You will process multiple grants in a batch. 
         For each grant, extract and organize key information into a structured JSON object.
@@ -74,34 +74,34 @@ def batch_process_grants_with_ai(grants_data):
     """Process multiple grants in a single AI API call for efficiency."""
     if not grants_data:
         return []
-    
+
     try:
         print(f"Processing batch of {len(grants_data)} grants with AI")
         ai_response = helpers.ai_extract_data(get_batch_prompt(grants_data), model)
-        
+
         if not ai_response:
             print("No response from AI")
             return []
-        
+
         # Clean the response
         # Remove any text before the first '[' and after the last ']'
-        start = ai_response.find('[')
-        end = ai_response.rfind(']')
+        start = ai_response.find("[")
+        end = ai_response.rfind("]")
         if start != -1 and end != -1 and end > start:
-            ai_response = ai_response[start:end+1]
+            ai_response = ai_response[start : end + 1]
         else:
             print("AI response does not contain a valid JSON array.")
             return []
-        
+
         processed_grants = json.loads(ai_response)
-        
+
         if not isinstance(processed_grants, list):
             print("AI response is not a list")
             return []
-        
+
         print(f"Successfully processed {len(processed_grants)} grants with AI")
         return processed_grants
-    
+
     except json.JSONDecodeError as e:
         print(f"Error parsing AI response as JSON: {e}")
         return []
@@ -201,7 +201,9 @@ def prepare_forecasted_grant(op, session):
         "title": opportunity.title,
         "funding_instrument": opportunity.funding_instrument,
         "funding_category": opportunity.category,
-        "description": opportunity.description[:2000] if opportunity.description else None,  # Limit for batch processing
+        "description": opportunity.description[:2000]
+        if opportunity.description
+        else None,  # Limit for batch processing
         "agency": opportunity.agency,
         "award_ceiling": opportunity.award_ceiling,
         "award_floor": opportunity.award_floor,
@@ -215,13 +217,15 @@ def prepare_forecasted_grant(op, session):
         "contact_phone": opportunity.contact_phone,
         "cost_sharing": opportunity.cost_sharing,
         "attachments": opportunity.attachments,
-        "eligibility": opportunity.eligibility[:1000] if opportunity.eligibility else None,  # Limit for batch processing
+        "eligibility": opportunity.eligibility[:1000]
+        if opportunity.eligibility
+        else None,  # Limit for batch processing
     }
 
     return {
-        'opportunity': opportunity,
-        'grant_data': current_opportunity,
-        'raw_data': op
+        "opportunity": opportunity,
+        "grant_data": current_opportunity,
+        "raw_data": op,
     }
 
 
@@ -335,7 +339,9 @@ def prepare_posted_grant(op, opp_status, session):
         "title": opportunity.title,
         "funding_instrument": opportunity.funding_instrument,
         "funding_category": opportunity.category,
-        "description": opportunity.description[:2000] if opportunity.description else None,  # Limit for batch processing
+        "description": opportunity.description[:2000]
+        if opportunity.description
+        else None,  # Limit for batch processing
         "agency": opportunity.agency,
         "award_ceiling": opportunity.award_ceiling,
         "award_floor": opportunity.award_floor,
@@ -349,13 +355,15 @@ def prepare_posted_grant(op, opp_status, session):
         "contact_phone": opportunity.contact_phone,
         "cost_sharing": opportunity.cost_sharing,
         "attachments": opportunity.attachments,
-        "eligibility": opportunity.eligibility[:1000] if opportunity.eligibility else None,  # Limit for batch processing
+        "eligibility": opportunity.eligibility[:1000]
+        if opportunity.eligibility
+        else None,  # Limit for batch processing
     }
 
     return {
-        'opportunity': opportunity,
-        'grant_data': current_opportunity,
-        'raw_data': op
+        "opportunity": opportunity,
+        "grant_data": current_opportunity,
+        "raw_data": op,
     }
 
 
@@ -374,10 +382,14 @@ def apply_ai_results_to_opportunity(opportunity, ai_data):
                 if 0 <= relevance_score <= 100:
                     opportunity.relevance_score = relevance_score
                 else:
-                    print(f"Relevance score {relevance_score} out of bounds (0-100). Setting to None.")
+                    print(
+                        f"Relevance score {relevance_score} out of bounds (0-100). Setting to None."
+                    )
                     opportunity.relevance_score = None
             except (ValueError, TypeError):
-                print(f"Invalid relevance score value: {ai_data['relevance_score']}. Setting to None.")
+                print(
+                    f"Invalid relevance score value: {ai_data['relevance_score']}. Setting to None."
+                )
                 opportunity.relevance_score = None
         return True
     except Exception as e:
@@ -389,38 +401,39 @@ def process_batch(batch, session):
     """Process a batch of grants with AI and update the database."""
     if not batch:
         return 0
-    
+
     print(f"Processing batch of {len(batch)} grants...")
-    
+
     # Prepare batch data for AI processing
     batch_data = []
     for j, grant_info in enumerate(batch):
-        grant_data = grant_info['grant_data'].copy()
-        grant_data['index'] = j
+        grant_data = grant_info["grant_data"].copy()
+        grant_data["index"] = j
         batch_data.append(grant_data)
-    
+
     # Process with AI
     processed_grants = batch_process_grants_with_ai(batch_data)
-    
+
     if not processed_grants:
         print("No AI results received for this batch")
         return 0
-    
+
     # Apply AI results to opportunities and commit
     updated_count = 0
     for j, ai_result in enumerate(processed_grants):
         if j < len(batch):
             grant_info = batch[j]
-            opportunity = grant_info['opportunity']
-            
+            opportunity = grant_info["opportunity"]
+
             if apply_ai_results_to_opportunity(opportunity, ai_result):
                 session.commit()
                 print(f"Upserted {opportunity.source_grant_id}: {opportunity.title}")
                 updated_count += 1
             else:
                 session.rollback()
-    
+
     return updated_count
+
 
 def update_expired(session):
     """Mark expired opportunities as closed."""
@@ -430,7 +443,7 @@ def update_expired(session):
     # Query for opportunities that have passed their archive date
     archived = (
         session.query(Opportunity)
-        .filter(Opportunity.archive_date != None)
+        .filter(Opportunity.archive_date is not None)
         .filter(Opportunity.archive_date < today)
         .filter(
             Opportunity.status.in_(
@@ -451,7 +464,7 @@ def update_expired(session):
 
     expired = (
         session.query(Opportunity)
-        .filter(Opportunity.close_date != None)
+        .filter(Opportunity.close_date is not None)
         .filter(Opportunity.close_date < today)
         .filter(
             Opportunity.status.in_(
@@ -481,7 +494,7 @@ def main():
                 "oppStatuses": "forecasted|posted",
                 "dateRange": "",
                 "rows": 5000,
-            }
+            },
         )
         response.raise_for_status()
 
@@ -510,7 +523,7 @@ def main():
         batch_size = 5
         current_batch = []
         updated_count = 0
-        
+
         for opp_summary in opps:
             opp_id = opp_summary["id"]
             opp_status = opp_summary["oppStatus"]
@@ -527,15 +540,15 @@ def main():
                 prepared_grant = prepare_forecasted_grant(detail, session)
             else:
                 prepared_grant = prepare_posted_grant(detail, opp_status, session)
-                
+
             if prepared_grant:  # Only add if not skipped
                 current_batch.append(prepared_grant)
-                
+
                 # Process batch when it reaches the batch size
                 if len(current_batch) >= batch_size:
                     updated_count += process_batch(current_batch, session)
                     current_batch = []  # Reset batch
-        
+
         # Process any remaining grants in the final batch
         if current_batch:
             updated_count += process_batch(current_batch, session)
