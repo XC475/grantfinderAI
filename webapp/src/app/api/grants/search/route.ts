@@ -228,117 +228,96 @@ export async function GET(req: NextRequest) {
       supabaseQuery = supabaseQuery.lte("close_date", closeDateTo);
     }
 
-    // Add pagination
+    // First, fetch ALL matching records (without pagination) to sort by status
     console.log(
-      `🔍 [${requestId}] Adding pagination: offset=${offset}, limit=${limit}`
+      `🔍 [${requestId}] Fetching all matching records for status-based sorting...`
     );
-    supabaseQuery = supabaseQuery
-      .range(offset, offset + limit - 1)
-      .order("post_date", { ascending: false });
 
-    console.log(`🔍 [${requestId}] Executing Supabase query...`);
-    const { data, error } = await supabaseQuery;
+    let allDataQuery = supabaseQuery;
+    const { data: allData, error: allError } = await allDataQuery;
 
-    if (error) {
-      console.error(`❌ [${requestId}] Supabase query error:`, error);
+    if (allError) {
+      console.error(`❌ [${requestId}] Supabase query error:`, allError);
       return NextResponse.json(
         {
-          error: error.message,
+          error: allError.message,
           requestId,
           timestamp: new Date().toISOString(),
         },
         {
           status: 500,
-          //   headers: corsHeaders,
         }
       );
     }
 
     console.log(
       `✅ [${requestId}] Supabase query successful. Found ${
-        data?.length || 0
-      } records`
+        allData?.length || 0
+      } total records before pagination`
     );
 
-    // Get total count for pagination
-    let totalCount = 0;
-    if (
-      query ||
-      status ||
-      category ||
-      minAmount ||
-      maxAmount ||
-      stateCode ||
-      agency ||
-      fundingInstrument ||
-      costSharing ||
-      fiscalYear ||
-      source ||
-      closeDateFrom ||
-      closeDateTo
-    ) {
-      console.log(`🔍 [${requestId}] Getting filtered count...`);
-      let countQuery = supabaseServer
-        .from("opportunities")
-        .select("*", { count: "exact", head: true });
+    // Sort all data by status first, then relevance, then date
+    const statusPriority: { [key: string]: number } = {
+      posted: 1,
+      forecasted: 2,
+      closed: 3,
+    };
 
-      // Apply the same filters to count query
-      if (query) {
-        countQuery = countQuery.or(
-          `title.ilike.%${query}%,description.ilike.%${query}%,source_grant_id.ilike.%${query}%`
-        );
-      }
-      if (status) {
-        countQuery = countQuery.eq("status", status);
-      }
-      if (category) {
-        countQuery = countQuery.eq("category", category);
-      }
-      if (minAmount) {
-        const minAmountNum = parseInt(minAmount);
-        countQuery = countQuery.gte("total_funding_amount", minAmountNum);
-      }
-      if (maxAmount) {
-        const maxAmountNum = parseInt(maxAmount);
-        countQuery = countQuery.lte("total_funding_amount", maxAmountNum);
-      }
-      if (stateCode) {
-        countQuery = countQuery.eq("state_code", stateCode);
-      }
-      if (agency) {
-        countQuery = countQuery.eq("agency", agency);
-      }
-      if (fundingInstrument) {
-        countQuery = countQuery.eq("funding_instrument", fundingInstrument);
-      }
-      if (costSharing !== null && costSharing !== undefined) {
-        const requiresCostSharing = costSharing === "true";
-        countQuery = countQuery.eq("cost_sharing", requiresCostSharing);
-      }
-      if (fiscalYear) {
-        const fiscalYearNum = parseInt(fiscalYear);
-        countQuery = countQuery.eq("fiscal_year", fiscalYearNum);
-      }
-      if (source) {
-        countQuery = countQuery.eq("source", source);
-      }
-      if (closeDateFrom) {
-        countQuery = countQuery.gte("close_date", closeDateFrom);
-      }
-      if (closeDateTo) {
-        countQuery = countQuery.lte("close_date", closeDateTo);
-      }
+    const sortedAllData =
+      allData?.sort((a, b) => {
+        // First, sort by status priority (posted, forecasted, closed)
+        const aStatusPriority = statusPriority[a.status?.toLowerCase()] ?? 999;
+        const bStatusPriority = statusPriority[b.status?.toLowerCase()] ?? 999;
+        if (aStatusPriority !== bStatusPriority) {
+          return aStatusPriority - bStatusPriority;
+        }
 
-      const { count: filteredCount } = await countQuery;
-      totalCount = filteredCount || 0;
-    } else {
-      // For unfiltered queries, get total count
-      console.log(`🔍 [${requestId}] Getting total count...`);
-      const { count } = await supabaseServer
-        .from("opportunities")
-        .select("*", { count: "exact", head: true });
-      totalCount = count || 0;
-    }
+        // Then, within same status, sort by relevance_score (descending, nulls last)
+        const aRelevance = a.relevance_score ?? -Infinity;
+        const bRelevance = b.relevance_score ?? -Infinity;
+        if (aRelevance !== bRelevance) {
+          return bRelevance - aRelevance;
+        }
+
+        // Finally, sort by post_date (descending, most recent first)
+        const aDate = a.post_date ? new Date(a.post_date).getTime() : 0;
+        const bDate = b.post_date ? new Date(b.post_date).getTime() : 0;
+        return bDate - aDate;
+      }) || [];
+
+    // Now apply pagination to the sorted data
+    const data = sortedAllData.slice(offset, offset + limit);
+    const error = null;
+
+    console.log(
+      `🔍 [${requestId}] Applied pagination: offset=${offset}, limit=${limit}`
+    );
+
+    // Debug: Log status distribution for paginated results
+    const statusCounts = data.reduce(
+      (acc, grant) => {
+        const status = grant.status?.toLowerCase() || "unknown";
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+    console.log(
+      `✅ [${requestId}] Status distribution in paginated results:`,
+      statusCounts
+    );
+    console.log(
+      `✅ [${requestId}] First 5 grants on this page:`,
+      data.slice(0, 5).map((g) => ({
+        id: g.id,
+        status: g.status,
+        relevance: g.relevance_score,
+        title: g.title?.substring(0, 50),
+      }))
+    );
+
+    // Get total count from the sorted data (all matching records)
+    const totalCount = sortedAllData?.length || 0;
     console.log(`🔍 [${requestId}] Total count: ${totalCount}`);
 
     const responseData = {
