@@ -12,10 +12,12 @@ import {
 } from "@/components/ui/breadcrumb";
 
 interface DynamicBreadcrumbProps {
-  workspaceSlug: string;
+  organizationSlug: string;
 }
 
-export function DynamicBreadcrumb({ workspaceSlug }: DynamicBreadcrumbProps) {
+export function DynamicBreadcrumb({
+  organizationSlug,
+}: DynamicBreadcrumbProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [grantTitle, setGrantTitle] = useState<string | null>(null);
@@ -24,7 +26,7 @@ export function DynamicBreadcrumb({ workspaceSlug }: DynamicBreadcrumbProps) {
 
   const breadcrumbs = useMemo(() => {
     // Remove the /private/[slug] prefix
-    const path = pathname.replace(`/private/${workspaceSlug}`, "");
+    const path = pathname.replace(`/private/${organizationSlug}`, "");
     const segments = path.split("/").filter(Boolean);
 
     // If we're on the chat page (home), don't show breadcrumbs
@@ -38,7 +40,7 @@ export function DynamicBreadcrumb({ workspaceSlug }: DynamicBreadcrumbProps) {
     // Always start with Home
     items.push({
       label: "Home",
-      href: `/private/${workspaceSlug}/chat`,
+      href: `/private/${organizationSlug}/chat`,
       isLast: false,
     });
 
@@ -49,7 +51,7 @@ export function DynamicBreadcrumb({ workspaceSlug }: DynamicBreadcrumbProps) {
         // Viewing grant from bookmarks
         items.push({
           label: "Saved Grants",
-          href: `/private/${workspaceSlug}/bookmarks`,
+          href: `/private/${organizationSlug}/bookmarks`,
           isLast: false,
         });
         items.push({
@@ -61,7 +63,7 @@ export function DynamicBreadcrumb({ workspaceSlug }: DynamicBreadcrumbProps) {
         // Regular grants flow
         items.push({
           label: "Grants",
-          href: `/private/${workspaceSlug}/grants`,
+          href: `/private/${organizationSlug}/grants`,
           isLast: segments.length === 1,
         });
 
@@ -77,13 +79,13 @@ export function DynamicBreadcrumb({ workspaceSlug }: DynamicBreadcrumbProps) {
     } else if (segments[0] === "bookmarks") {
       items.push({
         label: "Saved Grants",
-        href: `/private/${workspaceSlug}/bookmarks`,
+        href: `/private/${organizationSlug}/bookmarks`,
         isLast: true,
       });
     } else if (segments[0] === "settings") {
       items.push({
         label: "Settings",
-        href: `/private/${workspaceSlug}/settings`,
+        href: `/private/${organizationSlug}/settings`,
         isLast: true,
       });
     } else {
@@ -102,11 +104,11 @@ export function DynamicBreadcrumb({ workspaceSlug }: DynamicBreadcrumbProps) {
     }
 
     return items;
-  }, [pathname, workspaceSlug, grantTitle, fromBookmarks]);
+  }, [pathname, organizationSlug, grantTitle, fromBookmarks]);
 
   // Fetch grant title if we're on a grant detail page
   useEffect(() => {
-    const path = pathname.replace(`/private/${workspaceSlug}`, "");
+    const path = pathname.replace(`/private/${organizationSlug}`, "");
     const segments = path.split("/").filter(Boolean);
 
     if (segments[0] === "grants" && segments[1]) {
@@ -124,7 +126,7 @@ export function DynamicBreadcrumb({ workspaceSlug }: DynamicBreadcrumbProps) {
     } else {
       setGrantTitle(null);
     }
-  }, [pathname, workspaceSlug]);
+  }, [pathname, organizationSlug]);
 
   // Don't render anything if we're on the home page
   if (!breadcrumbs) {

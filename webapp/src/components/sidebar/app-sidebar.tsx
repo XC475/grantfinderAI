@@ -116,25 +116,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     email: string;
     avatar: string;
   } | null>(null);
-  const [workspaces, setWorkspaces] = React.useState<
-    Array<{
-      id: string;
-      name: string;
-      slug: string;
-      type: string;
-    }>
-  >([]);
-  const [loadingWorkspaces, setLoadingWorkspaces] = React.useState(true);
+  const [organization, setOrganization] = React.useState<{
+    id: string;
+    name: string;
+    slug: string;
+    type: string;
+  } | null>(null);
+  const [loadingOrganization, setLoadingOrganization] = React.useState(true);
 
-  // Extract workspace slug from pathname: /private/[slug]/...
-  const workspaceSlug = React.useMemo(() => {
+  // Extract organization slug from pathname: /private/[slug]/...
+  const organizationSlug = React.useMemo(() => {
     const match = pathname.match(/^\/private\/([^\/]+)/);
     return match ? match[1] : null;
   }, [pathname]);
 
-  // Fetch actual user data and workspaces
+  // Fetch actual user data and organization
   React.useEffect(() => {
-    const fetchUserAndWorkspaces = async () => {
+    const fetchUserAndOrganization = async () => {
       const supabase = createClient();
       const {
         data: { user: authUser },
@@ -150,32 +148,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           avatar: authUser.user_metadata?.avatar_url || "",
         });
 
-        // Fetch user's workspaces
+        // Fetch user's organization
         try {
-          const response = await fetch("/api/workspaces");
+          const response = await fetch("/api/organizations");
           if (response.ok) {
             const data = await response.json();
-            setWorkspaces(data);
+            setOrganization(data);
           }
         } catch (error) {
-          console.error("Error fetching workspaces:", error);
+          console.error("Error fetching organization:", error);
         } finally {
-          setLoadingWorkspaces(false);
+          setLoadingOrganization(false);
         }
       }
     };
-    fetchUserAndWorkspaces();
+    fetchUserAndOrganization();
   }, []);
 
-  // Build navigation items with workspace slug
+  // Build navigation items with organization slug
   const navItems = React.useMemo(() => {
-    if (!workspaceSlug) return data.navMain;
+    if (!organizationSlug) return data.navMain;
 
     return data.navMain.map((item) => ({
       ...item,
-      url: `/private/${workspaceSlug}${item.url.replace("/private", "")}`,
+      url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
     }));
-  }, [workspaceSlug]);
+  }, [organizationSlug]);
 
   // Check if we're on a settings page
   const isOnSettingsPage = pathname.includes("/settings");
@@ -184,18 +182,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher
-          workspaces={workspaces}
-          currentSlug={workspaceSlug}
-          loading={loadingWorkspaces}
+          organization={organization}
+          currentSlug={organizationSlug}
+          loading={loadingOrganization}
         />
       </SidebarHeader>
       <SidebarContent>
         {isOnSettingsPage ? (
-          <NavSettings workspaceSlug={workspaceSlug} />
+          <NavSettings organizationSlug={organizationSlug} />
         ) : (
           <>
             <NavMain items={navItems} />
-            <NavChats workspaceSlug={workspaceSlug} />
+            <NavChats organizationSlug={organizationSlug} />
           </>
         )}
       </SidebarContent>

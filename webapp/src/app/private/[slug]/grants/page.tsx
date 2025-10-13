@@ -50,6 +50,10 @@ interface SearchResponse {
   };
 }
 
+interface ApplicationData {
+  opportunityId: string;
+}
+
 function GrantsSearchPage() {
   const params = useParams();
   const slug = params.slug as string;
@@ -111,15 +115,17 @@ function GrantsSearchPage() {
     getUser();
   }, []);
 
-  // Fetch applications for this workspace
+  // Fetch applications for this organization
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const response = await fetch(`/api/applications?workspaceSlug=${slug}`);
+        const response = await fetch(
+          `/api/applications?organizationSlug=${slug}`
+        );
         if (response.ok) {
           const data = await response.json();
           const opportunityIds = data.applications.map(
-            (app: any) => app.opportunityId
+            (app: ApplicationData) => app.opportunityId
           );
           setGrantApplications(opportunityIds);
         }
@@ -148,7 +154,7 @@ function GrantsSearchPage() {
     fetchFilterOptions();
   }, []);
 
-  const fetchGrants = async (resetOffset = true) => {
+  const fetchGrants = async (resetOffset = true, customOffset?: number) => {
     try {
       setLoading(true);
       setError(null);
@@ -169,7 +175,12 @@ function GrantsSearchPage() {
       if (closeDateFrom) params.append("closeDateFrom", closeDateFrom);
       if (closeDateTo) params.append("closeDateTo", closeDateTo);
       params.append("limit", pagination.limit.toString());
-      params.append("offset", resetOffset ? "0" : pagination.offset.toString());
+      const offset = resetOffset
+        ? 0
+        : customOffset !== undefined
+          ? customOffset
+          : pagination.offset;
+      params.append("offset", offset.toString());
 
       const response = await fetch(`/api/grants/search?${params}`);
 
@@ -220,8 +231,8 @@ function GrantsSearchPage() {
   };
 
   const handleLoadMore = () => {
-    setPagination((prev) => ({ ...prev, offset: prev.offset + prev.limit }));
-    fetchGrants(false);
+    const newOffset = pagination.offset + pagination.limit;
+    fetchGrants(false, newOffset);
   };
 
   const handleSaveGrant = async (grantId: number) => {
@@ -280,7 +291,7 @@ function GrantsSearchPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           opportunityId: grantId,
-          workspaceSlug: slug,
+          organizationSlug: slug,
           alsoBookmark: true, // Also bookmark when creating application
         }),
       });
@@ -693,7 +704,7 @@ function GrantsSearchPage() {
             <GrantCard
               key={grant.id}
               grant={grant}
-              workspaceSlug={slug}
+              organizationSlug={slug}
               isSaved={savedGrants.includes(grant.id)}
               hasApplication={grantApplications.includes(grant.id)}
               isLoading={savingGrant === grant.id}

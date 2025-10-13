@@ -23,7 +23,7 @@ interface Application {
   updatedAt: string;
   submittedAt: string | null;
   lastEditedAt: string;
-  workspace: {
+  organization: {
     slug: string;
     name: string;
   };
@@ -66,13 +66,11 @@ export default function ApplicationsPage({
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchApplications();
-  }, [slug]);
-
   const fetchApplications = async () => {
     try {
-      const response = await fetch(`/api/applications?workspaceSlug=${slug}`);
+      const response = await fetch(
+        `/api/applications?organizationSlug=${slug}`
+      );
       if (response.ok) {
         const data = await response.json();
         setApplications(data.applications);
@@ -86,6 +84,11 @@ export default function ApplicationsPage({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchApplications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug]);
 
   if (loading) {
     return (
@@ -110,8 +113,8 @@ export default function ApplicationsPage({
                 No applications yet
               </h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Start by browsing grants and clicking "Apply" to create your
-                first application
+                Start by browsing grants and clicking &ldquo;Apply&rdquo; to
+                create your first application
               </p>
               <Button onClick={() => router.push(`/private/${slug}/grants`)}>
                 Browse Grants

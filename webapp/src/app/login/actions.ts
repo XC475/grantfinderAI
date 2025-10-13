@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { redirectWithToast } from "@/lib/toast";
-import { getUserWorkspace } from "@/lib/workspace";
+import { getUserOrganization } from "@/lib/organization";
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
@@ -16,45 +16,51 @@ export async function login(formData: FormData) {
     password: formData.get("password") as string,
   };
 
-  const { error, data: authData } = await supabase.auth.signInWithPassword(
-    data
-  );
+  const { error, data: authData } =
+    await supabase.auth.signInWithPassword(data);
 
   if (error) {
     redirect(
       redirectWithToast(
         "/login",
         "error",
-        (error instanceof Error ? error.message : String(error)) || "Invalid email or password"
+        (error instanceof Error ? error.message : String(error)) ||
+          "Invalid email or password"
       )
     );
   }
 
-  // Get user's workspace and redirect to it
+  // Get user's organization and redirect to it
   if (authData.user) {
     try {
-      const workspace = await getUserWorkspace(authData.user.id);
+      const organization = await getUserOrganization(authData.user.id);
       revalidatePath("/", "layout");
       redirect(
         redirectWithToast(
-          `/private/${workspace.slug}/chat`,
+          `/private/${organization.slug}/chat`,
           "success",
           "Welcome back!"
         )
       );
     } catch (error) {
       // Re-throw redirect errors (they're not actual errors)
-      if (error && typeof error === "object" && "digest" in error && typeof error.digest === "string" && error.digest.startsWith("NEXT_REDIRECT")) {
+      if (
+        error &&
+        typeof error === "object" &&
+        "digest" in error &&
+        typeof error.digest === "string" &&
+        error.digest.startsWith("NEXT_REDIRECT")
+      ) {
         throw error;
       }
-      console.error("Error fetching workspace:", error);
+      console.error("Error fetching organization:", error);
       revalidatePath("/", "layout");
-      redirect(redirectWithToast("/private", "success", "Welcome back!"));
+      redirect(redirectWithToast("/login", "error", "Organization not found"));
     }
   }
 
   revalidatePath("/", "layout");
-  redirect(redirectWithToast("/private", "success", "Welcome back!"));
+  redirect(redirectWithToast("/login", "error", "Login failed"));
 }
 
 export async function logout() {

@@ -1,1 +1,1 @@
-from .opportunity import Opportunity, OpportunityStatusEnum
+from .opportunity import Opportunity, OpportunityStatusEnum  # noqa: F401

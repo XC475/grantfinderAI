@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { getUserWorkspace } from "@/lib/workspace";
+import { getUserOrganization } from "@/lib/organization";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -12,19 +12,25 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // If logged in, redirect to their workspace
+  // If logged in, redirect to their organization
   if (user) {
     try {
-      const workspace = await getUserWorkspace(user.id);
-      redirect(`/private/${workspace.slug}/chat`);
+      const organization = await getUserOrganization(user.id);
+      redirect(`/private/${organization.slug}/chat`);
     } catch (error) {
       // Re-throw redirect errors (they're not actual errors)
-      if (typeof error === "object" && error !== null && "digest" in error && typeof error.digest === "string" && error.digest.startsWith("NEXT_REDIRECT")) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "digest" in error &&
+        typeof error.digest === "string" &&
+        error.digest.startsWith("NEXT_REDIRECT")
+      ) {
         throw error;
       }
-      console.error("Error fetching workspace:", error);
-      // Fallback to old route if workspace not found
-      redirect("/private/chat");
+      console.error("Error fetching organization:", error);
+      // Fallback if organization not found
+      redirect("/login");
     }
   }
 

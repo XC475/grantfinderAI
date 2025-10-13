@@ -10,7 +10,7 @@ interface WelcomeEmailParams {
   name: string;
   loginUrl: string;
   temporaryPassword: string;
-  workspaceUrl: string;
+  organizationUrl: string;
 }
 
 /**
@@ -21,7 +21,7 @@ export async function sendWelcomeEmail({
   name,
   loginUrl,
   temporaryPassword,
-  workspaceUrl,
+  organizationUrl,
 }: WelcomeEmailParams): Promise<{ success: boolean; error?: string }> {
   const resendApiKey = process.env.RESEND_API_KEY;
 
@@ -44,7 +44,7 @@ export async function sendWelcomeEmail({
         name,
         loginUrl,
         temporaryPassword,
-        workspaceUrl,
+        organizationUrl,
       }),
     });
 
@@ -71,7 +71,7 @@ function generateWelcomeEmailHTML({
   name,
   loginUrl,
   temporaryPassword,
-  workspaceUrl,
+  organizationUrl,
 }: Omit<WelcomeEmailParams, "to">): string {
   return `
 <!DOCTYPE html>
@@ -196,7 +196,7 @@ function generateWelcomeEmailHTML({
       <h3 style="color: #111827; margin-top: 30px;">Getting Started</h3>
       <ul style="color: #4B5563;">
         <li><strong>Login:</strong> Use the button above or visit <a href="${loginUrl}" class="link">${loginUrl}</a></li>
-        <li><strong>Your Workspace:</strong> Access your personal workspace at <a href="${workspaceUrl}" class="link">this link</a></li>
+        <li><strong>Your Organization:</strong> Access your personal organization at <a href="${organizationUrl}" class="link">this link</a></li>
         <li><strong>Change Password:</strong> Go to Settings → Account after logging in</li>
         <li><strong>Explore Grants:</strong> Browse available grant opportunities in your dashboard</li>
       </ul>
@@ -208,7 +208,7 @@ function generateWelcomeEmailHTML({
     <div class="footer">
       <p>This email was sent by GrantFinder AI</p>
       <p style="margin-top: 10px;">
-        <a href="${workspaceUrl}" class="link">Go to Dashboard</a> • 
+        <a href="${organizationUrl}" class="link">Go to Dashboard</a> • 
         <a href="${loginUrl}" class="link">Login</a>
       </p>
     </div>
