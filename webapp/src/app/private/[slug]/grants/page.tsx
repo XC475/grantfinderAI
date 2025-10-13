@@ -59,6 +59,7 @@ function GrantsSearchPage() {
   const slug = params.slug as string;
   const [grants, setGrants] = useState<Grant[]>([]);
   const [loading, setLoading] = useState(true);
+  const [initialLoad, setInitialLoad] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -216,6 +217,7 @@ function GrantsSearchPage() {
       toast.error("Failed to fetch grants");
     } finally {
       setLoading(false);
+      setInitialLoad(false);
     }
   };
 
@@ -223,6 +225,38 @@ function GrantsSearchPage() {
     fetchGrants();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Auto-search when search query changes (with debounce)
+  useEffect(() => {
+    if (initialLoad) return; // Don't trigger during initial load
+
+    const delayDebounce = setTimeout(() => {
+      fetchGrants(true);
+    }, 500); // 500ms debounce for search query
+
+    return () => clearTimeout(delayDebounce);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
+
+  // Auto-search when dropdown/filter fields change (instant, no debounce)
+  useEffect(() => {
+    if (initialLoad) return; // Don't trigger during initial load
+    fetchGrants(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    statusFilter,
+    categoryFilter,
+    minAmount,
+    maxAmount,
+    stateCode,
+    agency,
+    fundingInstrument,
+    costSharing,
+    fiscalYear,
+    source,
+    closeDateFrom,
+    closeDateTo,
+  ]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -340,7 +374,7 @@ function GrantsSearchPage() {
     setCloseDateFrom("");
     setCloseDateTo("");
     setPagination((prev) => ({ ...prev, offset: 0 }));
-    fetchGrants(true);
+    // fetchGrants will be triggered automatically by the useEffect hooks
   };
 
   return (
