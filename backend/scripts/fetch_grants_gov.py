@@ -29,43 +29,47 @@ def get_batch_prompt(grants_batch):
     grant_count = len(grants_batch)
 
     prompt = f"""
-        You are an AI agent specialized in processing grant data from grants.gov. You will process multiple grants in a batch. 
-        For each grant, extract and organize key information into a structured JSON object.
-        The goal is to build a searchable grants database specifically for U.S. public school districts, so focus on identifying 
-        and clearly stating information most relevant to school administrators and district grant officers.
-        
-        Process the following {grant_count} grants:
-        {batch_json}
-        
-        For EACH grant, extract the following information:
-        
-        Instructions for each grant:
-        - description_summary: Concise, plain-language summary of the grant's purpose and what it funds. Highlight aspects relevant to public school districts.
-        - eligibility_summary: Summarize eligibility rules in plain English. Explicitly state if public school districts, LEAs, or K-12 schools are eligible.
-        - extra: Any other important details that might help a school district decide if the grant is worth pursuing. Use a structured JSON object.
-        - relevance_score: Integer 0-100 reflecting relevance to U.S. public school districts:
-          * 90-100: Specifically targets K-12 schools, LEAs, or districts
-          * 70-89: Education-related, commonly applicable to schools
-          * 40-69: Schools technically eligible, broader focus
-          * 0-39: Minimal relevance to districts
+IMPORTANT: You MUST return ONLY a valid JSON array. Do not include any explanatory text, comments, or additional information.
 
-        Return ONLY a JSON array with one object per grant (even if there is only one), in the same order as input:
-        [
-          {{
-            "index": 0,
-            "description_summary": "...",
-            "eligibility_summary": "...",
-            "extra": {{}},
-            "relevance_score": 50
-          }},
-          {{
-            "index": 1,
-            "description_summary": "...",
-            "eligibility_summary": "...",
-            "extra": {{}},
-            "relevance_score": 75
-          }}
-        ]
+You are processing {grant_count} grants from grants.gov. For each grant, extract key information into a JSON object.
+
+Input data:
+{batch_json}
+
+CRITICAL INSTRUCTIONS:
+1. Return ONLY a JSON array starting with [ and ending with ]
+2. No explanatory text before or after the JSON
+3. No comments or additional information
+4. Process each grant in the exact order provided
+
+For each grant, create an object with these exact fields:
+- index: The grant's position (0, 1, 2, etc.)
+- description_summary: Brief summary of grant purpose (focus on school district relevance)
+- eligibility_summary: Who can apply (explicitly state if public school districts, LEAs, or K-12 schools are eligible)
+- extra: Additional relevant details as JSON object
+- relevance_score: Integer 0-100 reflecting relevance to U.S. public school districts:
+  * 90-100: Specifically targets K-12 schools, LEAs, or districts
+  * 70-89: Education-related, commonly applicable to schools
+  * 40-69: Schools technically eligible, broader focus
+  * 0-39: Minimal relevance to districts
+
+REQUIRED OUTPUT FORMAT (no other text):
+[
+  {{
+    "index": 0,
+    "description_summary": "Brief grant description",
+    "eligibility_summary": "Who can apply",
+    "extra": {{}},
+    "relevance_score": 50
+  }},
+  {{
+    "index": 1,
+    "description_summary": "Brief grant description",
+    "eligibility_summary": "Who can apply",
+    "extra": {{"deadline_note": "Applications due by 5 PM"}},
+    "relevance_score": 75
+  }}
+]
     """
     return prompt
 
@@ -83,17 +87,52 @@ def batch_process_grants_with_ai(grants_data):
             print("No response from AI")
             return []
 
-        # Clean the response
-        # Remove any text before the first '[' and after the last ']'
-        start = ai_response.find("[")
-        end = ai_response.rfind("]")
-        if start != -1 and end != -1 and end > start:
-            ai_response = ai_response[start : end + 1]
+        # Debug: Show first 200 chars of AI response
+        print(f"AI response preview: {ai_response[:200]}...")
+
+        # Clean the response - strip ```json ... ``` if present
+        if ai_response.startswith("```json"):
+            ai_response = ai_response.replace("```json", "").replace("```", "").strip()
+
+        # Check if the response starts with '[' (proper JSON array)
+        if ai_response.strip().startswith("["):
+            json_portion = ai_response.strip()
+            print("✅ AI response appears to be a valid JSON array")
         else:
-            print("AI response does not contain a valid JSON array.")
+            # More aggressive cleaning - look for JSON array pattern
+            # Remove any text before the first '[' and after the last ']'
+            start = ai_response.find("[")
+            end = ai_response.rfind("]")
+
+            if start == -1:
+                print(
+                    "❌ AI response does not contain a JSON array starting bracket '['"
+                )
+                print("Response type: AI returned explanatory text instead of JSON")
+                print(f"First 500 chars: {ai_response[:500]}...")
+                return []
+
+            if end == -1 or end <= start:
+                print(
+                    "❌ AI response does not contain a valid JSON array ending bracket ']'"
+                )
+                print(f"Start position: {start}, End position: {end}")
+                return []
+
+            # Extract the JSON array portion
+            json_portion = ai_response[start : end + 1]
+            print(f"⚠️  Extracted JSON from mixed response (chars {start}-{end})")
+
+        print(f"JSON portion preview: {json_portion[:200]}...")
+
+        # Additional validation - check if it looks like valid JSON
+        if not json_portion.strip().startswith(
+            "["
+        ) or not json_portion.strip().endswith("]"):
+            print("Extracted portion doesn't look like a valid JSON array")
             return []
 
-        processed_grants = json.loads(ai_response)
+        processed_grants = json.loads(json_portion)
 
         if not isinstance(processed_grants, list):
             print("AI response is not a list")
@@ -104,10 +143,79 @@ def batch_process_grants_with_ai(grants_data):
 
     except json.JSONDecodeError as e:
         print(f"Error parsing AI response as JSON: {e}")
+        print(f"AI response was: {ai_response[:500]}...")
         return []
     except Exception as e:
         print(f"Error in AI processing: {e}")
         return []
+
+
+def process_grants_individually(grants_data):
+    """Process grants individually when batch processing fails."""
+    if not grants_data:
+        return []
+
+    print(f"Processing {len(grants_data)} grants individually as fallback...")
+    results = []
+
+    for i, grant_data in enumerate(grants_data):
+        try:
+            # Create individual prompt for single grant
+            individual_prompt = f"""
+                You are an AI agent specialized in processing grant data from grants.gov.
+                Extract and organize key information from this single grant into a structured JSON object.
+                
+                Grant data:
+                {json.dumps(grant_data, indent=2)}
+                
+                Instructions:
+                - description_summary: Concise summary of grant purpose (focus on school district relevance)
+                - eligibility_summary: Who can apply (explicitly state if public school districts, LEAs, or K-12 schools are eligible)
+                - extra: Additional relevant details as JSON object
+                - relevance_score: Integer 0-100 reflecting relevance to U.S. public school districts:
+                  * 90-100: Specifically targets K-12 schools, LEAs, or districts
+                  * 70-89: Education-related, commonly applicable to schools
+                  * 40-69: Schools technically eligible, broader focus
+                  * 0-39: Minimal relevance to districts
+                
+                Return ONLY a JSON object (not an array) with these keys:
+                {{
+                    "index": {i},
+                    "description_summary": "...",
+                    "eligibility_summary": "...",
+                    "extra": {{}},
+                    "relevance_score": 50
+                }}
+            """
+
+            ai_response = helpers.ai_extract_data(individual_prompt, model)
+
+            if ai_response:
+                # Clean response
+                if ai_response.startswith("```json"):
+                    ai_response = (
+                        ai_response.replace("```json", "").replace("```", "").strip()
+                    )
+
+                individual_result = json.loads(ai_response)
+                individual_result["index"] = i  # Ensure correct index
+                results.append(individual_result)
+                print(
+                    f"  Processed grant {i+1}/{len(grants_data)}: {grant_data.get('opportunity_number', 'Unknown')}"
+                )
+            else:
+                print(
+                    f"  Failed to process grant {i+1}: {grant_data.get('opportunity_number', 'Unknown')}"
+                )
+
+        except Exception as e:
+            print(f"  Error processing individual grant {i+1}: {e}")
+            continue
+
+    print(
+        f"Individual processing completed: {len(results)}/{len(grants_data)} grants processed"
+    )
+    return results
 
 
 def prepare_forecasted_grant(op, session):
@@ -411,11 +519,16 @@ def process_batch(batch, session):
         grant_data["index"] = j
         batch_data.append(grant_data)
 
-    # Process with AI
+    # Try batch processing first
     processed_grants = batch_process_grants_with_ai(batch_data)
 
+    # If batch processing failed, try individual processing
     if not processed_grants:
-        print("No AI results received for this batch")
+        print("Batch processing failed, falling back to individual processing...")
+        processed_grants = process_grants_individually(batch_data)
+
+    if not processed_grants:
+        print("Both batch and individual processing failed for this batch")
         return 0
 
     # Apply AI results to opportunities and commit
