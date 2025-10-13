@@ -6,7 +6,8 @@ from flask_migrate import Migrate
 from .db import db
 from dotenv import load_dotenv
 
-from models_sql.opportunity import Opportunity
+from models_sql.opportunity import Opportunity  # noqa: F401 (needed for migrations)
+
 migrate = Migrate()
 
 load_dotenv()
