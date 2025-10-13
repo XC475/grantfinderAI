@@ -100,19 +100,45 @@ export async function POST(req: NextRequest) {
       ? await response.json()
       : await response.text();
 
-    const text =
-      typeof data === "string"
-        ? data
-        : data.response ||
-          data.message ||
-          data.content ||
-          data.recommendations ||
-          "OK";
+    console.log(
+      "🔍 [Recommendations API] Raw n8n response:",
+      JSON.stringify(data, null, 2)
+    );
 
-    console.log("🔍 [Recommendations API] n8n response:", text);
+    // Handle n8n response format: [{ output: "stringified JSON" }]
+    let recommendations;
+
+    if (Array.isArray(data)) {
+      // n8n returns array format
+      if (data.length > 0 && data[0].output) {
+        recommendations = data[0].output;
+      } else {
+        recommendations = data;
+      }
+    } else if (typeof data === "string") {
+      recommendations = data;
+    } else if (typeof data === "object") {
+      // Try to extract from various possible fields
+      recommendations =
+        data.response ||
+        data.message ||
+        data.content ||
+        data.recommendations ||
+        data.output ||
+        JSON.stringify(data);
+    } else {
+      recommendations = "OK";
+    }
+
+    console.log(
+      "🔍 [Recommendations API] Processed recommendations:",
+      typeof recommendations === "string" && recommendations.length > 100
+        ? recommendations.substring(0, 100) + "..."
+        : recommendations
+    );
 
     // Return the response to the client
-    return new Response(JSON.stringify({ recommendations: text }), {
+    return new Response(JSON.stringify({ recommendations }), {
       headers: {
         "Content-Type": "application/json",
       },
