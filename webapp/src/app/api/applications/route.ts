@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma";
 
 // POST /api/applications - Create a new application
 export async function POST(request: NextRequest) {
@@ -16,29 +17,26 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { opportunityId, workspaceSlug, alsoBookmark } = body;
+    const { opportunityId, organizationSlug, alsoBookmark } = body;
 
-    if (!opportunityId || !workspaceSlug) {
+    if (!opportunityId || !organizationSlug) {
       return NextResponse.json(
-        { error: "opportunityId and workspaceSlug are required" },
+        { error: "opportunityId and organizationSlug are required" },
         { status: 400 }
       );
     }
 
-    // Find the workspace
-    const workspace = await prisma.workspace.findFirst({
+    // Find the organization
+    const organization = await prisma.organization.findFirst({
       where: {
-        slug: workspaceSlug,
-        OR: [
-          { personalUser: { id: user.id } },
-          { organization: { members: { some: { userId: user.id } } } },
-        ],
+        slug: organizationSlug,
+        user: { id: user.id },
       },
     });
 
-    if (!workspace) {
+    if (!organization) {
       return NextResponse.json(
-        { error: "Workspace not found" },
+        { error: "Organization not found" },
         { status: 404 }
       );
     }
@@ -46,9 +44,9 @@ export async function POST(request: NextRequest) {
     // Check if application already exists
     const existing = await prisma.application.findUnique({
       where: {
-        opportunityId_workspaceId: {
+        opportunityId_organizationId: {
           opportunityId,
-          workspaceId: workspace.id,
+          organizationId: organization.id,
         },
       },
     });
@@ -67,7 +65,7 @@ export async function POST(request: NextRequest) {
     const application = await prisma.application.create({
       data: {
         opportunityId,
-        workspaceId: workspace.id,
+        organizationId: organization.id,
         status: "DRAFT",
       },
     });
@@ -76,16 +74,16 @@ export async function POST(request: NextRequest) {
     if (alsoBookmark) {
       await prisma.grantBookmark.upsert({
         where: {
-          userId_opportunityId_workspaceId: {
+          userId_opportunityId_organizationId: {
             userId: user.id,
             opportunityId,
-            workspaceId: workspace.id,
+            organizationId: organization.id,
           },
         },
         create: {
           userId: user.id,
           opportunityId,
-          workspaceId: workspace.id,
+          organizationId: organization.id,
         },
         update: {},
       });
@@ -101,7 +99,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET /api/applications - List all applications for user's workspaces
+// GET /api/applications - List all applications for user's organization
 export async function GET(request: NextRequest) {
   const supabase = await createClient();
 
@@ -115,27 +113,20 @@ export async function GET(request: NextRequest) {
 
   try {
     const searchParams = request.nextUrl.searchParams;
-    const workspaceSlug = searchParams.get("workspaceSlug");
+    const organizationSlug = searchParams.get("organizationSlug");
 
     // Build where clause
-    const whereClause: any = {
-      workspace: {
-        OR: [
-          { personalUser: { id: user.id } },
-          { organization: { members: { some: { userId: user.id } } } },
-        ],
+    const whereClause: Prisma.ApplicationWhereInput = {
+      organization: {
+        user: { id: user.id },
+        ...(organizationSlug ? { slug: organizationSlug } : {}),
       },
     };
-
-    // Filter by workspace if provided
-    if (workspaceSlug) {
-      whereClause.workspace.slug = workspaceSlug;
-    }
 
     const applications = await prisma.application.findMany({
       where: whereClause,
       include: {
-        workspace: {
+        organization: {
           select: {
             slug: true,
             name: true,

@@ -16,22 +16,28 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Check admin role
+  // Check system admin
   const dbUser = await prisma.user.findUnique({
     where: { id: currentUser.id },
-    select: { role: true },
+    select: { system_admin: true },
   });
 
-  if (dbUser?.role !== "ADMIN") {
+  if (dbUser?.system_admin !== true) {
     return NextResponse.json(
-      { error: "Forbidden - Admin only" },
+      { error: "Forbidden - System admin only" },
       { status: 403 }
     );
   }
 
   try {
     const body = await request.json();
-    const { email, name, password, role = "USER", districtData } = body;
+    const {
+      email,
+      name,
+      password,
+      organizationRole = "ADMIN",
+      districtData,
+    } = body;
 
     // Validate input
     if (!email || !name || !password) {
@@ -85,6 +91,12 @@ export async function POST(request: NextRequest) {
         email_confirm: true, // Auto-confirm email
         user_metadata: {
           name,
+          ...(schoolDistrict
+            ? {
+                schoolDistrictId: schoolDistrict.id,
+                schoolDistrictName: schoolDistrict.name,
+              }
+            : {}),
         },
       });
 
@@ -94,13 +106,13 @@ export async function POST(request: NextRequest) {
 
     const userId = authData.user.id;
 
-    // Wait for database trigger to create app.users record and workspace
+    // Wait for database trigger to create app.users record and organization
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     // Verify user was created by trigger
     const newUser = await prisma.user.findUnique({
       where: { id: userId },
-      include: { personalWorkspace: true },
+      include: { organization: true },
     });
 
     if (!newUser) {
@@ -111,49 +123,58 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!newUser.personalWorkspace) {
-      console.error(`[Admin] Trigger failed to create workspace for ${email}`);
+    if (!newUser.organization) {
+      console.error(
+        `[Admin] Trigger failed to create organization for ${email}`
+      );
       return NextResponse.json(
-        { error: "Failed to create workspace - database trigger error" },
+        { error: "Failed to create organization - database trigger error" },
         { status: 500 }
       );
     }
 
     console.log(
-      `[Admin] User ${email} created with workspace ${newUser.personalWorkspace.slug}`
+      `[Admin] User ${email} created with organization ${newUser.organization.slug}`
     );
 
-    // Update user role and link workspace to school district
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: { role },
-      include: { personalWorkspace: true },
-    });
-
-    // Link workspace to school district if provided
-    if (schoolDistrictId) {
-      await prisma.workspace.update({
-        where: { id: newUser.personalWorkspace.id },
-        data: { schoolDistrictId },
+    // Update organization role if different from default
+    if (organizationRole !== "ADMIN") {
+      await prisma.organization.update({
+        where: { id: newUser.organization.id },
+        data: { role: organizationRole },
       });
+      console.log(`[Admin] Organization role set to ${organizationRole}`);
+    }
 
+    if (schoolDistrict) {
       console.log(
-        `[Admin] Workspace linked to district ${schoolDistrict?.name}`
+        `[Admin] Organization created for district: ${schoolDistrict.name}`
       );
     }
 
-    console.log(`[Admin] User ${email} role set to ${role}`);
+    // Get updated user with organization
+    const updatedUser = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { organization: true },
+    });
+
+    if (!updatedUser) {
+      return NextResponse.json(
+        { error: "User not found after creation" },
+        { status: 500 }
+      );
+    }
 
     // Send welcome email with credentials
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const workspaceSlug = updatedUser.personalWorkspace?.slug;
+    const organizationSlug = updatedUser.organization?.slug;
 
     const emailResult = await sendWelcomeEmail({
       to: email,
       name: name,
       loginUrl: `${siteUrl}/login`,
       temporaryPassword: password,
-      workspaceUrl: `${siteUrl}/private/${workspaceSlug}/chat`,
+      organizationUrl: `${siteUrl}/private/${organizationSlug}/chat`,
     });
 
     if (emailResult.success) {
@@ -169,11 +190,12 @@ export async function POST(request: NextRequest) {
       message: "User created successfully",
       emailSent: emailResult.success,
       user: {
-        id: updatedUser.id,
-        email: updatedUser.email,
-        name: updatedUser.name,
-        role: updatedUser.role,
-        workspaceSlug: updatedUser.personalWorkspace?.slug,
+        id: updatedUser?.id,
+        email: updatedUser?.email,
+        name: updatedUser?.name,
+        system_admin: updatedUser?.system_admin,
+        organizationSlug: updatedUser?.organization?.slug,
+        organizationRole: updatedUser?.organization?.role,
         schoolDistrict: schoolDistrict
           ? {
               id: schoolDistrict.id,
@@ -207,15 +229,15 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Check admin role
+  // Check system admin
   const dbUser = await prisma.user.findUnique({
     where: { id: currentUser.id },
-    select: { role: true },
+    select: { system_admin: true },
   });
 
-  if (dbUser?.role !== "ADMIN") {
+  if (dbUser?.system_admin !== true) {
     return NextResponse.json(
-      { error: "Forbidden - Admin only" },
+      { error: "Forbidden - System admin only" },
       { status: 403 }
     );
   }
@@ -226,12 +248,13 @@ export async function GET() {
         id: true,
         email: true,
         name: true,
-        role: true,
+        system_admin: true,
         createdAt: true,
         lastActiveAt: true,
-        personalWorkspace: {
+        organization: {
           select: {
             slug: true,
+            role: true,
             schoolDistrict: {
               select: {
                 id: true,

@@ -31,7 +31,7 @@ export type GrantCardData = {
 
 interface GrantCardProps {
   grant: GrantCardData;
-  workspaceSlug: string;
+  organizationSlug: string;
   isSaved: boolean;
   hasApplication?: boolean;
   isLoading?: boolean;
@@ -77,7 +77,7 @@ function getStatusColor(status: string): string {
 
 export function GrantCard({
   grant,
-  workspaceSlug,
+  organizationSlug,
   isSaved,
   hasApplication = false,
   isLoading = false,
@@ -87,8 +87,8 @@ export function GrantCard({
   fromBookmarks = false,
 }: GrantCardProps) {
   const grantUrl = fromBookmarks
-    ? `/private/${workspaceSlug}/grants/${grant.id}?from=bookmarks`
-    : `/private/${workspaceSlug}/grants/${grant.id}`;
+    ? `/private/${organizationSlug}/grants/${grant.id}?from=bookmarks`
+    : `/private/${organizationSlug}/grants/${grant.id}`;
 
   return (
     <Card className="hover:shadow-md transition-shadow">

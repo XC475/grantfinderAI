@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 import { cn } from "@/lib/utils";
 import { Chat } from "@/components/ui/chat";
@@ -21,6 +21,21 @@ export function ChatDemo(props: ChatDemoProps) {
   const [chatId, setChatId] = useState(
     () => props.chatId || `chat_${Date.now()}`
   );
+
+  // Update messages when initialMessages prop changes (e.g., when navigating between chats)
+  useEffect(() => {
+    setMessages(props.initialMessages || []);
+  }, [props.initialMessages]);
+
+  // Update chatId when prop changes
+  useEffect(() => {
+    if (props.chatId) {
+      setChatId(props.chatId);
+    } else {
+      // Generate new chat ID when switching to a new chat
+      setChatId(`chat_${Date.now()}`);
+    }
+  }, [props.chatId]);
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -144,7 +159,7 @@ export function ChatDemo(props: ChatDemoProps) {
   );
 
   return (
-    <div className={cn("flex", "flex-col", "h-[calc(100vh-200px)]", "w-full")}>
+    <div className={cn("flex", "flex-col", "h-[calc(100vh-80px)]", "w-full")}>
       <Chat
         className="grow"
         messages={messages}
