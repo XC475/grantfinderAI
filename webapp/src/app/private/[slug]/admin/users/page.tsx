@@ -42,22 +42,19 @@ interface User {
   organization?: {
     slug: string;
     role: string;
-    schoolDistrict?: {
-      id: string;
-      leaId: string;
-      name: string;
-      stateCode: string;
-      city: string | null;
-      enrollment: number | null;
-      countyName: string | null;
-    };
+    name: string;
+    leaId: string | null;
+    state: string | null;
+    city: string | null;
+    enrollment: number | null;
+    countyName: string | null;
   };
 }
 
-interface SchoolDistrict {
+interface DistrictData {
   leaId: string;
   name: string;
-  stateCode: string;
+  state: string;
   city: string | null;
   enrollment: number | null;
   countyName: string | null;
@@ -70,7 +67,7 @@ interface SchoolDistrict {
   lowestGrade?: number | null;
   highestGrade?: number | null;
   urbanCentricLocale?: number | null;
-  year?: number;
+  districtDataYear?: number;
 }
 
 export default function AdminUsersPage() {
@@ -81,7 +78,7 @@ export default function AdminUsersPage() {
   const [creating, setCreating] = useState(false);
 
   // School districts state
-  const [districts, setDistricts] = useState<SchoolDistrict[]>([]);
+  const [districts, setDistricts] = useState<DistrictData[]>([]);
   const [loadingDistricts, setLoadingDistricts] = useState(false);
   const [districtSearch, setDistrictSearch] = useState("");
   const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
@@ -93,7 +90,7 @@ export default function AdminUsersPage() {
     name: "",
     password: "",
     organizationRole: "ADMIN",
-    districtData: null as SchoolDistrict | null,
+    districtData: null as DistrictData | null,
   });
 
   useEffect(() => {
@@ -189,9 +186,9 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleSelectDistrict = (district: SchoolDistrict) => {
+  const handleSelectDistrict = (district: DistrictData) => {
     setNewUser({ ...newUser, districtData: district });
-    setDistrictSearch(`${district.name}, ${district.stateCode}`);
+    setDistrictSearch(`${district.name}, ${district.state}`);
     setShowDistrictDropdown(false);
   };
 
@@ -543,7 +540,7 @@ export default function AdminUsersPage() {
                                         {district.name}
                                       </div>
                                       <div className="text-xs text-muted-foreground">
-                                        {district.city}, {district.stateCode}
+                                        {district.city}, {district.state}
                                         {district.enrollment &&
                                           ` • ${district.enrollment.toLocaleString()} students`}
                                       </div>
@@ -568,7 +565,7 @@ export default function AdminUsersPage() {
                                 </p>
                                 <p className="text-sm text-muted-foreground">
                                   {selectedDistrict.city},{" "}
-                                  {selectedDistrict.stateCode}
+                                  {selectedDistrict.state}
                                 </p>
                               </div>
                               <Button
@@ -650,16 +647,15 @@ export default function AdminUsersPage() {
                       </div>
                     </td>
                     <td className="p-4 text-sm">
-                      {user.organization?.schoolDistrict ? (
+                      {user.organization?.leaId ? (
                         <div>
                           <div className="font-medium">
-                            {user.organization.schoolDistrict.name}
+                            {user.organization.name}
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            {user.organization.schoolDistrict.city},{" "}
-                            {user.organization.schoolDistrict.stateCode}
-                            {user.organization.schoolDistrict.enrollment &&
-                              ` • ${user.organization.schoolDistrict.enrollment.toLocaleString()} students`}
+                            {user.organization.city}, {user.organization.state}
+                            {user.organization.enrollment &&
+                              ` • ${user.organization.enrollment.toLocaleString()} students`}
                           </div>
                         </div>
                       ) : (
