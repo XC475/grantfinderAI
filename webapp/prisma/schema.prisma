@@ -73,20 +73,36 @@ model User {
 }
 
 model Organization {
-  id                  String                     @id @default(cuid())
-  name                String
-  slug                String                     @unique
-  type                OrganizationType           @default(PERSONAL)
-  role                OrganizationRole           @default(MEMBER)
-  createdAt           DateTime                   @default(now())
-  updatedAt           DateTime                   @updatedAt
-  schoolDistrictId    String?
-  aiChats             AiChat[]
-  applications        Application[]
-  grantBookmarks      GrantBookmark[]
-  eligibilityAnalyses GrantEligibilityAnalysis[]
-  user                User?                      @relation("UserOrganization")
-  schoolDistrict      SchoolDistrict?            @relation(fields: [schoolDistrictId], references: [id])
+  id                     String                     @id @default(cuid())
+  name                   String
+  slug                   String                     @unique
+  role                   OrganizationRole           @default(MEMBER)
+  createdAt              DateTime                   @default(now())
+  updatedAt              DateTime                   @updatedAt
+  schoolDistrictId       String?
+  // Basic Information
+  organizationLogo       String?
+  website                String?
+  missionStatement       String?
+  strategicPlan          String?                    @db.Text
+  annualOperatingBudget  Decimal?                   @db.Decimal(15, 2)
+  fiscalYearEnd          String?
+  // Contact Information
+  phone                  String?
+  email                  String?
+  organizationLeaderName String?
+  // Address
+  address                String?
+  city                   String?
+  state                  String?
+  zipCode                String?
+  // Relations
+  aiChats                AiChat[]
+  applications           Application[]
+  grantBookmarks         GrantBookmark[]
+  eligibilityAnalyses    GrantEligibilityAnalysis[]
+  user                   User?                      @relation("UserOrganization")
+  schoolDistrict         SchoolDistrict?            @relation(fields: [schoolDistrictId], references: [id])
 
   @@map("organizations")
   @@schema("app")
@@ -213,13 +229,6 @@ enum opportunity_status_enum {
   archive
 
   @@schema("public")
-}
-
-enum OrganizationType {
-  PERSONAL
-  ORGANIZATION
-
-  @@schema("app")
 }
 
 enum GoNoGoDecision {
