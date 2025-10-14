@@ -6,14 +6,16 @@ import {
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
-  Home,
+  BotMessageSquare,
   FileText,
   Bookmark,
   ClipboardList,
   LayoutDashboard,
+  Building2,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
+import { NavOrganization } from "@/components/sidebar/nav-organization";
 import { NavChats } from "@/components/sidebar/nav-chats";
 import { NavUser } from "@/components/sidebar/nav-user";
 import { NavSettings } from "@/components/sidebar/nav-settings";
@@ -61,7 +63,7 @@ const data = {
     {
       title: "AI Chat",
       url: "/private/chat",
-      icon: Home,
+      icon: BotMessageSquare,
     },
     {
       title: "Grants",
@@ -73,10 +75,17 @@ const data = {
       url: "/private/bookmarks",
       icon: Bookmark,
     },
+  ],
+  navOrganization: [
     {
       title: "Applications",
       url: "/private/applications",
       icon: ClipboardList,
+    },
+    {
+      title: "Profile",
+      url: "/private/profile",
+      icon: Building2,
     },
     // {
     //   title: "Org Profile",
@@ -126,7 +135,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     id: string;
     name: string;
     slug: string;
-    type: string;
   } | null>(null);
   const [loadingOrganization, setLoadingOrganization] = React.useState(true);
 
@@ -181,6 +189,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }));
   }, [organizationSlug]);
 
+  // Build organization navigation items with organization slug
+  const navOrganizationItems = React.useMemo(() => {
+    if (!organizationSlug) return data.navOrganization;
+
+    return data.navOrganization.map((item) => ({
+      ...item,
+      url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
+    }));
+  }, [organizationSlug]);
+
   // Check if we're on a settings page
   const isOnSettingsPage = pathname.includes("/settings");
 
@@ -199,6 +217,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ) : (
           <>
             <NavMain items={navItems} />
+            <NavOrganization items={navOrganizationItems} />
             <NavChats organizationSlug={organizationSlug} />
           </>
         )}
