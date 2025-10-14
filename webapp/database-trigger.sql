@@ -6,8 +6,7 @@ returns trigger as $$
 declare
   v_organization_id text := 'org_' || replace(new.id::text, '-', '');
   v_name text := coalesce(new.raw_user_meta_data->>'name', split_part(new.email, '@', 1));
-  v_district_name text := new.raw_user_meta_data->>'schoolDistrictName';
-  v_district_id text := new.raw_user_meta_data->>'schoolDistrictId';
+  v_district_name text := new.raw_user_meta_data->>'districtName';
   v_org_name text;
   v_slug text;
 begin
@@ -24,15 +23,13 @@ begin
   v_slug := regexp_replace(v_slug, '-+', '-', 'g');      -- Replace multiple hyphens with single
   v_slug := regexp_replace(v_slug, '^-+|-+$', '', 'g');  -- Remove leading/trailing hyphens
 
-  -- First create the organization (formerly workspace)
-  insert into app.organizations (id, name, slug, type, role, "schoolDistrictId", "createdAt", "updatedAt")
+  -- First create the organization (without type and schoolDistrictId fields)
+  insert into app.organizations (id, name, slug, role, "createdAt", "updatedAt")
   values (
     v_organization_id,
     v_org_name,
     v_slug,
-    'PERSONAL'::app."OrganizationType",
     'ADMIN'::app."OrganizationRole",
-    v_district_id,
     now(),
     now()
   )
