@@ -320,12 +320,14 @@ function GrantsSearchPage() {
 
     setCreatingApplication(grantId);
     try {
+      const grant = grants.find((g) => g.id === grantId);
       const response = await fetch("/api/applications", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           opportunityId: grantId,
           organizationSlug: slug,
+          grantTitle: grant?.title,
           alsoBookmark: true, // Also bookmark when creating application
         }),
       });
