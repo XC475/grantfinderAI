@@ -29,6 +29,7 @@ import {
   Upload,
   Image as ImageIcon,
   Info,
+  Save,
 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/utils/supabase/client";
@@ -513,7 +514,10 @@ export default function ProfilePage() {
                   Saving...
                 </>
               ) : (
-                "Save Changes"
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Changes
+                </>
               )}
             </Button>
           </div>
