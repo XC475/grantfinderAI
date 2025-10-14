@@ -13,7 +13,6 @@ export async function getUserOrganization(userId: string) {
           id: true,
           slug: true,
           name: true,
-          type: true,
         },
       },
     },
@@ -62,7 +61,6 @@ export async function getOrganizationBySlug(slug: string) {
       id: true,
       slug: true,
       name: true,
-      type: true,
     },
   });
 
@@ -84,7 +82,6 @@ export async function verifyOrganizationAccess(
     where: { slug: organizationSlug },
     select: {
       id: true,
-      type: true,
       user: {
         select: { id: true },
       },
