@@ -39,6 +39,16 @@ export async function POST(request: NextRequest) {
       districtData,
     } = body;
 
+    console.log(
+      `[Admin] Creating user with email: ${email}, has district data: ${!!districtData}`
+    );
+    if (districtData) {
+      console.log(
+        `[Admin] District data:`,
+        JSON.stringify(districtData, null, 2)
+      );
+    }
+
     // Validate input
     if (!email || !name || !password) {
       return NextResponse.json(
@@ -47,43 +57,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create or find school district if provided
-    let schoolDistrictId = null;
-    let schoolDistrict = null;
-    if (districtData && districtData.leaId) {
-      // Check if district already exists
-      schoolDistrict = await prisma.schoolDistrict.findUnique({
-        where: { leaId: districtData.leaId },
-      });
+    // Store district data for later organization update
+    const districtInfo = districtData?.leaId
+      ? {
+          leaId: districtData.leaId,
+          state: districtData.state,
+          stateLeaId: districtData.stateLeaId,
+          city: districtData.city,
+          zipCode: districtData.zipCode,
+          phone: districtData.phone,
+          latitude: districtData.latitude,
+          longitude: districtData.longitude,
+          countyName: districtData.countyName,
+          enrollment: districtData.enrollment,
+          numberOfSchools: districtData.numberOfSchools,
+          lowestGrade: districtData.lowestGrade,
+          highestGrade: districtData.highestGrade,
+          urbanCentricLocale: districtData.urbanCentricLocale,
+          districtDataYear: districtData.districtDataYear || 2022,
+        }
+      : null;
 
-      // If not, create it
-      if (!schoolDistrict) {
-        schoolDistrict = await prisma.schoolDistrict.create({
-          data: {
-            leaId: districtData.leaId,
-            name: districtData.name,
-            stateCode: districtData.stateCode,
-            stateLeaId: districtData.stateLeaId,
-            city: districtData.city,
-            zipCode: districtData.zipCode,
-            phone: districtData.phone,
-            latitude: districtData.latitude,
-            longitude: districtData.longitude,
-            countyName: districtData.countyName,
-            enrollment: districtData.enrollment,
-            numberOfSchools: districtData.numberOfSchools,
-            lowestGrade: districtData.lowestGrade,
-            highestGrade: districtData.highestGrade,
-            urbanCentricLocale: districtData.urbanCentricLocale,
-            year: districtData.year || 2022,
-          },
-        });
-      }
-
-      schoolDistrictId = schoolDistrict.id;
-    }
+    // Store district name separately to update organization name
+    const districtName = districtData?.name;
 
     // Create user in Supabase Auth with admin API
+    console.log(`[Admin] Creating Supabase Auth user...`);
     const { data: authData, error: authError } =
       await supabase.auth.admin.createUser({
         email,
@@ -91,25 +90,35 @@ export async function POST(request: NextRequest) {
         email_confirm: true, // Auto-confirm email
         user_metadata: {
           name,
-          ...(schoolDistrict
+          ...(districtName && districtInfo?.leaId
             ? {
-                schoolDistrictId: schoolDistrict.id,
-                schoolDistrictName: schoolDistrict.name,
+                districtName: districtName,
+                leaId: districtInfo.leaId,
               }
             : {}),
         },
       });
 
     if (authError) {
-      return NextResponse.json({ error: authError.message }, { status: 400 });
+      console.error(`[Admin] Supabase Auth error:`, authError);
+      return NextResponse.json(
+        { error: `Auth error: ${authError.message}` },
+        { status: 400 }
+      );
     }
+
+    console.log(`[Admin] Supabase user created with ID: ${authData.user.id}`);
 
     const userId = authData.user.id;
 
     // Wait for database trigger to create app.users record and organization
+    console.log(
+      `[Admin] Waiting for database trigger to create user record...`
+    );
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     // Verify user was created by trigger
+    console.log(`[Admin] Verifying user creation in app.users...`);
     const newUser = await prisma.user.findUnique({
       where: { id: userId },
       include: { organization: true },
@@ -118,37 +127,57 @@ export async function POST(request: NextRequest) {
     if (!newUser) {
       console.error(`[Admin] Trigger failed to create user ${email}`);
       return NextResponse.json(
-        { error: "Failed to create user - database trigger error" },
+        { error: "Database trigger failed to create user record" },
         { status: 500 }
       );
     }
+
+    console.log(`[Admin] User record found in database`);
 
     if (!newUser.organization) {
       console.error(
         `[Admin] Trigger failed to create organization for ${email}`
       );
       return NextResponse.json(
-        { error: "Failed to create organization - database trigger error" },
+        { error: "Database trigger failed to create organization" },
         { status: 500 }
       );
     }
+
+    console.log(`[Admin] Organization found: ${newUser.organization.slug}`);
 
     console.log(
       `[Admin] User ${email} created with organization ${newUser.organization.slug}`
     );
 
-    // Update organization role if different from default
-    if (organizationRole !== "ADMIN") {
+    // Update organization with role and district data
+    const updateData = {
+      role: organizationRole,
+      ...(districtName ? { name: districtName } : {}),
+      ...(districtInfo || {}),
+    };
+
+    console.log(
+      `[Admin] Updating organization with data:`,
+      JSON.stringify(updateData, null, 2)
+    );
+
+    try {
       await prisma.organization.update({
         where: { id: newUser.organization.id },
-        data: { role: organizationRole },
+        data: updateData,
       });
       console.log(`[Admin] Organization role set to ${organizationRole}`);
-    }
 
-    if (schoolDistrict) {
-      console.log(
-        `[Admin] Organization created for district: ${schoolDistrict.name}`
+      if (districtInfo && districtName) {
+        console.log(
+          `[Admin] Organization created for district: ${districtName}`
+        );
+      }
+    } catch (updateError) {
+      console.error(`[Admin] Error updating organization:`, updateError);
+      throw new Error(
+        `Failed to update organization: ${updateError instanceof Error ? updateError.message : "Unknown error"}`
       );
     }
 
@@ -196,11 +225,13 @@ export async function POST(request: NextRequest) {
         system_admin: updatedUser?.system_admin,
         organizationSlug: updatedUser?.organization?.slug,
         organizationRole: updatedUser?.organization?.role,
-        schoolDistrict: schoolDistrict
+        districtInfo: updatedUser?.organization?.leaId
           ? {
-              id: schoolDistrict.id,
-              name: schoolDistrict.name,
-              stateCode: schoolDistrict.stateCode,
+              name: updatedUser.organization.name,
+              leaId: updatedUser.organization.leaId,
+              state: updatedUser.organization.state,
+              city: updatedUser.organization.city,
+              enrollment: updatedUser.organization.enrollment,
             }
           : null,
       },
@@ -255,17 +286,12 @@ export async function GET() {
           select: {
             slug: true,
             role: true,
-            schoolDistrict: {
-              select: {
-                id: true,
-                leaId: true,
-                name: true,
-                stateCode: true,
-                city: true,
-                enrollment: true,
-                countyName: true,
-              },
-            },
+            name: true,
+            leaId: true,
+            state: true,
+            city: true,
+            enrollment: true,
+            countyName: true,
           },
         },
       },
