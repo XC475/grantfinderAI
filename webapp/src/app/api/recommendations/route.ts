@@ -74,7 +74,6 @@ export async function POST(req: NextRequest) {
       organization_info: {
         id: organization.id,
         name: organization.name,
-        type: organization.type,
         district_linked: !!organization.schoolDistrict,
       },
     };
