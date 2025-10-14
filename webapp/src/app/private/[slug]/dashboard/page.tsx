@@ -1,10 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Calendar, DollarSign, Sparkles } from "lucide-react";
+import {
+  ExternalLink,
+  Calendar,
+  DollarSign,
+  Sparkles,
+  Trash2,
+} from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 
@@ -38,7 +45,14 @@ function formatDate(dateString: string) {
   });
 }
 
+// LocalStorage keys
+const STORAGE_KEY_GRANTS = "dashboard_recommendations_grants";
+const STORAGE_KEY_METADATA = "dashboard_recommendations_metadata";
+
 export default function DashboardPage() {
+  const params = useParams();
+  const slug = params.slug as string;
+
   const [isLoadingRecommendations, setIsLoadingRecommendations] =
     useState(false);
   const [recommendedGrants, setRecommendedGrants] = useState<
@@ -47,6 +61,28 @@ export default function DashboardPage() {
   const [metadata, setMetadata] = useState<
     RecommendationResponse["metadata"] | null
   >(null);
+
+  // Load saved recommendations from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedGrants = localStorage.getItem(`${slug}_${STORAGE_KEY_GRANTS}`);
+      const savedMetadata = localStorage.getItem(
+        `${slug}_${STORAGE_KEY_METADATA}`
+      );
+
+      if (savedGrants) {
+        const grants = JSON.parse(savedGrants);
+        setRecommendedGrants(grants);
+      }
+
+      if (savedMetadata) {
+        const meta = JSON.parse(savedMetadata);
+        setMetadata(meta);
+      }
+    } catch (error) {
+      console.error("Error loading saved recommendations:", error);
+    }
+  }, [slug]);
 
   const handleRunRecommendations = async () => {
     setIsLoadingRecommendations(true);
@@ -100,6 +136,21 @@ export default function DashboardPage() {
 
       setRecommendedGrants(parsedData.grants);
       setMetadata(parsedData.metadata);
+
+      // Save to localStorage
+      try {
+        localStorage.setItem(
+          `${slug}_${STORAGE_KEY_GRANTS}`,
+          JSON.stringify(parsedData.grants)
+        );
+        localStorage.setItem(
+          `${slug}_${STORAGE_KEY_METADATA}`,
+          JSON.stringify(parsedData.metadata)
+        );
+      } catch (error) {
+        console.error("Error saving recommendations to localStorage:", error);
+      }
+
       toast.success(
         `Found ${parsedData.grants.length} personalized grant recommendations!`
       );
@@ -112,6 +163,19 @@ export default function DashboardPage() {
       toast.error(errorMessage);
     } finally {
       setIsLoadingRecommendations(false);
+    }
+  };
+
+  const handleClearRecommendations = () => {
+    try {
+      localStorage.removeItem(`${slug}_${STORAGE_KEY_GRANTS}`);
+      localStorage.removeItem(`${slug}_${STORAGE_KEY_METADATA}`);
+      setRecommendedGrants([]);
+      setMetadata(null);
+      toast.success("Recommendations cleared");
+    } catch (error) {
+      console.error("Error clearing recommendations:", error);
+      toast.error("Failed to clear recommendations");
     }
   };
 
@@ -135,43 +199,38 @@ export default function DashboardPage() {
               Personalized grant opportunities based on your profile
             </p>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRunRecommendations}
-            disabled={isLoadingRecommendations}
-          >
-            {isLoadingRecommendations ? (
-              <>
-                <Spinner size="sm" className="mr-2" />
-                Running...
-              </>
-            ) : (
-              <>
-                <Sparkles className="h-4 w-4 mr-2" />
-                Run Recommendations
-              </>
+          <div className="flex gap-2">
+            {recommendedGrants.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleClearRecommendations}
+                disabled={isLoadingRecommendations}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Clear
+              </Button>
             )}
-          </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRunRecommendations}
+              disabled={isLoadingRecommendations}
+            >
+              {isLoadingRecommendations ? (
+                <>
+                  <Spinner size="sm" className="mr-2" />
+                  Running...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Run Recommendations
+                </>
+              )}
+            </Button>
+          </div>
         </div>
-
-        {/* Show metadata when recommendations are loaded */}
-        {metadata && (
-          <Card className="bg-blue-50 border-blue-200">
-            <CardContent className="pt-4">
-              <div className="flex items-center gap-2 text-sm text-blue-900">
-                <Sparkles className="h-4 w-4" />
-                <span className="font-medium">
-                  Personalized for {metadata.district_name}
-                </span>
-                <span className="text-blue-700">•</span>
-                <span className="text-blue-700">
-                  {new Date(metadata.query_date).toLocaleDateString()}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {recommendedGrants.length > 0 ? (
