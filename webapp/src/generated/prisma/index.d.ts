@@ -78,14 +78,6 @@ export namespace $Enums {
 export type opportunity_status_enum = (typeof opportunity_status_enum)[keyof typeof opportunity_status_enum]
 
 
-export const OrganizationType: {
-  PERSONAL: 'PERSONAL',
-  ORGANIZATION: 'ORGANIZATION'
-};
-
-export type OrganizationType = (typeof OrganizationType)[keyof typeof OrganizationType]
-
-
 export const GoNoGoDecision: {
   GO: 'GO',
   NO_GO: 'NO_GO',
@@ -142,10 +134,6 @@ export type OrganizationRole = (typeof OrganizationRole)[keyof typeof Organizati
 export type opportunity_status_enum = $Enums.opportunity_status_enum
 
 export const opportunity_status_enum: typeof $Enums.opportunity_status_enum
-
-export type OrganizationType = $Enums.OrganizationType
-
-export const OrganizationType: typeof $Enums.OrganizationType
 
 export type GoNoGoDecision = $Enums.GoNoGoDecision
 
@@ -5442,76 +5430,166 @@ export namespace Prisma {
 
   export type AggregateOrganization = {
     _count: OrganizationCountAggregateOutputType | null
+    _avg: OrganizationAvgAggregateOutputType | null
+    _sum: OrganizationSumAggregateOutputType | null
     _min: OrganizationMinAggregateOutputType | null
     _max: OrganizationMaxAggregateOutputType | null
+  }
+
+  export type OrganizationAvgAggregateOutputType = {
+    annualOperatingBudget: Decimal | null
+  }
+
+  export type OrganizationSumAggregateOutputType = {
+    annualOperatingBudget: Decimal | null
   }
 
   export type OrganizationMinAggregateOutputType = {
     id: string | null
     name: string | null
     slug: string | null
-    type: $Enums.OrganizationType | null
     role: $Enums.OrganizationRole | null
     createdAt: Date | null
     updatedAt: Date | null
     schoolDistrictId: string | null
+    organizationLogo: string | null
+    website: string | null
+    missionStatement: string | null
+    strategicPlan: string | null
+    annualOperatingBudget: Decimal | null
+    fiscalYearEnd: string | null
+    phone: string | null
+    email: string | null
+    organizationLeaderName: string | null
+    address: string | null
+    city: string | null
+    state: string | null
+    zipCode: string | null
   }
 
   export type OrganizationMaxAggregateOutputType = {
     id: string | null
     name: string | null
     slug: string | null
-    type: $Enums.OrganizationType | null
     role: $Enums.OrganizationRole | null
     createdAt: Date | null
     updatedAt: Date | null
     schoolDistrictId: string | null
+    organizationLogo: string | null
+    website: string | null
+    missionStatement: string | null
+    strategicPlan: string | null
+    annualOperatingBudget: Decimal | null
+    fiscalYearEnd: string | null
+    phone: string | null
+    email: string | null
+    organizationLeaderName: string | null
+    address: string | null
+    city: string | null
+    state: string | null
+    zipCode: string | null
   }
 
   export type OrganizationCountAggregateOutputType = {
     id: number
     name: number
     slug: number
-    type: number
     role: number
     createdAt: number
     updatedAt: number
     schoolDistrictId: number
+    organizationLogo: number
+    website: number
+    missionStatement: number
+    strategicPlan: number
+    annualOperatingBudget: number
+    fiscalYearEnd: number
+    phone: number
+    email: number
+    organizationLeaderName: number
+    address: number
+    city: number
+    state: number
+    zipCode: number
     _all: number
   }
 
+
+  export type OrganizationAvgAggregateInputType = {
+    annualOperatingBudget?: true
+  }
+
+  export type OrganizationSumAggregateInputType = {
+    annualOperatingBudget?: true
+  }
 
   export type OrganizationMinAggregateInputType = {
     id?: true
     name?: true
     slug?: true
-    type?: true
     role?: true
     createdAt?: true
     updatedAt?: true
     schoolDistrictId?: true
+    organizationLogo?: true
+    website?: true
+    missionStatement?: true
+    strategicPlan?: true
+    annualOperatingBudget?: true
+    fiscalYearEnd?: true
+    phone?: true
+    email?: true
+    organizationLeaderName?: true
+    address?: true
+    city?: true
+    state?: true
+    zipCode?: true
   }
 
   export type OrganizationMaxAggregateInputType = {
     id?: true
     name?: true
     slug?: true
-    type?: true
     role?: true
     createdAt?: true
     updatedAt?: true
     schoolDistrictId?: true
+    organizationLogo?: true
+    website?: true
+    missionStatement?: true
+    strategicPlan?: true
+    annualOperatingBudget?: true
+    fiscalYearEnd?: true
+    phone?: true
+    email?: true
+    organizationLeaderName?: true
+    address?: true
+    city?: true
+    state?: true
+    zipCode?: true
   }
 
   export type OrganizationCountAggregateInputType = {
     id?: true
     name?: true
     slug?: true
-    type?: true
     role?: true
     createdAt?: true
     updatedAt?: true
     schoolDistrictId?: true
+    organizationLogo?: true
+    website?: true
+    missionStatement?: true
+    strategicPlan?: true
+    annualOperatingBudget?: true
+    fiscalYearEnd?: true
+    phone?: true
+    email?: true
+    organizationLeaderName?: true
+    address?: true
+    city?: true
+    state?: true
+    zipCode?: true
     _all?: true
   }
 
@@ -5553,6 +5631,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: OrganizationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: OrganizationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: OrganizationMinAggregateInputType
@@ -5583,6 +5673,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: OrganizationCountAggregateInputType | true
+    _avg?: OrganizationAvgAggregateInputType
+    _sum?: OrganizationSumAggregateInputType
     _min?: OrganizationMinAggregateInputType
     _max?: OrganizationMaxAggregateInputType
   }
@@ -5591,12 +5683,26 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
-    type: $Enums.OrganizationType
     role: $Enums.OrganizationRole
     createdAt: Date
     updatedAt: Date
     schoolDistrictId: string | null
+    organizationLogo: string | null
+    website: string | null
+    missionStatement: string | null
+    strategicPlan: string | null
+    annualOperatingBudget: Decimal | null
+    fiscalYearEnd: string | null
+    phone: string | null
+    email: string | null
+    organizationLeaderName: string | null
+    address: string | null
+    city: string | null
+    state: string | null
+    zipCode: string | null
     _count: OrganizationCountAggregateOutputType | null
+    _avg: OrganizationAvgAggregateOutputType | null
+    _sum: OrganizationSumAggregateOutputType | null
     _min: OrganizationMinAggregateOutputType | null
     _max: OrganizationMaxAggregateOutputType | null
   }
@@ -5619,11 +5725,23 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
-    type?: boolean
     role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     schoolDistrictId?: boolean
+    organizationLogo?: boolean
+    website?: boolean
+    missionStatement?: boolean
+    strategicPlan?: boolean
+    annualOperatingBudget?: boolean
+    fiscalYearEnd?: boolean
+    phone?: boolean
+    email?: boolean
+    organizationLeaderName?: boolean
+    address?: boolean
+    city?: boolean
+    state?: boolean
+    zipCode?: boolean
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
     grantBookmarks?: boolean | Organization$grantBookmarksArgs<ExtArgs>
@@ -5637,11 +5755,23 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
-    type?: boolean
     role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     schoolDistrictId?: boolean
+    organizationLogo?: boolean
+    website?: boolean
+    missionStatement?: boolean
+    strategicPlan?: boolean
+    annualOperatingBudget?: boolean
+    fiscalYearEnd?: boolean
+    phone?: boolean
+    email?: boolean
+    organizationLeaderName?: boolean
+    address?: boolean
+    city?: boolean
+    state?: boolean
+    zipCode?: boolean
     schoolDistrict?: boolean | Organization$schoolDistrictArgs<ExtArgs>
   }, ExtArgs["result"]["organization"]>
 
@@ -5649,11 +5779,23 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
-    type?: boolean
     role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     schoolDistrictId?: boolean
+    organizationLogo?: boolean
+    website?: boolean
+    missionStatement?: boolean
+    strategicPlan?: boolean
+    annualOperatingBudget?: boolean
+    fiscalYearEnd?: boolean
+    phone?: boolean
+    email?: boolean
+    organizationLeaderName?: boolean
+    address?: boolean
+    city?: boolean
+    state?: boolean
+    zipCode?: boolean
     schoolDistrict?: boolean | Organization$schoolDistrictArgs<ExtArgs>
   }, ExtArgs["result"]["organization"]>
 
@@ -5661,14 +5803,26 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
-    type?: boolean
     role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     schoolDistrictId?: boolean
+    organizationLogo?: boolean
+    website?: boolean
+    missionStatement?: boolean
+    strategicPlan?: boolean
+    annualOperatingBudget?: boolean
+    fiscalYearEnd?: boolean
+    phone?: boolean
+    email?: boolean
+    organizationLeaderName?: boolean
+    address?: boolean
+    city?: boolean
+    state?: boolean
+    zipCode?: boolean
   }
 
-  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "type" | "role" | "createdAt" | "updatedAt" | "schoolDistrictId", ExtArgs["result"]["organization"]>
+  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "role" | "createdAt" | "updatedAt" | "schoolDistrictId" | "organizationLogo" | "website" | "missionStatement" | "strategicPlan" | "annualOperatingBudget" | "fiscalYearEnd" | "phone" | "email" | "organizationLeaderName" | "address" | "city" | "state" | "zipCode", ExtArgs["result"]["organization"]>
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
@@ -5699,11 +5853,23 @@ export namespace Prisma {
       id: string
       name: string
       slug: string
-      type: $Enums.OrganizationType
       role: $Enums.OrganizationRole
       createdAt: Date
       updatedAt: Date
       schoolDistrictId: string | null
+      organizationLogo: string | null
+      website: string | null
+      missionStatement: string | null
+      strategicPlan: string | null
+      annualOperatingBudget: Prisma.Decimal | null
+      fiscalYearEnd: string | null
+      phone: string | null
+      email: string | null
+      organizationLeaderName: string | null
+      address: string | null
+      city: string | null
+      state: string | null
+      zipCode: string | null
     }, ExtArgs["result"]["organization"]>
     composites: {}
   }
@@ -6136,11 +6302,23 @@ export namespace Prisma {
     readonly id: FieldRef<"Organization", 'String'>
     readonly name: FieldRef<"Organization", 'String'>
     readonly slug: FieldRef<"Organization", 'String'>
-    readonly type: FieldRef<"Organization", 'OrganizationType'>
     readonly role: FieldRef<"Organization", 'OrganizationRole'>
     readonly createdAt: FieldRef<"Organization", 'DateTime'>
     readonly updatedAt: FieldRef<"Organization", 'DateTime'>
     readonly schoolDistrictId: FieldRef<"Organization", 'String'>
+    readonly organizationLogo: FieldRef<"Organization", 'String'>
+    readonly website: FieldRef<"Organization", 'String'>
+    readonly missionStatement: FieldRef<"Organization", 'String'>
+    readonly strategicPlan: FieldRef<"Organization", 'String'>
+    readonly annualOperatingBudget: FieldRef<"Organization", 'Decimal'>
+    readonly fiscalYearEnd: FieldRef<"Organization", 'String'>
+    readonly phone: FieldRef<"Organization", 'String'>
+    readonly email: FieldRef<"Organization", 'String'>
+    readonly organizationLeaderName: FieldRef<"Organization", 'String'>
+    readonly address: FieldRef<"Organization", 'String'>
+    readonly city: FieldRef<"Organization", 'String'>
+    readonly state: FieldRef<"Organization", 'String'>
+    readonly zipCode: FieldRef<"Organization", 'String'>
   }
     
 
@@ -13764,11 +13942,23 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     slug: 'slug',
-    type: 'type',
     role: 'role',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    schoolDistrictId: 'schoolDistrictId'
+    schoolDistrictId: 'schoolDistrictId',
+    organizationLogo: 'organizationLogo',
+    website: 'website',
+    missionStatement: 'missionStatement',
+    strategicPlan: 'strategicPlan',
+    annualOperatingBudget: 'annualOperatingBudget',
+    fiscalYearEnd: 'fiscalYearEnd',
+    phone: 'phone',
+    email: 'email',
+    organizationLeaderName: 'organizationLeaderName',
+    address: 'address',
+    city: 'city',
+    state: 'state',
+    zipCode: 'zipCode'
   };
 
   export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
@@ -13993,20 +14183,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'OrganizationType'
-   */
-  export type EnumOrganizationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrganizationType'>
-    
-
-
-  /**
-   * Reference to a field of type 'OrganizationType[]'
-   */
-  export type ListEnumOrganizationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrganizationType[]'>
-    
-
-
-  /**
    * Reference to a field of type 'OrganizationRole'
    */
   export type EnumOrganizationRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrganizationRole'>
@@ -14017,6 +14193,20 @@ export namespace Prisma {
    * Reference to a field of type 'OrganizationRole[]'
    */
   export type ListEnumOrganizationRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrganizationRole[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Decimal'
+   */
+  export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+  /**
+   * Reference to a field of type 'Decimal[]'
+   */
+  export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
     
 
 
@@ -14387,11 +14577,23 @@ export namespace Prisma {
     id?: StringFilter<"Organization"> | string
     name?: StringFilter<"Organization"> | string
     slug?: StringFilter<"Organization"> | string
-    type?: EnumOrganizationTypeFilter<"Organization"> | $Enums.OrganizationType
     role?: EnumOrganizationRoleFilter<"Organization"> | $Enums.OrganizationRole
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
     schoolDistrictId?: StringNullableFilter<"Organization"> | string | null
+    organizationLogo?: StringNullableFilter<"Organization"> | string | null
+    website?: StringNullableFilter<"Organization"> | string | null
+    missionStatement?: StringNullableFilter<"Organization"> | string | null
+    strategicPlan?: StringNullableFilter<"Organization"> | string | null
+    annualOperatingBudget?: DecimalNullableFilter<"Organization"> | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: StringNullableFilter<"Organization"> | string | null
+    phone?: StringNullableFilter<"Organization"> | string | null
+    email?: StringNullableFilter<"Organization"> | string | null
+    organizationLeaderName?: StringNullableFilter<"Organization"> | string | null
+    address?: StringNullableFilter<"Organization"> | string | null
+    city?: StringNullableFilter<"Organization"> | string | null
+    state?: StringNullableFilter<"Organization"> | string | null
+    zipCode?: StringNullableFilter<"Organization"> | string | null
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
@@ -14404,11 +14606,23 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
-    type?: SortOrder
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     schoolDistrictId?: SortOrderInput | SortOrder
+    organizationLogo?: SortOrderInput | SortOrder
+    website?: SortOrderInput | SortOrder
+    missionStatement?: SortOrderInput | SortOrder
+    strategicPlan?: SortOrderInput | SortOrder
+    annualOperatingBudget?: SortOrderInput | SortOrder
+    fiscalYearEnd?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    organizationLeaderName?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    city?: SortOrderInput | SortOrder
+    state?: SortOrderInput | SortOrder
+    zipCode?: SortOrderInput | SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     applications?: ApplicationOrderByRelationAggregateInput
     grantBookmarks?: GrantBookmarkOrderByRelationAggregateInput
@@ -14424,11 +14638,23 @@ export namespace Prisma {
     OR?: OrganizationWhereInput[]
     NOT?: OrganizationWhereInput | OrganizationWhereInput[]
     name?: StringFilter<"Organization"> | string
-    type?: EnumOrganizationTypeFilter<"Organization"> | $Enums.OrganizationType
     role?: EnumOrganizationRoleFilter<"Organization"> | $Enums.OrganizationRole
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
     schoolDistrictId?: StringNullableFilter<"Organization"> | string | null
+    organizationLogo?: StringNullableFilter<"Organization"> | string | null
+    website?: StringNullableFilter<"Organization"> | string | null
+    missionStatement?: StringNullableFilter<"Organization"> | string | null
+    strategicPlan?: StringNullableFilter<"Organization"> | string | null
+    annualOperatingBudget?: DecimalNullableFilter<"Organization"> | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: StringNullableFilter<"Organization"> | string | null
+    phone?: StringNullableFilter<"Organization"> | string | null
+    email?: StringNullableFilter<"Organization"> | string | null
+    organizationLeaderName?: StringNullableFilter<"Organization"> | string | null
+    address?: StringNullableFilter<"Organization"> | string | null
+    city?: StringNullableFilter<"Organization"> | string | null
+    state?: StringNullableFilter<"Organization"> | string | null
+    zipCode?: StringNullableFilter<"Organization"> | string | null
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
@@ -14441,14 +14667,28 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
-    type?: SortOrder
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     schoolDistrictId?: SortOrderInput | SortOrder
+    organizationLogo?: SortOrderInput | SortOrder
+    website?: SortOrderInput | SortOrder
+    missionStatement?: SortOrderInput | SortOrder
+    strategicPlan?: SortOrderInput | SortOrder
+    annualOperatingBudget?: SortOrderInput | SortOrder
+    fiscalYearEnd?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    organizationLeaderName?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    city?: SortOrderInput | SortOrder
+    state?: SortOrderInput | SortOrder
+    zipCode?: SortOrderInput | SortOrder
     _count?: OrganizationCountOrderByAggregateInput
+    _avg?: OrganizationAvgOrderByAggregateInput
     _max?: OrganizationMaxOrderByAggregateInput
     _min?: OrganizationMinOrderByAggregateInput
+    _sum?: OrganizationSumOrderByAggregateInput
   }
 
   export type OrganizationScalarWhereWithAggregatesInput = {
@@ -14458,11 +14698,23 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Organization"> | string
     name?: StringWithAggregatesFilter<"Organization"> | string
     slug?: StringWithAggregatesFilter<"Organization"> | string
-    type?: EnumOrganizationTypeWithAggregatesFilter<"Organization"> | $Enums.OrganizationType
     role?: EnumOrganizationRoleWithAggregatesFilter<"Organization"> | $Enums.OrganizationRole
     createdAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
     schoolDistrictId?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    organizationLogo?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    website?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    missionStatement?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    strategicPlan?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    annualOperatingBudget?: DecimalNullableWithAggregatesFilter<"Organization"> | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    email?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    organizationLeaderName?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    address?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    city?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    state?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    zipCode?: StringNullableWithAggregatesFilter<"Organization"> | string | null
   }
 
   export type SchoolDistrictWhereInput = {
@@ -15310,10 +15562,22 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -15326,11 +15590,23 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     schoolDistrictId?: string | null
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15342,10 +15618,22 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -15358,11 +15646,23 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolDistrictId?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15374,32 +15674,68 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     schoolDistrictId?: string | null
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
   }
 
   export type OrganizationUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrganizationUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolDistrictId?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SchoolDistrictCreateInput = {
@@ -16422,18 +16758,22 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
-  export type EnumOrganizationTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrganizationType | EnumOrganizationTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.OrganizationType[] | ListEnumOrganizationTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrganizationType[] | ListEnumOrganizationTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrganizationTypeFilter<$PrismaModel> | $Enums.OrganizationType
-  }
-
   export type EnumOrganizationRoleFilter<$PrismaModel = never> = {
     equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
     in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
     notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
     not?: NestedEnumOrganizationRoleFilter<$PrismaModel> | $Enums.OrganizationRole
+  }
+
+  export type DecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
   }
 
   export type ApplicationListRelationFilter = {
@@ -16470,43 +16810,77 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
-    type?: SortOrder
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     schoolDistrictId?: SortOrder
+    organizationLogo?: SortOrder
+    website?: SortOrder
+    missionStatement?: SortOrder
+    strategicPlan?: SortOrder
+    annualOperatingBudget?: SortOrder
+    fiscalYearEnd?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    organizationLeaderName?: SortOrder
+    address?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    zipCode?: SortOrder
+  }
+
+  export type OrganizationAvgOrderByAggregateInput = {
+    annualOperatingBudget?: SortOrder
   }
 
   export type OrganizationMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
-    type?: SortOrder
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     schoolDistrictId?: SortOrder
+    organizationLogo?: SortOrder
+    website?: SortOrder
+    missionStatement?: SortOrder
+    strategicPlan?: SortOrder
+    annualOperatingBudget?: SortOrder
+    fiscalYearEnd?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    organizationLeaderName?: SortOrder
+    address?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    zipCode?: SortOrder
   }
 
   export type OrganizationMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
-    type?: SortOrder
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     schoolDistrictId?: SortOrder
+    organizationLogo?: SortOrder
+    website?: SortOrder
+    missionStatement?: SortOrder
+    strategicPlan?: SortOrder
+    annualOperatingBudget?: SortOrder
+    fiscalYearEnd?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    organizationLeaderName?: SortOrder
+    address?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    zipCode?: SortOrder
   }
 
-  export type EnumOrganizationTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrganizationType | EnumOrganizationTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.OrganizationType[] | ListEnumOrganizationTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrganizationType[] | ListEnumOrganizationTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrganizationTypeWithAggregatesFilter<$PrismaModel> | $Enums.OrganizationType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumOrganizationTypeFilter<$PrismaModel>
-    _max?: NestedEnumOrganizationTypeFilter<$PrismaModel>
+  export type OrganizationSumOrderByAggregateInput = {
+    annualOperatingBudget?: SortOrder
   }
 
   export type EnumOrganizationRoleWithAggregatesFilter<$PrismaModel = never> = {
@@ -16517,6 +16891,22 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumOrganizationRoleFilter<$PrismaModel>
     _max?: NestedEnumOrganizationRoleFilter<$PrismaModel>
+  }
+
+  export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
 
   export type FloatNullableFilter<$PrismaModel = never> = {
@@ -17156,12 +17546,16 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type EnumOrganizationTypeFieldUpdateOperationsInput = {
-    set?: $Enums.OrganizationType
-  }
-
   export type EnumOrganizationRoleFieldUpdateOperationsInput = {
     set?: $Enums.OrganizationRole
+  }
+
+  export type NullableDecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string | null
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
   }
 
   export type AiChatUpdateManyWithoutOrganizationNestedInput = {
@@ -17849,13 +18243,6 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
-  export type NestedEnumOrganizationTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrganizationType | EnumOrganizationTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.OrganizationType[] | ListEnumOrganizationTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrganizationType[] | ListEnumOrganizationTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrganizationTypeFilter<$PrismaModel> | $Enums.OrganizationType
-  }
-
   export type NestedEnumOrganizationRoleFilter<$PrismaModel = never> = {
     equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
     in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
@@ -17863,14 +18250,15 @@ export namespace Prisma {
     not?: NestedEnumOrganizationRoleFilter<$PrismaModel> | $Enums.OrganizationRole
   }
 
-  export type NestedEnumOrganizationTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrganizationType | EnumOrganizationTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.OrganizationType[] | ListEnumOrganizationTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrganizationType[] | ListEnumOrganizationTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrganizationTypeWithAggregatesFilter<$PrismaModel> | $Enums.OrganizationType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumOrganizationTypeFilter<$PrismaModel>
-    _max?: NestedEnumOrganizationTypeFilter<$PrismaModel>
+  export type NestedDecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
   }
 
   export type NestedEnumOrganizationRoleWithAggregatesFilter<$PrismaModel = never> = {
@@ -17881,6 +18269,22 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumOrganizationRoleFilter<$PrismaModel>
     _max?: NestedEnumOrganizationRoleFilter<$PrismaModel>
+  }
+
+  export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
 
   export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -18029,10 +18433,22 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -18044,11 +18460,23 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     schoolDistrictId?: string | null
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18133,10 +18561,22 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -18148,11 +18588,23 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolDistrictId?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18557,10 +19009,22 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -18572,10 +19036,22 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18616,11 +19092,23 @@ export namespace Prisma {
     id?: StringFilter<"Organization"> | string
     name?: StringFilter<"Organization"> | string
     slug?: StringFilter<"Organization"> | string
-    type?: EnumOrganizationTypeFilter<"Organization"> | $Enums.OrganizationType
     role?: EnumOrganizationRoleFilter<"Organization"> | $Enums.OrganizationRole
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
     schoolDistrictId?: StringNullableFilter<"Organization"> | string | null
+    organizationLogo?: StringNullableFilter<"Organization"> | string | null
+    website?: StringNullableFilter<"Organization"> | string | null
+    missionStatement?: StringNullableFilter<"Organization"> | string | null
+    strategicPlan?: StringNullableFilter<"Organization"> | string | null
+    annualOperatingBudget?: DecimalNullableFilter<"Organization"> | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: StringNullableFilter<"Organization"> | string | null
+    phone?: StringNullableFilter<"Organization"> | string | null
+    email?: StringNullableFilter<"Organization"> | string | null
+    organizationLeaderName?: StringNullableFilter<"Organization"> | string | null
+    address?: StringNullableFilter<"Organization"> | string | null
+    city?: StringNullableFilter<"Organization"> | string | null
+    state?: StringNullableFilter<"Organization"> | string | null
+    zipCode?: StringNullableFilter<"Organization"> | string | null
   }
 
   export type UserCreateWithoutGrantBookmarksInput = {
@@ -18658,10 +19146,22 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
@@ -18673,11 +19173,23 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     schoolDistrictId?: string | null
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18741,10 +19253,22 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
@@ -18756,11 +19280,23 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolDistrictId?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18771,10 +19307,22 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -18786,11 +19334,23 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     schoolDistrictId?: string | null
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18817,10 +19377,22 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -18832,11 +19404,23 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolDistrictId?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18879,10 +19463,22 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
@@ -18894,11 +19490,23 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     schoolDistrictId?: string | null
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18941,10 +19549,22 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
@@ -18956,11 +19576,23 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolDistrictId?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19065,10 +19697,22 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
@@ -19080,11 +19724,23 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     schoolDistrictId?: string | null
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19219,10 +19875,22 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
@@ -19234,11 +19902,23 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     schoolDistrictId?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19563,20 +20243,44 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
-    type?: $Enums.OrganizationType
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
+    organizationLogo?: string | null
+    website?: string | null
+    missionStatement?: string | null
+    strategicPlan?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: string | null
+    phone?: string | null
+    email?: string | null
+    organizationLeaderName?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
   }
 
   export type OrganizationUpdateWithoutSchoolDistrictInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -19588,10 +20292,22 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19603,10 +20319,22 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    type?: EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AiChatCreateManyApplicationInput = {

@@ -172,11 +172,23 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   id: 'id',
   name: 'name',
   slug: 'slug',
-  type: 'type',
   role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  schoolDistrictId: 'schoolDistrictId'
+  schoolDistrictId: 'schoolDistrictId',
+  organizationLogo: 'organizationLogo',
+  website: 'website',
+  missionStatement: 'missionStatement',
+  strategicPlan: 'strategicPlan',
+  annualOperatingBudget: 'annualOperatingBudget',
+  fiscalYearEnd: 'fiscalYearEnd',
+  phone: 'phone',
+  email: 'email',
+  organizationLeaderName: 'organizationLeaderName',
+  address: 'address',
+  city: 'city',
+  state: 'state',
+  zipCode: 'zipCode'
 };
 
 exports.Prisma.SchoolDistrictScalarFieldEnum = {
@@ -286,11 +298,6 @@ exports.opportunity_status_enum = exports.$Enums.opportunity_status_enum = {
   posted: 'posted',
   closed: 'closed',
   archive: 'archive'
-};
-
-exports.OrganizationType = exports.$Enums.OrganizationType = {
-  PERSONAL: 'PERSONAL',
-  ORGANIZATION: 'ORGANIZATION'
 };
 
 exports.OrganizationRole = exports.$Enums.OrganizationRole = {
