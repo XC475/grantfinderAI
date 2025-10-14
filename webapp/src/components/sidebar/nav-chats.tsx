@@ -20,13 +20,30 @@ interface Chat {
   _count: { messages: number };
 }
 
-export function NavChats({ organizationSlug }: { organizationSlug: string | null }) {
+export function NavChats({
+  organizationSlug,
+}: {
+  organizationSlug: string | null;
+}) {
   const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
 
   useEffect(() => {
     fetchChats();
+
+    // Listen for chat events (created or updated)
+    const handleChatEvent = () => {
+      fetchChats();
+    };
+
+    window.addEventListener("chatCreated", handleChatEvent);
+    window.addEventListener("chatUpdated", handleChatEvent);
+
+    return () => {
+      window.removeEventListener("chatCreated", handleChatEvent);
+      window.removeEventListener("chatUpdated", handleChatEvent);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -115,7 +132,9 @@ export function NavChats({ organizationSlug }: { organizationSlug: string | null
         <Button variant="ghost" size="sm" asChild className="h-6 w-6 p-0">
           <Link
             href={
-              organizationSlug ? `/private/${organizationSlug}/chat` : "/private/chat"
+              organizationSlug
+                ? `/private/${organizationSlug}/chat`
+                : "/private/chat"
             }
           >
             <Plus className="h-4 w-4" />

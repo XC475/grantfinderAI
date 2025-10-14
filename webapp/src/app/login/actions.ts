@@ -37,7 +37,7 @@ export async function login(formData: FormData) {
       revalidatePath("/", "layout");
       redirect(
         redirectWithToast(
-          `/private/${organization.slug}/chat`,
+          `/private/${organization.slug}/dashboard`,
           "success",
           "Welcome back!"
         )

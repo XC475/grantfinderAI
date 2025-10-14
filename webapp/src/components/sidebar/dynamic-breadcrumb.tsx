@@ -29,23 +29,29 @@ export function DynamicBreadcrumb({
     const path = pathname.replace(`/private/${organizationSlug}`, "");
     const segments = path.split("/").filter(Boolean);
 
-    // If we're on the chat page (home), don't show breadcrumbs
-    if (segments.length === 0 || segments[0] === "chat") {
+    // If we're on the dashboard page (home), don't show breadcrumbs
+    if (segments.length === 0 || segments[0] === "dashboard") {
       return null;
     }
 
     // Build breadcrumb items
     const items = [];
 
-    // Always start with Home
+    // Always start with Dashboard
     items.push({
-      label: "Home",
-      href: `/private/${organizationSlug}/chat`,
+      label: "Dashboard",
+      href: `/private/${organizationSlug}/dashboard`,
       isLast: false,
     });
 
     // Handle different pages
-    if (segments[0] === "grants") {
+    if (segments[0] === "chat") {
+      items.push({
+        label: "AI Chat",
+        href: `/private/${organizationSlug}/chat`,
+        isLast: true,
+      });
+    } else if (segments[0] === "grants") {
       // Check if we came from bookmarks
       if (segments.length > 1 && segments[1] && fromBookmarks) {
         // Viewing grant from bookmarks
@@ -76,6 +82,12 @@ export function DynamicBreadcrumb({
           });
         }
       }
+    } else if (segments[0] === "dashboard") {
+      items.push({
+        label: "Dashboard",
+        href: `/private/${organizationSlug}/dashboard`,
+        isLast: true,
+      });
     } else if (segments[0] === "bookmarks") {
       items.push({
         label: "Saved Grants",

@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
       name: name,
       loginUrl: `${siteUrl}/login`,
       temporaryPassword: password,
-      organizationUrl: `${siteUrl}/private/${organizationSlug}/chat`,
+      organizationUrl: `${siteUrl}/private/${organizationSlug}/dashboard`,
     });
 
     if (emailResult.success) {
