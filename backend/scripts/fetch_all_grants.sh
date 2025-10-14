@@ -16,6 +16,15 @@ if [ $? -ne 0 ]; then
   STATUS=1
 fi
 
+# Run the fetch_grants_nysed.py script
+echo "Running fetch_grants_nysed.py..."
+python scripts/fetch_grants_nysed.py
+if [ $? -ne 0 ]; then
+  echo "Error: fetch_grants_nysed.py failed."
+  STATUS=1
+fi
+
+
 # Run the fetch_grants_gov.py script
 echo "Running fetch_grants_gov.py..."
 python scripts/fetch_grants_gov.py
