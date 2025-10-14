@@ -12,10 +12,12 @@ import {
   ClipboardList,
   LayoutDashboard,
   Building2,
+  Users,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
 import { NavOrganization } from "@/components/sidebar/nav-organization";
+import { NavAdmin } from "@/components/sidebar/nav-admin";
 import { NavChats } from "@/components/sidebar/nav-chats";
 import { NavUser } from "@/components/sidebar/nav-user";
 import { NavSettings } from "@/components/sidebar/nav-settings";
@@ -122,6 +124,13 @@ const data = {
     //   ],
     // },
   ],
+  navAdmin: [
+    {
+      title: "Users",
+      url: "/private/admin/users",
+      icon: Users,
+    },
+  ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -137,6 +146,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     slug: string;
   } | null>(null);
   const [loadingOrganization, setLoadingOrganization] = React.useState(true);
+  const [isAdmin, setIsAdmin] = React.useState(false);
 
   // Extract organization slug from pathname: /private/[slug]/...
   const organizationSlug = React.useMemo(() => {
@@ -161,6 +171,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           email: authUser.email || "",
           avatar: authUser.user_metadata?.avatar_url || "",
         });
+
+        // Fetch user's system_admin status (server-side check)
+        try {
+          const userResponse = await fetch("/api/user/me");
+          if (userResponse.ok) {
+            const userData = await userResponse.json();
+            setIsAdmin(userData.system_admin === true);
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
 
         // Fetch user's organization
         try {
@@ -199,6 +220,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }));
   }, [organizationSlug]);
 
+  // Build admin navigation items with organization slug
+  const navAdminItems = React.useMemo(() => {
+    if (!organizationSlug) return data.navAdmin;
+
+    return data.navAdmin.map((item) => ({
+      ...item,
+      url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
+    }));
+  }, [organizationSlug]);
+
   // Check if we're on a settings page
   const isOnSettingsPage = pathname.includes("/settings");
 
@@ -218,6 +249,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <>
             <NavMain items={navItems} />
             <NavOrganization items={navOrganizationItems} />
+            {isAdmin && <NavAdmin items={navAdminItems} />}
             <NavChats organizationSlug={organizationSlug} />
           </>
         )}
