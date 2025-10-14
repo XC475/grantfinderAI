@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { opportunityId, organizationSlug, alsoBookmark } = body;
+    const { opportunityId, organizationSlug, alsoBookmark, grantTitle } = body;
 
     if (!opportunityId || !organizationSlug) {
       return NextResponse.json(
@@ -61,12 +61,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create the application
+    // Create the application with the grant title
     const application = await prisma.application.create({
       data: {
         opportunityId,
         organizationId: organization.id,
         status: "DRAFT",
+        title: grantTitle || `Application for Grant #${opportunityId}`,
       },
     });
 
