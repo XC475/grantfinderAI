@@ -34,11 +34,6 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type Organization = $Result.DefaultSelection<Prisma.$OrganizationPayload>
 /**
- * Model SchoolDistrict
- * 
- */
-export type SchoolDistrict = $Result.DefaultSelection<Prisma.$SchoolDistrictPayload>
-/**
  * Model GrantBookmark
  * 
  */
@@ -312,16 +307,6 @@ export class PrismaClient<
     * ```
     */
   get organization(): Prisma.OrganizationDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.schoolDistrict`: Exposes CRUD operations for the **SchoolDistrict** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more SchoolDistricts
-    * const schoolDistricts = await prisma.schoolDistrict.findMany()
-    * ```
-    */
-  get schoolDistrict(): Prisma.SchoolDistrictDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.grantBookmark`: Exposes CRUD operations for the **GrantBookmark** model.
@@ -816,7 +801,6 @@ export namespace Prisma {
     opportunities: 'opportunities',
     User: 'User',
     Organization: 'Organization',
-    SchoolDistrict: 'SchoolDistrict',
     GrantBookmark: 'GrantBookmark',
     GrantEligibilityAnalysis: 'GrantEligibilityAnalysis',
     Application: 'Application',
@@ -840,7 +824,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "schoolDistrict" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage"
+      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1137,80 +1121,6 @@ export namespace Prisma {
           count: {
             args: Prisma.OrganizationCountArgs<ExtArgs>
             result: $Utils.Optional<OrganizationCountAggregateOutputType> | number
-          }
-        }
-      }
-      SchoolDistrict: {
-        payload: Prisma.$SchoolDistrictPayload<ExtArgs>
-        fields: Prisma.SchoolDistrictFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.SchoolDistrictFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SchoolDistrictPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.SchoolDistrictFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SchoolDistrictPayload>
-          }
-          findFirst: {
-            args: Prisma.SchoolDistrictFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SchoolDistrictPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.SchoolDistrictFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SchoolDistrictPayload>
-          }
-          findMany: {
-            args: Prisma.SchoolDistrictFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SchoolDistrictPayload>[]
-          }
-          create: {
-            args: Prisma.SchoolDistrictCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SchoolDistrictPayload>
-          }
-          createMany: {
-            args: Prisma.SchoolDistrictCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.SchoolDistrictCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SchoolDistrictPayload>[]
-          }
-          delete: {
-            args: Prisma.SchoolDistrictDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SchoolDistrictPayload>
-          }
-          update: {
-            args: Prisma.SchoolDistrictUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SchoolDistrictPayload>
-          }
-          deleteMany: {
-            args: Prisma.SchoolDistrictDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.SchoolDistrictUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.SchoolDistrictUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SchoolDistrictPayload>[]
-          }
-          upsert: {
-            args: Prisma.SchoolDistrictUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SchoolDistrictPayload>
-          }
-          aggregate: {
-            args: Prisma.SchoolDistrictAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateSchoolDistrict>
-          }
-          groupBy: {
-            args: Prisma.SchoolDistrictGroupByArgs<ExtArgs>
-            result: $Utils.Optional<SchoolDistrictGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.SchoolDistrictCountArgs<ExtArgs>
-            result: $Utils.Optional<SchoolDistrictCountAggregateOutputType> | number
           }
         }
       }
@@ -1684,7 +1594,6 @@ export namespace Prisma {
     opportunities?: opportunitiesOmit
     user?: UserOmit
     organization?: OrganizationOmit
-    schoolDistrict?: SchoolDistrictOmit
     grantBookmark?: GrantBookmarkOmit
     grantEligibilityAnalysis?: GrantEligibilityAnalysisOmit
     application?: ApplicationOmit
@@ -1860,37 +1769,6 @@ export namespace Prisma {
    */
   export type OrganizationCountOutputTypeCountEligibilityAnalysesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: GrantEligibilityAnalysisWhereInput
-  }
-
-
-  /**
-   * Count Type SchoolDistrictCountOutputType
-   */
-
-  export type SchoolDistrictCountOutputType = {
-    organizations: number
-  }
-
-  export type SchoolDistrictCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    organizations?: boolean | SchoolDistrictCountOutputTypeCountOrganizationsArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * SchoolDistrictCountOutputType without action
-   */
-  export type SchoolDistrictCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SchoolDistrictCountOutputType
-     */
-    select?: SchoolDistrictCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * SchoolDistrictCountOutputType without action
-   */
-  export type SchoolDistrictCountOutputTypeCountOrganizationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: OrganizationWhereInput
   }
 
 
@@ -5438,10 +5316,26 @@ export namespace Prisma {
 
   export type OrganizationAvgAggregateOutputType = {
     annualOperatingBudget: Decimal | null
+    latitude: number | null
+    longitude: number | null
+    enrollment: number | null
+    numberOfSchools: number | null
+    lowestGrade: number | null
+    highestGrade: number | null
+    urbanCentricLocale: number | null
+    districtDataYear: number | null
   }
 
   export type OrganizationSumAggregateOutputType = {
     annualOperatingBudget: Decimal | null
+    latitude: number | null
+    longitude: number | null
+    enrollment: number | null
+    numberOfSchools: number | null
+    lowestGrade: number | null
+    highestGrade: number | null
+    urbanCentricLocale: number | null
+    districtDataYear: number | null
   }
 
   export type OrganizationMinAggregateOutputType = {
@@ -5451,7 +5345,6 @@ export namespace Prisma {
     role: $Enums.OrganizationRole | null
     createdAt: Date | null
     updatedAt: Date | null
-    schoolDistrictId: string | null
     organizationLogo: string | null
     website: string | null
     missionStatement: string | null
@@ -5465,6 +5358,17 @@ export namespace Prisma {
     city: string | null
     state: string | null
     zipCode: string | null
+    countyName: string | null
+    latitude: number | null
+    longitude: number | null
+    leaId: string | null
+    stateLeaId: string | null
+    enrollment: number | null
+    numberOfSchools: number | null
+    lowestGrade: number | null
+    highestGrade: number | null
+    urbanCentricLocale: number | null
+    districtDataYear: number | null
   }
 
   export type OrganizationMaxAggregateOutputType = {
@@ -5474,7 +5378,6 @@ export namespace Prisma {
     role: $Enums.OrganizationRole | null
     createdAt: Date | null
     updatedAt: Date | null
-    schoolDistrictId: string | null
     organizationLogo: string | null
     website: string | null
     missionStatement: string | null
@@ -5488,6 +5391,17 @@ export namespace Prisma {
     city: string | null
     state: string | null
     zipCode: string | null
+    countyName: string | null
+    latitude: number | null
+    longitude: number | null
+    leaId: string | null
+    stateLeaId: string | null
+    enrollment: number | null
+    numberOfSchools: number | null
+    lowestGrade: number | null
+    highestGrade: number | null
+    urbanCentricLocale: number | null
+    districtDataYear: number | null
   }
 
   export type OrganizationCountAggregateOutputType = {
@@ -5497,7 +5411,6 @@ export namespace Prisma {
     role: number
     createdAt: number
     updatedAt: number
-    schoolDistrictId: number
     organizationLogo: number
     website: number
     missionStatement: number
@@ -5511,16 +5424,43 @@ export namespace Prisma {
     city: number
     state: number
     zipCode: number
+    countyName: number
+    latitude: number
+    longitude: number
+    leaId: number
+    stateLeaId: number
+    enrollment: number
+    numberOfSchools: number
+    lowestGrade: number
+    highestGrade: number
+    urbanCentricLocale: number
+    districtDataYear: number
     _all: number
   }
 
 
   export type OrganizationAvgAggregateInputType = {
     annualOperatingBudget?: true
+    latitude?: true
+    longitude?: true
+    enrollment?: true
+    numberOfSchools?: true
+    lowestGrade?: true
+    highestGrade?: true
+    urbanCentricLocale?: true
+    districtDataYear?: true
   }
 
   export type OrganizationSumAggregateInputType = {
     annualOperatingBudget?: true
+    latitude?: true
+    longitude?: true
+    enrollment?: true
+    numberOfSchools?: true
+    lowestGrade?: true
+    highestGrade?: true
+    urbanCentricLocale?: true
+    districtDataYear?: true
   }
 
   export type OrganizationMinAggregateInputType = {
@@ -5530,7 +5470,6 @@ export namespace Prisma {
     role?: true
     createdAt?: true
     updatedAt?: true
-    schoolDistrictId?: true
     organizationLogo?: true
     website?: true
     missionStatement?: true
@@ -5544,6 +5483,17 @@ export namespace Prisma {
     city?: true
     state?: true
     zipCode?: true
+    countyName?: true
+    latitude?: true
+    longitude?: true
+    leaId?: true
+    stateLeaId?: true
+    enrollment?: true
+    numberOfSchools?: true
+    lowestGrade?: true
+    highestGrade?: true
+    urbanCentricLocale?: true
+    districtDataYear?: true
   }
 
   export type OrganizationMaxAggregateInputType = {
@@ -5553,7 +5503,6 @@ export namespace Prisma {
     role?: true
     createdAt?: true
     updatedAt?: true
-    schoolDistrictId?: true
     organizationLogo?: true
     website?: true
     missionStatement?: true
@@ -5567,6 +5516,17 @@ export namespace Prisma {
     city?: true
     state?: true
     zipCode?: true
+    countyName?: true
+    latitude?: true
+    longitude?: true
+    leaId?: true
+    stateLeaId?: true
+    enrollment?: true
+    numberOfSchools?: true
+    lowestGrade?: true
+    highestGrade?: true
+    urbanCentricLocale?: true
+    districtDataYear?: true
   }
 
   export type OrganizationCountAggregateInputType = {
@@ -5576,7 +5536,6 @@ export namespace Prisma {
     role?: true
     createdAt?: true
     updatedAt?: true
-    schoolDistrictId?: true
     organizationLogo?: true
     website?: true
     missionStatement?: true
@@ -5590,6 +5549,17 @@ export namespace Prisma {
     city?: true
     state?: true
     zipCode?: true
+    countyName?: true
+    latitude?: true
+    longitude?: true
+    leaId?: true
+    stateLeaId?: true
+    enrollment?: true
+    numberOfSchools?: true
+    lowestGrade?: true
+    highestGrade?: true
+    urbanCentricLocale?: true
+    districtDataYear?: true
     _all?: true
   }
 
@@ -5686,7 +5656,6 @@ export namespace Prisma {
     role: $Enums.OrganizationRole
     createdAt: Date
     updatedAt: Date
-    schoolDistrictId: string | null
     organizationLogo: string | null
     website: string | null
     missionStatement: string | null
@@ -5700,6 +5669,17 @@ export namespace Prisma {
     city: string | null
     state: string | null
     zipCode: string | null
+    countyName: string | null
+    latitude: number | null
+    longitude: number | null
+    leaId: string | null
+    stateLeaId: string | null
+    enrollment: number | null
+    numberOfSchools: number | null
+    lowestGrade: number | null
+    highestGrade: number | null
+    urbanCentricLocale: number | null
+    districtDataYear: number | null
     _count: OrganizationCountAggregateOutputType | null
     _avg: OrganizationAvgAggregateOutputType | null
     _sum: OrganizationSumAggregateOutputType | null
@@ -5728,7 +5708,6 @@ export namespace Prisma {
     role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    schoolDistrictId?: boolean
     organizationLogo?: boolean
     website?: boolean
     missionStatement?: boolean
@@ -5742,12 +5721,22 @@ export namespace Prisma {
     city?: boolean
     state?: boolean
     zipCode?: boolean
+    countyName?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    leaId?: boolean
+    stateLeaId?: boolean
+    enrollment?: boolean
+    numberOfSchools?: boolean
+    lowestGrade?: boolean
+    highestGrade?: boolean
+    urbanCentricLocale?: boolean
+    districtDataYear?: boolean
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
     grantBookmarks?: boolean | Organization$grantBookmarksArgs<ExtArgs>
     eligibilityAnalyses?: boolean | Organization$eligibilityAnalysesArgs<ExtArgs>
     user?: boolean | Organization$userArgs<ExtArgs>
-    schoolDistrict?: boolean | Organization$schoolDistrictArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["organization"]>
 
@@ -5758,7 +5747,6 @@ export namespace Prisma {
     role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    schoolDistrictId?: boolean
     organizationLogo?: boolean
     website?: boolean
     missionStatement?: boolean
@@ -5772,7 +5760,17 @@ export namespace Prisma {
     city?: boolean
     state?: boolean
     zipCode?: boolean
-    schoolDistrict?: boolean | Organization$schoolDistrictArgs<ExtArgs>
+    countyName?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    leaId?: boolean
+    stateLeaId?: boolean
+    enrollment?: boolean
+    numberOfSchools?: boolean
+    lowestGrade?: boolean
+    highestGrade?: boolean
+    urbanCentricLocale?: boolean
+    districtDataYear?: boolean
   }, ExtArgs["result"]["organization"]>
 
   export type OrganizationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5782,7 +5780,6 @@ export namespace Prisma {
     role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    schoolDistrictId?: boolean
     organizationLogo?: boolean
     website?: boolean
     missionStatement?: boolean
@@ -5796,7 +5793,17 @@ export namespace Prisma {
     city?: boolean
     state?: boolean
     zipCode?: boolean
-    schoolDistrict?: boolean | Organization$schoolDistrictArgs<ExtArgs>
+    countyName?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    leaId?: boolean
+    stateLeaId?: boolean
+    enrollment?: boolean
+    numberOfSchools?: boolean
+    lowestGrade?: boolean
+    highestGrade?: boolean
+    urbanCentricLocale?: boolean
+    districtDataYear?: boolean
   }, ExtArgs["result"]["organization"]>
 
   export type OrganizationSelectScalar = {
@@ -5806,7 +5813,6 @@ export namespace Prisma {
     role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    schoolDistrictId?: boolean
     organizationLogo?: boolean
     website?: boolean
     missionStatement?: boolean
@@ -5820,24 +5826,30 @@ export namespace Prisma {
     city?: boolean
     state?: boolean
     zipCode?: boolean
+    countyName?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    leaId?: boolean
+    stateLeaId?: boolean
+    enrollment?: boolean
+    numberOfSchools?: boolean
+    lowestGrade?: boolean
+    highestGrade?: boolean
+    urbanCentricLocale?: boolean
+    districtDataYear?: boolean
   }
 
-  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "role" | "createdAt" | "updatedAt" | "schoolDistrictId" | "organizationLogo" | "website" | "missionStatement" | "strategicPlan" | "annualOperatingBudget" | "fiscalYearEnd" | "phone" | "email" | "organizationLeaderName" | "address" | "city" | "state" | "zipCode", ExtArgs["result"]["organization"]>
+  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "role" | "createdAt" | "updatedAt" | "organizationLogo" | "website" | "missionStatement" | "strategicPlan" | "annualOperatingBudget" | "fiscalYearEnd" | "phone" | "email" | "organizationLeaderName" | "address" | "city" | "state" | "zipCode" | "countyName" | "latitude" | "longitude" | "leaId" | "stateLeaId" | "enrollment" | "numberOfSchools" | "lowestGrade" | "highestGrade" | "urbanCentricLocale" | "districtDataYear", ExtArgs["result"]["organization"]>
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
     grantBookmarks?: boolean | Organization$grantBookmarksArgs<ExtArgs>
     eligibilityAnalyses?: boolean | Organization$eligibilityAnalysesArgs<ExtArgs>
     user?: boolean | Organization$userArgs<ExtArgs>
-    schoolDistrict?: boolean | Organization$schoolDistrictArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    schoolDistrict?: boolean | Organization$schoolDistrictArgs<ExtArgs>
-  }
-  export type OrganizationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    schoolDistrict?: boolean | Organization$schoolDistrictArgs<ExtArgs>
-  }
+  export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type OrganizationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $OrganizationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Organization"
@@ -5847,7 +5859,6 @@ export namespace Prisma {
       grantBookmarks: Prisma.$GrantBookmarkPayload<ExtArgs>[]
       eligibilityAnalyses: Prisma.$GrantEligibilityAnalysisPayload<ExtArgs>[]
       user: Prisma.$UserPayload<ExtArgs> | null
-      schoolDistrict: Prisma.$SchoolDistrictPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5856,7 +5867,6 @@ export namespace Prisma {
       role: $Enums.OrganizationRole
       createdAt: Date
       updatedAt: Date
-      schoolDistrictId: string | null
       organizationLogo: string | null
       website: string | null
       missionStatement: string | null
@@ -5870,6 +5880,17 @@ export namespace Prisma {
       city: string | null
       state: string | null
       zipCode: string | null
+      countyName: string | null
+      latitude: number | null
+      longitude: number | null
+      leaId: string | null
+      stateLeaId: string | null
+      enrollment: number | null
+      numberOfSchools: number | null
+      lowestGrade: number | null
+      highestGrade: number | null
+      urbanCentricLocale: number | null
+      districtDataYear: number | null
     }, ExtArgs["result"]["organization"]>
     composites: {}
   }
@@ -6269,7 +6290,6 @@ export namespace Prisma {
     grantBookmarks<T extends Organization$grantBookmarksArgs<ExtArgs> = {}>(args?: Subset<T, Organization$grantBookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GrantBookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     eligibilityAnalyses<T extends Organization$eligibilityAnalysesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$eligibilityAnalysesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GrantEligibilityAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     user<T extends Organization$userArgs<ExtArgs> = {}>(args?: Subset<T, Organization$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    schoolDistrict<T extends Organization$schoolDistrictArgs<ExtArgs> = {}>(args?: Subset<T, Organization$schoolDistrictArgs<ExtArgs>>): Prisma__SchoolDistrictClient<$Result.GetResult<Prisma.$SchoolDistrictPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6305,7 +6325,6 @@ export namespace Prisma {
     readonly role: FieldRef<"Organization", 'OrganizationRole'>
     readonly createdAt: FieldRef<"Organization", 'DateTime'>
     readonly updatedAt: FieldRef<"Organization", 'DateTime'>
-    readonly schoolDistrictId: FieldRef<"Organization", 'String'>
     readonly organizationLogo: FieldRef<"Organization", 'String'>
     readonly website: FieldRef<"Organization", 'String'>
     readonly missionStatement: FieldRef<"Organization", 'String'>
@@ -6319,6 +6338,17 @@ export namespace Prisma {
     readonly city: FieldRef<"Organization", 'String'>
     readonly state: FieldRef<"Organization", 'String'>
     readonly zipCode: FieldRef<"Organization", 'String'>
+    readonly countyName: FieldRef<"Organization", 'String'>
+    readonly latitude: FieldRef<"Organization", 'Float'>
+    readonly longitude: FieldRef<"Organization", 'Float'>
+    readonly leaId: FieldRef<"Organization", 'String'>
+    readonly stateLeaId: FieldRef<"Organization", 'String'>
+    readonly enrollment: FieldRef<"Organization", 'Int'>
+    readonly numberOfSchools: FieldRef<"Organization", 'Int'>
+    readonly lowestGrade: FieldRef<"Organization", 'Int'>
+    readonly highestGrade: FieldRef<"Organization", 'Int'>
+    readonly urbanCentricLocale: FieldRef<"Organization", 'Int'>
+    readonly districtDataYear: FieldRef<"Organization", 'Int'>
   }
     
 
@@ -6568,10 +6598,6 @@ export namespace Prisma {
      */
     data: OrganizationCreateManyInput | OrganizationCreateManyInput[]
     skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: OrganizationIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -6642,10 +6668,6 @@ export namespace Prisma {
      * Limit how many Organizations to update.
      */
     limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: OrganizationIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -6830,25 +6852,6 @@ export namespace Prisma {
   }
 
   /**
-   * Organization.schoolDistrict
-   */
-  export type Organization$schoolDistrictArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SchoolDistrict
-     */
-    select?: SchoolDistrictSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the SchoolDistrict
-     */
-    omit?: SchoolDistrictOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SchoolDistrictInclude<ExtArgs> | null
-    where?: SchoolDistrictWhereInput
-  }
-
-  /**
    * Organization without action
    */
   export type OrganizationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6864,1294 +6867,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: OrganizationInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model SchoolDistrict
-   */
-
-  export type AggregateSchoolDistrict = {
-    _count: SchoolDistrictCountAggregateOutputType | null
-    _avg: SchoolDistrictAvgAggregateOutputType | null
-    _sum: SchoolDistrictSumAggregateOutputType | null
-    _min: SchoolDistrictMinAggregateOutputType | null
-    _max: SchoolDistrictMaxAggregateOutputType | null
-  }
-
-  export type SchoolDistrictAvgAggregateOutputType = {
-    latitude: number | null
-    longitude: number | null
-    enrollment: number | null
-    numberOfSchools: number | null
-    lowestGrade: number | null
-    highestGrade: number | null
-    urbanCentricLocale: number | null
-    year: number | null
-  }
-
-  export type SchoolDistrictSumAggregateOutputType = {
-    latitude: number | null
-    longitude: number | null
-    enrollment: number | null
-    numberOfSchools: number | null
-    lowestGrade: number | null
-    highestGrade: number | null
-    urbanCentricLocale: number | null
-    year: number | null
-  }
-
-  export type SchoolDistrictMinAggregateOutputType = {
-    id: string | null
-    leaId: string | null
-    name: string | null
-    stateCode: string | null
-    stateLeaId: string | null
-    city: string | null
-    zipCode: string | null
-    phone: string | null
-    latitude: number | null
-    longitude: number | null
-    countyName: string | null
-    enrollment: number | null
-    numberOfSchools: number | null
-    lowestGrade: number | null
-    highestGrade: number | null
-    urbanCentricLocale: number | null
-    year: number | null
-  }
-
-  export type SchoolDistrictMaxAggregateOutputType = {
-    id: string | null
-    leaId: string | null
-    name: string | null
-    stateCode: string | null
-    stateLeaId: string | null
-    city: string | null
-    zipCode: string | null
-    phone: string | null
-    latitude: number | null
-    longitude: number | null
-    countyName: string | null
-    enrollment: number | null
-    numberOfSchools: number | null
-    lowestGrade: number | null
-    highestGrade: number | null
-    urbanCentricLocale: number | null
-    year: number | null
-  }
-
-  export type SchoolDistrictCountAggregateOutputType = {
-    id: number
-    leaId: number
-    name: number
-    stateCode: number
-    stateLeaId: number
-    city: number
-    zipCode: number
-    phone: number
-    latitude: number
-    longitude: number
-    countyName: number
-    enrollment: number
-    numberOfSchools: number
-    lowestGrade: number
-    highestGrade: number
-    urbanCentricLocale: number
-    year: number
-    _all: number
-  }
-
-
-  export type SchoolDistrictAvgAggregateInputType = {
-    latitude?: true
-    longitude?: true
-    enrollment?: true
-    numberOfSchools?: true
-    lowestGrade?: true
-    highestGrade?: true
-    urbanCentricLocale?: true
-    year?: true
-  }
-
-  export type SchoolDistrictSumAggregateInputType = {
-    latitude?: true
-    longitude?: true
-    enrollment?: true
-    numberOfSchools?: true
-    lowestGrade?: true
-    highestGrade?: true
-    urbanCentricLocale?: true
-    year?: true
-  }
-
-  export type SchoolDistrictMinAggregateInputType = {
-    id?: true
-    leaId?: true
-    name?: true
-    stateCode?: true
-    stateLeaId?: true
-    city?: true
-    zipCode?: true
-    phone?: true
-    latitude?: true
-    longitude?: true
-    countyName?: true
-    enrollment?: true
-    numberOfSchools?: true
-    lowestGrade?: true
-    highestGrade?: true
-    urbanCentricLocale?: true
-    year?: true
-  }
-
-  export type SchoolDistrictMaxAggregateInputType = {
-    id?: true
-    leaId?: true
-    name?: true
-    stateCode?: true
-    stateLeaId?: true
-    city?: true
-    zipCode?: true
-    phone?: true
-    latitude?: true
-    longitude?: true
-    countyName?: true
-    enrollment?: true
-    numberOfSchools?: true
-    lowestGrade?: true
-    highestGrade?: true
-    urbanCentricLocale?: true
-    year?: true
-  }
-
-  export type SchoolDistrictCountAggregateInputType = {
-    id?: true
-    leaId?: true
-    name?: true
-    stateCode?: true
-    stateLeaId?: true
-    city?: true
-    zipCode?: true
-    phone?: true
-    latitude?: true
-    longitude?: true
-    countyName?: true
-    enrollment?: true
-    numberOfSchools?: true
-    lowestGrade?: true
-    highestGrade?: true
-    urbanCentricLocale?: true
-    year?: true
-    _all?: true
-  }
-
-  export type SchoolDistrictAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which SchoolDistrict to aggregate.
-     */
-    where?: SchoolDistrictWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SchoolDistricts to fetch.
-     */
-    orderBy?: SchoolDistrictOrderByWithRelationInput | SchoolDistrictOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: SchoolDistrictWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SchoolDistricts from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SchoolDistricts.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned SchoolDistricts
-    **/
-    _count?: true | SchoolDistrictCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: SchoolDistrictAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: SchoolDistrictSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: SchoolDistrictMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: SchoolDistrictMaxAggregateInputType
-  }
-
-  export type GetSchoolDistrictAggregateType<T extends SchoolDistrictAggregateArgs> = {
-        [P in keyof T & keyof AggregateSchoolDistrict]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateSchoolDistrict[P]>
-      : GetScalarType<T[P], AggregateSchoolDistrict[P]>
-  }
-
-
-
-
-  export type SchoolDistrictGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: SchoolDistrictWhereInput
-    orderBy?: SchoolDistrictOrderByWithAggregationInput | SchoolDistrictOrderByWithAggregationInput[]
-    by: SchoolDistrictScalarFieldEnum[] | SchoolDistrictScalarFieldEnum
-    having?: SchoolDistrictScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: SchoolDistrictCountAggregateInputType | true
-    _avg?: SchoolDistrictAvgAggregateInputType
-    _sum?: SchoolDistrictSumAggregateInputType
-    _min?: SchoolDistrictMinAggregateInputType
-    _max?: SchoolDistrictMaxAggregateInputType
-  }
-
-  export type SchoolDistrictGroupByOutputType = {
-    id: string
-    leaId: string
-    name: string
-    stateCode: string
-    stateLeaId: string | null
-    city: string | null
-    zipCode: string | null
-    phone: string | null
-    latitude: number | null
-    longitude: number | null
-    countyName: string | null
-    enrollment: number | null
-    numberOfSchools: number | null
-    lowestGrade: number | null
-    highestGrade: number | null
-    urbanCentricLocale: number | null
-    year: number
-    _count: SchoolDistrictCountAggregateOutputType | null
-    _avg: SchoolDistrictAvgAggregateOutputType | null
-    _sum: SchoolDistrictSumAggregateOutputType | null
-    _min: SchoolDistrictMinAggregateOutputType | null
-    _max: SchoolDistrictMaxAggregateOutputType | null
-  }
-
-  type GetSchoolDistrictGroupByPayload<T extends SchoolDistrictGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<SchoolDistrictGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof SchoolDistrictGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], SchoolDistrictGroupByOutputType[P]>
-            : GetScalarType<T[P], SchoolDistrictGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type SchoolDistrictSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    leaId?: boolean
-    name?: boolean
-    stateCode?: boolean
-    stateLeaId?: boolean
-    city?: boolean
-    zipCode?: boolean
-    phone?: boolean
-    latitude?: boolean
-    longitude?: boolean
-    countyName?: boolean
-    enrollment?: boolean
-    numberOfSchools?: boolean
-    lowestGrade?: boolean
-    highestGrade?: boolean
-    urbanCentricLocale?: boolean
-    year?: boolean
-    organizations?: boolean | SchoolDistrict$organizationsArgs<ExtArgs>
-    _count?: boolean | SchoolDistrictCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["schoolDistrict"]>
-
-  export type SchoolDistrictSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    leaId?: boolean
-    name?: boolean
-    stateCode?: boolean
-    stateLeaId?: boolean
-    city?: boolean
-    zipCode?: boolean
-    phone?: boolean
-    latitude?: boolean
-    longitude?: boolean
-    countyName?: boolean
-    enrollment?: boolean
-    numberOfSchools?: boolean
-    lowestGrade?: boolean
-    highestGrade?: boolean
-    urbanCentricLocale?: boolean
-    year?: boolean
-  }, ExtArgs["result"]["schoolDistrict"]>
-
-  export type SchoolDistrictSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    leaId?: boolean
-    name?: boolean
-    stateCode?: boolean
-    stateLeaId?: boolean
-    city?: boolean
-    zipCode?: boolean
-    phone?: boolean
-    latitude?: boolean
-    longitude?: boolean
-    countyName?: boolean
-    enrollment?: boolean
-    numberOfSchools?: boolean
-    lowestGrade?: boolean
-    highestGrade?: boolean
-    urbanCentricLocale?: boolean
-    year?: boolean
-  }, ExtArgs["result"]["schoolDistrict"]>
-
-  export type SchoolDistrictSelectScalar = {
-    id?: boolean
-    leaId?: boolean
-    name?: boolean
-    stateCode?: boolean
-    stateLeaId?: boolean
-    city?: boolean
-    zipCode?: boolean
-    phone?: boolean
-    latitude?: boolean
-    longitude?: boolean
-    countyName?: boolean
-    enrollment?: boolean
-    numberOfSchools?: boolean
-    lowestGrade?: boolean
-    highestGrade?: boolean
-    urbanCentricLocale?: boolean
-    year?: boolean
-  }
-
-  export type SchoolDistrictOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "leaId" | "name" | "stateCode" | "stateLeaId" | "city" | "zipCode" | "phone" | "latitude" | "longitude" | "countyName" | "enrollment" | "numberOfSchools" | "lowestGrade" | "highestGrade" | "urbanCentricLocale" | "year", ExtArgs["result"]["schoolDistrict"]>
-  export type SchoolDistrictInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    organizations?: boolean | SchoolDistrict$organizationsArgs<ExtArgs>
-    _count?: boolean | SchoolDistrictCountOutputTypeDefaultArgs<ExtArgs>
-  }
-  export type SchoolDistrictIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type SchoolDistrictIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-
-  export type $SchoolDistrictPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "SchoolDistrict"
-    objects: {
-      organizations: Prisma.$OrganizationPayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      leaId: string
-      name: string
-      stateCode: string
-      stateLeaId: string | null
-      city: string | null
-      zipCode: string | null
-      phone: string | null
-      latitude: number | null
-      longitude: number | null
-      countyName: string | null
-      enrollment: number | null
-      numberOfSchools: number | null
-      lowestGrade: number | null
-      highestGrade: number | null
-      urbanCentricLocale: number | null
-      year: number
-    }, ExtArgs["result"]["schoolDistrict"]>
-    composites: {}
-  }
-
-  type SchoolDistrictGetPayload<S extends boolean | null | undefined | SchoolDistrictDefaultArgs> = $Result.GetResult<Prisma.$SchoolDistrictPayload, S>
-
-  type SchoolDistrictCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<SchoolDistrictFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: SchoolDistrictCountAggregateInputType | true
-    }
-
-  export interface SchoolDistrictDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SchoolDistrict'], meta: { name: 'SchoolDistrict' } }
-    /**
-     * Find zero or one SchoolDistrict that matches the filter.
-     * @param {SchoolDistrictFindUniqueArgs} args - Arguments to find a SchoolDistrict
-     * @example
-     * // Get one SchoolDistrict
-     * const schoolDistrict = await prisma.schoolDistrict.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends SchoolDistrictFindUniqueArgs>(args: SelectSubset<T, SchoolDistrictFindUniqueArgs<ExtArgs>>): Prisma__SchoolDistrictClient<$Result.GetResult<Prisma.$SchoolDistrictPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one SchoolDistrict that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {SchoolDistrictFindUniqueOrThrowArgs} args - Arguments to find a SchoolDistrict
-     * @example
-     * // Get one SchoolDistrict
-     * const schoolDistrict = await prisma.schoolDistrict.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends SchoolDistrictFindUniqueOrThrowArgs>(args: SelectSubset<T, SchoolDistrictFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SchoolDistrictClient<$Result.GetResult<Prisma.$SchoolDistrictPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first SchoolDistrict that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SchoolDistrictFindFirstArgs} args - Arguments to find a SchoolDistrict
-     * @example
-     * // Get one SchoolDistrict
-     * const schoolDistrict = await prisma.schoolDistrict.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends SchoolDistrictFindFirstArgs>(args?: SelectSubset<T, SchoolDistrictFindFirstArgs<ExtArgs>>): Prisma__SchoolDistrictClient<$Result.GetResult<Prisma.$SchoolDistrictPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first SchoolDistrict that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SchoolDistrictFindFirstOrThrowArgs} args - Arguments to find a SchoolDistrict
-     * @example
-     * // Get one SchoolDistrict
-     * const schoolDistrict = await prisma.schoolDistrict.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends SchoolDistrictFindFirstOrThrowArgs>(args?: SelectSubset<T, SchoolDistrictFindFirstOrThrowArgs<ExtArgs>>): Prisma__SchoolDistrictClient<$Result.GetResult<Prisma.$SchoolDistrictPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more SchoolDistricts that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SchoolDistrictFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all SchoolDistricts
-     * const schoolDistricts = await prisma.schoolDistrict.findMany()
-     * 
-     * // Get first 10 SchoolDistricts
-     * const schoolDistricts = await prisma.schoolDistrict.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const schoolDistrictWithIdOnly = await prisma.schoolDistrict.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends SchoolDistrictFindManyArgs>(args?: SelectSubset<T, SchoolDistrictFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolDistrictPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a SchoolDistrict.
-     * @param {SchoolDistrictCreateArgs} args - Arguments to create a SchoolDistrict.
-     * @example
-     * // Create one SchoolDistrict
-     * const SchoolDistrict = await prisma.schoolDistrict.create({
-     *   data: {
-     *     // ... data to create a SchoolDistrict
-     *   }
-     * })
-     * 
-     */
-    create<T extends SchoolDistrictCreateArgs>(args: SelectSubset<T, SchoolDistrictCreateArgs<ExtArgs>>): Prisma__SchoolDistrictClient<$Result.GetResult<Prisma.$SchoolDistrictPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many SchoolDistricts.
-     * @param {SchoolDistrictCreateManyArgs} args - Arguments to create many SchoolDistricts.
-     * @example
-     * // Create many SchoolDistricts
-     * const schoolDistrict = await prisma.schoolDistrict.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends SchoolDistrictCreateManyArgs>(args?: SelectSubset<T, SchoolDistrictCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many SchoolDistricts and returns the data saved in the database.
-     * @param {SchoolDistrictCreateManyAndReturnArgs} args - Arguments to create many SchoolDistricts.
-     * @example
-     * // Create many SchoolDistricts
-     * const schoolDistrict = await prisma.schoolDistrict.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many SchoolDistricts and only return the `id`
-     * const schoolDistrictWithIdOnly = await prisma.schoolDistrict.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends SchoolDistrictCreateManyAndReturnArgs>(args?: SelectSubset<T, SchoolDistrictCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolDistrictPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a SchoolDistrict.
-     * @param {SchoolDistrictDeleteArgs} args - Arguments to delete one SchoolDistrict.
-     * @example
-     * // Delete one SchoolDistrict
-     * const SchoolDistrict = await prisma.schoolDistrict.delete({
-     *   where: {
-     *     // ... filter to delete one SchoolDistrict
-     *   }
-     * })
-     * 
-     */
-    delete<T extends SchoolDistrictDeleteArgs>(args: SelectSubset<T, SchoolDistrictDeleteArgs<ExtArgs>>): Prisma__SchoolDistrictClient<$Result.GetResult<Prisma.$SchoolDistrictPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one SchoolDistrict.
-     * @param {SchoolDistrictUpdateArgs} args - Arguments to update one SchoolDistrict.
-     * @example
-     * // Update one SchoolDistrict
-     * const schoolDistrict = await prisma.schoolDistrict.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends SchoolDistrictUpdateArgs>(args: SelectSubset<T, SchoolDistrictUpdateArgs<ExtArgs>>): Prisma__SchoolDistrictClient<$Result.GetResult<Prisma.$SchoolDistrictPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more SchoolDistricts.
-     * @param {SchoolDistrictDeleteManyArgs} args - Arguments to filter SchoolDistricts to delete.
-     * @example
-     * // Delete a few SchoolDistricts
-     * const { count } = await prisma.schoolDistrict.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends SchoolDistrictDeleteManyArgs>(args?: SelectSubset<T, SchoolDistrictDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more SchoolDistricts.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SchoolDistrictUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many SchoolDistricts
-     * const schoolDistrict = await prisma.schoolDistrict.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends SchoolDistrictUpdateManyArgs>(args: SelectSubset<T, SchoolDistrictUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more SchoolDistricts and returns the data updated in the database.
-     * @param {SchoolDistrictUpdateManyAndReturnArgs} args - Arguments to update many SchoolDistricts.
-     * @example
-     * // Update many SchoolDistricts
-     * const schoolDistrict = await prisma.schoolDistrict.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more SchoolDistricts and only return the `id`
-     * const schoolDistrictWithIdOnly = await prisma.schoolDistrict.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends SchoolDistrictUpdateManyAndReturnArgs>(args: SelectSubset<T, SchoolDistrictUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SchoolDistrictPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one SchoolDistrict.
-     * @param {SchoolDistrictUpsertArgs} args - Arguments to update or create a SchoolDistrict.
-     * @example
-     * // Update or create a SchoolDistrict
-     * const schoolDistrict = await prisma.schoolDistrict.upsert({
-     *   create: {
-     *     // ... data to create a SchoolDistrict
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the SchoolDistrict we want to update
-     *   }
-     * })
-     */
-    upsert<T extends SchoolDistrictUpsertArgs>(args: SelectSubset<T, SchoolDistrictUpsertArgs<ExtArgs>>): Prisma__SchoolDistrictClient<$Result.GetResult<Prisma.$SchoolDistrictPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of SchoolDistricts.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SchoolDistrictCountArgs} args - Arguments to filter SchoolDistricts to count.
-     * @example
-     * // Count the number of SchoolDistricts
-     * const count = await prisma.schoolDistrict.count({
-     *   where: {
-     *     // ... the filter for the SchoolDistricts we want to count
-     *   }
-     * })
-    **/
-    count<T extends SchoolDistrictCountArgs>(
-      args?: Subset<T, SchoolDistrictCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], SchoolDistrictCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a SchoolDistrict.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SchoolDistrictAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends SchoolDistrictAggregateArgs>(args: Subset<T, SchoolDistrictAggregateArgs>): Prisma.PrismaPromise<GetSchoolDistrictAggregateType<T>>
-
-    /**
-     * Group by SchoolDistrict.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SchoolDistrictGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends SchoolDistrictGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: SchoolDistrictGroupByArgs['orderBy'] }
-        : { orderBy?: SchoolDistrictGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, SchoolDistrictGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSchoolDistrictGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the SchoolDistrict model
-   */
-  readonly fields: SchoolDistrictFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for SchoolDistrict.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__SchoolDistrictClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    organizations<T extends SchoolDistrict$organizationsArgs<ExtArgs> = {}>(args?: Subset<T, SchoolDistrict$organizationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the SchoolDistrict model
-   */
-  interface SchoolDistrictFieldRefs {
-    readonly id: FieldRef<"SchoolDistrict", 'String'>
-    readonly leaId: FieldRef<"SchoolDistrict", 'String'>
-    readonly name: FieldRef<"SchoolDistrict", 'String'>
-    readonly stateCode: FieldRef<"SchoolDistrict", 'String'>
-    readonly stateLeaId: FieldRef<"SchoolDistrict", 'String'>
-    readonly city: FieldRef<"SchoolDistrict", 'String'>
-    readonly zipCode: FieldRef<"SchoolDistrict", 'String'>
-    readonly phone: FieldRef<"SchoolDistrict", 'String'>
-    readonly latitude: FieldRef<"SchoolDistrict", 'Float'>
-    readonly longitude: FieldRef<"SchoolDistrict", 'Float'>
-    readonly countyName: FieldRef<"SchoolDistrict", 'String'>
-    readonly enrollment: FieldRef<"SchoolDistrict", 'Int'>
-    readonly numberOfSchools: FieldRef<"SchoolDistrict", 'Int'>
-    readonly lowestGrade: FieldRef<"SchoolDistrict", 'Int'>
-    readonly highestGrade: FieldRef<"SchoolDistrict", 'Int'>
-    readonly urbanCentricLocale: FieldRef<"SchoolDistrict", 'Int'>
-    readonly year: FieldRef<"SchoolDistrict", 'Int'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * SchoolDistrict findUnique
-   */
-  export type SchoolDistrictFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SchoolDistrict
-     */
-    select?: SchoolDistrictSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the SchoolDistrict
-     */
-    omit?: SchoolDistrictOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SchoolDistrictInclude<ExtArgs> | null
-    /**
-     * Filter, which SchoolDistrict to fetch.
-     */
-    where: SchoolDistrictWhereUniqueInput
-  }
-
-  /**
-   * SchoolDistrict findUniqueOrThrow
-   */
-  export type SchoolDistrictFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SchoolDistrict
-     */
-    select?: SchoolDistrictSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the SchoolDistrict
-     */
-    omit?: SchoolDistrictOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SchoolDistrictInclude<ExtArgs> | null
-    /**
-     * Filter, which SchoolDistrict to fetch.
-     */
-    where: SchoolDistrictWhereUniqueInput
-  }
-
-  /**
-   * SchoolDistrict findFirst
-   */
-  export type SchoolDistrictFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SchoolDistrict
-     */
-    select?: SchoolDistrictSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the SchoolDistrict
-     */
-    omit?: SchoolDistrictOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SchoolDistrictInclude<ExtArgs> | null
-    /**
-     * Filter, which SchoolDistrict to fetch.
-     */
-    where?: SchoolDistrictWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SchoolDistricts to fetch.
-     */
-    orderBy?: SchoolDistrictOrderByWithRelationInput | SchoolDistrictOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for SchoolDistricts.
-     */
-    cursor?: SchoolDistrictWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SchoolDistricts from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SchoolDistricts.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of SchoolDistricts.
-     */
-    distinct?: SchoolDistrictScalarFieldEnum | SchoolDistrictScalarFieldEnum[]
-  }
-
-  /**
-   * SchoolDistrict findFirstOrThrow
-   */
-  export type SchoolDistrictFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SchoolDistrict
-     */
-    select?: SchoolDistrictSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the SchoolDistrict
-     */
-    omit?: SchoolDistrictOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SchoolDistrictInclude<ExtArgs> | null
-    /**
-     * Filter, which SchoolDistrict to fetch.
-     */
-    where?: SchoolDistrictWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SchoolDistricts to fetch.
-     */
-    orderBy?: SchoolDistrictOrderByWithRelationInput | SchoolDistrictOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for SchoolDistricts.
-     */
-    cursor?: SchoolDistrictWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SchoolDistricts from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SchoolDistricts.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of SchoolDistricts.
-     */
-    distinct?: SchoolDistrictScalarFieldEnum | SchoolDistrictScalarFieldEnum[]
-  }
-
-  /**
-   * SchoolDistrict findMany
-   */
-  export type SchoolDistrictFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SchoolDistrict
-     */
-    select?: SchoolDistrictSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the SchoolDistrict
-     */
-    omit?: SchoolDistrictOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SchoolDistrictInclude<ExtArgs> | null
-    /**
-     * Filter, which SchoolDistricts to fetch.
-     */
-    where?: SchoolDistrictWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SchoolDistricts to fetch.
-     */
-    orderBy?: SchoolDistrictOrderByWithRelationInput | SchoolDistrictOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing SchoolDistricts.
-     */
-    cursor?: SchoolDistrictWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SchoolDistricts from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SchoolDistricts.
-     */
-    skip?: number
-    distinct?: SchoolDistrictScalarFieldEnum | SchoolDistrictScalarFieldEnum[]
-  }
-
-  /**
-   * SchoolDistrict create
-   */
-  export type SchoolDistrictCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SchoolDistrict
-     */
-    select?: SchoolDistrictSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the SchoolDistrict
-     */
-    omit?: SchoolDistrictOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SchoolDistrictInclude<ExtArgs> | null
-    /**
-     * The data needed to create a SchoolDistrict.
-     */
-    data: XOR<SchoolDistrictCreateInput, SchoolDistrictUncheckedCreateInput>
-  }
-
-  /**
-   * SchoolDistrict createMany
-   */
-  export type SchoolDistrictCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many SchoolDistricts.
-     */
-    data: SchoolDistrictCreateManyInput | SchoolDistrictCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * SchoolDistrict createManyAndReturn
-   */
-  export type SchoolDistrictCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SchoolDistrict
-     */
-    select?: SchoolDistrictSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the SchoolDistrict
-     */
-    omit?: SchoolDistrictOmit<ExtArgs> | null
-    /**
-     * The data used to create many SchoolDistricts.
-     */
-    data: SchoolDistrictCreateManyInput | SchoolDistrictCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * SchoolDistrict update
-   */
-  export type SchoolDistrictUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SchoolDistrict
-     */
-    select?: SchoolDistrictSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the SchoolDistrict
-     */
-    omit?: SchoolDistrictOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SchoolDistrictInclude<ExtArgs> | null
-    /**
-     * The data needed to update a SchoolDistrict.
-     */
-    data: XOR<SchoolDistrictUpdateInput, SchoolDistrictUncheckedUpdateInput>
-    /**
-     * Choose, which SchoolDistrict to update.
-     */
-    where: SchoolDistrictWhereUniqueInput
-  }
-
-  /**
-   * SchoolDistrict updateMany
-   */
-  export type SchoolDistrictUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update SchoolDistricts.
-     */
-    data: XOR<SchoolDistrictUpdateManyMutationInput, SchoolDistrictUncheckedUpdateManyInput>
-    /**
-     * Filter which SchoolDistricts to update
-     */
-    where?: SchoolDistrictWhereInput
-    /**
-     * Limit how many SchoolDistricts to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * SchoolDistrict updateManyAndReturn
-   */
-  export type SchoolDistrictUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SchoolDistrict
-     */
-    select?: SchoolDistrictSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the SchoolDistrict
-     */
-    omit?: SchoolDistrictOmit<ExtArgs> | null
-    /**
-     * The data used to update SchoolDistricts.
-     */
-    data: XOR<SchoolDistrictUpdateManyMutationInput, SchoolDistrictUncheckedUpdateManyInput>
-    /**
-     * Filter which SchoolDistricts to update
-     */
-    where?: SchoolDistrictWhereInput
-    /**
-     * Limit how many SchoolDistricts to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * SchoolDistrict upsert
-   */
-  export type SchoolDistrictUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SchoolDistrict
-     */
-    select?: SchoolDistrictSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the SchoolDistrict
-     */
-    omit?: SchoolDistrictOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SchoolDistrictInclude<ExtArgs> | null
-    /**
-     * The filter to search for the SchoolDistrict to update in case it exists.
-     */
-    where: SchoolDistrictWhereUniqueInput
-    /**
-     * In case the SchoolDistrict found by the `where` argument doesn't exist, create a new SchoolDistrict with this data.
-     */
-    create: XOR<SchoolDistrictCreateInput, SchoolDistrictUncheckedCreateInput>
-    /**
-     * In case the SchoolDistrict was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<SchoolDistrictUpdateInput, SchoolDistrictUncheckedUpdateInput>
-  }
-
-  /**
-   * SchoolDistrict delete
-   */
-  export type SchoolDistrictDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SchoolDistrict
-     */
-    select?: SchoolDistrictSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the SchoolDistrict
-     */
-    omit?: SchoolDistrictOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SchoolDistrictInclude<ExtArgs> | null
-    /**
-     * Filter which SchoolDistrict to delete.
-     */
-    where: SchoolDistrictWhereUniqueInput
-  }
-
-  /**
-   * SchoolDistrict deleteMany
-   */
-  export type SchoolDistrictDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which SchoolDistricts to delete
-     */
-    where?: SchoolDistrictWhereInput
-    /**
-     * Limit how many SchoolDistricts to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * SchoolDistrict.organizations
-   */
-  export type SchoolDistrict$organizationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Organization
-     */
-    select?: OrganizationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Organization
-     */
-    omit?: OrganizationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: OrganizationInclude<ExtArgs> | null
-    where?: OrganizationWhereInput
-    orderBy?: OrganizationOrderByWithRelationInput | OrganizationOrderByWithRelationInput[]
-    cursor?: OrganizationWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: OrganizationScalarFieldEnum | OrganizationScalarFieldEnum[]
-  }
-
-  /**
-   * SchoolDistrict without action
-   */
-  export type SchoolDistrictDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SchoolDistrict
-     */
-    select?: SchoolDistrictSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the SchoolDistrict
-     */
-    omit?: SchoolDistrictOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SchoolDistrictInclude<ExtArgs> | null
   }
 
 
@@ -13945,7 +12660,6 @@ export namespace Prisma {
     role: 'role',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    schoolDistrictId: 'schoolDistrictId',
     organizationLogo: 'organizationLogo',
     website: 'website',
     missionStatement: 'missionStatement',
@@ -13958,33 +12672,21 @@ export namespace Prisma {
     address: 'address',
     city: 'city',
     state: 'state',
-    zipCode: 'zipCode'
-  };
-
-  export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
-
-
-  export const SchoolDistrictScalarFieldEnum: {
-    id: 'id',
-    leaId: 'leaId',
-    name: 'name',
-    stateCode: 'stateCode',
-    stateLeaId: 'stateLeaId',
-    city: 'city',
     zipCode: 'zipCode',
-    phone: 'phone',
+    countyName: 'countyName',
     latitude: 'latitude',
     longitude: 'longitude',
-    countyName: 'countyName',
+    leaId: 'leaId',
+    stateLeaId: 'stateLeaId',
     enrollment: 'enrollment',
     numberOfSchools: 'numberOfSchools',
     lowestGrade: 'lowestGrade',
     highestGrade: 'highestGrade',
     urbanCentricLocale: 'urbanCentricLocale',
-    year: 'year'
+    districtDataYear: 'districtDataYear'
   };
 
-  export type SchoolDistrictScalarFieldEnum = (typeof SchoolDistrictScalarFieldEnum)[keyof typeof SchoolDistrictScalarFieldEnum]
+  export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
 
 
   export const GrantBookmarkScalarFieldEnum: {
@@ -14580,7 +13282,6 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFilter<"Organization"> | $Enums.OrganizationRole
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
-    schoolDistrictId?: StringNullableFilter<"Organization"> | string | null
     organizationLogo?: StringNullableFilter<"Organization"> | string | null
     website?: StringNullableFilter<"Organization"> | string | null
     missionStatement?: StringNullableFilter<"Organization"> | string | null
@@ -14594,12 +13295,22 @@ export namespace Prisma {
     city?: StringNullableFilter<"Organization"> | string | null
     state?: StringNullableFilter<"Organization"> | string | null
     zipCode?: StringNullableFilter<"Organization"> | string | null
+    countyName?: StringNullableFilter<"Organization"> | string | null
+    latitude?: FloatNullableFilter<"Organization"> | number | null
+    longitude?: FloatNullableFilter<"Organization"> | number | null
+    leaId?: StringNullableFilter<"Organization"> | string | null
+    stateLeaId?: StringNullableFilter<"Organization"> | string | null
+    enrollment?: IntNullableFilter<"Organization"> | number | null
+    numberOfSchools?: IntNullableFilter<"Organization"> | number | null
+    lowestGrade?: IntNullableFilter<"Organization"> | number | null
+    highestGrade?: IntNullableFilter<"Organization"> | number | null
+    urbanCentricLocale?: IntNullableFilter<"Organization"> | number | null
+    districtDataYear?: IntNullableFilter<"Organization"> | number | null
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
     eligibilityAnalyses?: GrantEligibilityAnalysisListRelationFilter
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
-    schoolDistrict?: XOR<SchoolDistrictNullableScalarRelationFilter, SchoolDistrictWhereInput> | null
   }
 
   export type OrganizationOrderByWithRelationInput = {
@@ -14609,7 +13320,6 @@ export namespace Prisma {
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    schoolDistrictId?: SortOrderInput | SortOrder
     organizationLogo?: SortOrderInput | SortOrder
     website?: SortOrderInput | SortOrder
     missionStatement?: SortOrderInput | SortOrder
@@ -14623,17 +13333,28 @@ export namespace Prisma {
     city?: SortOrderInput | SortOrder
     state?: SortOrderInput | SortOrder
     zipCode?: SortOrderInput | SortOrder
+    countyName?: SortOrderInput | SortOrder
+    latitude?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
+    leaId?: SortOrderInput | SortOrder
+    stateLeaId?: SortOrderInput | SortOrder
+    enrollment?: SortOrderInput | SortOrder
+    numberOfSchools?: SortOrderInput | SortOrder
+    lowestGrade?: SortOrderInput | SortOrder
+    highestGrade?: SortOrderInput | SortOrder
+    urbanCentricLocale?: SortOrderInput | SortOrder
+    districtDataYear?: SortOrderInput | SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     applications?: ApplicationOrderByRelationAggregateInput
     grantBookmarks?: GrantBookmarkOrderByRelationAggregateInput
     eligibilityAnalyses?: GrantEligibilityAnalysisOrderByRelationAggregateInput
     user?: UserOrderByWithRelationInput
-    schoolDistrict?: SchoolDistrictOrderByWithRelationInput
   }
 
   export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     slug?: string
+    leaId?: string
     AND?: OrganizationWhereInput | OrganizationWhereInput[]
     OR?: OrganizationWhereInput[]
     NOT?: OrganizationWhereInput | OrganizationWhereInput[]
@@ -14641,7 +13362,6 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFilter<"Organization"> | $Enums.OrganizationRole
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
-    schoolDistrictId?: StringNullableFilter<"Organization"> | string | null
     organizationLogo?: StringNullableFilter<"Organization"> | string | null
     website?: StringNullableFilter<"Organization"> | string | null
     missionStatement?: StringNullableFilter<"Organization"> | string | null
@@ -14655,13 +13375,22 @@ export namespace Prisma {
     city?: StringNullableFilter<"Organization"> | string | null
     state?: StringNullableFilter<"Organization"> | string | null
     zipCode?: StringNullableFilter<"Organization"> | string | null
+    countyName?: StringNullableFilter<"Organization"> | string | null
+    latitude?: FloatNullableFilter<"Organization"> | number | null
+    longitude?: FloatNullableFilter<"Organization"> | number | null
+    stateLeaId?: StringNullableFilter<"Organization"> | string | null
+    enrollment?: IntNullableFilter<"Organization"> | number | null
+    numberOfSchools?: IntNullableFilter<"Organization"> | number | null
+    lowestGrade?: IntNullableFilter<"Organization"> | number | null
+    highestGrade?: IntNullableFilter<"Organization"> | number | null
+    urbanCentricLocale?: IntNullableFilter<"Organization"> | number | null
+    districtDataYear?: IntNullableFilter<"Organization"> | number | null
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
     eligibilityAnalyses?: GrantEligibilityAnalysisListRelationFilter
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
-    schoolDistrict?: XOR<SchoolDistrictNullableScalarRelationFilter, SchoolDistrictWhereInput> | null
-  }, "id" | "slug">
+  }, "id" | "slug" | "leaId">
 
   export type OrganizationOrderByWithAggregationInput = {
     id?: SortOrder
@@ -14670,7 +13399,6 @@ export namespace Prisma {
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    schoolDistrictId?: SortOrderInput | SortOrder
     organizationLogo?: SortOrderInput | SortOrder
     website?: SortOrderInput | SortOrder
     missionStatement?: SortOrderInput | SortOrder
@@ -14684,6 +13412,17 @@ export namespace Prisma {
     city?: SortOrderInput | SortOrder
     state?: SortOrderInput | SortOrder
     zipCode?: SortOrderInput | SortOrder
+    countyName?: SortOrderInput | SortOrder
+    latitude?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
+    leaId?: SortOrderInput | SortOrder
+    stateLeaId?: SortOrderInput | SortOrder
+    enrollment?: SortOrderInput | SortOrder
+    numberOfSchools?: SortOrderInput | SortOrder
+    lowestGrade?: SortOrderInput | SortOrder
+    highestGrade?: SortOrderInput | SortOrder
+    urbanCentricLocale?: SortOrderInput | SortOrder
+    districtDataYear?: SortOrderInput | SortOrder
     _count?: OrganizationCountOrderByAggregateInput
     _avg?: OrganizationAvgOrderByAggregateInput
     _max?: OrganizationMaxOrderByAggregateInput
@@ -14701,7 +13440,6 @@ export namespace Prisma {
     role?: EnumOrganizationRoleWithAggregatesFilter<"Organization"> | $Enums.OrganizationRole
     createdAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
-    schoolDistrictId?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     organizationLogo?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     website?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     missionStatement?: StringNullableWithAggregatesFilter<"Organization"> | string | null
@@ -14715,123 +13453,17 @@ export namespace Prisma {
     city?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     state?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     zipCode?: StringNullableWithAggregatesFilter<"Organization"> | string | null
-  }
-
-  export type SchoolDistrictWhereInput = {
-    AND?: SchoolDistrictWhereInput | SchoolDistrictWhereInput[]
-    OR?: SchoolDistrictWhereInput[]
-    NOT?: SchoolDistrictWhereInput | SchoolDistrictWhereInput[]
-    id?: StringFilter<"SchoolDistrict"> | string
-    leaId?: StringFilter<"SchoolDistrict"> | string
-    name?: StringFilter<"SchoolDistrict"> | string
-    stateCode?: StringFilter<"SchoolDistrict"> | string
-    stateLeaId?: StringNullableFilter<"SchoolDistrict"> | string | null
-    city?: StringNullableFilter<"SchoolDistrict"> | string | null
-    zipCode?: StringNullableFilter<"SchoolDistrict"> | string | null
-    phone?: StringNullableFilter<"SchoolDistrict"> | string | null
-    latitude?: FloatNullableFilter<"SchoolDistrict"> | number | null
-    longitude?: FloatNullableFilter<"SchoolDistrict"> | number | null
-    countyName?: StringNullableFilter<"SchoolDistrict"> | string | null
-    enrollment?: IntNullableFilter<"SchoolDistrict"> | number | null
-    numberOfSchools?: IntNullableFilter<"SchoolDistrict"> | number | null
-    lowestGrade?: IntNullableFilter<"SchoolDistrict"> | number | null
-    highestGrade?: IntNullableFilter<"SchoolDistrict"> | number | null
-    urbanCentricLocale?: IntNullableFilter<"SchoolDistrict"> | number | null
-    year?: IntFilter<"SchoolDistrict"> | number
-    organizations?: OrganizationListRelationFilter
-  }
-
-  export type SchoolDistrictOrderByWithRelationInput = {
-    id?: SortOrder
-    leaId?: SortOrder
-    name?: SortOrder
-    stateCode?: SortOrder
-    stateLeaId?: SortOrderInput | SortOrder
-    city?: SortOrderInput | SortOrder
-    zipCode?: SortOrderInput | SortOrder
-    phone?: SortOrderInput | SortOrder
-    latitude?: SortOrderInput | SortOrder
-    longitude?: SortOrderInput | SortOrder
-    countyName?: SortOrderInput | SortOrder
-    enrollment?: SortOrderInput | SortOrder
-    numberOfSchools?: SortOrderInput | SortOrder
-    lowestGrade?: SortOrderInput | SortOrder
-    highestGrade?: SortOrderInput | SortOrder
-    urbanCentricLocale?: SortOrderInput | SortOrder
-    year?: SortOrder
-    organizations?: OrganizationOrderByRelationAggregateInput
-  }
-
-  export type SchoolDistrictWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    leaId?: string
-    AND?: SchoolDistrictWhereInput | SchoolDistrictWhereInput[]
-    OR?: SchoolDistrictWhereInput[]
-    NOT?: SchoolDistrictWhereInput | SchoolDistrictWhereInput[]
-    name?: StringFilter<"SchoolDistrict"> | string
-    stateCode?: StringFilter<"SchoolDistrict"> | string
-    stateLeaId?: StringNullableFilter<"SchoolDistrict"> | string | null
-    city?: StringNullableFilter<"SchoolDistrict"> | string | null
-    zipCode?: StringNullableFilter<"SchoolDistrict"> | string | null
-    phone?: StringNullableFilter<"SchoolDistrict"> | string | null
-    latitude?: FloatNullableFilter<"SchoolDistrict"> | number | null
-    longitude?: FloatNullableFilter<"SchoolDistrict"> | number | null
-    countyName?: StringNullableFilter<"SchoolDistrict"> | string | null
-    enrollment?: IntNullableFilter<"SchoolDistrict"> | number | null
-    numberOfSchools?: IntNullableFilter<"SchoolDistrict"> | number | null
-    lowestGrade?: IntNullableFilter<"SchoolDistrict"> | number | null
-    highestGrade?: IntNullableFilter<"SchoolDistrict"> | number | null
-    urbanCentricLocale?: IntNullableFilter<"SchoolDistrict"> | number | null
-    year?: IntFilter<"SchoolDistrict"> | number
-    organizations?: OrganizationListRelationFilter
-  }, "id" | "leaId">
-
-  export type SchoolDistrictOrderByWithAggregationInput = {
-    id?: SortOrder
-    leaId?: SortOrder
-    name?: SortOrder
-    stateCode?: SortOrder
-    stateLeaId?: SortOrderInput | SortOrder
-    city?: SortOrderInput | SortOrder
-    zipCode?: SortOrderInput | SortOrder
-    phone?: SortOrderInput | SortOrder
-    latitude?: SortOrderInput | SortOrder
-    longitude?: SortOrderInput | SortOrder
-    countyName?: SortOrderInput | SortOrder
-    enrollment?: SortOrderInput | SortOrder
-    numberOfSchools?: SortOrderInput | SortOrder
-    lowestGrade?: SortOrderInput | SortOrder
-    highestGrade?: SortOrderInput | SortOrder
-    urbanCentricLocale?: SortOrderInput | SortOrder
-    year?: SortOrder
-    _count?: SchoolDistrictCountOrderByAggregateInput
-    _avg?: SchoolDistrictAvgOrderByAggregateInput
-    _max?: SchoolDistrictMaxOrderByAggregateInput
-    _min?: SchoolDistrictMinOrderByAggregateInput
-    _sum?: SchoolDistrictSumOrderByAggregateInput
-  }
-
-  export type SchoolDistrictScalarWhereWithAggregatesInput = {
-    AND?: SchoolDistrictScalarWhereWithAggregatesInput | SchoolDistrictScalarWhereWithAggregatesInput[]
-    OR?: SchoolDistrictScalarWhereWithAggregatesInput[]
-    NOT?: SchoolDistrictScalarWhereWithAggregatesInput | SchoolDistrictScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"SchoolDistrict"> | string
-    leaId?: StringWithAggregatesFilter<"SchoolDistrict"> | string
-    name?: StringWithAggregatesFilter<"SchoolDistrict"> | string
-    stateCode?: StringWithAggregatesFilter<"SchoolDistrict"> | string
-    stateLeaId?: StringNullableWithAggregatesFilter<"SchoolDistrict"> | string | null
-    city?: StringNullableWithAggregatesFilter<"SchoolDistrict"> | string | null
-    zipCode?: StringNullableWithAggregatesFilter<"SchoolDistrict"> | string | null
-    phone?: StringNullableWithAggregatesFilter<"SchoolDistrict"> | string | null
-    latitude?: FloatNullableWithAggregatesFilter<"SchoolDistrict"> | number | null
-    longitude?: FloatNullableWithAggregatesFilter<"SchoolDistrict"> | number | null
-    countyName?: StringNullableWithAggregatesFilter<"SchoolDistrict"> | string | null
-    enrollment?: IntNullableWithAggregatesFilter<"SchoolDistrict"> | number | null
-    numberOfSchools?: IntNullableWithAggregatesFilter<"SchoolDistrict"> | number | null
-    lowestGrade?: IntNullableWithAggregatesFilter<"SchoolDistrict"> | number | null
-    highestGrade?: IntNullableWithAggregatesFilter<"SchoolDistrict"> | number | null
-    urbanCentricLocale?: IntNullableWithAggregatesFilter<"SchoolDistrict"> | number | null
-    year?: IntWithAggregatesFilter<"SchoolDistrict"> | number
+    countyName?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    latitude?: FloatNullableWithAggregatesFilter<"Organization"> | number | null
+    longitude?: FloatNullableWithAggregatesFilter<"Organization"> | number | null
+    leaId?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    stateLeaId?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    enrollment?: IntNullableWithAggregatesFilter<"Organization"> | number | null
+    numberOfSchools?: IntNullableWithAggregatesFilter<"Organization"> | number | null
+    lowestGrade?: IntNullableWithAggregatesFilter<"Organization"> | number | null
+    highestGrade?: IntNullableWithAggregatesFilter<"Organization"> | number | null
+    urbanCentricLocale?: IntNullableWithAggregatesFilter<"Organization"> | number | null
+    districtDataYear?: IntNullableWithAggregatesFilter<"Organization"> | number | null
   }
 
   export type GrantBookmarkWhereInput = {
@@ -15578,12 +14210,22 @@ export namespace Prisma {
     city?: string | null
     state?: string | null
     zipCode?: string | null
+    countyName?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    leaId?: string | null
+    stateLeaId?: string | null
+    enrollment?: number | null
+    numberOfSchools?: number | null
+    lowestGrade?: number | null
+    highestGrade?: number | null
+    urbanCentricLocale?: number | null
+    districtDataYear?: number | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     user?: UserCreateNestedOneWithoutOrganizationInput
-    schoolDistrict?: SchoolDistrictCreateNestedOneWithoutOrganizationsInput
   }
 
   export type OrganizationUncheckedCreateInput = {
@@ -15593,7 +14235,6 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    schoolDistrictId?: string | null
     organizationLogo?: string | null
     website?: string | null
     missionStatement?: string | null
@@ -15607,6 +14248,17 @@ export namespace Prisma {
     city?: string | null
     state?: string | null
     zipCode?: string | null
+    countyName?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    leaId?: string | null
+    stateLeaId?: string | null
+    enrollment?: number | null
+    numberOfSchools?: number | null
+    lowestGrade?: number | null
+    highestGrade?: number | null
+    urbanCentricLocale?: number | null
+    districtDataYear?: number | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15634,12 +14286,22 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     user?: UserUpdateOneWithoutOrganizationNestedInput
-    schoolDistrict?: SchoolDistrictUpdateOneWithoutOrganizationsNestedInput
   }
 
   export type OrganizationUncheckedUpdateInput = {
@@ -15649,7 +14311,6 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    schoolDistrictId?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -15663,6 +14324,17 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15677,7 +14349,6 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    schoolDistrictId?: string | null
     organizationLogo?: string | null
     website?: string | null
     missionStatement?: string | null
@@ -15691,6 +14362,17 @@ export namespace Prisma {
     city?: string | null
     state?: string | null
     zipCode?: string | null
+    countyName?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    leaId?: string | null
+    stateLeaId?: string | null
+    enrollment?: number | null
+    numberOfSchools?: number | null
+    lowestGrade?: number | null
+    highestGrade?: number | null
+    urbanCentricLocale?: number | null
+    districtDataYear?: number | null
   }
 
   export type OrganizationUpdateManyMutationInput = {
@@ -15713,6 +14395,17 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type OrganizationUncheckedUpdateManyInput = {
@@ -15722,7 +14415,6 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    schoolDistrictId?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -15736,150 +14428,17 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type SchoolDistrictCreateInput = {
-    id?: string
-    leaId: string
-    name: string
-    stateCode: string
-    stateLeaId?: string | null
-    city?: string | null
-    zipCode?: string | null
-    phone?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    countyName?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
-    year?: number
-    organizations?: OrganizationCreateNestedManyWithoutSchoolDistrictInput
-  }
-
-  export type SchoolDistrictUncheckedCreateInput = {
-    id?: string
-    leaId: string
-    name: string
-    stateCode: string
-    stateLeaId?: string | null
-    city?: string | null
-    zipCode?: string | null
-    phone?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    countyName?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
-    year?: number
-    organizations?: OrganizationUncheckedCreateNestedManyWithoutSchoolDistrictInput
-  }
-
-  export type SchoolDistrictUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    leaId?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    stateCode?: StringFieldUpdateOperationsInput | string
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
     highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    year?: IntFieldUpdateOperationsInput | number
-    organizations?: OrganizationUpdateManyWithoutSchoolDistrictNestedInput
-  }
-
-  export type SchoolDistrictUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    leaId?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    stateCode?: StringFieldUpdateOperationsInput | string
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    year?: IntFieldUpdateOperationsInput | number
-    organizations?: OrganizationUncheckedUpdateManyWithoutSchoolDistrictNestedInput
-  }
-
-  export type SchoolDistrictCreateManyInput = {
-    id?: string
-    leaId: string
-    name: string
-    stateCode: string
-    stateLeaId?: string | null
-    city?: string | null
-    zipCode?: string | null
-    phone?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    countyName?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
-    year?: number
-  }
-
-  export type SchoolDistrictUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    leaId?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    stateCode?: StringFieldUpdateOperationsInput | string
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    year?: IntFieldUpdateOperationsInput | number
-  }
-
-  export type SchoolDistrictUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    leaId?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    stateCode?: StringFieldUpdateOperationsInput | string
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    year?: IntFieldUpdateOperationsInput | number
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type GrantBookmarkCreateInput = {
@@ -16776,6 +15335,17 @@ export namespace Prisma {
     not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type ApplicationListRelationFilter = {
     every?: ApplicationWhereInput
     some?: ApplicationWhereInput
@@ -16793,11 +15363,6 @@ export namespace Prisma {
     isNot?: UserWhereInput | null
   }
 
-  export type SchoolDistrictNullableScalarRelationFilter = {
-    is?: SchoolDistrictWhereInput | null
-    isNot?: SchoolDistrictWhereInput | null
-  }
-
   export type ApplicationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -16813,7 +15378,6 @@ export namespace Prisma {
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    schoolDistrictId?: SortOrder
     organizationLogo?: SortOrder
     website?: SortOrder
     missionStatement?: SortOrder
@@ -16827,10 +15391,29 @@ export namespace Prisma {
     city?: SortOrder
     state?: SortOrder
     zipCode?: SortOrder
+    countyName?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    leaId?: SortOrder
+    stateLeaId?: SortOrder
+    enrollment?: SortOrder
+    numberOfSchools?: SortOrder
+    lowestGrade?: SortOrder
+    highestGrade?: SortOrder
+    urbanCentricLocale?: SortOrder
+    districtDataYear?: SortOrder
   }
 
   export type OrganizationAvgOrderByAggregateInput = {
     annualOperatingBudget?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    enrollment?: SortOrder
+    numberOfSchools?: SortOrder
+    lowestGrade?: SortOrder
+    highestGrade?: SortOrder
+    urbanCentricLocale?: SortOrder
+    districtDataYear?: SortOrder
   }
 
   export type OrganizationMaxOrderByAggregateInput = {
@@ -16840,7 +15423,6 @@ export namespace Prisma {
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    schoolDistrictId?: SortOrder
     organizationLogo?: SortOrder
     website?: SortOrder
     missionStatement?: SortOrder
@@ -16854,6 +15436,17 @@ export namespace Prisma {
     city?: SortOrder
     state?: SortOrder
     zipCode?: SortOrder
+    countyName?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    leaId?: SortOrder
+    stateLeaId?: SortOrder
+    enrollment?: SortOrder
+    numberOfSchools?: SortOrder
+    lowestGrade?: SortOrder
+    highestGrade?: SortOrder
+    urbanCentricLocale?: SortOrder
+    districtDataYear?: SortOrder
   }
 
   export type OrganizationMinOrderByAggregateInput = {
@@ -16863,7 +15456,6 @@ export namespace Prisma {
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    schoolDistrictId?: SortOrder
     organizationLogo?: SortOrder
     website?: SortOrder
     missionStatement?: SortOrder
@@ -16877,10 +15469,29 @@ export namespace Prisma {
     city?: SortOrder
     state?: SortOrder
     zipCode?: SortOrder
+    countyName?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    leaId?: SortOrder
+    stateLeaId?: SortOrder
+    enrollment?: SortOrder
+    numberOfSchools?: SortOrder
+    lowestGrade?: SortOrder
+    highestGrade?: SortOrder
+    urbanCentricLocale?: SortOrder
+    districtDataYear?: SortOrder
   }
 
   export type OrganizationSumOrderByAggregateInput = {
     annualOperatingBudget?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    enrollment?: SortOrder
+    numberOfSchools?: SortOrder
+    lowestGrade?: SortOrder
+    highestGrade?: SortOrder
+    urbanCentricLocale?: SortOrder
+    districtDataYear?: SortOrder
   }
 
   export type EnumOrganizationRoleWithAggregatesFilter<$PrismaModel = never> = {
@@ -16907,109 +15518,6 @@ export namespace Prisma {
     _sum?: NestedDecimalNullableFilter<$PrismaModel>
     _min?: NestedDecimalNullableFilter<$PrismaModel>
     _max?: NestedDecimalNullableFilter<$PrismaModel>
-  }
-
-  export type FloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type OrganizationListRelationFilter = {
-    every?: OrganizationWhereInput
-    some?: OrganizationWhereInput
-    none?: OrganizationWhereInput
-  }
-
-  export type OrganizationOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type SchoolDistrictCountOrderByAggregateInput = {
-    id?: SortOrder
-    leaId?: SortOrder
-    name?: SortOrder
-    stateCode?: SortOrder
-    stateLeaId?: SortOrder
-    city?: SortOrder
-    zipCode?: SortOrder
-    phone?: SortOrder
-    latitude?: SortOrder
-    longitude?: SortOrder
-    countyName?: SortOrder
-    enrollment?: SortOrder
-    numberOfSchools?: SortOrder
-    lowestGrade?: SortOrder
-    highestGrade?: SortOrder
-    urbanCentricLocale?: SortOrder
-    year?: SortOrder
-  }
-
-  export type SchoolDistrictAvgOrderByAggregateInput = {
-    latitude?: SortOrder
-    longitude?: SortOrder
-    enrollment?: SortOrder
-    numberOfSchools?: SortOrder
-    lowestGrade?: SortOrder
-    highestGrade?: SortOrder
-    urbanCentricLocale?: SortOrder
-    year?: SortOrder
-  }
-
-  export type SchoolDistrictMaxOrderByAggregateInput = {
-    id?: SortOrder
-    leaId?: SortOrder
-    name?: SortOrder
-    stateCode?: SortOrder
-    stateLeaId?: SortOrder
-    city?: SortOrder
-    zipCode?: SortOrder
-    phone?: SortOrder
-    latitude?: SortOrder
-    longitude?: SortOrder
-    countyName?: SortOrder
-    enrollment?: SortOrder
-    numberOfSchools?: SortOrder
-    lowestGrade?: SortOrder
-    highestGrade?: SortOrder
-    urbanCentricLocale?: SortOrder
-    year?: SortOrder
-  }
-
-  export type SchoolDistrictMinOrderByAggregateInput = {
-    id?: SortOrder
-    leaId?: SortOrder
-    name?: SortOrder
-    stateCode?: SortOrder
-    stateLeaId?: SortOrder
-    city?: SortOrder
-    zipCode?: SortOrder
-    phone?: SortOrder
-    latitude?: SortOrder
-    longitude?: SortOrder
-    countyName?: SortOrder
-    enrollment?: SortOrder
-    numberOfSchools?: SortOrder
-    lowestGrade?: SortOrder
-    highestGrade?: SortOrder
-    urbanCentricLocale?: SortOrder
-    year?: SortOrder
-  }
-
-  export type SchoolDistrictSumOrderByAggregateInput = {
-    latitude?: SortOrder
-    longitude?: SortOrder
-    enrollment?: SortOrder
-    numberOfSchools?: SortOrder
-    lowestGrade?: SortOrder
-    highestGrade?: SortOrder
-    urbanCentricLocale?: SortOrder
-    year?: SortOrder
   }
 
   export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -17506,12 +16014,6 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type SchoolDistrictCreateNestedOneWithoutOrganizationsInput = {
-    create?: XOR<SchoolDistrictCreateWithoutOrganizationsInput, SchoolDistrictUncheckedCreateWithoutOrganizationsInput>
-    connectOrCreate?: SchoolDistrictCreateOrConnectWithoutOrganizationsInput
-    connect?: SchoolDistrictWhereUniqueInput
-  }
-
   export type AiChatUncheckedCreateNestedManyWithoutOrganizationInput = {
     create?: XOR<AiChatCreateWithoutOrganizationInput, AiChatUncheckedCreateWithoutOrganizationInput> | AiChatCreateWithoutOrganizationInput[] | AiChatUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: AiChatCreateOrConnectWithoutOrganizationInput | AiChatCreateOrConnectWithoutOrganizationInput[]
@@ -17556,6 +16058,14 @@ export namespace Prisma {
     decrement?: Decimal | DecimalJsLike | number | string
     multiply?: Decimal | DecimalJsLike | number | string
     divide?: Decimal | DecimalJsLike | number | string
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type AiChatUpdateManyWithoutOrganizationNestedInput = {
@@ -17624,16 +16134,6 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOrganizationInput, UserUpdateWithoutOrganizationInput>, UserUncheckedUpdateWithoutOrganizationInput>
   }
 
-  export type SchoolDistrictUpdateOneWithoutOrganizationsNestedInput = {
-    create?: XOR<SchoolDistrictCreateWithoutOrganizationsInput, SchoolDistrictUncheckedCreateWithoutOrganizationsInput>
-    connectOrCreate?: SchoolDistrictCreateOrConnectWithoutOrganizationsInput
-    upsert?: SchoolDistrictUpsertWithoutOrganizationsInput
-    disconnect?: SchoolDistrictWhereInput | boolean
-    delete?: SchoolDistrictWhereInput | boolean
-    connect?: SchoolDistrictWhereUniqueInput
-    update?: XOR<XOR<SchoolDistrictUpdateToOneWithWhereWithoutOrganizationsInput, SchoolDistrictUpdateWithoutOrganizationsInput>, SchoolDistrictUncheckedUpdateWithoutOrganizationsInput>
-  }
-
   export type AiChatUncheckedUpdateManyWithoutOrganizationNestedInput = {
     create?: XOR<AiChatCreateWithoutOrganizationInput, AiChatUncheckedCreateWithoutOrganizationInput> | AiChatCreateWithoutOrganizationInput[] | AiChatUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: AiChatCreateOrConnectWithoutOrganizationInput | AiChatCreateOrConnectWithoutOrganizationInput[]
@@ -17698,56 +16198,6 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOrganizationInput, UserUpdateWithoutOrganizationInput>, UserUncheckedUpdateWithoutOrganizationInput>
-  }
-
-  export type OrganizationCreateNestedManyWithoutSchoolDistrictInput = {
-    create?: XOR<OrganizationCreateWithoutSchoolDistrictInput, OrganizationUncheckedCreateWithoutSchoolDistrictInput> | OrganizationCreateWithoutSchoolDistrictInput[] | OrganizationUncheckedCreateWithoutSchoolDistrictInput[]
-    connectOrCreate?: OrganizationCreateOrConnectWithoutSchoolDistrictInput | OrganizationCreateOrConnectWithoutSchoolDistrictInput[]
-    createMany?: OrganizationCreateManySchoolDistrictInputEnvelope
-    connect?: OrganizationWhereUniqueInput | OrganizationWhereUniqueInput[]
-  }
-
-  export type OrganizationUncheckedCreateNestedManyWithoutSchoolDistrictInput = {
-    create?: XOR<OrganizationCreateWithoutSchoolDistrictInput, OrganizationUncheckedCreateWithoutSchoolDistrictInput> | OrganizationCreateWithoutSchoolDistrictInput[] | OrganizationUncheckedCreateWithoutSchoolDistrictInput[]
-    connectOrCreate?: OrganizationCreateOrConnectWithoutSchoolDistrictInput | OrganizationCreateOrConnectWithoutSchoolDistrictInput[]
-    createMany?: OrganizationCreateManySchoolDistrictInputEnvelope
-    connect?: OrganizationWhereUniqueInput | OrganizationWhereUniqueInput[]
-  }
-
-  export type NullableFloatFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type OrganizationUpdateManyWithoutSchoolDistrictNestedInput = {
-    create?: XOR<OrganizationCreateWithoutSchoolDistrictInput, OrganizationUncheckedCreateWithoutSchoolDistrictInput> | OrganizationCreateWithoutSchoolDistrictInput[] | OrganizationUncheckedCreateWithoutSchoolDistrictInput[]
-    connectOrCreate?: OrganizationCreateOrConnectWithoutSchoolDistrictInput | OrganizationCreateOrConnectWithoutSchoolDistrictInput[]
-    upsert?: OrganizationUpsertWithWhereUniqueWithoutSchoolDistrictInput | OrganizationUpsertWithWhereUniqueWithoutSchoolDistrictInput[]
-    createMany?: OrganizationCreateManySchoolDistrictInputEnvelope
-    set?: OrganizationWhereUniqueInput | OrganizationWhereUniqueInput[]
-    disconnect?: OrganizationWhereUniqueInput | OrganizationWhereUniqueInput[]
-    delete?: OrganizationWhereUniqueInput | OrganizationWhereUniqueInput[]
-    connect?: OrganizationWhereUniqueInput | OrganizationWhereUniqueInput[]
-    update?: OrganizationUpdateWithWhereUniqueWithoutSchoolDistrictInput | OrganizationUpdateWithWhereUniqueWithoutSchoolDistrictInput[]
-    updateMany?: OrganizationUpdateManyWithWhereWithoutSchoolDistrictInput | OrganizationUpdateManyWithWhereWithoutSchoolDistrictInput[]
-    deleteMany?: OrganizationScalarWhereInput | OrganizationScalarWhereInput[]
-  }
-
-  export type OrganizationUncheckedUpdateManyWithoutSchoolDistrictNestedInput = {
-    create?: XOR<OrganizationCreateWithoutSchoolDistrictInput, OrganizationUncheckedCreateWithoutSchoolDistrictInput> | OrganizationCreateWithoutSchoolDistrictInput[] | OrganizationUncheckedCreateWithoutSchoolDistrictInput[]
-    connectOrCreate?: OrganizationCreateOrConnectWithoutSchoolDistrictInput | OrganizationCreateOrConnectWithoutSchoolDistrictInput[]
-    upsert?: OrganizationUpsertWithWhereUniqueWithoutSchoolDistrictInput | OrganizationUpsertWithWhereUniqueWithoutSchoolDistrictInput[]
-    createMany?: OrganizationCreateManySchoolDistrictInputEnvelope
-    set?: OrganizationWhereUniqueInput | OrganizationWhereUniqueInput[]
-    disconnect?: OrganizationWhereUniqueInput | OrganizationWhereUniqueInput[]
-    delete?: OrganizationWhereUniqueInput | OrganizationWhereUniqueInput[]
-    connect?: OrganizationWhereUniqueInput | OrganizationWhereUniqueInput[]
-    update?: OrganizationUpdateWithWhereUniqueWithoutSchoolDistrictInput | OrganizationUpdateWithWhereUniqueWithoutSchoolDistrictInput[]
-    updateMany?: OrganizationUpdateManyWithWhereWithoutSchoolDistrictInput | OrganizationUpdateManyWithWhereWithoutSchoolDistrictInput[]
-    deleteMany?: OrganizationScalarWhereInput | OrganizationScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutGrantBookmarksInput = {
@@ -18449,11 +16899,21 @@ export namespace Prisma {
     city?: string | null
     state?: string | null
     zipCode?: string | null
+    countyName?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    leaId?: string | null
+    stateLeaId?: string | null
+    enrollment?: number | null
+    numberOfSchools?: number | null
+    lowestGrade?: number | null
+    highestGrade?: number | null
+    urbanCentricLocale?: number | null
+    districtDataYear?: number | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
-    schoolDistrict?: SchoolDistrictCreateNestedOneWithoutOrganizationsInput
   }
 
   export type OrganizationUncheckedCreateWithoutUserInput = {
@@ -18463,7 +16923,6 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    schoolDistrictId?: string | null
     organizationLogo?: string | null
     website?: string | null
     missionStatement?: string | null
@@ -18477,6 +16936,17 @@ export namespace Prisma {
     city?: string | null
     state?: string | null
     zipCode?: string | null
+    countyName?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    leaId?: string | null
+    stateLeaId?: string | null
+    enrollment?: number | null
+    numberOfSchools?: number | null
+    lowestGrade?: number | null
+    highestGrade?: number | null
+    urbanCentricLocale?: number | null
+    districtDataYear?: number | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18577,11 +17047,21 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
-    schoolDistrict?: SchoolDistrictUpdateOneWithoutOrganizationsNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutUserInput = {
@@ -18591,7 +17071,6 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    schoolDistrictId?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18605,6 +17084,17 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18774,51 +17264,6 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutOrganizationInput, UserUncheckedCreateWithoutOrganizationInput>
   }
 
-  export type SchoolDistrictCreateWithoutOrganizationsInput = {
-    id?: string
-    leaId: string
-    name: string
-    stateCode: string
-    stateLeaId?: string | null
-    city?: string | null
-    zipCode?: string | null
-    phone?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    countyName?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
-    year?: number
-  }
-
-  export type SchoolDistrictUncheckedCreateWithoutOrganizationsInput = {
-    id?: string
-    leaId: string
-    name: string
-    stateCode: string
-    stateLeaId?: string | null
-    city?: string | null
-    zipCode?: string | null
-    phone?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    countyName?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
-    year?: number
-  }
-
-  export type SchoolDistrictCreateOrConnectWithoutOrganizationsInput = {
-    where: SchoolDistrictWhereUniqueInput
-    create: XOR<SchoolDistrictCreateWithoutOrganizationsInput, SchoolDistrictUncheckedCreateWithoutOrganizationsInput>
-  }
-
   export type AiChatUpsertWithWhereUniqueWithoutOrganizationInput = {
     where: AiChatWhereUniqueInput
     update: XOR<AiChatUpdateWithoutOrganizationInput, AiChatUncheckedUpdateWithoutOrganizationInput>
@@ -18954,163 +17399,6 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutUserNestedInput
   }
 
-  export type SchoolDistrictUpsertWithoutOrganizationsInput = {
-    update: XOR<SchoolDistrictUpdateWithoutOrganizationsInput, SchoolDistrictUncheckedUpdateWithoutOrganizationsInput>
-    create: XOR<SchoolDistrictCreateWithoutOrganizationsInput, SchoolDistrictUncheckedCreateWithoutOrganizationsInput>
-    where?: SchoolDistrictWhereInput
-  }
-
-  export type SchoolDistrictUpdateToOneWithWhereWithoutOrganizationsInput = {
-    where?: SchoolDistrictWhereInput
-    data: XOR<SchoolDistrictUpdateWithoutOrganizationsInput, SchoolDistrictUncheckedUpdateWithoutOrganizationsInput>
-  }
-
-  export type SchoolDistrictUpdateWithoutOrganizationsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    leaId?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    stateCode?: StringFieldUpdateOperationsInput | string
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    year?: IntFieldUpdateOperationsInput | number
-  }
-
-  export type SchoolDistrictUncheckedUpdateWithoutOrganizationsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    leaId?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    stateCode?: StringFieldUpdateOperationsInput | string
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    year?: IntFieldUpdateOperationsInput | number
-  }
-
-  export type OrganizationCreateWithoutSchoolDistrictInput = {
-    id?: string
-    name: string
-    slug: string
-    role?: $Enums.OrganizationRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
-    address?: string | null
-    city?: string | null
-    state?: string | null
-    zipCode?: string | null
-    aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
-    applications?: ApplicationCreateNestedManyWithoutOrganizationInput
-    grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
-    user?: UserCreateNestedOneWithoutOrganizationInput
-  }
-
-  export type OrganizationUncheckedCreateWithoutSchoolDistrictInput = {
-    id?: string
-    name: string
-    slug: string
-    role?: $Enums.OrganizationRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
-    address?: string | null
-    city?: string | null
-    state?: string | null
-    zipCode?: string | null
-    aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
-    applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
-    grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
-    user?: UserUncheckedCreateNestedOneWithoutOrganizationInput
-  }
-
-  export type OrganizationCreateOrConnectWithoutSchoolDistrictInput = {
-    where: OrganizationWhereUniqueInput
-    create: XOR<OrganizationCreateWithoutSchoolDistrictInput, OrganizationUncheckedCreateWithoutSchoolDistrictInput>
-  }
-
-  export type OrganizationCreateManySchoolDistrictInputEnvelope = {
-    data: OrganizationCreateManySchoolDistrictInput | OrganizationCreateManySchoolDistrictInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type OrganizationUpsertWithWhereUniqueWithoutSchoolDistrictInput = {
-    where: OrganizationWhereUniqueInput
-    update: XOR<OrganizationUpdateWithoutSchoolDistrictInput, OrganizationUncheckedUpdateWithoutSchoolDistrictInput>
-    create: XOR<OrganizationCreateWithoutSchoolDistrictInput, OrganizationUncheckedCreateWithoutSchoolDistrictInput>
-  }
-
-  export type OrganizationUpdateWithWhereUniqueWithoutSchoolDistrictInput = {
-    where: OrganizationWhereUniqueInput
-    data: XOR<OrganizationUpdateWithoutSchoolDistrictInput, OrganizationUncheckedUpdateWithoutSchoolDistrictInput>
-  }
-
-  export type OrganizationUpdateManyWithWhereWithoutSchoolDistrictInput = {
-    where: OrganizationScalarWhereInput
-    data: XOR<OrganizationUpdateManyMutationInput, OrganizationUncheckedUpdateManyWithoutSchoolDistrictInput>
-  }
-
-  export type OrganizationScalarWhereInput = {
-    AND?: OrganizationScalarWhereInput | OrganizationScalarWhereInput[]
-    OR?: OrganizationScalarWhereInput[]
-    NOT?: OrganizationScalarWhereInput | OrganizationScalarWhereInput[]
-    id?: StringFilter<"Organization"> | string
-    name?: StringFilter<"Organization"> | string
-    slug?: StringFilter<"Organization"> | string
-    role?: EnumOrganizationRoleFilter<"Organization"> | $Enums.OrganizationRole
-    createdAt?: DateTimeFilter<"Organization"> | Date | string
-    updatedAt?: DateTimeFilter<"Organization"> | Date | string
-    schoolDistrictId?: StringNullableFilter<"Organization"> | string | null
-    organizationLogo?: StringNullableFilter<"Organization"> | string | null
-    website?: StringNullableFilter<"Organization"> | string | null
-    missionStatement?: StringNullableFilter<"Organization"> | string | null
-    strategicPlan?: StringNullableFilter<"Organization"> | string | null
-    annualOperatingBudget?: DecimalNullableFilter<"Organization"> | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: StringNullableFilter<"Organization"> | string | null
-    phone?: StringNullableFilter<"Organization"> | string | null
-    email?: StringNullableFilter<"Organization"> | string | null
-    organizationLeaderName?: StringNullableFilter<"Organization"> | string | null
-    address?: StringNullableFilter<"Organization"> | string | null
-    city?: StringNullableFilter<"Organization"> | string | null
-    state?: StringNullableFilter<"Organization"> | string | null
-    zipCode?: StringNullableFilter<"Organization"> | string | null
-  }
-
   export type UserCreateWithoutGrantBookmarksInput = {
     id: string
     email: string
@@ -19162,11 +17450,21 @@ export namespace Prisma {
     city?: string | null
     state?: string | null
     zipCode?: string | null
+    countyName?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    leaId?: string | null
+    stateLeaId?: string | null
+    enrollment?: number | null
+    numberOfSchools?: number | null
+    lowestGrade?: number | null
+    highestGrade?: number | null
+    urbanCentricLocale?: number | null
+    districtDataYear?: number | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     user?: UserCreateNestedOneWithoutOrganizationInput
-    schoolDistrict?: SchoolDistrictCreateNestedOneWithoutOrganizationsInput
   }
 
   export type OrganizationUncheckedCreateWithoutGrantBookmarksInput = {
@@ -19176,7 +17474,6 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    schoolDistrictId?: string | null
     organizationLogo?: string | null
     website?: string | null
     missionStatement?: string | null
@@ -19190,6 +17487,17 @@ export namespace Prisma {
     city?: string | null
     state?: string | null
     zipCode?: string | null
+    countyName?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    leaId?: string | null
+    stateLeaId?: string | null
+    enrollment?: number | null
+    numberOfSchools?: number | null
+    lowestGrade?: number | null
+    highestGrade?: number | null
+    urbanCentricLocale?: number | null
+    districtDataYear?: number | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19269,11 +17577,21 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     user?: UserUpdateOneWithoutOrganizationNestedInput
-    schoolDistrict?: SchoolDistrictUpdateOneWithoutOrganizationsNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutGrantBookmarksInput = {
@@ -19283,7 +17601,6 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    schoolDistrictId?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19297,6 +17614,17 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19323,11 +17651,21 @@ export namespace Prisma {
     city?: string | null
     state?: string | null
     zipCode?: string | null
+    countyName?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    leaId?: string | null
+    stateLeaId?: string | null
+    enrollment?: number | null
+    numberOfSchools?: number | null
+    lowestGrade?: number | null
+    highestGrade?: number | null
+    urbanCentricLocale?: number | null
+    districtDataYear?: number | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     user?: UserCreateNestedOneWithoutOrganizationInput
-    schoolDistrict?: SchoolDistrictCreateNestedOneWithoutOrganizationsInput
   }
 
   export type OrganizationUncheckedCreateWithoutEligibilityAnalysesInput = {
@@ -19337,7 +17675,6 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    schoolDistrictId?: string | null
     organizationLogo?: string | null
     website?: string | null
     missionStatement?: string | null
@@ -19351,6 +17688,17 @@ export namespace Prisma {
     city?: string | null
     state?: string | null
     zipCode?: string | null
+    countyName?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    leaId?: string | null
+    stateLeaId?: string | null
+    enrollment?: number | null
+    numberOfSchools?: number | null
+    lowestGrade?: number | null
+    highestGrade?: number | null
+    urbanCentricLocale?: number | null
+    districtDataYear?: number | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19393,11 +17741,21 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     user?: UserUpdateOneWithoutOrganizationNestedInput
-    schoolDistrict?: SchoolDistrictUpdateOneWithoutOrganizationsNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutEligibilityAnalysesInput = {
@@ -19407,7 +17765,6 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    schoolDistrictId?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19421,6 +17778,17 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19479,11 +17847,21 @@ export namespace Prisma {
     city?: string | null
     state?: string | null
     zipCode?: string | null
+    countyName?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    leaId?: string | null
+    stateLeaId?: string | null
+    enrollment?: number | null
+    numberOfSchools?: number | null
+    lowestGrade?: number | null
+    highestGrade?: number | null
+    urbanCentricLocale?: number | null
+    districtDataYear?: number | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     user?: UserCreateNestedOneWithoutOrganizationInput
-    schoolDistrict?: SchoolDistrictCreateNestedOneWithoutOrganizationsInput
   }
 
   export type OrganizationUncheckedCreateWithoutApplicationsInput = {
@@ -19493,7 +17871,6 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    schoolDistrictId?: string | null
     organizationLogo?: string | null
     website?: string | null
     missionStatement?: string | null
@@ -19507,6 +17884,17 @@ export namespace Prisma {
     city?: string | null
     state?: string | null
     zipCode?: string | null
+    countyName?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    leaId?: string | null
+    stateLeaId?: string | null
+    enrollment?: number | null
+    numberOfSchools?: number | null
+    lowestGrade?: number | null
+    highestGrade?: number | null
+    urbanCentricLocale?: number | null
+    districtDataYear?: number | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19565,11 +17953,21 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     user?: UserUpdateOneWithoutOrganizationNestedInput
-    schoolDistrict?: SchoolDistrictUpdateOneWithoutOrganizationsNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutApplicationsInput = {
@@ -19579,7 +17977,6 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    schoolDistrictId?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19593,6 +17990,17 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19713,11 +18121,21 @@ export namespace Prisma {
     city?: string | null
     state?: string | null
     zipCode?: string | null
+    countyName?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    leaId?: string | null
+    stateLeaId?: string | null
+    enrollment?: number | null
+    numberOfSchools?: number | null
+    lowestGrade?: number | null
+    highestGrade?: number | null
+    urbanCentricLocale?: number | null
+    districtDataYear?: number | null
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     user?: UserCreateNestedOneWithoutOrganizationInput
-    schoolDistrict?: SchoolDistrictCreateNestedOneWithoutOrganizationsInput
   }
 
   export type OrganizationUncheckedCreateWithoutAiChatsInput = {
@@ -19727,7 +18145,6 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    schoolDistrictId?: string | null
     organizationLogo?: string | null
     website?: string | null
     missionStatement?: string | null
@@ -19741,6 +18158,17 @@ export namespace Prisma {
     city?: string | null
     state?: string | null
     zipCode?: string | null
+    countyName?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    leaId?: string | null
+    stateLeaId?: string | null
+    enrollment?: number | null
+    numberOfSchools?: number | null
+    lowestGrade?: number | null
+    highestGrade?: number | null
+    urbanCentricLocale?: number | null
+    districtDataYear?: number | null
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19891,11 +18319,21 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     user?: UserUpdateOneWithoutOrganizationNestedInput
-    schoolDistrict?: SchoolDistrictUpdateOneWithoutOrganizationsNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutAiChatsInput = {
@@ -19905,7 +18343,6 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    schoolDistrictId?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19919,6 +18356,17 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20237,104 +18685,6 @@ export namespace Prisma {
     confidence?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     opportunityId?: IntFieldUpdateOperationsInput | number
-  }
-
-  export type OrganizationCreateManySchoolDistrictInput = {
-    id?: string
-    name: string
-    slug: string
-    role?: $Enums.OrganizationRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
-    address?: string | null
-    city?: string | null
-    state?: string | null
-    zipCode?: string | null
-  }
-
-  export type OrganizationUpdateWithoutSchoolDistrictInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: NullableStringFieldUpdateOperationsInput | string | null
-    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
-    aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
-    applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
-    grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
-    user?: UserUpdateOneWithoutOrganizationNestedInput
-  }
-
-  export type OrganizationUncheckedUpdateWithoutSchoolDistrictInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: NullableStringFieldUpdateOperationsInput | string | null
-    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
-    aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
-    applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
-    grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
-    user?: UserUncheckedUpdateOneWithoutOrganizationNestedInput
-  }
-
-  export type OrganizationUncheckedUpdateManyWithoutSchoolDistrictInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: NullableStringFieldUpdateOperationsInput | string | null
-    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AiChatCreateManyApplicationInput = {

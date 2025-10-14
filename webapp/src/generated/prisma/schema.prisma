@@ -79,7 +79,6 @@ model Organization {
   role                   OrganizationRole           @default(MEMBER)
   createdAt              DateTime                   @default(now())
   updatedAt              DateTime                   @updatedAt
-  schoolDistrictId       String?
   // Basic Information
   organizationLogo       String?
   website                String?
@@ -96,42 +95,28 @@ model Organization {
   city                   String?
   state                  String?
   zipCode                String?
+  countyName             String?
+  latitude               Float?
+  longitude              Float?
+  // School District Data (for education organizations)
+  leaId                  String?                    @unique
+  stateLeaId             String?
+  enrollment             Int?
+  numberOfSchools        Int?
+  lowestGrade            Int?
+  highestGrade           Int?
+  urbanCentricLocale     Int?
+  districtDataYear       Int?
   // Relations
   aiChats                AiChat[]
   applications           Application[]
   grantBookmarks         GrantBookmark[]
   eligibilityAnalyses    GrantEligibilityAnalysis[]
   user                   User?                      @relation("UserOrganization")
-  schoolDistrict         SchoolDistrict?            @relation(fields: [schoolDistrictId], references: [id])
 
-  @@map("organizations")
-  @@schema("app")
-}
-
-model SchoolDistrict {
-  id                 String         @id @default(cuid())
-  leaId              String         @unique
-  name               String
-  stateCode          String
-  stateLeaId         String?
-  city               String?
-  zipCode            String?
-  phone              String?
-  latitude           Float?
-  longitude          Float?
-  countyName         String?
-  enrollment         Int?
-  numberOfSchools    Int?
-  lowestGrade        Int?
-  highestGrade       Int?
-  urbanCentricLocale Int?
-  year               Int            @default(2022)
-  organizations      Organization[]
-
-  @@index([stateCode])
-  @@index([name])
   @@index([leaId])
-  @@map("school_districts")
+  @@index([state])
+  @@map("organizations")
   @@schema("app")
 }
 

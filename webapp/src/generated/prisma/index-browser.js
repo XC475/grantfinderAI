@@ -175,7 +175,6 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  schoolDistrictId: 'schoolDistrictId',
   organizationLogo: 'organizationLogo',
   website: 'website',
   missionStatement: 'missionStatement',
@@ -188,27 +187,18 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   address: 'address',
   city: 'city',
   state: 'state',
-  zipCode: 'zipCode'
-};
-
-exports.Prisma.SchoolDistrictScalarFieldEnum = {
-  id: 'id',
-  leaId: 'leaId',
-  name: 'name',
-  stateCode: 'stateCode',
-  stateLeaId: 'stateLeaId',
-  city: 'city',
   zipCode: 'zipCode',
-  phone: 'phone',
+  countyName: 'countyName',
   latitude: 'latitude',
   longitude: 'longitude',
-  countyName: 'countyName',
+  leaId: 'leaId',
+  stateLeaId: 'stateLeaId',
   enrollment: 'enrollment',
   numberOfSchools: 'numberOfSchools',
   lowestGrade: 'lowestGrade',
   highestGrade: 'highestGrade',
   urbanCentricLocale: 'urbanCentricLocale',
-  year: 'year'
+  districtDataYear: 'districtDataYear'
 };
 
 exports.Prisma.GrantBookmarkScalarFieldEnum = {
@@ -342,7 +332,6 @@ exports.Prisma.ModelName = {
   opportunities: 'opportunities',
   User: 'User',
   Organization: 'Organization',
-  SchoolDistrict: 'SchoolDistrict',
   GrantBookmark: 'GrantBookmark',
   GrantEligibilityAnalysis: 'GrantEligibilityAnalysis',
   Application: 'Application',
