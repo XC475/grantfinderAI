@@ -80,7 +80,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="h-full">
+    <div className="flex flex-col h-full">
       <ChatDemo
         initialMessages={initialMessages}
         chatId={currentChatId}
