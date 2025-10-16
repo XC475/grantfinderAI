@@ -13,6 +13,7 @@ import {
   LayoutDashboard,
   Building2,
   Users,
+  Sparkles,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
@@ -63,14 +64,19 @@ const data = {
       icon: LayoutDashboard,
     },
     {
-      title: "AI Chat",
+      title: "AI Assistant",
       url: "/private/chat",
       icon: BotMessageSquare,
     },
     {
-      title: "Grants",
+      title: "Grant Search",
       url: "/private/grants",
       icon: FileText,
+    },
+    {
+      title: "Recommendations",
+      url: "/private/recommendations",
+      icon: Sparkles,
     },
     {
       title: "Bookmarks",
