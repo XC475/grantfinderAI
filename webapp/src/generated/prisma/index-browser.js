@@ -258,6 +258,18 @@ exports.Prisma.AiChatMessageScalarFieldEnum = {
   chatId: 'chatId'
 };
 
+exports.Prisma.RecommendationScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  opportunityId: 'opportunityId',
+  fitScore: 'fitScore',
+  fitReasoning: 'fitReasoning',
+  fitDescription: 'fitDescription',
+  districtName: 'districtName',
+  queryDate: 'queryDate',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -336,7 +348,8 @@ exports.Prisma.ModelName = {
   GrantEligibilityAnalysis: 'GrantEligibilityAnalysis',
   Application: 'Application',
   AiChat: 'AiChat',
-  AiChatMessage: 'AiChatMessage'
+  AiChatMessage: 'AiChatMessage',
+  Recommendation: 'Recommendation'
 };
 
 /**

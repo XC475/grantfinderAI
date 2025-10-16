@@ -112,6 +112,7 @@ model Organization {
   applications           Application[]
   grantBookmarks         GrantBookmark[]
   eligibilityAnalyses    GrantEligibilityAnalysis[]
+  recommendations        Recommendation[]
   user                   User?                      @relation("UserOrganization")
 
   @@index([leaId])
@@ -204,6 +205,24 @@ model AiChatMessage {
   chat      AiChat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
   @@map("ai_chat_messages")
+  @@schema("app")
+}
+
+model Recommendation {
+  id             String       @id @default(cuid())
+  organizationId String
+  opportunityId  String
+  fitScore       Int
+  fitReasoning   String       @db.Text
+  fitDescription String       @db.Text
+  districtName   String
+  queryDate      DateTime
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([opportunityId])
+  @@map("recommendations")
   @@schema("app")
 }
 
