@@ -8,20 +8,38 @@ const N8N_RECOMMENDATIONS_URL = process.env.N8N_RECOMMENDATIONS_URL!;
 export async function POST(req: NextRequest) {
   const { message, organizationId, opportunityId } = await req.json();
 
-  // Get authenticated user
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
+  // Check for API key authentication first
+  const apiKey = req.headers.get("x-api-key");
+  let user, userOrganizationId;
 
-  if (authError || !user) {
-    return new Response("Unauthorized", { status: 401 });
+  if (apiKey && apiKey === process.env.INTERNAL_API_KEY) {
+    // API key authentication - skip user validation
+    console.log("✅ API key authenticated request to recommendations");
+    user = { id: "api-user" }; // Dummy user for API key requests
+    userOrganizationId = organizationId; // Must provide organizationId in request
+
+    if (!userOrganizationId) {
+      return new Response(
+        "organizationId is required for API key authentication",
+        { status: 400 }
+      );
+    }
+  } else {
+    // Regular Supabase authentication
+    const supabase = await createClient();
+    const {
+      data: { user: supabaseUser },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !supabaseUser) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
+    user = supabaseUser;
+    userOrganizationId =
+      organizationId || (await getUserOrganizationId(user.id));
   }
-
-  // Get user's organization
-  const userOrganizationId =
-    organizationId || (await getUserOrganizationId(user.id));
 
   // Fetch organization data
   const organization = await prisma.organization.findUnique({
@@ -40,6 +58,85 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // Fetch grants: first state-specific, then USA-wide to fill up to 100 total
+    console.log(
+      "📊 [Recommendations API] Fetching grants for recommendations..."
+    );
+    let topGrants = [];
+
+    // Step 1: Fetch all posted grants for the organization's state (if available)
+    if (organization.state) {
+      console.log(
+        `📊 [Recommendations API] Fetching grants for state: ${organization.state}`
+      );
+      const stateGrantsUrl = new URL(
+        `${req.nextUrl.protocol}//${req.nextUrl.host}/api/grants/search`
+      );
+      stateGrantsUrl.searchParams.set("status", "posted");
+      stateGrantsUrl.searchParams.set("stateCode", organization.state);
+      stateGrantsUrl.searchParams.set("limit", "100"); // Fetch all state grants
+      stateGrantsUrl.searchParams.set("offset", "0");
+
+      const stateGrantsResponse = await fetch(stateGrantsUrl.toString(), {
+        headers: {
+          "x-api-key": process.env.INTERNAL_API_KEY || "",
+        },
+      });
+
+      if (stateGrantsResponse.ok) {
+        const stateGrantsData = await stateGrantsResponse.json();
+        topGrants = stateGrantsData.data || [];
+        console.log(
+          `📊 [Recommendations API] Fetched ${topGrants.length} state-specific grants`
+        );
+      } else {
+        console.warn("⚠️ [Recommendations API] Failed to fetch state grants");
+      }
+    }
+
+    // Step 2: Calculate how many more grants we need to reach 100
+    const remainingSlots = Math.max(0, 100 - topGrants.length);
+
+    if (remainingSlots > 0) {
+      console.log(
+        `📊 [Recommendations API] Fetching ${remainingSlots} USA-wide grants to fill remaining slots`
+      );
+      const usaGrantsUrl = new URL(
+        `${req.nextUrl.protocol}//${req.nextUrl.host}/api/grants/search`
+      );
+      usaGrantsUrl.searchParams.set("status", "posted");
+      usaGrantsUrl.searchParams.set("limit", remainingSlots.toString());
+      usaGrantsUrl.searchParams.set("offset", "0");
+
+      const usaGrantsResponse = await fetch(usaGrantsUrl.toString(), {
+        headers: {
+          "x-api-key": process.env.INTERNAL_API_KEY || "",
+        },
+      });
+
+      if (usaGrantsResponse.ok) {
+        const usaGrantsData = await usaGrantsResponse.json();
+        const usaGrants = usaGrantsData.data || [];
+
+        // Filter out any USA grants that are already in the state grants (by ID)
+        const stateGrantIds = new Set(topGrants.map((g: any) => g.id));
+        const uniqueUsaGrants = usaGrants.filter(
+          (g: any) => !stateGrantIds.has(g.id)
+        );
+
+        topGrants = [...topGrants, ...uniqueUsaGrants];
+        console.log(
+          `📊 [Recommendations API] Added ${uniqueUsaGrants.length} USA-wide grants`
+        );
+      } else {
+        console.warn("⚠️ [Recommendations API] Failed to fetch USA grants");
+      }
+    }
+
+    console.log(
+      `📊 [Recommendations API] Total grants to send to n8n: ${topGrants.length}`
+    );
+
     // Send to N8N with district information for recommendations
     const n8nMessage = {
       app_source: "grantfinder-ai-webapp",
@@ -48,6 +145,8 @@ export async function POST(req: NextRequest) {
       message: message,
       timestamp: Date.now().toString(),
       opportunity_id: opportunityId || null,
+      // Top 100 available grants
+      available_grants: topGrants,
       // District information for personalized grant recommendations
       district_info: organization.leaId
         ? {
@@ -109,8 +208,9 @@ export async function POST(req: NextRequest) {
       JSON.stringify(data, null, 2)
     );
 
-    // Handle n8n response format: [{ output: "stringified JSON" }]
+    // Handle n8n response format
     let recommendations;
+    let recommendationsArray = [];
 
     if (Array.isArray(data)) {
       // n8n returns array format
@@ -140,6 +240,71 @@ export async function POST(req: NextRequest) {
         ? recommendations.substring(0, 100) + "..."
         : recommendations
     );
+
+    // Parse recommendations if it's a string
+    if (typeof recommendations === "string") {
+      try {
+        const parsed = JSON.parse(recommendations);
+        if (parsed.recommendations && Array.isArray(parsed.recommendations)) {
+          recommendationsArray = parsed.recommendations;
+        }
+      } catch (e) {
+        console.warn("Could not parse recommendations as JSON");
+      }
+    } else if (Array.isArray(recommendations)) {
+      recommendationsArray = recommendations;
+    } else if (
+      recommendations?.recommendations &&
+      Array.isArray(recommendations.recommendations)
+    ) {
+      recommendationsArray = recommendations.recommendations;
+    }
+
+    // Save recommendations to database
+    if (recommendationsArray.length > 0) {
+      console.log(
+        `💾 [Recommendations API] Saving ${recommendationsArray.length} recommendations to database`
+      );
+
+      try {
+        // Check if there are existing recommendations and delete them to avoid duplicates
+        const existingCount = await prisma.recommendation.count({
+          where: { organizationId: userOrganizationId },
+        });
+
+        if (existingCount > 0) {
+          await prisma.recommendation.deleteMany({
+            where: { organizationId: userOrganizationId },
+          });
+          console.log(
+            `🗑️ [Recommendations API] Deleted ${existingCount} old recommendations`
+          );
+        }
+
+        // Save new recommendations
+        const savedRecommendations = await prisma.recommendation.createMany({
+          data: recommendationsArray.map((rec: any) => ({
+            organizationId: userOrganizationId,
+            opportunityId: rec.opportunity_id?.toString() || "",
+            fitScore: rec.fit_score || 0,
+            fitReasoning: rec.fit_reasoning || "",
+            fitDescription: rec.fit_description || "",
+            districtName: rec.district_name || "",
+            queryDate: rec.query_date ? new Date(rec.query_date) : new Date(),
+          })),
+        });
+
+        console.log(
+          `✅ [Recommendations API] Saved ${savedRecommendations.count} recommendations`
+        );
+      } catch (dbError) {
+        console.error(
+          "❌ [Recommendations API] Error saving to database:",
+          dbError
+        );
+        // Continue anyway - don't fail the entire request if DB save fails
+      }
+    }
 
     // Return the response to the client
     return new Response(JSON.stringify({ recommendations }), {

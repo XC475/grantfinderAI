@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 
 // Your n8n webhook URL - replace with your actual webhook URL
 const N8N_WEBHOOK_URL = process.env.N8N_SEARCH_URL!;
+const BASE_URL = process.env.BASE_URL!;
 
 export async function POST(req: NextRequest) {
   const { messages, chatId, organizationId } = await req.json();
@@ -90,6 +91,7 @@ export async function POST(req: NextRequest) {
       message: lastUserMessage.content,
       timestamp: Date.now().toString(),
       message_id: userMessage.id,
+      base_url: BASE_URL,
       conversation_history: messages,
       // District information for personalized grant recommendations
       district_info: organization.leaId
