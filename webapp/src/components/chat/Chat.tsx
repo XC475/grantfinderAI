@@ -172,8 +172,18 @@ export function ChatDemo(props: ChatDemoProps) {
     [handleSubmit]
   );
 
+  const isEmpty = messages.length === 0;
+
   return (
-    <div className={cn("flex", "flex-col", "h-[calc(100vh-80px)]", "w-full")}>
+    <div
+      className={cn(
+        "flex",
+        "flex-col",
+        isEmpty
+          ? "h-[50vh] w-full max-w-5xl mx-auto"
+          : "h-[calc(100vh-80px)] w-full"
+      )}
+    >
       <Chat
         className="grow"
         messages={messages}
@@ -184,10 +194,11 @@ export function ChatDemo(props: ChatDemoProps) {
         stop={stop}
         append={append}
         setMessages={setMessages}
+        isEmpty={isEmpty}
         suggestions={[
-          "What grants are available for small businesses?",
-          "Find funding opportunities for education technology startups",
-          "Search for research grants in renewable energy",
+          "Find grants for improving student achievement in our district",
+          "Help me find grants for teacher professional development",
+          "Search for grants to support special education services",
         ]}
       />
     </div>

@@ -21,6 +21,7 @@ interface MessageInputBaseProps
   isGenerating: boolean;
   enableInterrupt?: boolean;
   transcribeAudio?: (blob: Blob) => Promise<string>;
+  isEmpty?: boolean;
 }
 
 interface MessageInputWithoutAttachmentProps extends MessageInputBaseProps {
@@ -37,8 +38,16 @@ type MessageInputProps =
   | MessageInputWithoutAttachmentProps
   | MessageInputWithAttachmentsProps;
 
+const placeholderTexts = [
+  "Ask anything...",
+  "Help with search...",
+  "Help with writing...",
+  "Find grants...",
+  "Get recommendations...",
+];
+
 export function MessageInput({
-  placeholder = "Ask AI...",
+  placeholder,
   className,
   onKeyDown: onKeyDownProp,
   submitOnEnter = true,
@@ -46,10 +55,14 @@ export function MessageInput({
   isGenerating,
   enableInterrupt = true,
   transcribeAudio,
+  isEmpty = false,
   ...props
 }: MessageInputProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [showInterruptPrompt, setShowInterruptPrompt] = useState(false);
+  const [currentPlaceholder, setCurrentPlaceholder] = useState(
+    placeholder || placeholderTexts[0]
+  );
 
   const {
     isListening,
@@ -73,6 +86,46 @@ export function MessageInput({
       setShowInterruptPrompt(false);
     }
   }, [isGenerating]);
+
+  // Typing animation for placeholder text only when chat is empty
+  useEffect(() => {
+    if (placeholder || !isEmpty) {
+      // Use custom placeholder or default if chat has messages
+      setCurrentPlaceholder(placeholder || "Ask AI...");
+      return;
+    }
+
+    let currentIndex = 0;
+    let currentCharIndex = 0;
+    let isPaused = false;
+    let timeoutId: NodeJS.Timeout | null = null;
+
+    const typingInterval = setInterval(() => {
+      if (isPaused) return;
+
+      const fullText = placeholderTexts[currentIndex];
+
+      // Typing phase - add one character at a time
+      currentCharIndex++;
+      setCurrentPlaceholder(fullText.slice(0, currentCharIndex));
+
+      if (currentCharIndex >= fullText.length) {
+        // Finished typing, pause before changing to next phrase
+        isPaused = true;
+        timeoutId = setTimeout(() => {
+          // Move to next phrase after pause
+          currentIndex = (currentIndex + 1) % placeholderTexts.length;
+          currentCharIndex = 0;
+          isPaused = false;
+        }, 2000); // Pause for 2 seconds before changing
+      }
+    }, 100); // Type one character every 100ms
+
+    return () => {
+      clearInterval(typingInterval);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [placeholder, isEmpty]);
 
   const addFiles = (files: File[] | null) => {
     if (props.allowAttachments) {
@@ -203,12 +256,13 @@ export function MessageInput({
         <div className="relative flex-1">
           <textarea
             aria-label="Write your prompt here"
-            placeholder={placeholder}
+            placeholder={currentPlaceholder}
             ref={textAreaRef}
             onPaste={onPaste}
             onKeyDown={onKeyDown}
             className={cn(
-              "z-10 w-full grow resize-none rounded-xl border border-input bg-background p-3 pr-24 text-sm ring-offset-background transition-[border] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+              "mb-2 z-10 w-full grow resize-none rounded-xl border border-input bg-background text-sm ring-offset-background transition-[border] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+              isEmpty ? "p-3 pr-24" : "p-4 pr-24 min-h-[180px]",
               showFileList && "pb-16",
               className
             )}
@@ -248,7 +302,8 @@ export function MessageInput({
       </div>
 
       <div className="absolute right-3 top-3 z-20 flex gap-2">
-        {props.allowAttachments && (
+        {/* Attachment button - commented out */}
+        {/* {props.allowAttachments && (
           <Button
             type="button"
             size="icon"
@@ -262,7 +317,7 @@ export function MessageInput({
           >
             <Paperclip className="h-4 w-4" />
           </Button>
-        )}
+        )} */}
         {isSpeechSupported && (
           <Button
             type="button"
