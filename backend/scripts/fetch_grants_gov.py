@@ -499,6 +499,10 @@ def apply_ai_results_to_opportunity(opportunity, ai_data):
                     f"Invalid relevance score value: {ai_data['relevance_score']}. Setting to None."
                 )
                 opportunity.relevance_score = None
+
+        # Generate and populate raw_text using the helper function
+        opportunity.raw_text = helpers.format_opportunity_text(opportunity)
+
         return True
     except Exception as e:
         print(f"Error applying AI results: {e}")

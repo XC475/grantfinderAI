@@ -315,6 +315,9 @@ def upsert_nysed_grant(grant_data: Dict, processed_data: Dict, session) -> bool:
         extra_data["content_hash"] = content_hash
         opportunity.extra = extra_data
 
+        # Generate and populate raw_text using the helper function
+        opportunity.raw_text = helpers.format_opportunity_text(opportunity)
+
         # Print the complete grant object for debugging
         for attr in opportunity.__table__.columns.keys():
             print(f"{attr}: {getattr(opportunity, attr)}")
