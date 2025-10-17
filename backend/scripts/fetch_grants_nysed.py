@@ -97,16 +97,7 @@ def extract_grant_data(url: str) -> Optional[Dict]:
         existing_grant = (
             db.session.query(Opportunity).filter_by(url=url, source="nysed.gov").first()
         )
-        existing_grant_extra = None
-        if existing_grant and existing_grant.extra:
-            if isinstance(existing_grant.extra, str):
-                existing_grant_extra = json.loads(existing_grant.extra)
-            else:
-                existing_grant_extra = existing_grant.extra
-        if (
-            existing_grant_extra
-            and existing_grant_extra.get("content_hash") == content_hash
-        ):
+        if existing_grant and existing_grant.content_hash == content_hash:
             logger.info(f"Skipping: No changes detected for grant at {url}")
             return None
 
@@ -255,11 +246,7 @@ def upsert_nysed_grant(grant_data: Dict, processed_data: Dict, session) -> bool:
         )
 
         # Skip if content hasn't changed
-        if (
-            existing_grant
-            and existing_grant.extra
-            and existing_grant.extra.get("content_hash") == content_hash
-        ):
+        if existing_grant and existing_grant.content_hash == content_hash:
             logger.info(f"No changes detected for grant {source_grant_id}")
             return False
 
@@ -310,10 +297,12 @@ def upsert_nysed_grant(grant_data: Dict, processed_data: Dict, session) -> bool:
             else:
                 opportunity.status = OpportunityStatusEnum.closed
 
-        # Store hash and extra data
-        extra_data = processed_data.get("extra", {})
-        extra_data["content_hash"] = content_hash
-        opportunity.extra = extra_data
+        # Store content hash in the dedicated column and extra data
+        opportunity.content_hash = content_hash
+        opportunity.extra = processed_data.get("extra", {})
+
+        # Generate and populate raw_text using the helper function
+        opportunity.raw_text = helpers.format_opportunity_text(opportunity)
 
         # Print the complete grant object for debugging
         for attr in opportunity.__table__.columns.keys():
