@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -23,7 +22,6 @@ import {
 import {
   Loader2,
   Building2,
-  Users,
   MapPin,
   Mail,
   Upload,
@@ -31,6 +29,7 @@ import {
   Info,
   Save,
 } from "lucide-react";
+import Image from "next/image";
 import { toast } from "sonner";
 import { createClient } from "@/utils/supabase/client";
 
@@ -111,7 +110,7 @@ export default function ProfilePage() {
       const filePath = `organization-logos/${fileName}`;
 
       // Upload to Supabase storage
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from("grantware")
         .upload(filePath, file, {
           cacheControl: "3600",
@@ -188,7 +187,7 @@ export default function ProfilePage() {
           Organization Profile
         </h1>
         <p className="text-muted-foreground">
-          Manage your organization's information and settings
+          Manage your organization&apos;s information and settings
         </p>
       </div>
 
@@ -196,7 +195,7 @@ export default function ProfilePage() {
         <CardHeader>
           <CardTitle>Organization Information</CardTitle>
           <CardDescription>
-            Manage your organization's information and settings
+            Manage your organization&apos;s information and settings
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
@@ -213,9 +212,11 @@ export default function ProfilePage() {
                 <div className="flex items-center gap-4">
                   {organization.organizationLogo ? (
                     <div className="relative w-24 h-24 rounded-lg border-2 border-border overflow-hidden">
-                      <img
+                      <Image
                         src={organization.organizationLogo}
                         alt="Organization logo"
+                        width={96}
+                        height={96}
                         className="w-full h-full object-cover"
                       />
                     </div>
