@@ -23,7 +23,7 @@ interface TeamSwitcherProps {
 
 export function TeamSwitcher({
   organization,
-  currentSlug,
+  currentSlug: _currentSlug,
   loading = false,
 }: TeamSwitcherProps) {
   if (loading) {
