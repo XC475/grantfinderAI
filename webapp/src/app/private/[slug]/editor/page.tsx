@@ -3,7 +3,7 @@ import "./editor-overrides.css";
 
 export default function EditorPage() {
   return (
-    <div className="h-full w-full overflow-hidden">
+    <div className="w-full">
       <SimpleEditor />
     </div>
   );
