@@ -233,7 +233,7 @@ export async function GET(req: NextRequest) {
       `🔍 [${requestId}] Fetching all matching records for status-based sorting...`
     );
 
-    let allDataQuery = supabaseQuery;
+    const allDataQuery = supabaseQuery;
     const { data: allData, error: allError } = await allDataQuery;
 
     if (allError) {
@@ -287,7 +287,6 @@ export async function GET(req: NextRequest) {
 
     // Now apply pagination to the sorted data
     const data = sortedAllData.slice(offset, offset + limit);
-    const error = null;
 
     console.log(
       `🔍 [${requestId}] Applied pagination: offset=${offset}, limit=${limit}`
