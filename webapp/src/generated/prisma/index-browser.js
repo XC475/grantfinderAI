@@ -184,7 +184,7 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   fiscalYearEnd: 'fiscalYearEnd',
   missionStatement: 'missionStatement',
   organizationLeaderName: 'organizationLeaderName',
-  organizationLogo: 'organizationLogo',
+  logoUrl: 'logoUrl',
   phone: 'phone',
   state: 'state',
   website: 'website',

@@ -88,7 +88,7 @@ model Organization {
   fiscalYearEnd          String?
   missionStatement       String?
   organizationLeaderName String?
-  organizationLogo       String?
+  logoUrl                String?
   phone                  String?
   state                  String?
   website                String?

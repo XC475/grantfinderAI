@@ -5569,7 +5569,7 @@ export namespace Prisma {
     fiscalYearEnd: string | null
     missionStatement: string | null
     organizationLeaderName: string | null
-    organizationLogo: string | null
+    logoUrl: string | null
     phone: string | null
     state: string | null
     website: string | null
@@ -5603,7 +5603,7 @@ export namespace Prisma {
     fiscalYearEnd: string | null
     missionStatement: string | null
     organizationLeaderName: string | null
-    organizationLogo: string | null
+    logoUrl: string | null
     phone: string | null
     state: string | null
     website: string | null
@@ -5637,7 +5637,7 @@ export namespace Prisma {
     fiscalYearEnd: number
     missionStatement: number
     organizationLeaderName: number
-    organizationLogo: number
+    logoUrl: number
     phone: number
     state: number
     website: number
@@ -5697,7 +5697,7 @@ export namespace Prisma {
     fiscalYearEnd?: true
     missionStatement?: true
     organizationLeaderName?: true
-    organizationLogo?: true
+    logoUrl?: true
     phone?: true
     state?: true
     website?: true
@@ -5731,7 +5731,7 @@ export namespace Prisma {
     fiscalYearEnd?: true
     missionStatement?: true
     organizationLeaderName?: true
-    organizationLogo?: true
+    logoUrl?: true
     phone?: true
     state?: true
     website?: true
@@ -5765,7 +5765,7 @@ export namespace Prisma {
     fiscalYearEnd?: true
     missionStatement?: true
     organizationLeaderName?: true
-    organizationLogo?: true
+    logoUrl?: true
     phone?: true
     state?: true
     website?: true
@@ -5886,7 +5886,7 @@ export namespace Prisma {
     fiscalYearEnd: string | null
     missionStatement: string | null
     organizationLeaderName: string | null
-    organizationLogo: string | null
+    logoUrl: string | null
     phone: string | null
     state: string | null
     website: string | null
@@ -5939,7 +5939,7 @@ export namespace Prisma {
     fiscalYearEnd?: boolean
     missionStatement?: boolean
     organizationLeaderName?: boolean
-    organizationLogo?: boolean
+    logoUrl?: boolean
     phone?: boolean
     state?: boolean
     website?: boolean
@@ -5980,7 +5980,7 @@ export namespace Prisma {
     fiscalYearEnd?: boolean
     missionStatement?: boolean
     organizationLeaderName?: boolean
-    organizationLogo?: boolean
+    logoUrl?: boolean
     phone?: boolean
     state?: boolean
     website?: boolean
@@ -6014,7 +6014,7 @@ export namespace Prisma {
     fiscalYearEnd?: boolean
     missionStatement?: boolean
     organizationLeaderName?: boolean
-    organizationLogo?: boolean
+    logoUrl?: boolean
     phone?: boolean
     state?: boolean
     website?: boolean
@@ -6048,7 +6048,7 @@ export namespace Prisma {
     fiscalYearEnd?: boolean
     missionStatement?: boolean
     organizationLeaderName?: boolean
-    organizationLogo?: boolean
+    logoUrl?: boolean
     phone?: boolean
     state?: boolean
     website?: boolean
@@ -6068,7 +6068,7 @@ export namespace Prisma {
     urbanCentricLocale?: boolean
   }
 
-  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "slug" | "role" | "address" | "annualOperatingBudget" | "city" | "email" | "fiscalYearEnd" | "missionStatement" | "organizationLeaderName" | "organizationLogo" | "phone" | "state" | "website" | "zipCode" | "strategicPlan" | "onboardingCompleted" | "countyName" | "districtDataYear" | "enrollment" | "highestGrade" | "latitude" | "leaId" | "longitude" | "lowestGrade" | "numberOfSchools" | "stateLeaId" | "urbanCentricLocale", ExtArgs["result"]["organization"]>
+  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "slug" | "role" | "address" | "annualOperatingBudget" | "city" | "email" | "fiscalYearEnd" | "missionStatement" | "organizationLeaderName" | "logoUrl" | "phone" | "state" | "website" | "zipCode" | "strategicPlan" | "onboardingCompleted" | "countyName" | "districtDataYear" | "enrollment" | "highestGrade" | "latitude" | "leaId" | "longitude" | "lowestGrade" | "numberOfSchools" | "stateLeaId" | "urbanCentricLocale", ExtArgs["result"]["organization"]>
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
@@ -6105,7 +6105,7 @@ export namespace Prisma {
       fiscalYearEnd: string | null
       missionStatement: string | null
       organizationLeaderName: string | null
-      organizationLogo: string | null
+      logoUrl: string | null
       phone: string | null
       state: string | null
       website: string | null
@@ -6565,7 +6565,7 @@ export namespace Prisma {
     readonly fiscalYearEnd: FieldRef<"Organization", 'String'>
     readonly missionStatement: FieldRef<"Organization", 'String'>
     readonly organizationLeaderName: FieldRef<"Organization", 'String'>
-    readonly organizationLogo: FieldRef<"Organization", 'String'>
+    readonly logoUrl: FieldRef<"Organization", 'String'>
     readonly phone: FieldRef<"Organization", 'String'>
     readonly state: FieldRef<"Organization", 'String'>
     readonly website: FieldRef<"Organization", 'String'>
@@ -15070,7 +15070,7 @@ export namespace Prisma {
     fiscalYearEnd: 'fiscalYearEnd',
     missionStatement: 'missionStatement',
     organizationLeaderName: 'organizationLeaderName',
-    organizationLogo: 'organizationLogo',
+    logoUrl: 'logoUrl',
     phone: 'phone',
     state: 'state',
     website: 'website',
@@ -15741,7 +15741,7 @@ export namespace Prisma {
     fiscalYearEnd?: StringNullableFilter<"Organization"> | string | null
     missionStatement?: StringNullableFilter<"Organization"> | string | null
     organizationLeaderName?: StringNullableFilter<"Organization"> | string | null
-    organizationLogo?: StringNullableFilter<"Organization"> | string | null
+    logoUrl?: StringNullableFilter<"Organization"> | string | null
     phone?: StringNullableFilter<"Organization"> | string | null
     state?: StringNullableFilter<"Organization"> | string | null
     website?: StringNullableFilter<"Organization"> | string | null
@@ -15781,7 +15781,7 @@ export namespace Prisma {
     fiscalYearEnd?: SortOrderInput | SortOrder
     missionStatement?: SortOrderInput | SortOrder
     organizationLeaderName?: SortOrderInput | SortOrder
-    organizationLogo?: SortOrderInput | SortOrder
+    logoUrl?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     state?: SortOrderInput | SortOrder
     website?: SortOrderInput | SortOrder
@@ -15825,7 +15825,7 @@ export namespace Prisma {
     fiscalYearEnd?: StringNullableFilter<"Organization"> | string | null
     missionStatement?: StringNullableFilter<"Organization"> | string | null
     organizationLeaderName?: StringNullableFilter<"Organization"> | string | null
-    organizationLogo?: StringNullableFilter<"Organization"> | string | null
+    logoUrl?: StringNullableFilter<"Organization"> | string | null
     phone?: StringNullableFilter<"Organization"> | string | null
     state?: StringNullableFilter<"Organization"> | string | null
     website?: StringNullableFilter<"Organization"> | string | null
@@ -15864,7 +15864,7 @@ export namespace Prisma {
     fiscalYearEnd?: SortOrderInput | SortOrder
     missionStatement?: SortOrderInput | SortOrder
     organizationLeaderName?: SortOrderInput | SortOrder
-    organizationLogo?: SortOrderInput | SortOrder
+    logoUrl?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     state?: SortOrderInput | SortOrder
     website?: SortOrderInput | SortOrder
@@ -15906,7 +15906,7 @@ export namespace Prisma {
     fiscalYearEnd?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     missionStatement?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     organizationLeaderName?: StringNullableWithAggregatesFilter<"Organization"> | string | null
-    organizationLogo?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    logoUrl?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     phone?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     state?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     website?: StringNullableWithAggregatesFilter<"Organization"> | string | null
@@ -16799,7 +16799,7 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    organizationLogo?: string | null
+    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
@@ -16839,7 +16839,7 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    organizationLogo?: string | null
+    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
@@ -16879,7 +16879,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16919,7 +16919,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16959,7 +16959,7 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    organizationLogo?: string | null
+    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
@@ -16993,7 +16993,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17027,7 +17027,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18132,7 +18132,7 @@ export namespace Prisma {
     fiscalYearEnd?: SortOrder
     missionStatement?: SortOrder
     organizationLeaderName?: SortOrder
-    organizationLogo?: SortOrder
+    logoUrl?: SortOrder
     phone?: SortOrder
     state?: SortOrder
     website?: SortOrder
@@ -18178,7 +18178,7 @@ export namespace Prisma {
     fiscalYearEnd?: SortOrder
     missionStatement?: SortOrder
     organizationLeaderName?: SortOrder
-    organizationLogo?: SortOrder
+    logoUrl?: SortOrder
     phone?: SortOrder
     state?: SortOrder
     website?: SortOrder
@@ -18212,7 +18212,7 @@ export namespace Prisma {
     fiscalYearEnd?: SortOrder
     missionStatement?: SortOrder
     organizationLeaderName?: SortOrder
-    organizationLogo?: SortOrder
+    logoUrl?: SortOrder
     phone?: SortOrder
     state?: SortOrder
     website?: SortOrder
@@ -19829,7 +19829,7 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    organizationLogo?: string | null
+    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
@@ -19868,7 +19868,7 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    organizationLogo?: string | null
+    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
@@ -19981,7 +19981,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20020,7 +20020,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20420,7 +20420,7 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    organizationLogo?: string | null
+    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
@@ -20459,7 +20459,7 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    organizationLogo?: string | null
+    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
@@ -20545,7 +20545,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20584,7 +20584,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20660,7 +20660,7 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    organizationLogo?: string | null
+    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
@@ -20699,7 +20699,7 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    organizationLogo?: string | null
+    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
@@ -20754,7 +20754,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20793,7 +20793,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20864,7 +20864,7 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    organizationLogo?: string | null
+    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
@@ -20903,7 +20903,7 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    organizationLogo?: string | null
+    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
@@ -20974,7 +20974,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21013,7 +21013,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21115,7 +21115,7 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    organizationLogo?: string | null
+    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
@@ -21154,7 +21154,7 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    organizationLogo?: string | null
+    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
@@ -21311,7 +21311,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21350,7 +21350,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21486,7 +21486,7 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    organizationLogo?: string | null
+    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
@@ -21525,7 +21525,7 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    organizationLogo?: string | null
+    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
@@ -21580,7 +21580,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21619,7 +21619,7 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
