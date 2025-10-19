@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
+// Gets all grants from the db's opportunities table
 export async function GET() {
   try {
     const supabase = await createClient();

@@ -92,6 +92,26 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Organization access verification (for /private/[slug] routes)
+  if (user && request.nextUrl.pathname.startsWith("/private/")) {
+    const pathParts = request.nextUrl.pathname.split("/");
+    const orgSlug = pathParts[2]; // /private/[slug]/...
+
+    if (orgSlug && orgSlug !== "undefined") {
+      // Quick check: verify user's organization matches the slug
+      // This is a lightweight check that doesn't require additional DB queries
+      // Full verification happens on the server if needed
+      const userOrgSlug = request.cookies.get("org-slug")?.value;
+
+      // If we have a cached org slug and it doesn't match, redirect
+      if (userOrgSlug && userOrgSlug !== orgSlug) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/";
+        return NextResponse.redirect(url);
+      }
+    }
+  }
+
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:

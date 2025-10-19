@@ -66,9 +66,12 @@ export async function GET(request: NextRequest) {
     const data: UrbanAPIResponse = await response.json();
     let allDistricts = data.results;
 
-    // For state-specific queries, fetch all pages (smaller dataset)
-    // For nationwide queries, just use first page to avoid overwhelming the system
+    // For state-specific queries, fetch all pages to ensure complete data
+    // This avoids needing to refetch when user selects a district
     if (state && data.next) {
+      console.log(
+        `[School Districts] Fetching all pages for state ${state}...`
+      );
       let nextUrl: string | null = data.next;
       let pageCount = 1;
       const maxPages = 50; // Safety limit
@@ -81,7 +84,15 @@ export async function GET(request: NextRequest) {
         allDistricts = allDistricts.concat(pageData.results);
         nextUrl = pageData.next;
         pageCount++;
+
+        console.log(
+          `[School Districts] Fetched page ${pageCount}, total districts: ${allDistricts.length}`
+        );
       }
+
+      console.log(
+        `[School Districts] Completed fetching ${allDistricts.length} districts for ${state}`
+      );
     }
 
     // Filter by search term if provided
@@ -91,13 +102,16 @@ export async function GET(request: NextRequest) {
       filteredDistricts = allDistricts.filter((d) =>
         d.lea_name.toLowerCase().includes(searchLower)
       );
+      console.log(
+        `[School Districts] Filtered to ${filteredDistricts.length} districts matching "${search}"`
+      );
     }
 
     // Transform to frontend format
     const responseData = filteredDistricts.map((d) => ({
       leaId: d.leaid,
       name: d.lea_name,
-      stateCode: d.state_location,
+      state: d.state_location,
       stateLeaId: d.state_leaid,
       city: d.city_location,
       zipCode: d.zip_location,
@@ -110,7 +124,7 @@ export async function GET(request: NextRequest) {
       lowestGrade: d.lowest_grade_offered,
       highestGrade: d.highest_grade_offered,
       urbanCentricLocale: d.urban_centric_locale,
-      year: d.year,
+      districtDataYear: d.year,
     }));
 
     return NextResponse.json({

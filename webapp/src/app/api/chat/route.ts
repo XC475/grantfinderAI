@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 
 // Your n8n webhook URL - replace with your actual webhook URL
 const N8N_WEBHOOK_URL = process.env.N8N_SEARCH_URL!;
+const BASE_URL = process.env.BASE_URL!;
 
 export async function POST(req: NextRequest) {
   const { messages, chatId, organizationId } = await req.json();
@@ -23,12 +24,9 @@ export async function POST(req: NextRequest) {
   const userOrganizationId =
     organizationId || (await getUserOrganizationId(user.id));
 
-  // Fetch organization with school district data
+  // Fetch organization data
   const organization = await prisma.organization.findUnique({
     where: { id: userOrganizationId },
-    include: {
-      schoolDistrict: true, // Include the full district data
-    },
   });
 
   if (!organization) {
@@ -93,38 +91,40 @@ export async function POST(req: NextRequest) {
       message: lastUserMessage.content,
       timestamp: Date.now().toString(),
       message_id: userMessage.id,
+      base_url: BASE_URL,
       conversation_history: messages,
       // District information for personalized grant recommendations
-      district_info: organization.schoolDistrict
+      district_info: organization.leaId
         ? {
-            id: organization.schoolDistrict.id,
-            leaId: organization.schoolDistrict.leaId,
-            name: organization.schoolDistrict.name,
-            stateCode: organization.schoolDistrict.stateCode,
-            stateLeaId: organization.schoolDistrict.stateLeaId,
-            city: organization.schoolDistrict.city,
-            zipCode: organization.schoolDistrict.zipCode,
-            countyName: organization.schoolDistrict.countyName,
-            enrollment: organization.schoolDistrict.enrollment,
-            numberOfSchools: organization.schoolDistrict.numberOfSchools,
-            lowestGrade: organization.schoolDistrict.lowestGrade,
-            highestGrade: organization.schoolDistrict.highestGrade,
-            urbanCentricLocale: organization.schoolDistrict.urbanCentricLocale,
-            year: organization.schoolDistrict.year,
+            id: organization.id,
+            leaId: organization.leaId,
+            name: organization.name,
+            state: organization.state,
+            stateLeaId: organization.stateLeaId,
+            city: organization.city,
+            zipCode: organization.zipCode,
+            countyName: organization.countyName,
+            enrollment: organization.enrollment,
+            numberOfSchools: organization.numberOfSchools,
+            lowestGrade: organization.lowestGrade,
+            highestGrade: organization.highestGrade,
+            urbanCentricLocale: organization.urbanCentricLocale,
+            districtDataYear: organization.districtDataYear,
+            annualOperatingBudget: organization.annualOperatingBudget
+              ? organization.annualOperatingBudget.toString()
+              : null,
+            fiscalYearEnd: organization.fiscalYearEnd || null,
+            missionStatement: organization.missionStatement || null,
+            strategicPlan: organization.strategicPlan || null,
           }
         : null,
-      // Organization context
-      organization_info: {
-        id: organization.id,
-        name: organization.name,
-        type: organization.type,
-        district_linked: !!organization.schoolDistrict,
-      },
     };
 
     console.log("🔍 [Grant Finder API] Sending to n8n with district info:", {
       ...n8nMessage,
-      district_name: organization.schoolDistrict?.name || "No district linked",
+      district_name: organization.leaId
+        ? organization.name
+        : "No district linked",
     });
 
     const response = await fetch(N8N_WEBHOOK_URL, {

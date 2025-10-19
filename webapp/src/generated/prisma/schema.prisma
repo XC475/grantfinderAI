@@ -73,49 +73,51 @@ model User {
 }
 
 model Organization {
-  id                  String                     @id @default(cuid())
-  name                String
-  slug                String                     @unique
-  type                OrganizationType           @default(PERSONAL)
-  role                OrganizationRole           @default(MEMBER)
-  createdAt           DateTime                   @default(now())
-  updatedAt           DateTime                   @updatedAt
-  schoolDistrictId    String?
-  aiChats             AiChat[]
-  applications        Application[]
-  grantBookmarks      GrantBookmark[]
-  eligibilityAnalyses GrantEligibilityAnalysis[]
-  user                User?                      @relation("UserOrganization")
-  schoolDistrict      SchoolDistrict?            @relation(fields: [schoolDistrictId], references: [id])
+  id                     String                     @id @default(cuid())
+  name                   String
+  slug                   String                     @unique
+  role                   OrganizationRole           @default(MEMBER)
+  createdAt              DateTime                   @default(now())
+  updatedAt              DateTime                   @updatedAt
+  // Basic Information
+  organizationLogo       String?
+  website                String?
+  missionStatement       String?
+  strategicPlan          String?                    @db.Text
+  annualOperatingBudget  Decimal?                   @db.Decimal(15, 2)
+  fiscalYearEnd          String?
+  // Contact Information
+  phone                  String?
+  email                  String?
+  organizationLeaderName String?
+  // Address
+  address                String?
+  city                   String?
+  state                  String?
+  zipCode                String?
+  countyName             String?
+  latitude               Float?
+  longitude              Float?
+  // School District Data (for education organizations)
+  leaId                  String?                    @unique
+  stateLeaId             String?
+  enrollment             Int?
+  numberOfSchools        Int?
+  lowestGrade            Int?
+  highestGrade           Int?
+  urbanCentricLocale     Int?
+  districtDataYear       Int?
+  // Relations
+  aiChats                AiChat[]
+  applications           Application[]
+  grantBookmarks         GrantBookmark[]
+  eligibilityAnalyses    GrantEligibilityAnalysis[]
+  recommendations        Recommendation[]
+  user                   User?                      @relation("UserOrganization")
 
-  @@map("organizations")
-  @@schema("app")
-}
-
-model SchoolDistrict {
-  id                 String         @id @default(cuid())
-  leaId              String         @unique
-  name               String
-  stateCode          String
-  stateLeaId         String?
-  city               String?
-  zipCode            String?
-  phone              String?
-  latitude           Float?
-  longitude          Float?
-  countyName         String?
-  enrollment         Int?
-  numberOfSchools    Int?
-  lowestGrade        Int?
-  highestGrade       Int?
-  urbanCentricLocale Int?
-  year               Int            @default(2022)
-  organizations      Organization[]
-
-  @@index([stateCode])
-  @@index([name])
   @@index([leaId])
-  @@map("school_districts")
+  @@index([state])
+  @@map("organizations")
   @@schema("app")
 }
 
@@ -206,6 +208,24 @@ model AiChatMessage {
   @@schema("app")
 }
 
+model Recommendation {
+  id             String       @id @default(cuid())
+  organizationId String
+  opportunityId  String
+  fitScore       Int
+  fitReasoning   String       @db.Text
+  fitDescription String       @db.Text
+  districtName   String
+  queryDate      DateTime
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([opportunityId])
+  @@map("recommendations")
+  @@schema("app")
+}
+
 enum opportunity_status_enum {
   forecasted
   posted
@@ -213,13 +233,6 @@ enum opportunity_status_enum {
   archive
 
   @@schema("public")
-}
-
-enum OrganizationType {
-  PERSONAL
-  ORGANIZATION
-
-  @@schema("app")
 }
 
 enum GoNoGoDecision {

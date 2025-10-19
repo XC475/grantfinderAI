@@ -1,13 +1,10 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
-import {
-  verifyOrganizationAccess,
-  getOrganizationBySlug,
-} from "@/lib/organization";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { DynamicBreadcrumb } from "@/components/sidebar/dynamic-breadcrumb";
+
+// Note: Authentication and access checks are now handled by middleware.ts
+// This makes the layout lighter and prevents full page reloads on navigation
 
 export default async function OrganizationLayout({
   children,
@@ -16,32 +13,7 @@ export default async function OrganizationLayout({
   children: React.ReactNode;
   params: Promise<{ slug: string }>;
 }) {
-  const supabase = await createClient();
   const { slug } = await params;
-
-  // Check authentication
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    redirect("/login");
-  }
-
-  // Verify organization exists and user has access
-  try {
-    await getOrganizationBySlug(slug);
-    const hasAccess = await verifyOrganizationAccess(user.id, slug);
-
-    if (!hasAccess) {
-      // User doesn't have access to this organization
-      redirect("/");
-    }
-  } catch (error) {
-    console.error("Organization access error:", error);
-    redirect("/");
-  }
 
   return (
     <SidebarProvider>

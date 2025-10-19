@@ -172,31 +172,33 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   id: 'id',
   name: 'name',
   slug: 'slug',
-  type: 'type',
   role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  schoolDistrictId: 'schoolDistrictId'
-};
-
-exports.Prisma.SchoolDistrictScalarFieldEnum = {
-  id: 'id',
-  leaId: 'leaId',
-  name: 'name',
-  stateCode: 'stateCode',
-  stateLeaId: 'stateLeaId',
-  city: 'city',
-  zipCode: 'zipCode',
+  organizationLogo: 'organizationLogo',
+  website: 'website',
+  missionStatement: 'missionStatement',
+  strategicPlan: 'strategicPlan',
+  annualOperatingBudget: 'annualOperatingBudget',
+  fiscalYearEnd: 'fiscalYearEnd',
   phone: 'phone',
+  email: 'email',
+  organizationLeaderName: 'organizationLeaderName',
+  address: 'address',
+  city: 'city',
+  state: 'state',
+  zipCode: 'zipCode',
+  countyName: 'countyName',
   latitude: 'latitude',
   longitude: 'longitude',
-  countyName: 'countyName',
+  leaId: 'leaId',
+  stateLeaId: 'stateLeaId',
   enrollment: 'enrollment',
   numberOfSchools: 'numberOfSchools',
   lowestGrade: 'lowestGrade',
   highestGrade: 'highestGrade',
   urbanCentricLocale: 'urbanCentricLocale',
-  year: 'year'
+  districtDataYear: 'districtDataYear'
 };
 
 exports.Prisma.GrantBookmarkScalarFieldEnum = {
@@ -256,6 +258,18 @@ exports.Prisma.AiChatMessageScalarFieldEnum = {
   chatId: 'chatId'
 };
 
+exports.Prisma.RecommendationScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  opportunityId: 'opportunityId',
+  fitScore: 'fitScore',
+  fitReasoning: 'fitReasoning',
+  fitDescription: 'fitDescription',
+  districtName: 'districtName',
+  queryDate: 'queryDate',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -286,11 +300,6 @@ exports.opportunity_status_enum = exports.$Enums.opportunity_status_enum = {
   posted: 'posted',
   closed: 'closed',
   archive: 'archive'
-};
-
-exports.OrganizationType = exports.$Enums.OrganizationType = {
-  PERSONAL: 'PERSONAL',
-  ORGANIZATION: 'ORGANIZATION'
 };
 
 exports.OrganizationRole = exports.$Enums.OrganizationRole = {
@@ -335,12 +344,12 @@ exports.Prisma.ModelName = {
   opportunities: 'opportunities',
   User: 'User',
   Organization: 'Organization',
-  SchoolDistrict: 'SchoolDistrict',
   GrantBookmark: 'GrantBookmark',
   GrantEligibilityAnalysis: 'GrantEligibilityAnalysis',
   Application: 'Application',
   AiChat: 'AiChat',
-  AiChatMessage: 'AiChatMessage'
+  AiChatMessage: 'AiChatMessage',
+  Recommendation: 'Recommendation'
 };
 
 /**

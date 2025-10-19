@@ -1,258 +1,431 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useParams, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Calendar, DollarSign, Sparkles } from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
-import { toast } from "sonner";
+import {
+  BotMessageSquare,
+  FileText,
+  Bookmark,
+  ClipboardList,
+  Building2,
+  Sparkles,
+  ArrowRight,
+  Send,
+} from "lucide-react";
 
-// Types for n8n response
-interface RecommendedGrant {
-  title: string;
-  agency: string;
-  fit_score: number;
-  funding_range: string;
-  close_date: string;
-  description: string;
-  eligibility: string;
-  url: string;
-  fit_reasoning: string;
-}
+// Commented out - Old recommendations interface
+// interface Recommendation {
+//   id: string;
+//   opportunityId: string;
+//   fitScore: number;
+//   fitReasoning: string;
+//   fitDescription: string;
+//   districtName: string;
+//   queryDate: string;
+//   grant?: {
+//     title: string;
+//     agency: string;
+//     total_funding_amount?: number;
+//     award_min?: number;
+//     award_max?: number;
+//     url?: string;
+//   };
+// }
 
-interface RecommendationResponse {
-  metadata: {
-    district_name: string;
-    query_date: string;
-    filters_used: Record<string, any>;
-  };
-  grants: RecommendedGrant[];
-}
-
-function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
+const placeholderTexts = [
+  "Ask anything...",
+  "Help with search...",
+  "Help with writing...",
+  "Find grants...",
+  "Get recommendations...",
+];
 
 export default function DashboardPage() {
-  const [isLoadingRecommendations, setIsLoadingRecommendations] =
-    useState(false);
-  const [recommendedGrants, setRecommendedGrants] = useState<
-    RecommendedGrant[]
-  >([]);
-  const [metadata, setMetadata] = useState<
-    RecommendationResponse["metadata"] | null
-  >(null);
+  const params = useParams();
+  const router = useRouter();
+  const organizationSlug = params.slug as string;
 
-  const handleRunRecommendations = async () => {
-    setIsLoadingRecommendations(true);
-    try {
-      const response = await fetch("/api/recommendations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message:
-            "Please recommend the top 3 grants that best fit our school district's needs and eligibility.",
-        }),
-      });
+  const [chatInput, setChatInput] = useState("");
+  const [currentPlaceholder, setCurrentPlaceholder] = useState(
+    placeholderTexts[0]
+  );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch recommendations");
-      }
+  // Animated placeholder effect
+  useEffect(() => {
+    let currentIndex = 0;
+    let currentCharIndex = 0;
+    let isPaused = false;
+    let isDeleting = false;
 
-      const data = await response.json();
+    const animatePlaceholder = () => {
+      const currentText = placeholderTexts[currentIndex];
 
-      console.log("Dashboard received:", data);
+      if (!isDeleting && currentCharIndex <= currentText.length) {
+        setCurrentPlaceholder(currentText.slice(0, currentCharIndex));
+        currentCharIndex++;
 
-      // Parse the n8n response - it comes as { recommendations: "stringified JSON" }
-      let parsedData: RecommendationResponse;
-
-      if (typeof data.recommendations === "string") {
-        // Check if it's a valid JSON string
-        if (data.recommendations === "OK" || data.recommendations.length < 10) {
-          throw new Error(
-            "n8n workflow returned an invalid response. Please check your N8N_RECOMMENDATIONS_URL is configured correctly."
-          );
+        if (currentCharIndex > currentText.length) {
+          isPaused = true;
+          setTimeout(() => {
+            isPaused = false;
+            isDeleting = true;
+          }, 2000);
         }
-        // Parse the stringified JSON
-        parsedData = JSON.parse(data.recommendations);
-      } else if (
-        typeof data.recommendations === "object" &&
-        data.recommendations !== null
-      ) {
-        // Response is already an object
-        parsedData = data.recommendations;
-      } else {
-        throw new Error("Invalid response format from recommendations API");
-      }
+      } else if (isDeleting && currentCharIndex >= 0) {
+        setCurrentPlaceholder(currentText.slice(0, currentCharIndex));
+        currentCharIndex--;
 
-      // Validate the parsed data has the expected structure
-      if (!parsedData.grants || !Array.isArray(parsedData.grants)) {
-        console.error("Invalid parsed data:", parsedData);
-        throw new Error("Response does not contain grants array");
+        if (currentCharIndex === 0) {
+          isDeleting = false;
+          currentIndex = (currentIndex + 1) % placeholderTexts.length;
+        }
       }
+    };
 
-      setRecommendedGrants(parsedData.grants);
-      setMetadata(parsedData.metadata);
-      toast.success(
-        `Found ${parsedData.grants.length} personalized grant recommendations!`
+    const interval = setInterval(() => {
+      if (!isPaused) {
+        animatePlaceholder();
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleChatSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (chatInput.trim()) {
+      router.push(
+        `/private/${organizationSlug}/chat?message=${encodeURIComponent(chatInput.trim())}`
       );
-    } catch (error) {
-      console.error("Error fetching recommendations:", error);
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to generate recommendations. Please try again.";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoadingRecommendations(false);
     }
   };
+
+  // Commented out - Old recommendations fetching logic
+  // useEffect(() => {
+  //   fetchRecommendations();
+  // }, []);
+
+  // const fetchRecommendations = async () => {
+  //   try {
+  //     const response = await fetch(`/api/recommendations/list`);
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch recommendations");
+  //     }
+
+  //     const data = await response.json();
+  //     if (data.success && data.recommendations) {
+  //       // API already sorts by fit score, just take top 3
+  //       const topRecommendations = data.recommendations.slice(0, 3);
+
+  //       // Fetch grant details for each recommendation
+  //       const recommendationsWithGrants = await Promise.all(
+  //         topRecommendations.map(async (rec: Recommendation) => {
+  //           try {
+  //             const grantResponse = await fetch(
+  //               `/api/grants/${rec.opportunityId}`
+  //             );
+  //             if (grantResponse.ok) {
+  //               const grantData = await grantResponse.json();
+  //               return { ...rec, grant: grantData };
+  //             }
+  //           } catch (error) {
+  //             console.error(
+  //               `Failed to fetch grant ${rec.opportunityId}:`,
+  //               error
+  //             );
+  //           }
+  //           return rec;
+  //         })
+  //       );
+
+  //       setRecommendations(recommendationsWithGrants);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching recommendations:", error);
+  //     toast.error("Failed to load recommendations");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // const formatAwardAmount = (grant?: Recommendation["grant"]) => {
+  //   if (!grant) return "Amount not available";
+
+  //   if (grant.total_funding_amount) {
+  //     return `$${grant.total_funding_amount.toLocaleString()}`;
+  //   }
+
+  //   if (grant.award_min && grant.award_max) {
+  //     return `$${grant.award_min.toLocaleString()} - $${grant.award_max.toLocaleString()}`;
+  //   }
+
+  //   if (grant.award_min) {
+  //     return `$${grant.award_min.toLocaleString()}+`;
+  //   }
+
+  //   if (grant.award_max) {
+  //     return `Up to $${grant.award_max.toLocaleString()}`;
+  //   }
+
+  //   return "Amount not available";
+  // };
+
+  // Dashboard page cards
+  const dashboardCards = [
+    {
+      title: "AI Assistant",
+      description:
+        "Get personalized grant recommendations and answers to your funding questions using our intelligent chatbot.",
+      icon: BotMessageSquare,
+      url: `/private/${organizationSlug}/chat`,
+      color: "text-blue-500",
+    },
+    {
+      title: "Grant Search",
+      description:
+        "Browse and search through thousands of available grants. Filter by category, deadline, and funding amount.",
+      icon: FileText,
+      url: `/private/${organizationSlug}/grants`,
+      color: "text-green-500",
+    },
+    {
+      title: "Recommendations",
+      description:
+        "View AI-powered grant recommendations tailored specifically to your organization's profile and needs.",
+      icon: Sparkles,
+      url: `/private/${organizationSlug}/recommendations`,
+      color: "text-purple-500",
+    },
+    {
+      title: "Bookmarks",
+      description:
+        "Access your saved grants and keep track of opportunities you're interested in applying for.",
+      icon: Bookmark,
+      url: `/private/${organizationSlug}/bookmarks`,
+      color: "text-yellow-500",
+    },
+    {
+      title: "Applications",
+      description:
+        "Manage your grant applications, track deadlines, and monitor the status of your submissions.",
+      icon: ClipboardList,
+      url: `/private/${organizationSlug}/applications`,
+      color: "text-orange-500",
+    },
+    {
+      title: "Organization Profile",
+      description:
+        "Update your organization's information, mission statement, and strategic priorities for better matches.",
+      icon: Building2,
+      url: `/private/${organizationSlug}/profile`,
+      color: "text-indigo-500",
+    },
+  ];
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome to your grant management dashboard
+          Welcome to your grant management hub. Explore the tools and features
+          available to you.
         </p>
       </div>
 
-      {/* Recommendations Section */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight">
-              Recommended Grants
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Personalized grant opportunities based on your profile
-            </p>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRunRecommendations}
-            disabled={isLoadingRecommendations}
-          >
-            {isLoadingRecommendations ? (
-              <>
-                <Spinner size="sm" className="mr-2" />
-                Running...
-              </>
-            ) : (
-              <>
-                <Sparkles className="h-4 w-4 mr-2" />
-                Run Recommendations
-              </>
-            )}
-          </Button>
-        </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {dashboardCards.map((card) => {
+          const Icon = card.icon;
 
-        {/* Show metadata when recommendations are loaded */}
-        {metadata && (
-          <Card className="bg-blue-50 border-blue-200">
-            <CardContent className="pt-4">
-              <div className="flex items-center gap-2 text-sm text-blue-900">
-                <Sparkles className="h-4 w-4" />
-                <span className="font-medium">
-                  Personalized for {metadata.district_name}
-                </span>
-                <span className="text-blue-700">•</span>
-                <span className="text-blue-700">
-                  {new Date(metadata.query_date).toLocaleDateString()}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {recommendedGrants.length > 0 ? (
-            recommendedGrants.map((grant, index) => (
+          // Special handling for AI Assistant card
+          if (card.title === "AI Assistant") {
+            return (
               <Card
-                key={index}
-                className="hover:shadow-md transition-shadow flex flex-col"
+                key={card.title}
+                className="hover:shadow-md transition-all hover:border-primary/50 h-full"
               >
                 <CardHeader>
-                  <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-lg leading-tight line-clamp-2">
-                      {grant.title}
-                    </CardTitle>
-                    <Badge
-                      variant="outline"
-                      className="bg-green-50 text-green-700 border-green-200 shrink-0"
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`p-2 rounded-lg bg-muted transition-colors`}
                     >
-                      {grant.fit_score}% fit
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {grant.agency}
-                  </p>
-                </CardHeader>
-                <CardContent className="flex flex-col h-full flex-1">
-                  <div className="flex-1 space-y-4">
-                    <p className="text-sm line-clamp-3">{grant.description}</p>
-
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium">
-                          {grant.funding_range}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <span>Closes: {formatDate(grant.close_date)}</span>
-                      </div>
+                      <Icon className={`h-6 w-6 ${card.color}`} />
                     </div>
-
-                    {/* Show fit reasoning in a collapsible section */}
-                    <details className="text-xs text-muted-foreground">
-                      <summary className="cursor-pointer font-medium hover:text-foreground">
-                        Why this fits your district
-                      </summary>
-                      <p className="mt-2 pl-2 border-l-2 border-blue-200">
-                        {grant.fit_reasoning}
-                      </p>
-                    </details>
+                    <Link href={card.url}>
+                      <CardTitle className="text-xl hover:text-primary transition-colors cursor-pointer">
+                        {card.title}
+                      </CardTitle>
+                    </Link>
                   </div>
-
-                  <div className="flex justify-end mt-4">
-                    <Button size="sm" variant="outline" asChild>
-                      <a
-                        href={grant.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                      </a>
+                </CardHeader>
+                <CardContent className="space-y-4 mt-[-10px]">
+                  <CardDescription className="text-sm leading-relaxed">
+                    {card.description}
+                  </CardDescription>
+                  <form onSubmit={handleChatSubmit} className="relative">
+                    <input
+                      type="text"
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      placeholder={currentPlaceholder}
+                      className="w-full px-4 py-2 pr-12 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all cursor-text"
+                    />
+                    <Button
+                      type="submit"
+                      size="sm"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+                      disabled={!chatInput.trim()}
+                    >
+                      <Send className="h-4 w-4" />
                     </Button>
-                  </div>
+                  </form>
                 </CardContent>
               </Card>
-            ))
-          ) : (
-            // Show placeholder when no recommendations yet
-            <div className="col-span-full text-center py-12">
-              <Sparkles className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">
-                No recommendations yet
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Click "Run Recommendations" to get personalized grant
-                suggestions for your district
-              </p>
-            </div>
-          )}
-        </div>
+            );
+          }
+
+          // Regular cards for other items
+          return (
+            <Link key={card.title} href={card.url}>
+              <Card className="hover:shadow-md transition-all hover:border-primary/50 cursor-pointer group h-full">
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`p-2 rounded-lg bg-muted group-hover:bg-primary/10 transition-colors`}
+                    >
+                      <Icon className={`h-6 w-6 ${card.color}`} />
+                    </div>
+                    <CardTitle className="text-xl">{card.title}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4 mt-[-10px]">
+                  <CardDescription className="text-sm leading-relaxed">
+                    {card.description}
+                  </CardDescription>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full justify-between transition-colors"
+                    asChild
+                  >
+                    <span>
+                      Go to {card.title}
+                      <ArrowRight className="h-4 w-4" />
+                    </span>
+                  </Button>
+                </CardContent>
+              </Card>
+            </Link>
+          );
+        })}
       </div>
+
+      {/* Commented out - Old recommendations section */}
+      {/* {loading ? (
+        <div className="flex items-center justify-center p-8">
+          <div className="text-muted-foreground">
+            Loading recommendations...
+          </div>
+        </div>
+      ) : recommendations.length > 0 ? (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
+              <Sparkles className="h-5 w-5" />
+              Top Grant Recommendations
+            </h2>
+            <Button
+              variant="outline"
+              onClick={() =>
+                router.push(`/private/${organizationSlug}/recommendations`)
+              }
+              className="flex items-center gap-2"
+            >
+              View All Recommendations
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+            {recommendations.map((recommendation) => (
+              <Card
+                key={recommendation.id}
+                className="hover:shadow-md transition-shadow"
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <CardTitle className="text-lg leading-tight">
+                      {recommendation.grant?.title
+                        ?.split(" ")
+                        .slice(0, 5)
+                        .join(" ") + "..." || "Grant Title Not Available"}
+                    </CardTitle>
+                    <Badge variant="secondary" className="ml-2 flex-shrink-0">
+                      {recommendation.fitScore}% Match
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <DollarSign className="h-4 w-4" />
+                    <span>{formatAwardAmount(recommendation.grant)}</span>
+                  </div>
+
+                  {recommendation.grant?.agency && (
+                    <div className="text-sm text-muted-foreground">
+                      <strong>Agency:</strong> {recommendation.grant.agency}
+                    </div>
+                  )}
+
+                  {recommendation.grant?.url && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      onClick={() =>
+                        window.open(recommendation.grant?.url, "_blank")
+                      }
+                    >
+                      View Grant Details
+                      <ExternalLink className="h-3 w-3 ml-1" />
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-8">
+            <Sparkles className="h-8 w-8 text-muted-foreground mb-2" />
+            <h3 className="text-lg font-semibold mb-1">
+              No Recommendations Yet
+            </h3>
+            <p className="text-muted-foreground text-center mb-4">
+              Get personalized grant recommendations by running an AI analysis
+              of your organization.
+            </p>
+            <Button
+              onClick={() =>
+                router.push(`/private/${organizationSlug}/recommendations`)
+              }
+              className="flex items-center gap-2"
+            >
+              <Sparkles className="h-4 w-4" />
+              Get Recommendations
+            </Button>
+          </CardContent>
+        </Card>
+      )} */}
     </div>
   );
 }
