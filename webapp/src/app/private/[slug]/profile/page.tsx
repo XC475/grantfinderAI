@@ -119,10 +119,8 @@ export default function ProfilePage() {
 
       if (error) throw error;
 
-      // Get public URL
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("grantware").getPublicUrl(filePath);
+      // Construct the proper S3 URL for Supabase storage
+      const publicUrl = `https://oetxbwjdxhcryqkdfdpr.storage.supabase.co/storage/v1/s3/grantware/${filePath}`;
 
       // Update organization in database
       const response = await fetch(`/api/organizations/${organization.id}`, {
@@ -227,7 +225,6 @@ export default function ProfilePage() {
                         width={96}
                         height={96}
                         className="w-full h-full object-cover"
-                        unoptimized
                       />
                     </div>
                   ) : (
