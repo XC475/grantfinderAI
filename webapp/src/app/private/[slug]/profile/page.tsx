@@ -104,6 +104,21 @@ export default function ProfilePage() {
 
     setUploading(true);
     try {
+      // Delete old logo if it exists
+      if (organization.logoUrl) {
+        try {
+          // Extract file path from URL
+          const urlParts = organization.logoUrl.split("/grantware/");
+          if (urlParts.length > 1) {
+            const oldFilePath = urlParts[1];
+            await supabase.storage.from("grantware").remove([oldFilePath]);
+          }
+        } catch (deleteError) {
+          console.warn("Failed to delete old logo:", deleteError);
+          // Continue with upload even if delete fails
+        }
+      }
+
       // Create a unique filename
       const fileExt = file.name.split(".").pop();
       const fileName = `${organization.id}-${Date.now()}.${fileExt}`;
@@ -119,8 +134,10 @@ export default function ProfilePage() {
 
       if (error) throw error;
 
-      // Construct the proper S3 URL for Supabase storage
-      const publicUrl = `https://oetxbwjdxhcryqkdfdpr.storage.supabase.co/storage/v1/s3/grantware/${filePath}`;
+      // Get public URL
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("grantware").getPublicUrl(filePath);
 
       // Update organization in database
       const response = await fetch(`/api/organizations/${organization.id}`, {
