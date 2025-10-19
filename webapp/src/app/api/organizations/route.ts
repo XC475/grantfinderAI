@@ -37,6 +37,7 @@ export async function GET() {
             city: true,
             state: true,
             zipCode: true,
+            onboardingCompleted: true,
             createdAt: true,
             updatedAt: true,
           },
