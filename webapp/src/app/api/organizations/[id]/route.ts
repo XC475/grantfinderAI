@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 // PATCH /api/organizations/[id] - Update organization
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = await createClient();
   const {
@@ -18,7 +18,7 @@ export async function PATCH(
   }
 
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     // Verify user owns this organization
