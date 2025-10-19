@@ -48,7 +48,7 @@ export async function PATCH(
       where: { id },
       data: {
         name: body.name,
-        organizationLogo: body.organizationLogo,
+        logoUrl: body.logoUrl,
         website: body.website,
         missionStatement: body.missionStatement,
         strategicPlan: body.strategicPlan,
@@ -72,7 +72,7 @@ export async function PATCH(
         id: true,
         name: true,
         slug: true,
-        organizationLogo: true,
+        logoUrl: true,
         website: true,
         missionStatement: true,
         strategicPlan: true,

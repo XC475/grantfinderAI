@@ -24,7 +24,7 @@ export async function GET() {
             id: true,
             name: true,
             slug: true,
-            organizationLogo: true,
+            logoUrl: true,
             website: true,
             missionStatement: true,
             strategicPlan: true,
