@@ -1,6 +1,7 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Card,
@@ -18,6 +19,7 @@ import {
   Building2,
   Sparkles,
   ArrowRight,
+  Send,
 } from "lucide-react";
 
 // Commented out - Old recommendations interface
@@ -39,12 +41,73 @@ import {
 //   };
 // }
 
+const placeholderTexts = [
+  "Ask anything...",
+  "Help with search...",
+  "Help with writing...",
+  "Find grants...",
+  "Get recommendations...",
+];
+
 export default function DashboardPage() {
-  // Commented out - Old recommendations state
-  // const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
-  // const [loading, setLoading] = useState(true);
   const params = useParams();
+  const router = useRouter();
   const organizationSlug = params.slug as string;
+
+  const [chatInput, setChatInput] = useState("");
+  const [currentPlaceholder, setCurrentPlaceholder] = useState(
+    placeholderTexts[0]
+  );
+
+  // Animated placeholder effect
+  useEffect(() => {
+    let currentIndex = 0;
+    let currentCharIndex = 0;
+    let isPaused = false;
+    let isDeleting = false;
+
+    const animatePlaceholder = () => {
+      const currentText = placeholderTexts[currentIndex];
+
+      if (!isDeleting && currentCharIndex <= currentText.length) {
+        setCurrentPlaceholder(currentText.slice(0, currentCharIndex));
+        currentCharIndex++;
+
+        if (currentCharIndex > currentText.length) {
+          isPaused = true;
+          setTimeout(() => {
+            isPaused = false;
+            isDeleting = true;
+          }, 2000);
+        }
+      } else if (isDeleting && currentCharIndex >= 0) {
+        setCurrentPlaceholder(currentText.slice(0, currentCharIndex));
+        currentCharIndex--;
+
+        if (currentCharIndex === 0) {
+          isDeleting = false;
+          currentIndex = (currentIndex + 1) % placeholderTexts.length;
+        }
+      }
+    };
+
+    const interval = setInterval(() => {
+      if (!isPaused) {
+        animatePlaceholder();
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleChatSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (chatInput.trim()) {
+      router.push(
+        `/private/${organizationSlug}/chat?message=${encodeURIComponent(chatInput.trim())}`
+      );
+    }
+  };
 
   // Commented out - Old recommendations fetching logic
   // useEffect(() => {
@@ -181,6 +244,55 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {dashboardCards.map((card) => {
           const Icon = card.icon;
+
+          // Special handling for AI Assistant card
+          if (card.title === "AI Assistant") {
+            return (
+              <Card
+                key={card.title}
+                className="hover:shadow-md transition-all hover:border-primary/50 h-full"
+              >
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`p-2 rounded-lg bg-muted transition-colors`}
+                    >
+                      <Icon className={`h-6 w-6 ${card.color}`} />
+                    </div>
+                    <Link href={card.url}>
+                      <CardTitle className="text-xl hover:text-primary transition-colors cursor-pointer">
+                        {card.title}
+                      </CardTitle>
+                    </Link>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4 mt-[-10px]">
+                  <CardDescription className="text-sm leading-relaxed">
+                    {card.description}
+                  </CardDescription>
+                  <form onSubmit={handleChatSubmit} className="relative">
+                    <input
+                      type="text"
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      placeholder={currentPlaceholder}
+                      className="w-full px-4 py-2 pr-12 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all cursor-text"
+                    />
+                    <Button
+                      type="submit"
+                      size="sm"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+                      disabled={!chatInput.trim()}
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            );
+          }
+
+          // Regular cards for other items
           return (
             <Link key={card.title} href={card.url}>
               <Card className="hover:shadow-md transition-all hover:border-primary/50 cursor-pointer group h-full">
@@ -194,7 +306,7 @@ export default function DashboardPage() {
                     <CardTitle className="text-xl">{card.title}</CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 mt-[-10px]">
                   <CardDescription className="text-sm leading-relaxed">
                     {card.description}
                   </CardDescription>
