@@ -299,35 +299,36 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleToggleOrgRole = async (userId: string, currentRole: string) => {
-    const newRole = currentRole === "ADMIN" ? "MEMBER" : "ADMIN";
+  // Organization role toggle handler - currently unused but kept for future feature
+  // const handleToggleOrgRole = async (userId: string, currentRole: string) => {
+  //   const newRole = currentRole === "ADMIN" ? "MEMBER" : "ADMIN";
 
-    if (!confirm(`Change organization role to ${newRole}?`)) {
-      return;
-    }
+  //   if (!confirm(`Change organization role to ${newRole}?`)) {
+  //     return;
+  //   }
 
-    try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ organizationRole: newRole }),
-      });
+  //   try {
+  //     const response = await fetch(`/api/admin/users/${userId}`, {
+  //       method: "PATCH",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ organizationRole: newRole }),
+  //     });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to update organization role");
-      }
+  //     if (!response.ok) {
+  //       const data = await response.json();
+  //       throw new Error(data.error || "Failed to update organization role");
+  //     }
 
-      toast.success("Organization role updated successfully");
-      fetchUsers();
-    } catch (error) {
-      console.error("Error updating organization role:", error);
-      toast.error(
-        (error instanceof Error ? error.message : String(error)) ||
-          "Failed to update organization role"
-      );
-    }
-  };
+  //     toast.success("Organization role updated successfully");
+  //     fetchUsers();
+  //   } catch (error) {
+  //     console.error("Error updating organization role:", error);
+  //     toast.error(
+  //       (error instanceof Error ? error.message : String(error)) ||
+  //         "Failed to update organization role"
+  //     );
+  //   }
+  // };
 
   const selectedDistrict = newUser.districtData;
 
