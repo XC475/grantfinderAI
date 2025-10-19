@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 import OpenAI from "openai";
+import crypto from "crypto";
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -10,6 +10,60 @@ const openai = new OpenAI({
 
 // Model to use for embeddings
 const EMBEDDING_MODEL = "text-embedding-3-small";
+
+// Type for opportunity content
+interface OpportunityContent {
+  id?: number;
+  title?: string | null;
+  description?: string | null;
+  description_summary?: string | null;
+  agency?: string | null;
+  category?: string | null;
+  funding_instrument?: string | null;
+  state_code?: string | null;
+  fiscal_year?: number | null;
+  eligibility?: string | null;
+  eligibility_summary?: string | null;
+  total_funding_amount?: number | null;
+  award_min?: number | null;
+  award_max?: number | null;
+  cost_sharing?: boolean | null;
+  post_date?: Date | null;
+  close_date?: Date | null;
+  contact_name?: string | null;
+  contact_email?: string | null;
+  contact_phone?: string | null;
+  url?: string | null;
+  status?: string | null;
+}
+
+// Helper function to create a hash of opportunity content
+function hashOpportunityContent(opportunity: OpportunityContent): string {
+  const contentToHash = JSON.stringify({
+    title: opportunity.title,
+    description: opportunity.description,
+    description_summary: opportunity.description_summary,
+    agency: opportunity.agency,
+    category: opportunity.category,
+    funding_instrument: opportunity.funding_instrument,
+    state_code: opportunity.state_code,
+    fiscal_year: opportunity.fiscal_year,
+    eligibility: opportunity.eligibility,
+    eligibility_summary: opportunity.eligibility_summary,
+    total_funding_amount: opportunity.total_funding_amount,
+    award_min: opportunity.award_min,
+    award_max: opportunity.award_max,
+    cost_sharing: opportunity.cost_sharing,
+    post_date: opportunity.post_date,
+    close_date: opportunity.close_date,
+    contact_name: opportunity.contact_name,
+    contact_email: opportunity.contact_email,
+    contact_phone: opportunity.contact_phone,
+    url: opportunity.url,
+    status: opportunity.status,
+  });
+  return crypto.createHash("sha256").update(contentToHash).digest("hex");
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -51,53 +105,110 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Find opportunities that don't have corresponding documents
-    // We'll match by opportunity ID stored in document metadata
-    const existingDocumentIds = await prisma.$queryRaw<
-      Array<{ opportunity_id: number }>
+    // Get existing documents with their hashes
+    const existingDocuments = await prisma.$queryRaw<
+      Array<{ opportunity_id: number; content_hash: string; doc_id: bigint }>
     >`
-      SELECT DISTINCT (metadata->>'opportunity_id')::int as opportunity_id
+      SELECT 
+        (metadata->>'opportunity_id')::int as opportunity_id,
+        metadata->>'content_hash' as content_hash,
+        id as doc_id
       FROM public.documents
       WHERE metadata->>'opportunity_id' IS NOT NULL
     `;
 
-    // Set of ids of already vectorized opportunities
-    const existingIds = new Set(
-      existingDocumentIds.map((d) => d.opportunity_id)
+    // Create a map of opportunity_id -> {hash, doc_id}
+    const existingDocsMap = new Map(
+      existingDocuments.map((d) => [
+        d.opportunity_id,
+        { hash: d.content_hash, docId: d.doc_id },
+      ])
     );
 
-    // Fetch opportunities that need vectorization
-    const opportunitiesToVectorize = await prisma.opportunities.findMany({
-      where: {
-        id: {
-          notIn: Array.from(existingIds),
-        },
-      },
+    console.log(
+      `📋 [Vectorize] Found ${existingDocuments.length} existing documents`
+    );
+
+    // Fetch ALL opportunities to check for changes
+    const allOpportunities = await prisma.opportunities.findMany({
       select: {
         id: true,
+        source: true,
+        state_code: true,
+        source_grant_id: true,
+        status: true,
         title: true,
         description: true,
         description_summary: true,
         agency: true,
+        funding_instrument: true,
         category: true,
+        fiscal_year: true,
+        post_date: true,
+        close_date: true,
+        archive_date: true,
+        cost_sharing: true,
+        award_max: true,
+        award_min: true,
+        total_funding_amount: true,
         eligibility: true,
         eligibility_summary: true,
+        contact_name: true,
+        contact_email: true,
+        contact_phone: true,
         url: true,
       },
     });
 
+    // Determine which opportunities need vectorization
+    const opportunitiesToVectorize = [];
+    const documentsToDelete = [];
+    let changedCount = 0;
+    let newCount = 0;
+
+    for (const opportunity of allOpportunities) {
+      const currentHash = hashOpportunityContent(opportunity);
+      const existingDoc = existingDocsMap.get(opportunity.id);
+
+      if (!existingDoc) {
+        // New opportunity - needs vectorization
+        opportunitiesToVectorize.push(opportunity);
+        newCount++;
+      } else if (existingDoc.hash !== currentHash) {
+        // Content changed - needs re-vectorization
+        opportunitiesToVectorize.push(opportunity);
+        documentsToDelete.push(existingDoc.docId);
+        changedCount++;
+      }
+      // else: unchanged, skip
+    }
+
     console.log(
-      `🎯 [Vectorize] Found ${opportunitiesToVectorize.length} grants to vectorize`
+      `🎯 [Vectorize] Found ${opportunitiesToVectorize.length} grants to vectorize (${newCount} new, ${changedCount} changed)`
     );
+
+    // Delete outdated documents for changed opportunities
+    if (documentsToDelete.length > 0) {
+      console.log(
+        `🗑️ [Vectorize] Deleting ${documentsToDelete.length} outdated documents...`
+      );
+      await prisma.$executeRaw`
+        DELETE FROM public.documents 
+        WHERE id = ANY(${documentsToDelete}::bigint[])
+      `;
+      console.log(`✅ [Vectorize] Deleted outdated documents`);
+    }
 
     if (opportunitiesToVectorize.length === 0) {
       return NextResponse.json({
         success: true,
-        message: "No new grants to vectorize",
+        message: "All grants are up to date",
         stats: {
           opportunities: totalOpportunities,
           documents: totalDocuments,
           vectorized: 0,
+          changed: 0,
+          new: 0,
         },
       });
     }
@@ -115,16 +226,44 @@ export async function POST(req: NextRequest) {
 
       const batchPromises = batch.map(async (opportunity) => {
         try {
-          // Create text representation of the grant
+          // Create text representation of the grant with all fields
           const contentParts = [
             `Opportunity ID: ${opportunity.id}`,
+            `Source: ${opportunity.source}`,
+            opportunity.source_grant_id &&
+              `Source Grant ID: ${opportunity.source_grant_id}`,
+            `Status: ${opportunity.status}`,
             `Title: ${opportunity.title}`,
             opportunity.agency && `Agency: ${opportunity.agency}`,
             opportunity.category && `Category: ${opportunity.category}`,
+            opportunity.funding_instrument &&
+              `Funding Instrument: ${opportunity.funding_instrument}`,
+            opportunity.state_code && `State: ${opportunity.state_code}`,
+            opportunity.fiscal_year &&
+              `Fiscal Year: ${opportunity.fiscal_year}`,
             opportunity.description_summary &&
               `Summary: ${opportunity.description_summary}`,
+            opportunity.description &&
+              `Description: ${opportunity.description}`,
+            opportunity.total_funding_amount &&
+              `Total Funding: $${opportunity.total_funding_amount.toLocaleString()}`,
+            opportunity.award_min &&
+              `Award Minimum: $${opportunity.award_min.toLocaleString()}`,
+            opportunity.award_max &&
+              `Award Maximum: $${opportunity.award_max.toLocaleString()}`,
+            opportunity.cost_sharing !== null &&
+              `Cost Sharing Required: ${opportunity.cost_sharing ? "Yes" : "No"}`,
+            opportunity.post_date &&
+              `Posted: ${opportunity.post_date.toISOString().split("T")[0]}`,
+            opportunity.close_date &&
+              `Closes: ${opportunity.close_date.toISOString().split("T")[0]}`,
             opportunity.eligibility_summary &&
               `Eligibility Summary: ${opportunity.eligibility_summary}`,
+            opportunity.eligibility &&
+              `Eligibility Details: ${opportunity.eligibility}`,
+            opportunity.contact_name && `Contact: ${opportunity.contact_name}`,
+            opportunity.contact_email && `Email: ${opportunity.contact_email}`,
+            opportunity.contact_phone && `Phone: ${opportunity.contact_phone}`,
             opportunity.url && `URL: ${opportunity.url}`,
           ]
             .filter(Boolean)
@@ -145,13 +284,29 @@ export async function POST(req: NextRequest) {
             );
           }
 
-          // Prepare metadata with opportunity_id
+          // Calculate content hash for change detection
+          const contentHash = hashOpportunityContent(opportunity);
+
+          // Prepare metadata with opportunity_id, key fields, and content hash
           const metadata = {
             opportunity_id: opportunity.id,
+            source: opportunity.source,
+            source_grant_id: opportunity.source_grant_id,
+            status: opportunity.status,
             title: opportunity.title,
             agency: opportunity.agency,
             category: opportunity.category,
+            funding_instrument: opportunity.funding_instrument,
+            state_code: opportunity.state_code,
+            fiscal_year: opportunity.fiscal_year,
+            total_funding_amount: opportunity.total_funding_amount,
+            award_min: opportunity.award_min,
+            award_max: opportunity.award_max,
+            cost_sharing: opportunity.cost_sharing,
+            post_date: opportunity.post_date?.toISOString(),
+            close_date: opportunity.close_date?.toISOString(),
             url: opportunity.url,
+            content_hash: contentHash,
             vectorized_at: new Date().toISOString(),
             model: EMBEDDING_MODEL,
           };
@@ -192,16 +347,18 @@ export async function POST(req: NextRequest) {
     }
 
     console.log(
-      `🎉 [Vectorize] Vectorization complete! Vectorized: ${vectorizedCount}, Errors: ${errors.length}`
+      `🎉 [Vectorize] Vectorization complete! Vectorized: ${vectorizedCount} (${newCount} new, ${changedCount} changed), Errors: ${errors.length}`
     );
 
     return NextResponse.json({
       success: true,
-      message: `Successfully vectorized ${vectorizedCount} grants`,
+      message: `Successfully vectorized ${vectorizedCount} grants (${newCount} new, ${changedCount} changed)`,
       stats: {
         opportunities: totalOpportunities,
-        documents: totalDocuments + vectorizedCount,
+        documents: totalDocuments + vectorizedCount - changedCount,
         vectorized: vectorizedCount,
+        new: newCount,
+        changed: changedCount,
         errors: errors.length,
       },
       errors: errors.length > 0 ? errors : undefined,
