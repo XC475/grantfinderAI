@@ -119,9 +119,11 @@ export async function POST(req: NextRequest) {
         const usaGrants = usaGrantsData.data || [];
 
         // Filter out any USA grants that are already in the state grants (by ID)
-        const stateGrantIds = new Set(topGrants.map((g: any) => g.id));
+        const stateGrantIds = new Set(
+          topGrants.map((g: { id: number }) => g.id)
+        );
         const uniqueUsaGrants = usaGrants.filter(
-          (g: any) => !stateGrantIds.has(g.id)
+          (g: { id: number }) => !stateGrantIds.has(g.id)
         );
 
         topGrants = [...topGrants, ...uniqueUsaGrants];
@@ -248,7 +250,7 @@ export async function POST(req: NextRequest) {
         if (parsed.recommendations && Array.isArray(parsed.recommendations)) {
           recommendationsArray = parsed.recommendations;
         }
-      } catch (e) {
+      } catch {
         console.warn("Could not parse recommendations as JSON");
       }
     } else if (Array.isArray(recommendations)) {
@@ -283,15 +285,24 @@ export async function POST(req: NextRequest) {
 
         // Save new recommendations
         const savedRecommendations = await prisma.recommendation.createMany({
-          data: recommendationsArray.map((rec: any) => ({
-            organizationId: userOrganizationId,
-            opportunityId: rec.opportunity_id?.toString() || "",
-            fitScore: rec.fit_score || 0,
-            fitReasoning: rec.fit_reasoning || "",
-            fitDescription: rec.fit_description || "",
-            districtName: rec.district_name || "",
-            queryDate: rec.query_date ? new Date(rec.query_date) : new Date(),
-          })),
+          data: recommendationsArray.map(
+            (rec: {
+              opportunity_id?: number | string;
+              fit_score?: number;
+              fit_reasoning?: string;
+              fit_description?: string;
+              district_name?: string;
+              query_date?: string;
+            }) => ({
+              organizationId: userOrganizationId,
+              opportunityId: rec.opportunity_id?.toString() || "",
+              fitScore: rec.fit_score || 0,
+              fitReasoning: rec.fit_reasoning || "",
+              fitDescription: rec.fit_description || "",
+              districtName: rec.district_name || "",
+              queryDate: rec.query_date ? new Date(rec.query_date) : new Date(),
+            })
+          ),
         });
 
         console.log(
