@@ -125,51 +125,33 @@ export async function POST(req: NextRequest) {
       JSON.stringify(data, null, 2)
     );
 
-    // Handle n8n response format - expect {recommendations: "[...]"} structure
+    // Handle n8n response format - expect {output: "[...]"} structure
     let recommendationsArray = [];
 
-    console.log(
-      "🔍 [Recommendations API] Raw n8n response type:",
-      typeof data
-    );
+    console.log("🔍 [Recommendations API] Raw n8n response type:", typeof data);
 
-    // Parse the response based on type
-    if (typeof data === "object" && data.recommendations) {
-      // New format: {recommendations: "[...]"}
+    // Parse the response based on type - n8n returns {output: "[...]"}
+    if (typeof data === "object" && data.output) {
       try {
-        if (typeof data.recommendations === "string") {
+        if (typeof data.output === "string") {
           // Parse the stringified JSON array
-          recommendationsArray = JSON.parse(data.recommendations);
+          recommendationsArray = JSON.parse(data.output);
           console.log(
-            `🔍 [Recommendations API] Parsed ${recommendationsArray.length} recommendations from string`
+            `🔍 [Recommendations API] Parsed ${recommendationsArray.length} recommendations from output string`
           );
-        } else if (Array.isArray(data.recommendations)) {
+        } else if (Array.isArray(data.output)) {
           // Already an array
-          recommendationsArray = data.recommendations;
+          recommendationsArray = data.output;
         }
       } catch (parseError) {
         console.error(
-          "❌ [Recommendations API] Failed to parse recommendations:",
+          "❌ [Recommendations API] Failed to parse output:",
           parseError
         );
       }
     } else if (Array.isArray(data)) {
       // Direct array format
       recommendationsArray = data;
-    } else if (typeof data === "string") {
-      // Try to parse as JSON
-      try {
-        const parsed = JSON.parse(data);
-        if (Array.isArray(parsed)) {
-          recommendationsArray = parsed;
-        } else if (parsed.recommendations) {
-          recommendationsArray = Array.isArray(parsed.recommendations)
-            ? parsed.recommendations
-            : JSON.parse(parsed.recommendations);
-        }
-      } catch {
-        console.warn("⚠️ [Recommendations API] Could not parse string response");
-      }
     }
 
     console.log(
