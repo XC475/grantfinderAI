@@ -57,13 +57,29 @@ export async function GET(req: NextRequest) {
       },
       select: {
         id: true,
+        source: true,
+        state_code: true,
+        source_grant_id: true,
+        status: true,
         title: true,
         description: true,
         description_summary: true,
         agency: true,
+        funding_instrument: true,
         category: true,
+        fiscal_year: true,
+        post_date: true,
+        close_date: true,
+        archive_date: true,
+        cost_sharing: true,
+        award_max: true,
+        award_min: true,
+        total_funding_amount: true,
         eligibility: true,
         eligibility_summary: true,
+        contact_name: true,
+        contact_email: true,
+        contact_phone: true,
         url: true,
       },
     });
@@ -104,13 +120,39 @@ export async function GET(req: NextRequest) {
       // Create text representation (same as what would be embedded)
       const contentParts = [
         `Opportunity ID: ${opportunity.id}`,
+        `Source: ${opportunity.source}`,
+        opportunity.source_grant_id &&
+          `Source Grant ID: ${opportunity.source_grant_id}`,
+        `Status: ${opportunity.status}`,
         `Title: ${opportunity.title}`,
         opportunity.agency && `Agency: ${opportunity.agency}`,
         opportunity.category && `Category: ${opportunity.category}`,
+        opportunity.funding_instrument &&
+          `Funding Instrument: ${opportunity.funding_instrument}`,
+        opportunity.state_code && `State: ${opportunity.state_code}`,
+        opportunity.fiscal_year && `Fiscal Year: ${opportunity.fiscal_year}`,
         opportunity.description_summary &&
           `Summary: ${opportunity.description_summary}`,
+        opportunity.description && `Description: ${opportunity.description}`,
+        opportunity.total_funding_amount &&
+          `Total Funding: $${opportunity.total_funding_amount.toLocaleString()}`,
+        opportunity.award_min &&
+          `Award Minimum: $${opportunity.award_min.toLocaleString()}`,
+        opportunity.award_max &&
+          `Award Maximum: $${opportunity.award_max.toLocaleString()}`,
+        opportunity.cost_sharing !== null &&
+          `Cost Sharing Required: ${opportunity.cost_sharing ? "Yes" : "No"}`,
+        opportunity.post_date &&
+          `Posted: ${opportunity.post_date.toISOString().split("T")[0]}`,
+        opportunity.close_date &&
+          `Closes: ${opportunity.close_date.toISOString().split("T")[0]}`,
         opportunity.eligibility_summary &&
           `Eligibility Summary: ${opportunity.eligibility_summary}`,
+        opportunity.eligibility &&
+          `Eligibility Details: ${opportunity.eligibility}`,
+        opportunity.contact_name && `Contact: ${opportunity.contact_name}`,
+        opportunity.contact_email && `Email: ${opportunity.contact_email}`,
+        opportunity.contact_phone && `Phone: ${opportunity.contact_phone}`,
         opportunity.url && `URL: ${opportunity.url}`,
       ]
         .filter(Boolean)
