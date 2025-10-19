@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 import { cn } from "@/lib/utils";
 import { Chat } from "@/components/ui/chat";
@@ -10,6 +10,8 @@ type ChatDemoProps = {
   initialMessages?: Message[];
   chatId?: string;
   onChatIdChange?: (chatId: string) => void;
+  initialMessageToSend?: string | null;
+  onMessageSent?: () => void;
 };
 
 export function ChatDemo(props: ChatDemoProps) {
@@ -21,6 +23,7 @@ export function ChatDemo(props: ChatDemoProps) {
   const [chatId, setChatId] = useState(
     () => props.chatId || `chat_${Date.now()}`
   );
+  const hasAutoSent = useRef(false);
 
   // Update messages when initialMessages prop changes (e.g., when navigating between chats)
   useEffect(() => {
@@ -171,6 +174,20 @@ export function ChatDemo(props: ChatDemoProps) {
     },
     [handleSubmit]
   );
+
+  // Auto-send initial message if provided (placed after handleSubmit is defined)
+  useEffect(() => {
+    if (props.initialMessageToSend && !isLoading && !hasAutoSent.current) {
+      hasAutoSent.current = true;
+      setInput(props.initialMessageToSend);
+      // Small delay to ensure the input is set before submitting
+      setTimeout(() => {
+        const fakeEvent = { preventDefault: () => {} };
+        handleSubmit(fakeEvent);
+        props.onMessageSent?.();
+      }, 100);
+    }
+  }, [props.initialMessageToSend, isLoading, handleSubmit, props]);
 
   const isEmpty = messages.length === 0;
 
