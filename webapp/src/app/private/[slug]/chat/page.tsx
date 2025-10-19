@@ -20,11 +20,15 @@ interface ChatData {
 export default function ChatPage() {
   const searchParams = useSearchParams();
   const chatId = searchParams.get("chatId");
+  const initialMessage = searchParams.get("message");
 
   const [initialMessages, setInitialMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentChatId, setCurrentChatId] = useState<string | undefined>(
     chatId || undefined
+  );
+  const [messageToSend, setMessageToSend] = useState<string | null>(
+    initialMessage
   );
 
   useEffect(() => {
@@ -85,6 +89,8 @@ export default function ChatPage() {
         initialMessages={initialMessages}
         chatId={currentChatId}
         onChatIdChange={handleChatIdChange}
+        initialMessageToSend={messageToSend}
+        onMessageSent={() => setMessageToSend(null)}
       />
     </div>
   );
