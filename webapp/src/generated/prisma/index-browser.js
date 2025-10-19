@@ -153,7 +153,9 @@ exports.Prisma.OpportunitiesScalarFieldEnum = {
   url: 'url',
   attachments: 'attachments',
   extra: 'extra',
-  relevance_score: 'relevance_score'
+  relevance_score: 'relevance_score',
+  raw_text: 'raw_text',
+  content_hash: 'content_hash'
 };
 
 exports.Prisma.UserScalarFieldEnum = {
@@ -171,43 +173,44 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.OrganizationScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  slug: 'slug',
-  role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  organizationLogo: 'organizationLogo',
-  website: 'website',
-  missionStatement: 'missionStatement',
-  strategicPlan: 'strategicPlan',
-  annualOperatingBudget: 'annualOperatingBudget',
-  fiscalYearEnd: 'fiscalYearEnd',
-  phone: 'phone',
-  email: 'email',
-  organizationLeaderName: 'organizationLeaderName',
+  slug: 'slug',
+  role: 'role',
   address: 'address',
+  annualOperatingBudget: 'annualOperatingBudget',
   city: 'city',
+  email: 'email',
+  fiscalYearEnd: 'fiscalYearEnd',
+  missionStatement: 'missionStatement',
+  organizationLeaderName: 'organizationLeaderName',
+  organizationLogo: 'organizationLogo',
+  phone: 'phone',
   state: 'state',
+  website: 'website',
   zipCode: 'zipCode',
+  strategicPlan: 'strategicPlan',
+  onboardingCompleted: 'onboardingCompleted',
   countyName: 'countyName',
-  latitude: 'latitude',
-  longitude: 'longitude',
-  leaId: 'leaId',
-  stateLeaId: 'stateLeaId',
+  districtDataYear: 'districtDataYear',
   enrollment: 'enrollment',
-  numberOfSchools: 'numberOfSchools',
-  lowestGrade: 'lowestGrade',
   highestGrade: 'highestGrade',
-  urbanCentricLocale: 'urbanCentricLocale',
-  districtDataYear: 'districtDataYear'
+  latitude: 'latitude',
+  leaId: 'leaId',
+  longitude: 'longitude',
+  lowestGrade: 'lowestGrade',
+  numberOfSchools: 'numberOfSchools',
+  stateLeaId: 'stateLeaId',
+  urbanCentricLocale: 'urbanCentricLocale'
 };
 
 exports.Prisma.GrantBookmarkScalarFieldEnum = {
   id: 'id',
   notes: 'notes',
   createdAt: 'createdAt',
-  organizationId: 'organizationId',
   userId: 'userId',
-  opportunityId: 'opportunityId'
+  opportunityId: 'opportunityId',
+  organizationId: 'organizationId'
 };
 
 exports.Prisma.GrantEligibilityAnalysisScalarFieldEnum = {
@@ -218,14 +221,13 @@ exports.Prisma.GrantEligibilityAnalysisScalarFieldEnum = {
   risks: 'risks',
   confidence: 'confidence',
   createdAt: 'createdAt',
-  organizationId: 'organizationId',
-  opportunityId: 'opportunityId'
+  opportunityId: 'opportunityId',
+  organizationId: 'organizationId'
 };
 
 exports.Prisma.ApplicationScalarFieldEnum = {
   id: 'id',
   opportunityId: 'opportunityId',
-  organizationId: 'organizationId',
   status: 'status',
   content: 'content',
   contentHtml: 'contentHtml',
@@ -235,7 +237,8 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   submittedAt: 'submittedAt',
-  lastEditedAt: 'lastEditedAt'
+  lastEditedAt: 'lastEditedAt',
+  organizationId: 'organizationId'
 };
 
 exports.Prisma.AiChatScalarFieldEnum = {
@@ -244,9 +247,9 @@ exports.Prisma.AiChatScalarFieldEnum = {
   context: 'context',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  organizationId: 'organizationId',
   userId: 'userId',
-  applicationId: 'applicationId'
+  applicationId: 'applicationId',
+  organizationId: 'organizationId'
 };
 
 exports.Prisma.AiChatMessageScalarFieldEnum = {
@@ -268,6 +271,12 @@ exports.Prisma.RecommendationScalarFieldEnum = {
   districtName: 'districtName',
   queryDate: 'queryDate',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.DocumentsScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  metadata: 'metadata'
 };
 
 exports.Prisma.SortOrder = {
@@ -349,7 +358,8 @@ exports.Prisma.ModelName = {
   Application: 'Application',
   AiChat: 'AiChat',
   AiChatMessage: 'AiChatMessage',
-  Recommendation: 'Recommendation'
+  Recommendation: 'Recommendation',
+  documents: 'documents'
 };
 
 /**

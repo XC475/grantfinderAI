@@ -63,6 +63,11 @@ export type AiChatMessage = $Result.DefaultSelection<Prisma.$AiChatMessagePayloa
  * 
  */
 export type Recommendation = $Result.DefaultSelection<Prisma.$RecommendationPayload>
+/**
+ * Model documents
+ * 
+ */
+export type documents = $Result.DefaultSelection<Prisma.$documentsPayload>
 
 /**
  * Enums
@@ -372,6 +377,16 @@ export class PrismaClient<
     * ```
     */
   get recommendation(): Prisma.RecommendationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.documents`: Exposes CRUD operations for the **documents** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Documents
+    * const documents = await prisma.documents.findMany()
+    * ```
+    */
+  get documents(): Prisma.documentsDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -821,7 +836,8 @@ export namespace Prisma {
     Application: 'Application',
     AiChat: 'AiChat',
     AiChatMessage: 'AiChatMessage',
-    Recommendation: 'Recommendation'
+    Recommendation: 'Recommendation',
+    documents: 'documents'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -840,7 +856,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation"
+      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "documents"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1584,6 +1600,80 @@ export namespace Prisma {
           }
         }
       }
+      documents: {
+        payload: Prisma.$documentsPayload<ExtArgs>
+        fields: Prisma.documentsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.documentsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$documentsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.documentsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$documentsPayload>
+          }
+          findFirst: {
+            args: Prisma.documentsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$documentsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.documentsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$documentsPayload>
+          }
+          findMany: {
+            args: Prisma.documentsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$documentsPayload>[]
+          }
+          create: {
+            args: Prisma.documentsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$documentsPayload>
+          }
+          createMany: {
+            args: Prisma.documentsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.documentsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$documentsPayload>[]
+          }
+          delete: {
+            args: Prisma.documentsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$documentsPayload>
+          }
+          update: {
+            args: Prisma.documentsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$documentsPayload>
+          }
+          deleteMany: {
+            args: Prisma.documentsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.documentsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.documentsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$documentsPayload>[]
+          }
+          upsert: {
+            args: Prisma.documentsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$documentsPayload>
+          }
+          aggregate: {
+            args: Prisma.DocumentsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDocuments>
+          }
+          groupBy: {
+            args: Prisma.documentsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DocumentsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.documentsCountArgs<ExtArgs>
+            result: $Utils.Optional<DocumentsCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1690,6 +1780,7 @@ export namespace Prisma {
     aiChat?: AiChatOmit
     aiChatMessage?: AiChatMessageOmit
     recommendation?: RecommendationOmit
+    documents?: documentsOmit
   }
 
   /* Types for Logging */
@@ -2939,6 +3030,8 @@ export namespace Prisma {
     contact_phone: string | null
     url: string | null
     relevance_score: number | null
+    raw_text: string | null
+    content_hash: string | null
   }
 
   export type OpportunitiesMaxAggregateOutputType = {
@@ -2969,6 +3062,8 @@ export namespace Prisma {
     contact_phone: string | null
     url: string | null
     relevance_score: number | null
+    raw_text: string | null
+    content_hash: string | null
   }
 
   export type OpportunitiesCountAggregateOutputType = {
@@ -3001,6 +3096,8 @@ export namespace Prisma {
     attachments: number
     extra: number
     relevance_score: number
+    raw_text: number
+    content_hash: number
     _all: number
   }
 
@@ -3051,6 +3148,8 @@ export namespace Prisma {
     contact_phone?: true
     url?: true
     relevance_score?: true
+    raw_text?: true
+    content_hash?: true
   }
 
   export type OpportunitiesMaxAggregateInputType = {
@@ -3081,6 +3180,8 @@ export namespace Prisma {
     contact_phone?: true
     url?: true
     relevance_score?: true
+    raw_text?: true
+    content_hash?: true
   }
 
   export type OpportunitiesCountAggregateInputType = {
@@ -3113,6 +3214,8 @@ export namespace Prisma {
     attachments?: true
     extra?: true
     relevance_score?: true
+    raw_text?: true
+    content_hash?: true
     _all?: true
   }
 
@@ -3232,6 +3335,8 @@ export namespace Prisma {
     attachments: JsonValue | null
     extra: JsonValue | null
     relevance_score: number | null
+    raw_text: string | null
+    content_hash: string | null
     _count: OpportunitiesCountAggregateOutputType | null
     _avg: OpportunitiesAvgAggregateOutputType | null
     _sum: OpportunitiesSumAggregateOutputType | null
@@ -3283,6 +3388,8 @@ export namespace Prisma {
     attachments?: boolean
     extra?: boolean
     relevance_score?: boolean
+    raw_text?: boolean
+    content_hash?: boolean
   }, ExtArgs["result"]["opportunities"]>
 
   export type opportunitiesSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3315,6 +3422,8 @@ export namespace Prisma {
     attachments?: boolean
     extra?: boolean
     relevance_score?: boolean
+    raw_text?: boolean
+    content_hash?: boolean
   }, ExtArgs["result"]["opportunities"]>
 
   export type opportunitiesSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3347,6 +3456,8 @@ export namespace Prisma {
     attachments?: boolean
     extra?: boolean
     relevance_score?: boolean
+    raw_text?: boolean
+    content_hash?: boolean
   }, ExtArgs["result"]["opportunities"]>
 
   export type opportunitiesSelectScalar = {
@@ -3379,9 +3490,11 @@ export namespace Prisma {
     attachments?: boolean
     extra?: boolean
     relevance_score?: boolean
+    raw_text?: boolean
+    content_hash?: boolean
   }
 
-  export type opportunitiesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "source" | "state_code" | "source_grant_id" | "status" | "title" | "description" | "description_summary" | "agency" | "funding_instrument" | "category" | "fiscal_year" | "post_date" | "close_date" | "archive_date" | "cost_sharing" | "award_max" | "award_min" | "total_funding_amount" | "eligibility" | "eligibility_summary" | "last_updated" | "contact_name" | "contact_email" | "contact_phone" | "url" | "attachments" | "extra" | "relevance_score", ExtArgs["result"]["opportunities"]>
+  export type opportunitiesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "source" | "state_code" | "source_grant_id" | "status" | "title" | "description" | "description_summary" | "agency" | "funding_instrument" | "category" | "fiscal_year" | "post_date" | "close_date" | "archive_date" | "cost_sharing" | "award_max" | "award_min" | "total_funding_amount" | "eligibility" | "eligibility_summary" | "last_updated" | "contact_name" | "contact_email" | "contact_phone" | "url" | "attachments" | "extra" | "relevance_score" | "raw_text" | "content_hash", ExtArgs["result"]["opportunities"]>
 
   export type $opportunitiesPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "opportunities"
@@ -3416,6 +3529,8 @@ export namespace Prisma {
       attachments: Prisma.JsonValue | null
       extra: Prisma.JsonValue | null
       relevance_score: number | null
+      raw_text: string | null
+      content_hash: string | null
     }, ExtArgs["result"]["opportunities"]>
     composites: {}
   }
@@ -3868,6 +3983,8 @@ export namespace Prisma {
     readonly attachments: FieldRef<"opportunities", 'Json'>
     readonly extra: FieldRef<"opportunities", 'Json'>
     readonly relevance_score: FieldRef<"opportunities", 'Int'>
+    readonly raw_text: FieldRef<"opportunities", 'String'>
+    readonly content_hash: FieldRef<"opportunities", 'String'>
   }
     
 
@@ -5416,250 +5533,256 @@ export namespace Prisma {
 
   export type OrganizationAvgAggregateOutputType = {
     annualOperatingBudget: Decimal | null
+    districtDataYear: number | null
+    enrollment: number | null
+    highestGrade: number | null
     latitude: number | null
     longitude: number | null
-    enrollment: number | null
-    numberOfSchools: number | null
     lowestGrade: number | null
-    highestGrade: number | null
+    numberOfSchools: number | null
     urbanCentricLocale: number | null
-    districtDataYear: number | null
   }
 
   export type OrganizationSumAggregateOutputType = {
     annualOperatingBudget: Decimal | null
+    districtDataYear: number | null
+    enrollment: number | null
+    highestGrade: number | null
     latitude: number | null
     longitude: number | null
-    enrollment: number | null
-    numberOfSchools: number | null
     lowestGrade: number | null
-    highestGrade: number | null
+    numberOfSchools: number | null
     urbanCentricLocale: number | null
-    districtDataYear: number | null
   }
 
   export type OrganizationMinAggregateOutputType = {
     id: string | null
     name: string | null
-    slug: string | null
-    role: $Enums.OrganizationRole | null
     createdAt: Date | null
     updatedAt: Date | null
-    organizationLogo: string | null
-    website: string | null
-    missionStatement: string | null
-    strategicPlan: string | null
-    annualOperatingBudget: Decimal | null
-    fiscalYearEnd: string | null
-    phone: string | null
-    email: string | null
-    organizationLeaderName: string | null
+    slug: string | null
+    role: $Enums.OrganizationRole | null
     address: string | null
+    annualOperatingBudget: Decimal | null
     city: string | null
+    email: string | null
+    fiscalYearEnd: string | null
+    missionStatement: string | null
+    organizationLeaderName: string | null
+    organizationLogo: string | null
+    phone: string | null
     state: string | null
+    website: string | null
     zipCode: string | null
+    strategicPlan: string | null
+    onboardingCompleted: boolean | null
     countyName: string | null
-    latitude: number | null
-    longitude: number | null
-    leaId: string | null
-    stateLeaId: string | null
-    enrollment: number | null
-    numberOfSchools: number | null
-    lowestGrade: number | null
-    highestGrade: number | null
-    urbanCentricLocale: number | null
     districtDataYear: number | null
+    enrollment: number | null
+    highestGrade: number | null
+    latitude: number | null
+    leaId: string | null
+    longitude: number | null
+    lowestGrade: number | null
+    numberOfSchools: number | null
+    stateLeaId: string | null
+    urbanCentricLocale: number | null
   }
 
   export type OrganizationMaxAggregateOutputType = {
     id: string | null
     name: string | null
-    slug: string | null
-    role: $Enums.OrganizationRole | null
     createdAt: Date | null
     updatedAt: Date | null
-    organizationLogo: string | null
-    website: string | null
-    missionStatement: string | null
-    strategicPlan: string | null
-    annualOperatingBudget: Decimal | null
-    fiscalYearEnd: string | null
-    phone: string | null
-    email: string | null
-    organizationLeaderName: string | null
+    slug: string | null
+    role: $Enums.OrganizationRole | null
     address: string | null
+    annualOperatingBudget: Decimal | null
     city: string | null
+    email: string | null
+    fiscalYearEnd: string | null
+    missionStatement: string | null
+    organizationLeaderName: string | null
+    organizationLogo: string | null
+    phone: string | null
     state: string | null
+    website: string | null
     zipCode: string | null
+    strategicPlan: string | null
+    onboardingCompleted: boolean | null
     countyName: string | null
-    latitude: number | null
-    longitude: number | null
-    leaId: string | null
-    stateLeaId: string | null
-    enrollment: number | null
-    numberOfSchools: number | null
-    lowestGrade: number | null
-    highestGrade: number | null
-    urbanCentricLocale: number | null
     districtDataYear: number | null
+    enrollment: number | null
+    highestGrade: number | null
+    latitude: number | null
+    leaId: string | null
+    longitude: number | null
+    lowestGrade: number | null
+    numberOfSchools: number | null
+    stateLeaId: string | null
+    urbanCentricLocale: number | null
   }
 
   export type OrganizationCountAggregateOutputType = {
     id: number
     name: number
-    slug: number
-    role: number
     createdAt: number
     updatedAt: number
-    organizationLogo: number
-    website: number
-    missionStatement: number
-    strategicPlan: number
-    annualOperatingBudget: number
-    fiscalYearEnd: number
-    phone: number
-    email: number
-    organizationLeaderName: number
+    slug: number
+    role: number
     address: number
+    annualOperatingBudget: number
     city: number
+    email: number
+    fiscalYearEnd: number
+    missionStatement: number
+    organizationLeaderName: number
+    organizationLogo: number
+    phone: number
     state: number
+    website: number
     zipCode: number
+    strategicPlan: number
+    onboardingCompleted: number
     countyName: number
-    latitude: number
-    longitude: number
-    leaId: number
-    stateLeaId: number
-    enrollment: number
-    numberOfSchools: number
-    lowestGrade: number
-    highestGrade: number
-    urbanCentricLocale: number
     districtDataYear: number
+    enrollment: number
+    highestGrade: number
+    latitude: number
+    leaId: number
+    longitude: number
+    lowestGrade: number
+    numberOfSchools: number
+    stateLeaId: number
+    urbanCentricLocale: number
     _all: number
   }
 
 
   export type OrganizationAvgAggregateInputType = {
     annualOperatingBudget?: true
+    districtDataYear?: true
+    enrollment?: true
+    highestGrade?: true
     latitude?: true
     longitude?: true
-    enrollment?: true
-    numberOfSchools?: true
     lowestGrade?: true
-    highestGrade?: true
+    numberOfSchools?: true
     urbanCentricLocale?: true
-    districtDataYear?: true
   }
 
   export type OrganizationSumAggregateInputType = {
     annualOperatingBudget?: true
+    districtDataYear?: true
+    enrollment?: true
+    highestGrade?: true
     latitude?: true
     longitude?: true
-    enrollment?: true
-    numberOfSchools?: true
     lowestGrade?: true
-    highestGrade?: true
+    numberOfSchools?: true
     urbanCentricLocale?: true
-    districtDataYear?: true
   }
 
   export type OrganizationMinAggregateInputType = {
     id?: true
     name?: true
-    slug?: true
-    role?: true
     createdAt?: true
     updatedAt?: true
-    organizationLogo?: true
-    website?: true
-    missionStatement?: true
-    strategicPlan?: true
-    annualOperatingBudget?: true
-    fiscalYearEnd?: true
-    phone?: true
-    email?: true
-    organizationLeaderName?: true
+    slug?: true
+    role?: true
     address?: true
+    annualOperatingBudget?: true
     city?: true
+    email?: true
+    fiscalYearEnd?: true
+    missionStatement?: true
+    organizationLeaderName?: true
+    organizationLogo?: true
+    phone?: true
     state?: true
+    website?: true
     zipCode?: true
+    strategicPlan?: true
+    onboardingCompleted?: true
     countyName?: true
-    latitude?: true
-    longitude?: true
-    leaId?: true
-    stateLeaId?: true
-    enrollment?: true
-    numberOfSchools?: true
-    lowestGrade?: true
-    highestGrade?: true
-    urbanCentricLocale?: true
     districtDataYear?: true
+    enrollment?: true
+    highestGrade?: true
+    latitude?: true
+    leaId?: true
+    longitude?: true
+    lowestGrade?: true
+    numberOfSchools?: true
+    stateLeaId?: true
+    urbanCentricLocale?: true
   }
 
   export type OrganizationMaxAggregateInputType = {
     id?: true
     name?: true
-    slug?: true
-    role?: true
     createdAt?: true
     updatedAt?: true
-    organizationLogo?: true
-    website?: true
-    missionStatement?: true
-    strategicPlan?: true
-    annualOperatingBudget?: true
-    fiscalYearEnd?: true
-    phone?: true
-    email?: true
-    organizationLeaderName?: true
+    slug?: true
+    role?: true
     address?: true
+    annualOperatingBudget?: true
     city?: true
+    email?: true
+    fiscalYearEnd?: true
+    missionStatement?: true
+    organizationLeaderName?: true
+    organizationLogo?: true
+    phone?: true
     state?: true
+    website?: true
     zipCode?: true
+    strategicPlan?: true
+    onboardingCompleted?: true
     countyName?: true
-    latitude?: true
-    longitude?: true
-    leaId?: true
-    stateLeaId?: true
-    enrollment?: true
-    numberOfSchools?: true
-    lowestGrade?: true
-    highestGrade?: true
-    urbanCentricLocale?: true
     districtDataYear?: true
+    enrollment?: true
+    highestGrade?: true
+    latitude?: true
+    leaId?: true
+    longitude?: true
+    lowestGrade?: true
+    numberOfSchools?: true
+    stateLeaId?: true
+    urbanCentricLocale?: true
   }
 
   export type OrganizationCountAggregateInputType = {
     id?: true
     name?: true
-    slug?: true
-    role?: true
     createdAt?: true
     updatedAt?: true
-    organizationLogo?: true
-    website?: true
-    missionStatement?: true
-    strategicPlan?: true
-    annualOperatingBudget?: true
-    fiscalYearEnd?: true
-    phone?: true
-    email?: true
-    organizationLeaderName?: true
+    slug?: true
+    role?: true
     address?: true
+    annualOperatingBudget?: true
     city?: true
+    email?: true
+    fiscalYearEnd?: true
+    missionStatement?: true
+    organizationLeaderName?: true
+    organizationLogo?: true
+    phone?: true
     state?: true
+    website?: true
     zipCode?: true
+    strategicPlan?: true
+    onboardingCompleted?: true
     countyName?: true
-    latitude?: true
-    longitude?: true
-    leaId?: true
-    stateLeaId?: true
-    enrollment?: true
-    numberOfSchools?: true
-    lowestGrade?: true
-    highestGrade?: true
-    urbanCentricLocale?: true
     districtDataYear?: true
+    enrollment?: true
+    highestGrade?: true
+    latitude?: true
+    leaId?: true
+    longitude?: true
+    lowestGrade?: true
+    numberOfSchools?: true
+    stateLeaId?: true
+    urbanCentricLocale?: true
     _all?: true
   }
 
@@ -5752,34 +5875,35 @@ export namespace Prisma {
   export type OrganizationGroupByOutputType = {
     id: string
     name: string
-    slug: string
-    role: $Enums.OrganizationRole
     createdAt: Date
     updatedAt: Date
-    organizationLogo: string | null
-    website: string | null
-    missionStatement: string | null
-    strategicPlan: string | null
-    annualOperatingBudget: Decimal | null
-    fiscalYearEnd: string | null
-    phone: string | null
-    email: string | null
-    organizationLeaderName: string | null
+    slug: string
+    role: $Enums.OrganizationRole
     address: string | null
+    annualOperatingBudget: Decimal | null
     city: string | null
+    email: string | null
+    fiscalYearEnd: string | null
+    missionStatement: string | null
+    organizationLeaderName: string | null
+    organizationLogo: string | null
+    phone: string | null
     state: string | null
+    website: string | null
     zipCode: string | null
+    strategicPlan: string | null
+    onboardingCompleted: boolean
     countyName: string | null
-    latitude: number | null
-    longitude: number | null
-    leaId: string | null
-    stateLeaId: string | null
-    enrollment: number | null
-    numberOfSchools: number | null
-    lowestGrade: number | null
-    highestGrade: number | null
-    urbanCentricLocale: number | null
     districtDataYear: number | null
+    enrollment: number | null
+    highestGrade: number | null
+    latitude: number | null
+    leaId: string | null
+    longitude: number | null
+    lowestGrade: number | null
+    numberOfSchools: number | null
+    stateLeaId: string | null
+    urbanCentricLocale: number | null
     _count: OrganizationCountAggregateOutputType | null
     _avg: OrganizationAvgAggregateOutputType | null
     _sum: OrganizationSumAggregateOutputType | null
@@ -5804,34 +5928,35 @@ export namespace Prisma {
   export type OrganizationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    slug?: boolean
-    role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    organizationLogo?: boolean
-    website?: boolean
-    missionStatement?: boolean
-    strategicPlan?: boolean
-    annualOperatingBudget?: boolean
-    fiscalYearEnd?: boolean
-    phone?: boolean
-    email?: boolean
-    organizationLeaderName?: boolean
+    slug?: boolean
+    role?: boolean
     address?: boolean
+    annualOperatingBudget?: boolean
     city?: boolean
+    email?: boolean
+    fiscalYearEnd?: boolean
+    missionStatement?: boolean
+    organizationLeaderName?: boolean
+    organizationLogo?: boolean
+    phone?: boolean
     state?: boolean
+    website?: boolean
     zipCode?: boolean
+    strategicPlan?: boolean
+    onboardingCompleted?: boolean
     countyName?: boolean
-    latitude?: boolean
-    longitude?: boolean
-    leaId?: boolean
-    stateLeaId?: boolean
-    enrollment?: boolean
-    numberOfSchools?: boolean
-    lowestGrade?: boolean
-    highestGrade?: boolean
-    urbanCentricLocale?: boolean
     districtDataYear?: boolean
+    enrollment?: boolean
+    highestGrade?: boolean
+    latitude?: boolean
+    leaId?: boolean
+    longitude?: boolean
+    lowestGrade?: boolean
+    numberOfSchools?: boolean
+    stateLeaId?: boolean
+    urbanCentricLocale?: boolean
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
     grantBookmarks?: boolean | Organization$grantBookmarksArgs<ExtArgs>
@@ -5844,103 +5969,106 @@ export namespace Prisma {
   export type OrganizationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    slug?: boolean
-    role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    organizationLogo?: boolean
-    website?: boolean
-    missionStatement?: boolean
-    strategicPlan?: boolean
-    annualOperatingBudget?: boolean
-    fiscalYearEnd?: boolean
-    phone?: boolean
-    email?: boolean
-    organizationLeaderName?: boolean
+    slug?: boolean
+    role?: boolean
     address?: boolean
+    annualOperatingBudget?: boolean
     city?: boolean
+    email?: boolean
+    fiscalYearEnd?: boolean
+    missionStatement?: boolean
+    organizationLeaderName?: boolean
+    organizationLogo?: boolean
+    phone?: boolean
     state?: boolean
+    website?: boolean
     zipCode?: boolean
+    strategicPlan?: boolean
+    onboardingCompleted?: boolean
     countyName?: boolean
-    latitude?: boolean
-    longitude?: boolean
-    leaId?: boolean
-    stateLeaId?: boolean
-    enrollment?: boolean
-    numberOfSchools?: boolean
-    lowestGrade?: boolean
-    highestGrade?: boolean
-    urbanCentricLocale?: boolean
     districtDataYear?: boolean
+    enrollment?: boolean
+    highestGrade?: boolean
+    latitude?: boolean
+    leaId?: boolean
+    longitude?: boolean
+    lowestGrade?: boolean
+    numberOfSchools?: boolean
+    stateLeaId?: boolean
+    urbanCentricLocale?: boolean
   }, ExtArgs["result"]["organization"]>
 
   export type OrganizationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    slug?: boolean
-    role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    organizationLogo?: boolean
-    website?: boolean
-    missionStatement?: boolean
-    strategicPlan?: boolean
-    annualOperatingBudget?: boolean
-    fiscalYearEnd?: boolean
-    phone?: boolean
-    email?: boolean
-    organizationLeaderName?: boolean
+    slug?: boolean
+    role?: boolean
     address?: boolean
+    annualOperatingBudget?: boolean
     city?: boolean
+    email?: boolean
+    fiscalYearEnd?: boolean
+    missionStatement?: boolean
+    organizationLeaderName?: boolean
+    organizationLogo?: boolean
+    phone?: boolean
     state?: boolean
+    website?: boolean
     zipCode?: boolean
+    strategicPlan?: boolean
+    onboardingCompleted?: boolean
     countyName?: boolean
-    latitude?: boolean
-    longitude?: boolean
-    leaId?: boolean
-    stateLeaId?: boolean
-    enrollment?: boolean
-    numberOfSchools?: boolean
-    lowestGrade?: boolean
-    highestGrade?: boolean
-    urbanCentricLocale?: boolean
     districtDataYear?: boolean
+    enrollment?: boolean
+    highestGrade?: boolean
+    latitude?: boolean
+    leaId?: boolean
+    longitude?: boolean
+    lowestGrade?: boolean
+    numberOfSchools?: boolean
+    stateLeaId?: boolean
+    urbanCentricLocale?: boolean
   }, ExtArgs["result"]["organization"]>
 
   export type OrganizationSelectScalar = {
     id?: boolean
     name?: boolean
-    slug?: boolean
-    role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    organizationLogo?: boolean
-    website?: boolean
-    missionStatement?: boolean
-    strategicPlan?: boolean
-    annualOperatingBudget?: boolean
-    fiscalYearEnd?: boolean
-    phone?: boolean
-    email?: boolean
-    organizationLeaderName?: boolean
+    slug?: boolean
+    role?: boolean
     address?: boolean
+    annualOperatingBudget?: boolean
     city?: boolean
+    email?: boolean
+    fiscalYearEnd?: boolean
+    missionStatement?: boolean
+    organizationLeaderName?: boolean
+    organizationLogo?: boolean
+    phone?: boolean
     state?: boolean
+    website?: boolean
     zipCode?: boolean
+    strategicPlan?: boolean
+    onboardingCompleted?: boolean
     countyName?: boolean
-    latitude?: boolean
-    longitude?: boolean
-    leaId?: boolean
-    stateLeaId?: boolean
-    enrollment?: boolean
-    numberOfSchools?: boolean
-    lowestGrade?: boolean
-    highestGrade?: boolean
-    urbanCentricLocale?: boolean
     districtDataYear?: boolean
+    enrollment?: boolean
+    highestGrade?: boolean
+    latitude?: boolean
+    leaId?: boolean
+    longitude?: boolean
+    lowestGrade?: boolean
+    numberOfSchools?: boolean
+    stateLeaId?: boolean
+    urbanCentricLocale?: boolean
   }
 
-  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "role" | "createdAt" | "updatedAt" | "organizationLogo" | "website" | "missionStatement" | "strategicPlan" | "annualOperatingBudget" | "fiscalYearEnd" | "phone" | "email" | "organizationLeaderName" | "address" | "city" | "state" | "zipCode" | "countyName" | "latitude" | "longitude" | "leaId" | "stateLeaId" | "enrollment" | "numberOfSchools" | "lowestGrade" | "highestGrade" | "urbanCentricLocale" | "districtDataYear", ExtArgs["result"]["organization"]>
+  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "slug" | "role" | "address" | "annualOperatingBudget" | "city" | "email" | "fiscalYearEnd" | "missionStatement" | "organizationLeaderName" | "organizationLogo" | "phone" | "state" | "website" | "zipCode" | "strategicPlan" | "onboardingCompleted" | "countyName" | "districtDataYear" | "enrollment" | "highestGrade" | "latitude" | "leaId" | "longitude" | "lowestGrade" | "numberOfSchools" | "stateLeaId" | "urbanCentricLocale", ExtArgs["result"]["organization"]>
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
@@ -5966,34 +6094,35 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
-      slug: string
-      role: $Enums.OrganizationRole
       createdAt: Date
       updatedAt: Date
-      organizationLogo: string | null
-      website: string | null
-      missionStatement: string | null
-      strategicPlan: string | null
-      annualOperatingBudget: Prisma.Decimal | null
-      fiscalYearEnd: string | null
-      phone: string | null
-      email: string | null
-      organizationLeaderName: string | null
+      slug: string
+      role: $Enums.OrganizationRole
       address: string | null
+      annualOperatingBudget: Prisma.Decimal | null
       city: string | null
+      email: string | null
+      fiscalYearEnd: string | null
+      missionStatement: string | null
+      organizationLeaderName: string | null
+      organizationLogo: string | null
+      phone: string | null
       state: string | null
+      website: string | null
       zipCode: string | null
+      strategicPlan: string | null
+      onboardingCompleted: boolean
       countyName: string | null
-      latitude: number | null
-      longitude: number | null
-      leaId: string | null
-      stateLeaId: string | null
-      enrollment: number | null
-      numberOfSchools: number | null
-      lowestGrade: number | null
-      highestGrade: number | null
-      urbanCentricLocale: number | null
       districtDataYear: number | null
+      enrollment: number | null
+      highestGrade: number | null
+      latitude: number | null
+      leaId: string | null
+      longitude: number | null
+      lowestGrade: number | null
+      numberOfSchools: number | null
+      stateLeaId: string | null
+      urbanCentricLocale: number | null
     }, ExtArgs["result"]["organization"]>
     composites: {}
   }
@@ -6425,34 +6554,35 @@ export namespace Prisma {
   interface OrganizationFieldRefs {
     readonly id: FieldRef<"Organization", 'String'>
     readonly name: FieldRef<"Organization", 'String'>
-    readonly slug: FieldRef<"Organization", 'String'>
-    readonly role: FieldRef<"Organization", 'OrganizationRole'>
     readonly createdAt: FieldRef<"Organization", 'DateTime'>
     readonly updatedAt: FieldRef<"Organization", 'DateTime'>
-    readonly organizationLogo: FieldRef<"Organization", 'String'>
-    readonly website: FieldRef<"Organization", 'String'>
-    readonly missionStatement: FieldRef<"Organization", 'String'>
-    readonly strategicPlan: FieldRef<"Organization", 'String'>
-    readonly annualOperatingBudget: FieldRef<"Organization", 'Decimal'>
-    readonly fiscalYearEnd: FieldRef<"Organization", 'String'>
-    readonly phone: FieldRef<"Organization", 'String'>
-    readonly email: FieldRef<"Organization", 'String'>
-    readonly organizationLeaderName: FieldRef<"Organization", 'String'>
+    readonly slug: FieldRef<"Organization", 'String'>
+    readonly role: FieldRef<"Organization", 'OrganizationRole'>
     readonly address: FieldRef<"Organization", 'String'>
+    readonly annualOperatingBudget: FieldRef<"Organization", 'Decimal'>
     readonly city: FieldRef<"Organization", 'String'>
+    readonly email: FieldRef<"Organization", 'String'>
+    readonly fiscalYearEnd: FieldRef<"Organization", 'String'>
+    readonly missionStatement: FieldRef<"Organization", 'String'>
+    readonly organizationLeaderName: FieldRef<"Organization", 'String'>
+    readonly organizationLogo: FieldRef<"Organization", 'String'>
+    readonly phone: FieldRef<"Organization", 'String'>
     readonly state: FieldRef<"Organization", 'String'>
+    readonly website: FieldRef<"Organization", 'String'>
     readonly zipCode: FieldRef<"Organization", 'String'>
+    readonly strategicPlan: FieldRef<"Organization", 'String'>
+    readonly onboardingCompleted: FieldRef<"Organization", 'Boolean'>
     readonly countyName: FieldRef<"Organization", 'String'>
-    readonly latitude: FieldRef<"Organization", 'Float'>
-    readonly longitude: FieldRef<"Organization", 'Float'>
-    readonly leaId: FieldRef<"Organization", 'String'>
-    readonly stateLeaId: FieldRef<"Organization", 'String'>
-    readonly enrollment: FieldRef<"Organization", 'Int'>
-    readonly numberOfSchools: FieldRef<"Organization", 'Int'>
-    readonly lowestGrade: FieldRef<"Organization", 'Int'>
-    readonly highestGrade: FieldRef<"Organization", 'Int'>
-    readonly urbanCentricLocale: FieldRef<"Organization", 'Int'>
     readonly districtDataYear: FieldRef<"Organization", 'Int'>
+    readonly enrollment: FieldRef<"Organization", 'Int'>
+    readonly highestGrade: FieldRef<"Organization", 'Int'>
+    readonly latitude: FieldRef<"Organization", 'Float'>
+    readonly leaId: FieldRef<"Organization", 'String'>
+    readonly longitude: FieldRef<"Organization", 'Float'>
+    readonly lowestGrade: FieldRef<"Organization", 'Int'>
+    readonly numberOfSchools: FieldRef<"Organization", 'Int'>
+    readonly stateLeaId: FieldRef<"Organization", 'String'>
+    readonly urbanCentricLocale: FieldRef<"Organization", 'Int'>
   }
     
 
@@ -7022,27 +7152,27 @@ export namespace Prisma {
     id: string | null
     notes: string | null
     createdAt: Date | null
-    organizationId: string | null
     userId: string | null
     opportunityId: number | null
+    organizationId: string | null
   }
 
   export type GrantBookmarkMaxAggregateOutputType = {
     id: string | null
     notes: string | null
     createdAt: Date | null
-    organizationId: string | null
     userId: string | null
     opportunityId: number | null
+    organizationId: string | null
   }
 
   export type GrantBookmarkCountAggregateOutputType = {
     id: number
     notes: number
     createdAt: number
-    organizationId: number
     userId: number
     opportunityId: number
+    organizationId: number
     _all: number
   }
 
@@ -7059,27 +7189,27 @@ export namespace Prisma {
     id?: true
     notes?: true
     createdAt?: true
-    organizationId?: true
     userId?: true
     opportunityId?: true
+    organizationId?: true
   }
 
   export type GrantBookmarkMaxAggregateInputType = {
     id?: true
     notes?: true
     createdAt?: true
-    organizationId?: true
     userId?: true
     opportunityId?: true
+    organizationId?: true
   }
 
   export type GrantBookmarkCountAggregateInputType = {
     id?: true
     notes?: true
     createdAt?: true
-    organizationId?: true
     userId?: true
     opportunityId?: true
+    organizationId?: true
     _all?: true
   }
 
@@ -7173,9 +7303,9 @@ export namespace Prisma {
     id: string
     notes: string | null
     createdAt: Date
-    organizationId: string
     userId: string
     opportunityId: number
+    organizationId: string
     _count: GrantBookmarkCountAggregateOutputType | null
     _avg: GrantBookmarkAvgAggregateOutputType | null
     _sum: GrantBookmarkSumAggregateOutputType | null
@@ -7201,71 +7331,71 @@ export namespace Prisma {
     id?: boolean
     notes?: boolean
     createdAt?: boolean
-    organizationId?: boolean
     userId?: boolean
     opportunityId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    organizationId?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["grantBookmark"]>
 
   export type GrantBookmarkSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     notes?: boolean
     createdAt?: boolean
-    organizationId?: boolean
     userId?: boolean
     opportunityId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    organizationId?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["grantBookmark"]>
 
   export type GrantBookmarkSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     notes?: boolean
     createdAt?: boolean
-    organizationId?: boolean
     userId?: boolean
     opportunityId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    organizationId?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["grantBookmark"]>
 
   export type GrantBookmarkSelectScalar = {
     id?: boolean
     notes?: boolean
     createdAt?: boolean
-    organizationId?: boolean
     userId?: boolean
     opportunityId?: boolean
+    organizationId?: boolean
   }
 
-  export type GrantBookmarkOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "notes" | "createdAt" | "organizationId" | "userId" | "opportunityId", ExtArgs["result"]["grantBookmark"]>
+  export type GrantBookmarkOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "notes" | "createdAt" | "userId" | "opportunityId" | "organizationId", ExtArgs["result"]["grantBookmark"]>
   export type GrantBookmarkInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type GrantBookmarkIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type GrantBookmarkIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $GrantBookmarkPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "GrantBookmark"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
       organization: Prisma.$OrganizationPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       notes: string | null
       createdAt: Date
-      organizationId: string
       userId: string
       opportunityId: number
+      organizationId: string
     }, ExtArgs["result"]["grantBookmark"]>
     composites: {}
   }
@@ -7660,8 +7790,8 @@ export namespace Prisma {
    */
   export interface Prisma__GrantBookmarkClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7694,9 +7824,9 @@ export namespace Prisma {
     readonly id: FieldRef<"GrantBookmark", 'String'>
     readonly notes: FieldRef<"GrantBookmark", 'String'>
     readonly createdAt: FieldRef<"GrantBookmark", 'DateTime'>
-    readonly organizationId: FieldRef<"GrantBookmark", 'String'>
     readonly userId: FieldRef<"GrantBookmark", 'String'>
     readonly opportunityId: FieldRef<"GrantBookmark", 'Int'>
+    readonly organizationId: FieldRef<"GrantBookmark", 'String'>
   }
     
 
@@ -8143,8 +8273,8 @@ export namespace Prisma {
     risks: string | null
     confidence: number | null
     createdAt: Date | null
-    organizationId: string | null
     opportunityId: number | null
+    organizationId: string | null
   }
 
   export type GrantEligibilityAnalysisMaxAggregateOutputType = {
@@ -8155,8 +8285,8 @@ export namespace Prisma {
     risks: string | null
     confidence: number | null
     createdAt: Date | null
-    organizationId: string | null
     opportunityId: number | null
+    organizationId: string | null
   }
 
   export type GrantEligibilityAnalysisCountAggregateOutputType = {
@@ -8167,8 +8297,8 @@ export namespace Prisma {
     risks: number
     confidence: number
     createdAt: number
-    organizationId: number
     opportunityId: number
+    organizationId: number
     _all: number
   }
 
@@ -8193,8 +8323,8 @@ export namespace Prisma {
     risks?: true
     confidence?: true
     createdAt?: true
-    organizationId?: true
     opportunityId?: true
+    organizationId?: true
   }
 
   export type GrantEligibilityAnalysisMaxAggregateInputType = {
@@ -8205,8 +8335,8 @@ export namespace Prisma {
     risks?: true
     confidence?: true
     createdAt?: true
-    organizationId?: true
     opportunityId?: true
+    organizationId?: true
   }
 
   export type GrantEligibilityAnalysisCountAggregateInputType = {
@@ -8217,8 +8347,8 @@ export namespace Prisma {
     risks?: true
     confidence?: true
     createdAt?: true
-    organizationId?: true
     opportunityId?: true
+    organizationId?: true
     _all?: true
   }
 
@@ -8316,8 +8446,8 @@ export namespace Prisma {
     risks: string | null
     confidence: number | null
     createdAt: Date
-    organizationId: string
     opportunityId: number
+    organizationId: string
     _count: GrantEligibilityAnalysisCountAggregateOutputType | null
     _avg: GrantEligibilityAnalysisAvgAggregateOutputType | null
     _sum: GrantEligibilityAnalysisSumAggregateOutputType | null
@@ -8347,8 +8477,8 @@ export namespace Prisma {
     risks?: boolean
     confidence?: boolean
     createdAt?: boolean
-    organizationId?: boolean
     opportunityId?: boolean
+    organizationId?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["grantEligibilityAnalysis"]>
 
@@ -8360,8 +8490,8 @@ export namespace Prisma {
     risks?: boolean
     confidence?: boolean
     createdAt?: boolean
-    organizationId?: boolean
     opportunityId?: boolean
+    organizationId?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["grantEligibilityAnalysis"]>
 
@@ -8373,8 +8503,8 @@ export namespace Prisma {
     risks?: boolean
     confidence?: boolean
     createdAt?: boolean
-    organizationId?: boolean
     opportunityId?: boolean
+    organizationId?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["grantEligibilityAnalysis"]>
 
@@ -8386,11 +8516,11 @@ export namespace Prisma {
     risks?: boolean
     confidence?: boolean
     createdAt?: boolean
-    organizationId?: boolean
     opportunityId?: boolean
+    organizationId?: boolean
   }
 
-  export type GrantEligibilityAnalysisOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "matchScore" | "goNoGo" | "rationale" | "risks" | "confidence" | "createdAt" | "organizationId" | "opportunityId", ExtArgs["result"]["grantEligibilityAnalysis"]>
+  export type GrantEligibilityAnalysisOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "matchScore" | "goNoGo" | "rationale" | "risks" | "confidence" | "createdAt" | "opportunityId" | "organizationId", ExtArgs["result"]["grantEligibilityAnalysis"]>
   export type GrantEligibilityAnalysisInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }
@@ -8414,8 +8544,8 @@ export namespace Prisma {
       risks: string | null
       confidence: number | null
       createdAt: Date
-      organizationId: string
       opportunityId: number
+      organizationId: string
     }, ExtArgs["result"]["grantEligibilityAnalysis"]>
     composites: {}
   }
@@ -8847,8 +8977,8 @@ export namespace Prisma {
     readonly risks: FieldRef<"GrantEligibilityAnalysis", 'String'>
     readonly confidence: FieldRef<"GrantEligibilityAnalysis", 'Float'>
     readonly createdAt: FieldRef<"GrantEligibilityAnalysis", 'DateTime'>
-    readonly organizationId: FieldRef<"GrantEligibilityAnalysis", 'String'>
     readonly opportunityId: FieldRef<"GrantEligibilityAnalysis", 'Int'>
+    readonly organizationId: FieldRef<"GrantEligibilityAnalysis", 'String'>
   }
     
 
@@ -9286,7 +9416,6 @@ export namespace Prisma {
   export type ApplicationMinAggregateOutputType = {
     id: string | null
     opportunityId: number | null
-    organizationId: string | null
     status: $Enums.ApplicationStatus | null
     contentHtml: string | null
     title: string | null
@@ -9295,12 +9424,12 @@ export namespace Prisma {
     updatedAt: Date | null
     submittedAt: Date | null
     lastEditedAt: Date | null
+    organizationId: string | null
   }
 
   export type ApplicationMaxAggregateOutputType = {
     id: string | null
     opportunityId: number | null
-    organizationId: string | null
     status: $Enums.ApplicationStatus | null
     contentHtml: string | null
     title: string | null
@@ -9309,12 +9438,12 @@ export namespace Prisma {
     updatedAt: Date | null
     submittedAt: Date | null
     lastEditedAt: Date | null
+    organizationId: string | null
   }
 
   export type ApplicationCountAggregateOutputType = {
     id: number
     opportunityId: number
-    organizationId: number
     status: number
     content: number
     contentHtml: number
@@ -9325,6 +9454,7 @@ export namespace Prisma {
     updatedAt: number
     submittedAt: number
     lastEditedAt: number
+    organizationId: number
     _all: number
   }
 
@@ -9340,7 +9470,6 @@ export namespace Prisma {
   export type ApplicationMinAggregateInputType = {
     id?: true
     opportunityId?: true
-    organizationId?: true
     status?: true
     contentHtml?: true
     title?: true
@@ -9349,12 +9478,12 @@ export namespace Prisma {
     updatedAt?: true
     submittedAt?: true
     lastEditedAt?: true
+    organizationId?: true
   }
 
   export type ApplicationMaxAggregateInputType = {
     id?: true
     opportunityId?: true
-    organizationId?: true
     status?: true
     contentHtml?: true
     title?: true
@@ -9363,12 +9492,12 @@ export namespace Prisma {
     updatedAt?: true
     submittedAt?: true
     lastEditedAt?: true
+    organizationId?: true
   }
 
   export type ApplicationCountAggregateInputType = {
     id?: true
     opportunityId?: true
-    organizationId?: true
     status?: true
     content?: true
     contentHtml?: true
@@ -9379,6 +9508,7 @@ export namespace Prisma {
     updatedAt?: true
     submittedAt?: true
     lastEditedAt?: true
+    organizationId?: true
     _all?: true
   }
 
@@ -9471,7 +9601,6 @@ export namespace Prisma {
   export type ApplicationGroupByOutputType = {
     id: string
     opportunityId: number
-    organizationId: string
     status: $Enums.ApplicationStatus
     content: JsonValue | null
     contentHtml: string | null
@@ -9482,6 +9611,7 @@ export namespace Prisma {
     updatedAt: Date
     submittedAt: Date | null
     lastEditedAt: Date
+    organizationId: string
     _count: ApplicationCountAggregateOutputType | null
     _avg: ApplicationAvgAggregateOutputType | null
     _sum: ApplicationSumAggregateOutputType | null
@@ -9506,7 +9636,6 @@ export namespace Prisma {
   export type ApplicationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     opportunityId?: boolean
-    organizationId?: boolean
     status?: boolean
     content?: boolean
     contentHtml?: boolean
@@ -9517,6 +9646,7 @@ export namespace Prisma {
     updatedAt?: boolean
     submittedAt?: boolean
     lastEditedAt?: boolean
+    organizationId?: boolean
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     _count?: boolean | ApplicationCountOutputTypeDefaultArgs<ExtArgs>
@@ -9525,7 +9655,6 @@ export namespace Prisma {
   export type ApplicationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     opportunityId?: boolean
-    organizationId?: boolean
     status?: boolean
     content?: boolean
     contentHtml?: boolean
@@ -9536,13 +9665,13 @@ export namespace Prisma {
     updatedAt?: boolean
     submittedAt?: boolean
     lastEditedAt?: boolean
+    organizationId?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
 
   export type ApplicationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     opportunityId?: boolean
-    organizationId?: boolean
     status?: boolean
     content?: boolean
     contentHtml?: boolean
@@ -9553,13 +9682,13 @@ export namespace Prisma {
     updatedAt?: boolean
     submittedAt?: boolean
     lastEditedAt?: boolean
+    organizationId?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
 
   export type ApplicationSelectScalar = {
     id?: boolean
     opportunityId?: boolean
-    organizationId?: boolean
     status?: boolean
     content?: boolean
     contentHtml?: boolean
@@ -9570,9 +9699,10 @@ export namespace Prisma {
     updatedAt?: boolean
     submittedAt?: boolean
     lastEditedAt?: boolean
+    organizationId?: boolean
   }
 
-  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "organizationId" | "status" | "content" | "contentHtml" | "title" | "notes" | "documents" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt", ExtArgs["result"]["application"]>
+  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "content" | "contentHtml" | "title" | "notes" | "documents" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId", ExtArgs["result"]["application"]>
   export type ApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -9594,7 +9724,6 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       opportunityId: number
-      organizationId: string
       status: $Enums.ApplicationStatus
       content: Prisma.JsonValue | null
       contentHtml: string | null
@@ -9605,6 +9734,7 @@ export namespace Prisma {
       updatedAt: Date
       submittedAt: Date | null
       lastEditedAt: Date
+      organizationId: string
     }, ExtArgs["result"]["application"]>
     composites: {}
   }
@@ -10032,7 +10162,6 @@ export namespace Prisma {
   interface ApplicationFieldRefs {
     readonly id: FieldRef<"Application", 'String'>
     readonly opportunityId: FieldRef<"Application", 'Int'>
-    readonly organizationId: FieldRef<"Application", 'String'>
     readonly status: FieldRef<"Application", 'ApplicationStatus'>
     readonly content: FieldRef<"Application", 'Json'>
     readonly contentHtml: FieldRef<"Application", 'String'>
@@ -10043,6 +10172,7 @@ export namespace Prisma {
     readonly updatedAt: FieldRef<"Application", 'DateTime'>
     readonly submittedAt: FieldRef<"Application", 'DateTime'>
     readonly lastEditedAt: FieldRef<"Application", 'DateTime'>
+    readonly organizationId: FieldRef<"Application", 'String'>
   }
     
 
@@ -10497,9 +10627,9 @@ export namespace Prisma {
     context: $Enums.AiChatContext | null
     createdAt: Date | null
     updatedAt: Date | null
-    organizationId: string | null
     userId: string | null
     applicationId: string | null
+    organizationId: string | null
   }
 
   export type AiChatMaxAggregateOutputType = {
@@ -10508,9 +10638,9 @@ export namespace Prisma {
     context: $Enums.AiChatContext | null
     createdAt: Date | null
     updatedAt: Date | null
-    organizationId: string | null
     userId: string | null
     applicationId: string | null
+    organizationId: string | null
   }
 
   export type AiChatCountAggregateOutputType = {
@@ -10519,9 +10649,9 @@ export namespace Prisma {
     context: number
     createdAt: number
     updatedAt: number
-    organizationId: number
     userId: number
     applicationId: number
+    organizationId: number
     _all: number
   }
 
@@ -10532,9 +10662,9 @@ export namespace Prisma {
     context?: true
     createdAt?: true
     updatedAt?: true
-    organizationId?: true
     userId?: true
     applicationId?: true
+    organizationId?: true
   }
 
   export type AiChatMaxAggregateInputType = {
@@ -10543,9 +10673,9 @@ export namespace Prisma {
     context?: true
     createdAt?: true
     updatedAt?: true
-    organizationId?: true
     userId?: true
     applicationId?: true
+    organizationId?: true
   }
 
   export type AiChatCountAggregateInputType = {
@@ -10554,9 +10684,9 @@ export namespace Prisma {
     context?: true
     createdAt?: true
     updatedAt?: true
-    organizationId?: true
     userId?: true
     applicationId?: true
+    organizationId?: true
     _all?: true
   }
 
@@ -10638,9 +10768,9 @@ export namespace Prisma {
     context: $Enums.AiChatContext
     createdAt: Date
     updatedAt: Date
-    organizationId: string
     userId: string
     applicationId: string | null
+    organizationId: string
     _count: AiChatCountAggregateOutputType | null
     _min: AiChatMinAggregateOutputType | null
     _max: AiChatMaxAggregateOutputType | null
@@ -10666,13 +10796,13 @@ export namespace Prisma {
     context?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    organizationId?: boolean
     userId?: boolean
     applicationId?: boolean
+    organizationId?: boolean
     messages?: boolean | AiChat$messagesArgs<ExtArgs>
     application?: boolean | AiChat$applicationArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | AiChatCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["aiChat"]>
 
@@ -10682,12 +10812,12 @@ export namespace Prisma {
     context?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    organizationId?: boolean
     userId?: boolean
     applicationId?: boolean
+    organizationId?: boolean
     application?: boolean | AiChat$applicationArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["aiChat"]>
 
   export type AiChatSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -10696,12 +10826,12 @@ export namespace Prisma {
     context?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    organizationId?: boolean
     userId?: boolean
     applicationId?: boolean
+    organizationId?: boolean
     application?: boolean | AiChat$applicationArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["aiChat"]>
 
   export type AiChatSelectScalar = {
@@ -10710,28 +10840,28 @@ export namespace Prisma {
     context?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    organizationId?: boolean
     userId?: boolean
     applicationId?: boolean
+    organizationId?: boolean
   }
 
-  export type AiChatOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "context" | "createdAt" | "updatedAt" | "organizationId" | "userId" | "applicationId", ExtArgs["result"]["aiChat"]>
+  export type AiChatOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "context" | "createdAt" | "updatedAt" | "userId" | "applicationId" | "organizationId", ExtArgs["result"]["aiChat"]>
   export type AiChatInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     messages?: boolean | AiChat$messagesArgs<ExtArgs>
     application?: boolean | AiChat$applicationArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | AiChatCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type AiChatIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     application?: boolean | AiChat$applicationArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type AiChatIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     application?: boolean | AiChat$applicationArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $AiChatPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10739,8 +10869,8 @@ export namespace Prisma {
     objects: {
       messages: Prisma.$AiChatMessagePayload<ExtArgs>[]
       application: Prisma.$ApplicationPayload<ExtArgs> | null
-      user: Prisma.$UserPayload<ExtArgs>
       organization: Prisma.$OrganizationPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10748,9 +10878,9 @@ export namespace Prisma {
       context: $Enums.AiChatContext
       createdAt: Date
       updatedAt: Date
-      organizationId: string
       userId: string
       applicationId: string | null
+      organizationId: string
     }, ExtArgs["result"]["aiChat"]>
     composites: {}
   }
@@ -11147,8 +11277,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     messages<T extends AiChat$messagesArgs<ExtArgs> = {}>(args?: Subset<T, AiChat$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiChatMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     application<T extends AiChat$applicationArgs<ExtArgs> = {}>(args?: Subset<T, AiChat$applicationArgs<ExtArgs>>): Prisma__ApplicationClient<$Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11183,9 +11313,9 @@ export namespace Prisma {
     readonly context: FieldRef<"AiChat", 'AiChatContext'>
     readonly createdAt: FieldRef<"AiChat", 'DateTime'>
     readonly updatedAt: FieldRef<"AiChat", 'DateTime'>
-    readonly organizationId: FieldRef<"AiChat", 'String'>
     readonly userId: FieldRef<"AiChat", 'String'>
     readonly applicationId: FieldRef<"AiChat", 'String'>
+    readonly organizationId: FieldRef<"AiChat", 'String'>
   }
     
 
@@ -13855,6 +13985,1005 @@ export namespace Prisma {
 
 
   /**
+   * Model documents
+   */
+
+  export type AggregateDocuments = {
+    _count: DocumentsCountAggregateOutputType | null
+    _avg: DocumentsAvgAggregateOutputType | null
+    _sum: DocumentsSumAggregateOutputType | null
+    _min: DocumentsMinAggregateOutputType | null
+    _max: DocumentsMaxAggregateOutputType | null
+  }
+
+  export type DocumentsAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type DocumentsSumAggregateOutputType = {
+    id: bigint | null
+  }
+
+  export type DocumentsMinAggregateOutputType = {
+    id: bigint | null
+    content: string | null
+  }
+
+  export type DocumentsMaxAggregateOutputType = {
+    id: bigint | null
+    content: string | null
+  }
+
+  export type DocumentsCountAggregateOutputType = {
+    id: number
+    content: number
+    metadata: number
+    _all: number
+  }
+
+
+  export type DocumentsAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type DocumentsSumAggregateInputType = {
+    id?: true
+  }
+
+  export type DocumentsMinAggregateInputType = {
+    id?: true
+    content?: true
+  }
+
+  export type DocumentsMaxAggregateInputType = {
+    id?: true
+    content?: true
+  }
+
+  export type DocumentsCountAggregateInputType = {
+    id?: true
+    content?: true
+    metadata?: true
+    _all?: true
+  }
+
+  export type DocumentsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which documents to aggregate.
+     */
+    where?: documentsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of documents to fetch.
+     */
+    orderBy?: documentsOrderByWithRelationInput | documentsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: documentsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` documents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` documents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned documents
+    **/
+    _count?: true | DocumentsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DocumentsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DocumentsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DocumentsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DocumentsMaxAggregateInputType
+  }
+
+  export type GetDocumentsAggregateType<T extends DocumentsAggregateArgs> = {
+        [P in keyof T & keyof AggregateDocuments]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDocuments[P]>
+      : GetScalarType<T[P], AggregateDocuments[P]>
+  }
+
+
+
+
+  export type documentsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: documentsWhereInput
+    orderBy?: documentsOrderByWithAggregationInput | documentsOrderByWithAggregationInput[]
+    by: DocumentsScalarFieldEnum[] | DocumentsScalarFieldEnum
+    having?: documentsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DocumentsCountAggregateInputType | true
+    _avg?: DocumentsAvgAggregateInputType
+    _sum?: DocumentsSumAggregateInputType
+    _min?: DocumentsMinAggregateInputType
+    _max?: DocumentsMaxAggregateInputType
+  }
+
+  export type DocumentsGroupByOutputType = {
+    id: bigint
+    content: string | null
+    metadata: JsonValue | null
+    _count: DocumentsCountAggregateOutputType | null
+    _avg: DocumentsAvgAggregateOutputType | null
+    _sum: DocumentsSumAggregateOutputType | null
+    _min: DocumentsMinAggregateOutputType | null
+    _max: DocumentsMaxAggregateOutputType | null
+  }
+
+  type GetDocumentsGroupByPayload<T extends documentsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DocumentsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DocumentsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DocumentsGroupByOutputType[P]>
+            : GetScalarType<T[P], DocumentsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type documentsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    content?: boolean
+    metadata?: boolean
+  }, ExtArgs["result"]["documents"]>
+
+  export type documentsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    content?: boolean
+    metadata?: boolean
+  }, ExtArgs["result"]["documents"]>
+
+  export type documentsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    content?: boolean
+    metadata?: boolean
+  }, ExtArgs["result"]["documents"]>
+
+  export type documentsSelectScalar = {
+    id?: boolean
+    content?: boolean
+    metadata?: boolean
+  }
+
+  export type documentsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "content" | "metadata", ExtArgs["result"]["documents"]>
+
+  export type $documentsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "documents"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: bigint
+      content: string | null
+      metadata: Prisma.JsonValue | null
+    }, ExtArgs["result"]["documents"]>
+    composites: {}
+  }
+
+  type documentsGetPayload<S extends boolean | null | undefined | documentsDefaultArgs> = $Result.GetResult<Prisma.$documentsPayload, S>
+
+  type documentsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<documentsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DocumentsCountAggregateInputType | true
+    }
+
+  export interface documentsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['documents'], meta: { name: 'documents' } }
+    /**
+     * Find zero or one Documents that matches the filter.
+     * @param {documentsFindUniqueArgs} args - Arguments to find a Documents
+     * @example
+     * // Get one Documents
+     * const documents = await prisma.documents.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends documentsFindUniqueArgs>(args: SelectSubset<T, documentsFindUniqueArgs<ExtArgs>>): Prisma__documentsClient<$Result.GetResult<Prisma.$documentsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Documents that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {documentsFindUniqueOrThrowArgs} args - Arguments to find a Documents
+     * @example
+     * // Get one Documents
+     * const documents = await prisma.documents.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends documentsFindUniqueOrThrowArgs>(args: SelectSubset<T, documentsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__documentsClient<$Result.GetResult<Prisma.$documentsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Documents that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {documentsFindFirstArgs} args - Arguments to find a Documents
+     * @example
+     * // Get one Documents
+     * const documents = await prisma.documents.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends documentsFindFirstArgs>(args?: SelectSubset<T, documentsFindFirstArgs<ExtArgs>>): Prisma__documentsClient<$Result.GetResult<Prisma.$documentsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Documents that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {documentsFindFirstOrThrowArgs} args - Arguments to find a Documents
+     * @example
+     * // Get one Documents
+     * const documents = await prisma.documents.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends documentsFindFirstOrThrowArgs>(args?: SelectSubset<T, documentsFindFirstOrThrowArgs<ExtArgs>>): Prisma__documentsClient<$Result.GetResult<Prisma.$documentsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Documents that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {documentsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Documents
+     * const documents = await prisma.documents.findMany()
+     * 
+     * // Get first 10 Documents
+     * const documents = await prisma.documents.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const documentsWithIdOnly = await prisma.documents.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends documentsFindManyArgs>(args?: SelectSubset<T, documentsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$documentsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Documents.
+     * @param {documentsCreateArgs} args - Arguments to create a Documents.
+     * @example
+     * // Create one Documents
+     * const Documents = await prisma.documents.create({
+     *   data: {
+     *     // ... data to create a Documents
+     *   }
+     * })
+     * 
+     */
+    create<T extends documentsCreateArgs>(args: SelectSubset<T, documentsCreateArgs<ExtArgs>>): Prisma__documentsClient<$Result.GetResult<Prisma.$documentsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Documents.
+     * @param {documentsCreateManyArgs} args - Arguments to create many Documents.
+     * @example
+     * // Create many Documents
+     * const documents = await prisma.documents.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends documentsCreateManyArgs>(args?: SelectSubset<T, documentsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Documents and returns the data saved in the database.
+     * @param {documentsCreateManyAndReturnArgs} args - Arguments to create many Documents.
+     * @example
+     * // Create many Documents
+     * const documents = await prisma.documents.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Documents and only return the `id`
+     * const documentsWithIdOnly = await prisma.documents.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends documentsCreateManyAndReturnArgs>(args?: SelectSubset<T, documentsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$documentsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Documents.
+     * @param {documentsDeleteArgs} args - Arguments to delete one Documents.
+     * @example
+     * // Delete one Documents
+     * const Documents = await prisma.documents.delete({
+     *   where: {
+     *     // ... filter to delete one Documents
+     *   }
+     * })
+     * 
+     */
+    delete<T extends documentsDeleteArgs>(args: SelectSubset<T, documentsDeleteArgs<ExtArgs>>): Prisma__documentsClient<$Result.GetResult<Prisma.$documentsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Documents.
+     * @param {documentsUpdateArgs} args - Arguments to update one Documents.
+     * @example
+     * // Update one Documents
+     * const documents = await prisma.documents.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends documentsUpdateArgs>(args: SelectSubset<T, documentsUpdateArgs<ExtArgs>>): Prisma__documentsClient<$Result.GetResult<Prisma.$documentsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Documents.
+     * @param {documentsDeleteManyArgs} args - Arguments to filter Documents to delete.
+     * @example
+     * // Delete a few Documents
+     * const { count } = await prisma.documents.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends documentsDeleteManyArgs>(args?: SelectSubset<T, documentsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Documents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {documentsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Documents
+     * const documents = await prisma.documents.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends documentsUpdateManyArgs>(args: SelectSubset<T, documentsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Documents and returns the data updated in the database.
+     * @param {documentsUpdateManyAndReturnArgs} args - Arguments to update many Documents.
+     * @example
+     * // Update many Documents
+     * const documents = await prisma.documents.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Documents and only return the `id`
+     * const documentsWithIdOnly = await prisma.documents.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends documentsUpdateManyAndReturnArgs>(args: SelectSubset<T, documentsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$documentsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Documents.
+     * @param {documentsUpsertArgs} args - Arguments to update or create a Documents.
+     * @example
+     * // Update or create a Documents
+     * const documents = await prisma.documents.upsert({
+     *   create: {
+     *     // ... data to create a Documents
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Documents we want to update
+     *   }
+     * })
+     */
+    upsert<T extends documentsUpsertArgs>(args: SelectSubset<T, documentsUpsertArgs<ExtArgs>>): Prisma__documentsClient<$Result.GetResult<Prisma.$documentsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Documents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {documentsCountArgs} args - Arguments to filter Documents to count.
+     * @example
+     * // Count the number of Documents
+     * const count = await prisma.documents.count({
+     *   where: {
+     *     // ... the filter for the Documents we want to count
+     *   }
+     * })
+    **/
+    count<T extends documentsCountArgs>(
+      args?: Subset<T, documentsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DocumentsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Documents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DocumentsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DocumentsAggregateArgs>(args: Subset<T, DocumentsAggregateArgs>): Prisma.PrismaPromise<GetDocumentsAggregateType<T>>
+
+    /**
+     * Group by Documents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {documentsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends documentsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: documentsGroupByArgs['orderBy'] }
+        : { orderBy?: documentsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, documentsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDocumentsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the documents model
+   */
+  readonly fields: documentsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for documents.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__documentsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the documents model
+   */
+  interface documentsFieldRefs {
+    readonly id: FieldRef<"documents", 'BigInt'>
+    readonly content: FieldRef<"documents", 'String'>
+    readonly metadata: FieldRef<"documents", 'Json'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * documents findUnique
+   */
+  export type documentsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the documents
+     */
+    select?: documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the documents
+     */
+    omit?: documentsOmit<ExtArgs> | null
+    /**
+     * Filter, which documents to fetch.
+     */
+    where: documentsWhereUniqueInput
+  }
+
+  /**
+   * documents findUniqueOrThrow
+   */
+  export type documentsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the documents
+     */
+    select?: documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the documents
+     */
+    omit?: documentsOmit<ExtArgs> | null
+    /**
+     * Filter, which documents to fetch.
+     */
+    where: documentsWhereUniqueInput
+  }
+
+  /**
+   * documents findFirst
+   */
+  export type documentsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the documents
+     */
+    select?: documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the documents
+     */
+    omit?: documentsOmit<ExtArgs> | null
+    /**
+     * Filter, which documents to fetch.
+     */
+    where?: documentsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of documents to fetch.
+     */
+    orderBy?: documentsOrderByWithRelationInput | documentsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for documents.
+     */
+    cursor?: documentsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` documents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` documents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of documents.
+     */
+    distinct?: DocumentsScalarFieldEnum | DocumentsScalarFieldEnum[]
+  }
+
+  /**
+   * documents findFirstOrThrow
+   */
+  export type documentsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the documents
+     */
+    select?: documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the documents
+     */
+    omit?: documentsOmit<ExtArgs> | null
+    /**
+     * Filter, which documents to fetch.
+     */
+    where?: documentsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of documents to fetch.
+     */
+    orderBy?: documentsOrderByWithRelationInput | documentsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for documents.
+     */
+    cursor?: documentsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` documents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` documents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of documents.
+     */
+    distinct?: DocumentsScalarFieldEnum | DocumentsScalarFieldEnum[]
+  }
+
+  /**
+   * documents findMany
+   */
+  export type documentsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the documents
+     */
+    select?: documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the documents
+     */
+    omit?: documentsOmit<ExtArgs> | null
+    /**
+     * Filter, which documents to fetch.
+     */
+    where?: documentsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of documents to fetch.
+     */
+    orderBy?: documentsOrderByWithRelationInput | documentsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing documents.
+     */
+    cursor?: documentsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` documents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` documents.
+     */
+    skip?: number
+    distinct?: DocumentsScalarFieldEnum | DocumentsScalarFieldEnum[]
+  }
+
+  /**
+   * documents create
+   */
+  export type documentsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the documents
+     */
+    select?: documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the documents
+     */
+    omit?: documentsOmit<ExtArgs> | null
+    /**
+     * The data needed to create a documents.
+     */
+    data?: XOR<documentsCreateInput, documentsUncheckedCreateInput>
+  }
+
+  /**
+   * documents createMany
+   */
+  export type documentsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many documents.
+     */
+    data: documentsCreateManyInput | documentsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * documents createManyAndReturn
+   */
+  export type documentsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the documents
+     */
+    select?: documentsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the documents
+     */
+    omit?: documentsOmit<ExtArgs> | null
+    /**
+     * The data used to create many documents.
+     */
+    data: documentsCreateManyInput | documentsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * documents update
+   */
+  export type documentsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the documents
+     */
+    select?: documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the documents
+     */
+    omit?: documentsOmit<ExtArgs> | null
+    /**
+     * The data needed to update a documents.
+     */
+    data: XOR<documentsUpdateInput, documentsUncheckedUpdateInput>
+    /**
+     * Choose, which documents to update.
+     */
+    where: documentsWhereUniqueInput
+  }
+
+  /**
+   * documents updateMany
+   */
+  export type documentsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update documents.
+     */
+    data: XOR<documentsUpdateManyMutationInput, documentsUncheckedUpdateManyInput>
+    /**
+     * Filter which documents to update
+     */
+    where?: documentsWhereInput
+    /**
+     * Limit how many documents to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * documents updateManyAndReturn
+   */
+  export type documentsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the documents
+     */
+    select?: documentsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the documents
+     */
+    omit?: documentsOmit<ExtArgs> | null
+    /**
+     * The data used to update documents.
+     */
+    data: XOR<documentsUpdateManyMutationInput, documentsUncheckedUpdateManyInput>
+    /**
+     * Filter which documents to update
+     */
+    where?: documentsWhereInput
+    /**
+     * Limit how many documents to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * documents upsert
+   */
+  export type documentsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the documents
+     */
+    select?: documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the documents
+     */
+    omit?: documentsOmit<ExtArgs> | null
+    /**
+     * The filter to search for the documents to update in case it exists.
+     */
+    where: documentsWhereUniqueInput
+    /**
+     * In case the documents found by the `where` argument doesn't exist, create a new documents with this data.
+     */
+    create: XOR<documentsCreateInput, documentsUncheckedCreateInput>
+    /**
+     * In case the documents was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<documentsUpdateInput, documentsUncheckedUpdateInput>
+  }
+
+  /**
+   * documents delete
+   */
+  export type documentsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the documents
+     */
+    select?: documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the documents
+     */
+    omit?: documentsOmit<ExtArgs> | null
+    /**
+     * Filter which documents to delete.
+     */
+    where: documentsWhereUniqueInput
+  }
+
+  /**
+   * documents deleteMany
+   */
+  export type documentsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which documents to delete
+     */
+    where?: documentsWhereInput
+    /**
+     * Limit how many documents to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * documents without action
+   */
+  export type documentsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the documents
+     */
+    select?: documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the documents
+     */
+    omit?: documentsOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -13904,7 +15033,9 @@ export namespace Prisma {
     url: 'url',
     attachments: 'attachments',
     extra: 'extra',
-    relevance_score: 'relevance_score'
+    relevance_score: 'relevance_score',
+    raw_text: 'raw_text',
+    content_hash: 'content_hash'
   };
 
   export type OpportunitiesScalarFieldEnum = (typeof OpportunitiesScalarFieldEnum)[keyof typeof OpportunitiesScalarFieldEnum]
@@ -13928,34 +15059,35 @@ export namespace Prisma {
   export const OrganizationScalarFieldEnum: {
     id: 'id',
     name: 'name',
-    slug: 'slug',
-    role: 'role',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    organizationLogo: 'organizationLogo',
-    website: 'website',
-    missionStatement: 'missionStatement',
-    strategicPlan: 'strategicPlan',
-    annualOperatingBudget: 'annualOperatingBudget',
-    fiscalYearEnd: 'fiscalYearEnd',
-    phone: 'phone',
-    email: 'email',
-    organizationLeaderName: 'organizationLeaderName',
+    slug: 'slug',
+    role: 'role',
     address: 'address',
+    annualOperatingBudget: 'annualOperatingBudget',
     city: 'city',
+    email: 'email',
+    fiscalYearEnd: 'fiscalYearEnd',
+    missionStatement: 'missionStatement',
+    organizationLeaderName: 'organizationLeaderName',
+    organizationLogo: 'organizationLogo',
+    phone: 'phone',
     state: 'state',
+    website: 'website',
     zipCode: 'zipCode',
+    strategicPlan: 'strategicPlan',
+    onboardingCompleted: 'onboardingCompleted',
     countyName: 'countyName',
-    latitude: 'latitude',
-    longitude: 'longitude',
-    leaId: 'leaId',
-    stateLeaId: 'stateLeaId',
+    districtDataYear: 'districtDataYear',
     enrollment: 'enrollment',
-    numberOfSchools: 'numberOfSchools',
-    lowestGrade: 'lowestGrade',
     highestGrade: 'highestGrade',
-    urbanCentricLocale: 'urbanCentricLocale',
-    districtDataYear: 'districtDataYear'
+    latitude: 'latitude',
+    leaId: 'leaId',
+    longitude: 'longitude',
+    lowestGrade: 'lowestGrade',
+    numberOfSchools: 'numberOfSchools',
+    stateLeaId: 'stateLeaId',
+    urbanCentricLocale: 'urbanCentricLocale'
   };
 
   export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
@@ -13965,9 +15097,9 @@ export namespace Prisma {
     id: 'id',
     notes: 'notes',
     createdAt: 'createdAt',
-    organizationId: 'organizationId',
     userId: 'userId',
-    opportunityId: 'opportunityId'
+    opportunityId: 'opportunityId',
+    organizationId: 'organizationId'
   };
 
   export type GrantBookmarkScalarFieldEnum = (typeof GrantBookmarkScalarFieldEnum)[keyof typeof GrantBookmarkScalarFieldEnum]
@@ -13981,8 +15113,8 @@ export namespace Prisma {
     risks: 'risks',
     confidence: 'confidence',
     createdAt: 'createdAt',
-    organizationId: 'organizationId',
-    opportunityId: 'opportunityId'
+    opportunityId: 'opportunityId',
+    organizationId: 'organizationId'
   };
 
   export type GrantEligibilityAnalysisScalarFieldEnum = (typeof GrantEligibilityAnalysisScalarFieldEnum)[keyof typeof GrantEligibilityAnalysisScalarFieldEnum]
@@ -13991,7 +15123,6 @@ export namespace Prisma {
   export const ApplicationScalarFieldEnum: {
     id: 'id',
     opportunityId: 'opportunityId',
-    organizationId: 'organizationId',
     status: 'status',
     content: 'content',
     contentHtml: 'contentHtml',
@@ -14001,7 +15132,8 @@ export namespace Prisma {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     submittedAt: 'submittedAt',
-    lastEditedAt: 'lastEditedAt'
+    lastEditedAt: 'lastEditedAt',
+    organizationId: 'organizationId'
   };
 
   export type ApplicationScalarFieldEnum = (typeof ApplicationScalarFieldEnum)[keyof typeof ApplicationScalarFieldEnum]
@@ -14013,9 +15145,9 @@ export namespace Prisma {
     context: 'context',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    organizationId: 'organizationId',
     userId: 'userId',
-    applicationId: 'applicationId'
+    applicationId: 'applicationId',
+    organizationId: 'organizationId'
   };
 
   export type AiChatScalarFieldEnum = (typeof AiChatScalarFieldEnum)[keyof typeof AiChatScalarFieldEnum]
@@ -14046,6 +15178,15 @@ export namespace Prisma {
   };
 
   export type RecommendationScalarFieldEnum = (typeof RecommendationScalarFieldEnum)[keyof typeof RecommendationScalarFieldEnum]
+
+
+  export const DocumentsScalarFieldEnum: {
+    id: 'id',
+    content: 'content',
+    metadata: 'metadata'
+  };
+
+  export type DocumentsScalarFieldEnum = (typeof DocumentsScalarFieldEnum)[keyof typeof DocumentsScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -14267,6 +15408,20 @@ export namespace Prisma {
    */
   export type ListEnumMessageRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageRole[]'>
     
+
+
+  /**
+   * Reference to a field of type 'BigInt'
+   */
+  export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
+    
+
+
+  /**
+   * Reference to a field of type 'BigInt[]'
+   */
+  export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
+    
   /**
    * Deep Input Types
    */
@@ -14337,6 +15492,8 @@ export namespace Prisma {
     attachments?: JsonNullableFilter<"opportunities">
     extra?: JsonNullableFilter<"opportunities">
     relevance_score?: IntNullableFilter<"opportunities"> | number | null
+    raw_text?: StringNullableFilter<"opportunities"> | string | null
+    content_hash?: StringNullableFilter<"opportunities"> | string | null
   }
 
   export type opportunitiesOrderByWithRelationInput = {
@@ -14369,6 +15526,8 @@ export namespace Prisma {
     attachments?: SortOrderInput | SortOrder
     extra?: SortOrderInput | SortOrder
     relevance_score?: SortOrderInput | SortOrder
+    raw_text?: SortOrderInput | SortOrder
+    content_hash?: SortOrderInput | SortOrder
   }
 
   export type opportunitiesWhereUniqueInput = Prisma.AtLeast<{
@@ -14404,6 +15563,8 @@ export namespace Prisma {
     attachments?: JsonNullableFilter<"opportunities">
     extra?: JsonNullableFilter<"opportunities">
     relevance_score?: IntNullableFilter<"opportunities"> | number | null
+    raw_text?: StringNullableFilter<"opportunities"> | string | null
+    content_hash?: StringNullableFilter<"opportunities"> | string | null
   }, "id">
 
   export type opportunitiesOrderByWithAggregationInput = {
@@ -14436,6 +15597,8 @@ export namespace Prisma {
     attachments?: SortOrderInput | SortOrder
     extra?: SortOrderInput | SortOrder
     relevance_score?: SortOrderInput | SortOrder
+    raw_text?: SortOrderInput | SortOrder
+    content_hash?: SortOrderInput | SortOrder
     _count?: opportunitiesCountOrderByAggregateInput
     _avg?: opportunitiesAvgOrderByAggregateInput
     _max?: opportunitiesMaxOrderByAggregateInput
@@ -14476,6 +15639,8 @@ export namespace Prisma {
     attachments?: JsonNullableWithAggregatesFilter<"opportunities">
     extra?: JsonNullableWithAggregatesFilter<"opportunities">
     relevance_score?: IntNullableWithAggregatesFilter<"opportunities"> | number | null
+    raw_text?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
+    content_hash?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
   }
 
   export type UserWhereInput = {
@@ -14565,34 +15730,35 @@ export namespace Prisma {
     NOT?: OrganizationWhereInput | OrganizationWhereInput[]
     id?: StringFilter<"Organization"> | string
     name?: StringFilter<"Organization"> | string
-    slug?: StringFilter<"Organization"> | string
-    role?: EnumOrganizationRoleFilter<"Organization"> | $Enums.OrganizationRole
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
-    organizationLogo?: StringNullableFilter<"Organization"> | string | null
-    website?: StringNullableFilter<"Organization"> | string | null
-    missionStatement?: StringNullableFilter<"Organization"> | string | null
-    strategicPlan?: StringNullableFilter<"Organization"> | string | null
-    annualOperatingBudget?: DecimalNullableFilter<"Organization"> | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: StringNullableFilter<"Organization"> | string | null
-    phone?: StringNullableFilter<"Organization"> | string | null
-    email?: StringNullableFilter<"Organization"> | string | null
-    organizationLeaderName?: StringNullableFilter<"Organization"> | string | null
+    slug?: StringFilter<"Organization"> | string
+    role?: EnumOrganizationRoleFilter<"Organization"> | $Enums.OrganizationRole
     address?: StringNullableFilter<"Organization"> | string | null
+    annualOperatingBudget?: DecimalNullableFilter<"Organization"> | Decimal | DecimalJsLike | number | string | null
     city?: StringNullableFilter<"Organization"> | string | null
+    email?: StringNullableFilter<"Organization"> | string | null
+    fiscalYearEnd?: StringNullableFilter<"Organization"> | string | null
+    missionStatement?: StringNullableFilter<"Organization"> | string | null
+    organizationLeaderName?: StringNullableFilter<"Organization"> | string | null
+    organizationLogo?: StringNullableFilter<"Organization"> | string | null
+    phone?: StringNullableFilter<"Organization"> | string | null
     state?: StringNullableFilter<"Organization"> | string | null
+    website?: StringNullableFilter<"Organization"> | string | null
     zipCode?: StringNullableFilter<"Organization"> | string | null
+    strategicPlan?: StringNullableFilter<"Organization"> | string | null
+    onboardingCompleted?: BoolFilter<"Organization"> | boolean
     countyName?: StringNullableFilter<"Organization"> | string | null
-    latitude?: FloatNullableFilter<"Organization"> | number | null
-    longitude?: FloatNullableFilter<"Organization"> | number | null
-    leaId?: StringNullableFilter<"Organization"> | string | null
-    stateLeaId?: StringNullableFilter<"Organization"> | string | null
-    enrollment?: IntNullableFilter<"Organization"> | number | null
-    numberOfSchools?: IntNullableFilter<"Organization"> | number | null
-    lowestGrade?: IntNullableFilter<"Organization"> | number | null
-    highestGrade?: IntNullableFilter<"Organization"> | number | null
-    urbanCentricLocale?: IntNullableFilter<"Organization"> | number | null
     districtDataYear?: IntNullableFilter<"Organization"> | number | null
+    enrollment?: IntNullableFilter<"Organization"> | number | null
+    highestGrade?: IntNullableFilter<"Organization"> | number | null
+    latitude?: FloatNullableFilter<"Organization"> | number | null
+    leaId?: StringNullableFilter<"Organization"> | string | null
+    longitude?: FloatNullableFilter<"Organization"> | number | null
+    lowestGrade?: IntNullableFilter<"Organization"> | number | null
+    numberOfSchools?: IntNullableFilter<"Organization"> | number | null
+    stateLeaId?: StringNullableFilter<"Organization"> | string | null
+    urbanCentricLocale?: IntNullableFilter<"Organization"> | number | null
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
@@ -14604,34 +15770,35 @@ export namespace Prisma {
   export type OrganizationOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
-    slug?: SortOrder
-    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    organizationLogo?: SortOrderInput | SortOrder
-    website?: SortOrderInput | SortOrder
-    missionStatement?: SortOrderInput | SortOrder
-    strategicPlan?: SortOrderInput | SortOrder
-    annualOperatingBudget?: SortOrderInput | SortOrder
-    fiscalYearEnd?: SortOrderInput | SortOrder
-    phone?: SortOrderInput | SortOrder
-    email?: SortOrderInput | SortOrder
-    organizationLeaderName?: SortOrderInput | SortOrder
+    slug?: SortOrder
+    role?: SortOrder
     address?: SortOrderInput | SortOrder
+    annualOperatingBudget?: SortOrderInput | SortOrder
     city?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    fiscalYearEnd?: SortOrderInput | SortOrder
+    missionStatement?: SortOrderInput | SortOrder
+    organizationLeaderName?: SortOrderInput | SortOrder
+    organizationLogo?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
     state?: SortOrderInput | SortOrder
+    website?: SortOrderInput | SortOrder
     zipCode?: SortOrderInput | SortOrder
+    strategicPlan?: SortOrderInput | SortOrder
+    onboardingCompleted?: SortOrder
     countyName?: SortOrderInput | SortOrder
-    latitude?: SortOrderInput | SortOrder
-    longitude?: SortOrderInput | SortOrder
-    leaId?: SortOrderInput | SortOrder
-    stateLeaId?: SortOrderInput | SortOrder
-    enrollment?: SortOrderInput | SortOrder
-    numberOfSchools?: SortOrderInput | SortOrder
-    lowestGrade?: SortOrderInput | SortOrder
-    highestGrade?: SortOrderInput | SortOrder
-    urbanCentricLocale?: SortOrderInput | SortOrder
     districtDataYear?: SortOrderInput | SortOrder
+    enrollment?: SortOrderInput | SortOrder
+    highestGrade?: SortOrderInput | SortOrder
+    latitude?: SortOrderInput | SortOrder
+    leaId?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
+    lowestGrade?: SortOrderInput | SortOrder
+    numberOfSchools?: SortOrderInput | SortOrder
+    stateLeaId?: SortOrderInput | SortOrder
+    urbanCentricLocale?: SortOrderInput | SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     applications?: ApplicationOrderByRelationAggregateInput
     grantBookmarks?: GrantBookmarkOrderByRelationAggregateInput
@@ -14648,32 +15815,33 @@ export namespace Prisma {
     OR?: OrganizationWhereInput[]
     NOT?: OrganizationWhereInput | OrganizationWhereInput[]
     name?: StringFilter<"Organization"> | string
-    role?: EnumOrganizationRoleFilter<"Organization"> | $Enums.OrganizationRole
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
-    organizationLogo?: StringNullableFilter<"Organization"> | string | null
-    website?: StringNullableFilter<"Organization"> | string | null
-    missionStatement?: StringNullableFilter<"Organization"> | string | null
-    strategicPlan?: StringNullableFilter<"Organization"> | string | null
-    annualOperatingBudget?: DecimalNullableFilter<"Organization"> | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: StringNullableFilter<"Organization"> | string | null
-    phone?: StringNullableFilter<"Organization"> | string | null
-    email?: StringNullableFilter<"Organization"> | string | null
-    organizationLeaderName?: StringNullableFilter<"Organization"> | string | null
+    role?: EnumOrganizationRoleFilter<"Organization"> | $Enums.OrganizationRole
     address?: StringNullableFilter<"Organization"> | string | null
+    annualOperatingBudget?: DecimalNullableFilter<"Organization"> | Decimal | DecimalJsLike | number | string | null
     city?: StringNullableFilter<"Organization"> | string | null
+    email?: StringNullableFilter<"Organization"> | string | null
+    fiscalYearEnd?: StringNullableFilter<"Organization"> | string | null
+    missionStatement?: StringNullableFilter<"Organization"> | string | null
+    organizationLeaderName?: StringNullableFilter<"Organization"> | string | null
+    organizationLogo?: StringNullableFilter<"Organization"> | string | null
+    phone?: StringNullableFilter<"Organization"> | string | null
     state?: StringNullableFilter<"Organization"> | string | null
+    website?: StringNullableFilter<"Organization"> | string | null
     zipCode?: StringNullableFilter<"Organization"> | string | null
+    strategicPlan?: StringNullableFilter<"Organization"> | string | null
+    onboardingCompleted?: BoolFilter<"Organization"> | boolean
     countyName?: StringNullableFilter<"Organization"> | string | null
+    districtDataYear?: IntNullableFilter<"Organization"> | number | null
+    enrollment?: IntNullableFilter<"Organization"> | number | null
+    highestGrade?: IntNullableFilter<"Organization"> | number | null
     latitude?: FloatNullableFilter<"Organization"> | number | null
     longitude?: FloatNullableFilter<"Organization"> | number | null
-    stateLeaId?: StringNullableFilter<"Organization"> | string | null
-    enrollment?: IntNullableFilter<"Organization"> | number | null
-    numberOfSchools?: IntNullableFilter<"Organization"> | number | null
     lowestGrade?: IntNullableFilter<"Organization"> | number | null
-    highestGrade?: IntNullableFilter<"Organization"> | number | null
+    numberOfSchools?: IntNullableFilter<"Organization"> | number | null
+    stateLeaId?: StringNullableFilter<"Organization"> | string | null
     urbanCentricLocale?: IntNullableFilter<"Organization"> | number | null
-    districtDataYear?: IntNullableFilter<"Organization"> | number | null
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
@@ -14685,34 +15853,35 @@ export namespace Prisma {
   export type OrganizationOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
-    slug?: SortOrder
-    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    organizationLogo?: SortOrderInput | SortOrder
-    website?: SortOrderInput | SortOrder
-    missionStatement?: SortOrderInput | SortOrder
-    strategicPlan?: SortOrderInput | SortOrder
-    annualOperatingBudget?: SortOrderInput | SortOrder
-    fiscalYearEnd?: SortOrderInput | SortOrder
-    phone?: SortOrderInput | SortOrder
-    email?: SortOrderInput | SortOrder
-    organizationLeaderName?: SortOrderInput | SortOrder
+    slug?: SortOrder
+    role?: SortOrder
     address?: SortOrderInput | SortOrder
+    annualOperatingBudget?: SortOrderInput | SortOrder
     city?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    fiscalYearEnd?: SortOrderInput | SortOrder
+    missionStatement?: SortOrderInput | SortOrder
+    organizationLeaderName?: SortOrderInput | SortOrder
+    organizationLogo?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
     state?: SortOrderInput | SortOrder
+    website?: SortOrderInput | SortOrder
     zipCode?: SortOrderInput | SortOrder
+    strategicPlan?: SortOrderInput | SortOrder
+    onboardingCompleted?: SortOrder
     countyName?: SortOrderInput | SortOrder
-    latitude?: SortOrderInput | SortOrder
-    longitude?: SortOrderInput | SortOrder
-    leaId?: SortOrderInput | SortOrder
-    stateLeaId?: SortOrderInput | SortOrder
-    enrollment?: SortOrderInput | SortOrder
-    numberOfSchools?: SortOrderInput | SortOrder
-    lowestGrade?: SortOrderInput | SortOrder
-    highestGrade?: SortOrderInput | SortOrder
-    urbanCentricLocale?: SortOrderInput | SortOrder
     districtDataYear?: SortOrderInput | SortOrder
+    enrollment?: SortOrderInput | SortOrder
+    highestGrade?: SortOrderInput | SortOrder
+    latitude?: SortOrderInput | SortOrder
+    leaId?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
+    lowestGrade?: SortOrderInput | SortOrder
+    numberOfSchools?: SortOrderInput | SortOrder
+    stateLeaId?: SortOrderInput | SortOrder
+    urbanCentricLocale?: SortOrderInput | SortOrder
     _count?: OrganizationCountOrderByAggregateInput
     _avg?: OrganizationAvgOrderByAggregateInput
     _max?: OrganizationMaxOrderByAggregateInput
@@ -14726,34 +15895,35 @@ export namespace Prisma {
     NOT?: OrganizationScalarWhereWithAggregatesInput | OrganizationScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Organization"> | string
     name?: StringWithAggregatesFilter<"Organization"> | string
-    slug?: StringWithAggregatesFilter<"Organization"> | string
-    role?: EnumOrganizationRoleWithAggregatesFilter<"Organization"> | $Enums.OrganizationRole
     createdAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
-    organizationLogo?: StringNullableWithAggregatesFilter<"Organization"> | string | null
-    website?: StringNullableWithAggregatesFilter<"Organization"> | string | null
-    missionStatement?: StringNullableWithAggregatesFilter<"Organization"> | string | null
-    strategicPlan?: StringNullableWithAggregatesFilter<"Organization"> | string | null
-    annualOperatingBudget?: DecimalNullableWithAggregatesFilter<"Organization"> | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: StringNullableWithAggregatesFilter<"Organization"> | string | null
-    phone?: StringNullableWithAggregatesFilter<"Organization"> | string | null
-    email?: StringNullableWithAggregatesFilter<"Organization"> | string | null
-    organizationLeaderName?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    slug?: StringWithAggregatesFilter<"Organization"> | string
+    role?: EnumOrganizationRoleWithAggregatesFilter<"Organization"> | $Enums.OrganizationRole
     address?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    annualOperatingBudget?: DecimalNullableWithAggregatesFilter<"Organization"> | Decimal | DecimalJsLike | number | string | null
     city?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    email?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    fiscalYearEnd?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    missionStatement?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    organizationLeaderName?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    organizationLogo?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     state?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    website?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     zipCode?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    strategicPlan?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    onboardingCompleted?: BoolWithAggregatesFilter<"Organization"> | boolean
     countyName?: StringNullableWithAggregatesFilter<"Organization"> | string | null
-    latitude?: FloatNullableWithAggregatesFilter<"Organization"> | number | null
-    longitude?: FloatNullableWithAggregatesFilter<"Organization"> | number | null
-    leaId?: StringNullableWithAggregatesFilter<"Organization"> | string | null
-    stateLeaId?: StringNullableWithAggregatesFilter<"Organization"> | string | null
-    enrollment?: IntNullableWithAggregatesFilter<"Organization"> | number | null
-    numberOfSchools?: IntNullableWithAggregatesFilter<"Organization"> | number | null
-    lowestGrade?: IntNullableWithAggregatesFilter<"Organization"> | number | null
-    highestGrade?: IntNullableWithAggregatesFilter<"Organization"> | number | null
-    urbanCentricLocale?: IntNullableWithAggregatesFilter<"Organization"> | number | null
     districtDataYear?: IntNullableWithAggregatesFilter<"Organization"> | number | null
+    enrollment?: IntNullableWithAggregatesFilter<"Organization"> | number | null
+    highestGrade?: IntNullableWithAggregatesFilter<"Organization"> | number | null
+    latitude?: FloatNullableWithAggregatesFilter<"Organization"> | number | null
+    leaId?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    longitude?: FloatNullableWithAggregatesFilter<"Organization"> | number | null
+    lowestGrade?: IntNullableWithAggregatesFilter<"Organization"> | number | null
+    numberOfSchools?: IntNullableWithAggregatesFilter<"Organization"> | number | null
+    stateLeaId?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    urbanCentricLocale?: IntNullableWithAggregatesFilter<"Organization"> | number | null
   }
 
   export type GrantBookmarkWhereInput = {
@@ -14763,22 +15933,22 @@ export namespace Prisma {
     id?: StringFilter<"GrantBookmark"> | string
     notes?: StringNullableFilter<"GrantBookmark"> | string | null
     createdAt?: DateTimeFilter<"GrantBookmark"> | Date | string
-    organizationId?: StringFilter<"GrantBookmark"> | string
     userId?: UuidFilter<"GrantBookmark"> | string
     opportunityId?: IntFilter<"GrantBookmark"> | number
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    organizationId?: StringFilter<"GrantBookmark"> | string
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type GrantBookmarkOrderByWithRelationInput = {
     id?: SortOrder
     notes?: SortOrderInput | SortOrder
     createdAt?: SortOrder
-    organizationId?: SortOrder
     userId?: SortOrder
     opportunityId?: SortOrder
-    user?: UserOrderByWithRelationInput
+    organizationId?: SortOrder
     organization?: OrganizationOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type GrantBookmarkWhereUniqueInput = Prisma.AtLeast<{
@@ -14789,20 +15959,20 @@ export namespace Prisma {
     NOT?: GrantBookmarkWhereInput | GrantBookmarkWhereInput[]
     notes?: StringNullableFilter<"GrantBookmark"> | string | null
     createdAt?: DateTimeFilter<"GrantBookmark"> | Date | string
-    organizationId?: StringFilter<"GrantBookmark"> | string
     userId?: UuidFilter<"GrantBookmark"> | string
     opportunityId?: IntFilter<"GrantBookmark"> | number
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    organizationId?: StringFilter<"GrantBookmark"> | string
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "userId_opportunityId_organizationId">
 
   export type GrantBookmarkOrderByWithAggregationInput = {
     id?: SortOrder
     notes?: SortOrderInput | SortOrder
     createdAt?: SortOrder
-    organizationId?: SortOrder
     userId?: SortOrder
     opportunityId?: SortOrder
+    organizationId?: SortOrder
     _count?: GrantBookmarkCountOrderByAggregateInput
     _avg?: GrantBookmarkAvgOrderByAggregateInput
     _max?: GrantBookmarkMaxOrderByAggregateInput
@@ -14817,9 +15987,9 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"GrantBookmark"> | string
     notes?: StringNullableWithAggregatesFilter<"GrantBookmark"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"GrantBookmark"> | Date | string
-    organizationId?: StringWithAggregatesFilter<"GrantBookmark"> | string
     userId?: UuidWithAggregatesFilter<"GrantBookmark"> | string
     opportunityId?: IntWithAggregatesFilter<"GrantBookmark"> | number
+    organizationId?: StringWithAggregatesFilter<"GrantBookmark"> | string
   }
 
   export type GrantEligibilityAnalysisWhereInput = {
@@ -14833,8 +16003,8 @@ export namespace Prisma {
     risks?: StringNullableFilter<"GrantEligibilityAnalysis"> | string | null
     confidence?: FloatNullableFilter<"GrantEligibilityAnalysis"> | number | null
     createdAt?: DateTimeFilter<"GrantEligibilityAnalysis"> | Date | string
-    organizationId?: StringFilter<"GrantEligibilityAnalysis"> | string
     opportunityId?: IntFilter<"GrantEligibilityAnalysis"> | number
+    organizationId?: StringFilter<"GrantEligibilityAnalysis"> | string
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
   }
 
@@ -14846,8 +16016,8 @@ export namespace Prisma {
     risks?: SortOrderInput | SortOrder
     confidence?: SortOrderInput | SortOrder
     createdAt?: SortOrder
-    organizationId?: SortOrder
     opportunityId?: SortOrder
+    organizationId?: SortOrder
     organization?: OrganizationOrderByWithRelationInput
   }
 
@@ -14863,8 +16033,8 @@ export namespace Prisma {
     risks?: StringNullableFilter<"GrantEligibilityAnalysis"> | string | null
     confidence?: FloatNullableFilter<"GrantEligibilityAnalysis"> | number | null
     createdAt?: DateTimeFilter<"GrantEligibilityAnalysis"> | Date | string
-    organizationId?: StringFilter<"GrantEligibilityAnalysis"> | string
     opportunityId?: IntFilter<"GrantEligibilityAnalysis"> | number
+    organizationId?: StringFilter<"GrantEligibilityAnalysis"> | string
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
   }, "id" | "opportunityId_organizationId">
 
@@ -14876,8 +16046,8 @@ export namespace Prisma {
     risks?: SortOrderInput | SortOrder
     confidence?: SortOrderInput | SortOrder
     createdAt?: SortOrder
-    organizationId?: SortOrder
     opportunityId?: SortOrder
+    organizationId?: SortOrder
     _count?: GrantEligibilityAnalysisCountOrderByAggregateInput
     _avg?: GrantEligibilityAnalysisAvgOrderByAggregateInput
     _max?: GrantEligibilityAnalysisMaxOrderByAggregateInput
@@ -14896,8 +16066,8 @@ export namespace Prisma {
     risks?: StringNullableWithAggregatesFilter<"GrantEligibilityAnalysis"> | string | null
     confidence?: FloatNullableWithAggregatesFilter<"GrantEligibilityAnalysis"> | number | null
     createdAt?: DateTimeWithAggregatesFilter<"GrantEligibilityAnalysis"> | Date | string
-    organizationId?: StringWithAggregatesFilter<"GrantEligibilityAnalysis"> | string
     opportunityId?: IntWithAggregatesFilter<"GrantEligibilityAnalysis"> | number
+    organizationId?: StringWithAggregatesFilter<"GrantEligibilityAnalysis"> | string
   }
 
   export type ApplicationWhereInput = {
@@ -14906,7 +16076,6 @@ export namespace Prisma {
     NOT?: ApplicationWhereInput | ApplicationWhereInput[]
     id?: StringFilter<"Application"> | string
     opportunityId?: IntFilter<"Application"> | number
-    organizationId?: StringFilter<"Application"> | string
     status?: EnumApplicationStatusFilter<"Application"> | $Enums.ApplicationStatus
     content?: JsonNullableFilter<"Application">
     contentHtml?: StringNullableFilter<"Application"> | string | null
@@ -14917,6 +16086,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Application"> | Date | string
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
+    organizationId?: StringFilter<"Application"> | string
     aiChats?: AiChatListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
   }
@@ -14924,7 +16094,6 @@ export namespace Prisma {
   export type ApplicationOrderByWithRelationInput = {
     id?: SortOrder
     opportunityId?: SortOrder
-    organizationId?: SortOrder
     status?: SortOrder
     content?: SortOrderInput | SortOrder
     contentHtml?: SortOrderInput | SortOrder
@@ -14935,6 +16104,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     submittedAt?: SortOrderInput | SortOrder
     lastEditedAt?: SortOrder
+    organizationId?: SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     organization?: OrganizationOrderByWithRelationInput
   }
@@ -14946,7 +16116,6 @@ export namespace Prisma {
     OR?: ApplicationWhereInput[]
     NOT?: ApplicationWhereInput | ApplicationWhereInput[]
     opportunityId?: IntFilter<"Application"> | number
-    organizationId?: StringFilter<"Application"> | string
     status?: EnumApplicationStatusFilter<"Application"> | $Enums.ApplicationStatus
     content?: JsonNullableFilter<"Application">
     contentHtml?: StringNullableFilter<"Application"> | string | null
@@ -14957,6 +16126,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Application"> | Date | string
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
+    organizationId?: StringFilter<"Application"> | string
     aiChats?: AiChatListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
   }, "id" | "opportunityId_organizationId">
@@ -14964,7 +16134,6 @@ export namespace Prisma {
   export type ApplicationOrderByWithAggregationInput = {
     id?: SortOrder
     opportunityId?: SortOrder
-    organizationId?: SortOrder
     status?: SortOrder
     content?: SortOrderInput | SortOrder
     contentHtml?: SortOrderInput | SortOrder
@@ -14975,6 +16144,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     submittedAt?: SortOrderInput | SortOrder
     lastEditedAt?: SortOrder
+    organizationId?: SortOrder
     _count?: ApplicationCountOrderByAggregateInput
     _avg?: ApplicationAvgOrderByAggregateInput
     _max?: ApplicationMaxOrderByAggregateInput
@@ -14988,7 +16158,6 @@ export namespace Prisma {
     NOT?: ApplicationScalarWhereWithAggregatesInput | ApplicationScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Application"> | string
     opportunityId?: IntWithAggregatesFilter<"Application"> | number
-    organizationId?: StringWithAggregatesFilter<"Application"> | string
     status?: EnumApplicationStatusWithAggregatesFilter<"Application"> | $Enums.ApplicationStatus
     content?: JsonNullableWithAggregatesFilter<"Application">
     contentHtml?: StringNullableWithAggregatesFilter<"Application"> | string | null
@@ -14999,6 +16168,7 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
     submittedAt?: DateTimeNullableWithAggregatesFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
+    organizationId?: StringWithAggregatesFilter<"Application"> | string
   }
 
   export type AiChatWhereInput = {
@@ -15010,13 +16180,13 @@ export namespace Prisma {
     context?: EnumAiChatContextFilter<"AiChat"> | $Enums.AiChatContext
     createdAt?: DateTimeFilter<"AiChat"> | Date | string
     updatedAt?: DateTimeFilter<"AiChat"> | Date | string
-    organizationId?: StringFilter<"AiChat"> | string
     userId?: UuidFilter<"AiChat"> | string
     applicationId?: StringNullableFilter<"AiChat"> | string | null
+    organizationId?: StringFilter<"AiChat"> | string
     messages?: AiChatMessageListRelationFilter
     application?: XOR<ApplicationNullableScalarRelationFilter, ApplicationWhereInput> | null
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type AiChatOrderByWithRelationInput = {
@@ -15025,13 +16195,13 @@ export namespace Prisma {
     context?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    organizationId?: SortOrder
     userId?: SortOrder
     applicationId?: SortOrderInput | SortOrder
+    organizationId?: SortOrder
     messages?: AiChatMessageOrderByRelationAggregateInput
     application?: ApplicationOrderByWithRelationInput
-    user?: UserOrderByWithRelationInput
     organization?: OrganizationOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type AiChatWhereUniqueInput = Prisma.AtLeast<{
@@ -15043,13 +16213,13 @@ export namespace Prisma {
     context?: EnumAiChatContextFilter<"AiChat"> | $Enums.AiChatContext
     createdAt?: DateTimeFilter<"AiChat"> | Date | string
     updatedAt?: DateTimeFilter<"AiChat"> | Date | string
-    organizationId?: StringFilter<"AiChat"> | string
     userId?: UuidFilter<"AiChat"> | string
     applicationId?: StringNullableFilter<"AiChat"> | string | null
+    organizationId?: StringFilter<"AiChat"> | string
     messages?: AiChatMessageListRelationFilter
     application?: XOR<ApplicationNullableScalarRelationFilter, ApplicationWhereInput> | null
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type AiChatOrderByWithAggregationInput = {
@@ -15058,9 +16228,9 @@ export namespace Prisma {
     context?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    organizationId?: SortOrder
     userId?: SortOrder
     applicationId?: SortOrderInput | SortOrder
+    organizationId?: SortOrder
     _count?: AiChatCountOrderByAggregateInput
     _max?: AiChatMaxOrderByAggregateInput
     _min?: AiChatMinOrderByAggregateInput
@@ -15075,9 +16245,9 @@ export namespace Prisma {
     context?: EnumAiChatContextWithAggregatesFilter<"AiChat"> | $Enums.AiChatContext
     createdAt?: DateTimeWithAggregatesFilter<"AiChat"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"AiChat"> | Date | string
-    organizationId?: StringWithAggregatesFilter<"AiChat"> | string
     userId?: UuidWithAggregatesFilter<"AiChat"> | string
     applicationId?: StringNullableWithAggregatesFilter<"AiChat"> | string | null
+    organizationId?: StringWithAggregatesFilter<"AiChat"> | string
   }
 
   export type AiChatMessageWhereInput = {
@@ -15217,6 +16387,50 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Recommendation"> | Date | string
   }
 
+  export type documentsWhereInput = {
+    AND?: documentsWhereInput | documentsWhereInput[]
+    OR?: documentsWhereInput[]
+    NOT?: documentsWhereInput | documentsWhereInput[]
+    id?: BigIntFilter<"documents"> | bigint | number
+    content?: StringNullableFilter<"documents"> | string | null
+    metadata?: JsonNullableFilter<"documents">
+  }
+
+  export type documentsOrderByWithRelationInput = {
+    id?: SortOrder
+    content?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+  }
+
+  export type documentsWhereUniqueInput = Prisma.AtLeast<{
+    id?: bigint | number
+    AND?: documentsWhereInput | documentsWhereInput[]
+    OR?: documentsWhereInput[]
+    NOT?: documentsWhereInput | documentsWhereInput[]
+    content?: StringNullableFilter<"documents"> | string | null
+    metadata?: JsonNullableFilter<"documents">
+  }, "id">
+
+  export type documentsOrderByWithAggregationInput = {
+    id?: SortOrder
+    content?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    _count?: documentsCountOrderByAggregateInput
+    _avg?: documentsAvgOrderByAggregateInput
+    _max?: documentsMaxOrderByAggregateInput
+    _min?: documentsMinOrderByAggregateInput
+    _sum?: documentsSumOrderByAggregateInput
+  }
+
+  export type documentsScalarWhereWithAggregatesInput = {
+    AND?: documentsScalarWhereWithAggregatesInput | documentsScalarWhereWithAggregatesInput[]
+    OR?: documentsScalarWhereWithAggregatesInput[]
+    NOT?: documentsScalarWhereWithAggregatesInput | documentsScalarWhereWithAggregatesInput[]
+    id?: BigIntWithAggregatesFilter<"documents"> | bigint | number
+    content?: StringNullableWithAggregatesFilter<"documents"> | string | null
+    metadata?: JsonNullableWithAggregatesFilter<"documents">
+  }
+
   export type alembic_versionCreateInput = {
     version_num: string
   }
@@ -15274,6 +16488,8 @@ export namespace Prisma {
     attachments?: NullableJsonNullValueInput | InputJsonValue
     extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: number | null
+    raw_text?: string | null
+    content_hash?: string | null
   }
 
   export type opportunitiesUncheckedCreateInput = {
@@ -15306,6 +16522,8 @@ export namespace Prisma {
     attachments?: NullableJsonNullValueInput | InputJsonValue
     extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: number | null
+    raw_text?: string | null
+    content_hash?: string | null
   }
 
   export type opportunitiesUpdateInput = {
@@ -15337,6 +16555,8 @@ export namespace Prisma {
     attachments?: NullableJsonNullValueInput | InputJsonValue
     extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
+    raw_text?: NullableStringFieldUpdateOperationsInput | string | null
+    content_hash?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type opportunitiesUncheckedUpdateInput = {
@@ -15369,6 +16589,8 @@ export namespace Prisma {
     attachments?: NullableJsonNullValueInput | InputJsonValue
     extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
+    raw_text?: NullableStringFieldUpdateOperationsInput | string | null
+    content_hash?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type opportunitiesCreateManyInput = {
@@ -15401,6 +16623,8 @@ export namespace Prisma {
     attachments?: NullableJsonNullValueInput | InputJsonValue
     extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: number | null
+    raw_text?: string | null
+    content_hash?: string | null
   }
 
   export type opportunitiesUpdateManyMutationInput = {
@@ -15432,6 +16656,8 @@ export namespace Prisma {
     attachments?: NullableJsonNullValueInput | InputJsonValue
     extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
+    raw_text?: NullableStringFieldUpdateOperationsInput | string | null
+    content_hash?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type opportunitiesUncheckedUpdateManyInput = {
@@ -15464,6 +16690,8 @@ export namespace Prisma {
     attachments?: NullableJsonNullValueInput | InputJsonValue
     extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
+    raw_text?: NullableStringFieldUpdateOperationsInput | string | null
+    content_hash?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserCreateInput = {
@@ -15560,34 +16788,35 @@ export namespace Prisma {
   export type OrganizationCreateInput = {
     id?: string
     name: string
-    slug: string
-    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
+    slug: string
+    role?: $Enums.OrganizationRole
     address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    organizationLogo?: string | null
+    phone?: string | null
     state?: string | null
+    website?: string | null
     zipCode?: string | null
+    strategicPlan?: string | null
+    onboardingCompleted?: boolean
     countyName?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    leaId?: string | null
-    stateLeaId?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
     districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -15599,34 +16828,35 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateInput = {
     id?: string
     name: string
-    slug: string
-    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
+    slug: string
+    role?: $Enums.OrganizationRole
     address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    organizationLogo?: string | null
+    phone?: string | null
     state?: string | null
+    website?: string | null
     zipCode?: string | null
+    strategicPlan?: string | null
+    onboardingCompleted?: boolean
     countyName?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    leaId?: string | null
-    stateLeaId?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
     districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15638,34 +16868,35 @@ export namespace Prisma {
   export type OrganizationUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -15677,34 +16908,35 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15716,100 +16948,103 @@ export namespace Prisma {
   export type OrganizationCreateManyInput = {
     id?: string
     name: string
-    slug: string
-    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
+    slug: string
+    role?: $Enums.OrganizationRole
     address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    organizationLogo?: string | null
+    phone?: string | null
     state?: string | null
+    website?: string | null
     zipCode?: string | null
+    strategicPlan?: string | null
+    onboardingCompleted?: boolean
     countyName?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    leaId?: string | null
-    stateLeaId?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
     districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
   }
 
   export type OrganizationUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type OrganizationUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type GrantBookmarkCreateInput = {
@@ -15817,17 +17052,17 @@ export namespace Prisma {
     notes?: string | null
     createdAt?: Date | string
     opportunityId: number
-    user: UserCreateNestedOneWithoutGrantBookmarksInput
     organization: OrganizationCreateNestedOneWithoutGrantBookmarksInput
+    user: UserCreateNestedOneWithoutGrantBookmarksInput
   }
 
   export type GrantBookmarkUncheckedCreateInput = {
     id?: string
     notes?: string | null
     createdAt?: Date | string
-    organizationId: string
     userId: string
     opportunityId: number
+    organizationId: string
   }
 
   export type GrantBookmarkUpdateInput = {
@@ -15835,26 +17070,26 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     opportunityId?: IntFieldUpdateOperationsInput | number
-    user?: UserUpdateOneRequiredWithoutGrantBookmarksNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutGrantBookmarksNestedInput
+    user?: UserUpdateOneRequiredWithoutGrantBookmarksNestedInput
   }
 
   export type GrantBookmarkUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
+    organizationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type GrantBookmarkCreateManyInput = {
     id?: string
     notes?: string | null
     createdAt?: Date | string
-    organizationId: string
     userId: string
     opportunityId: number
+    organizationId: string
   }
 
   export type GrantBookmarkUpdateManyMutationInput = {
@@ -15868,9 +17103,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
+    organizationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type GrantEligibilityAnalysisCreateInput = {
@@ -15893,8 +17128,8 @@ export namespace Prisma {
     risks?: string | null
     confidence?: number | null
     createdAt?: Date | string
-    organizationId: string
     opportunityId: number
+    organizationId: string
   }
 
   export type GrantEligibilityAnalysisUpdateInput = {
@@ -15917,8 +17152,8 @@ export namespace Prisma {
     risks?: NullableStringFieldUpdateOperationsInput | string | null
     confidence?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
+    organizationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type GrantEligibilityAnalysisCreateManyInput = {
@@ -15929,8 +17164,8 @@ export namespace Prisma {
     risks?: string | null
     confidence?: number | null
     createdAt?: Date | string
-    organizationId: string
     opportunityId: number
+    organizationId: string
   }
 
   export type GrantEligibilityAnalysisUpdateManyMutationInput = {
@@ -15952,8 +17187,8 @@ export namespace Prisma {
     risks?: NullableStringFieldUpdateOperationsInput | string | null
     confidence?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
+    organizationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ApplicationCreateInput = {
@@ -15976,7 +17211,6 @@ export namespace Prisma {
   export type ApplicationUncheckedCreateInput = {
     id?: string
     opportunityId: number
-    organizationId: string
     status?: $Enums.ApplicationStatus
     content?: NullableJsonNullValueInput | InputJsonValue
     contentHtml?: string | null
@@ -15987,6 +17221,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
+    organizationId: string
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
   }
 
@@ -16010,7 +17245,6 @@ export namespace Prisma {
   export type ApplicationUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
-    organizationId?: StringFieldUpdateOperationsInput | string
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     content?: NullableJsonNullValueInput | InputJsonValue
     contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16021,13 +17255,13 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
   }
 
   export type ApplicationCreateManyInput = {
     id?: string
     opportunityId: number
-    organizationId: string
     status?: $Enums.ApplicationStatus
     content?: NullableJsonNullValueInput | InputJsonValue
     contentHtml?: string | null
@@ -16038,6 +17272,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
+    organizationId: string
   }
 
   export type ApplicationUpdateManyMutationInput = {
@@ -16058,7 +17293,6 @@ export namespace Prisma {
   export type ApplicationUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
-    organizationId?: StringFieldUpdateOperationsInput | string
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     content?: NullableJsonNullValueInput | InputJsonValue
     contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16069,6 +17303,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type AiChatCreateInput = {
@@ -16079,8 +17314,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     messages?: AiChatMessageCreateNestedManyWithoutChatInput
     application?: ApplicationCreateNestedOneWithoutAiChatsInput
-    user: UserCreateNestedOneWithoutAiChatsInput
     organization: OrganizationCreateNestedOneWithoutAiChatsInput
+    user: UserCreateNestedOneWithoutAiChatsInput
   }
 
   export type AiChatUncheckedCreateInput = {
@@ -16089,9 +17324,9 @@ export namespace Prisma {
     context: $Enums.AiChatContext
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationId: string
     userId: string
     applicationId?: string | null
+    organizationId: string
     messages?: AiChatMessageUncheckedCreateNestedManyWithoutChatInput
   }
 
@@ -16103,8 +17338,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: AiChatMessageUpdateManyWithoutChatNestedInput
     application?: ApplicationUpdateOneWithoutAiChatsNestedInput
-    user?: UserUpdateOneRequiredWithoutAiChatsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutAiChatsNestedInput
+    user?: UserUpdateOneRequiredWithoutAiChatsNestedInput
   }
 
   export type AiChatUncheckedUpdateInput = {
@@ -16113,9 +17348,9 @@ export namespace Prisma {
     context?: EnumAiChatContextFieldUpdateOperationsInput | $Enums.AiChatContext
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationId?: StringFieldUpdateOperationsInput | string
     messages?: AiChatMessageUncheckedUpdateManyWithoutChatNestedInput
   }
 
@@ -16125,9 +17360,9 @@ export namespace Prisma {
     context: $Enums.AiChatContext
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationId: string
     userId: string
     applicationId?: string | null
+    organizationId: string
   }
 
   export type AiChatUpdateManyMutationInput = {
@@ -16144,9 +17379,9 @@ export namespace Prisma {
     context?: EnumAiChatContextFieldUpdateOperationsInput | $Enums.AiChatContext
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type AiChatMessageCreateInput = {
@@ -16292,6 +17527,48 @@ export namespace Prisma {
     districtName?: StringFieldUpdateOperationsInput | string
     queryDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type documentsCreateInput = {
+    id?: bigint | number
+    content?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type documentsUncheckedCreateInput = {
+    id?: bigint | number
+    content?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type documentsUpdateInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type documentsUncheckedUpdateInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type documentsCreateManyInput = {
+    id?: bigint | number
+    content?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type documentsUpdateManyMutationInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type documentsUncheckedUpdateManyInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -16457,6 +17734,8 @@ export namespace Prisma {
     attachments?: SortOrder
     extra?: SortOrder
     relevance_score?: SortOrder
+    raw_text?: SortOrder
+    content_hash?: SortOrder
   }
 
   export type opportunitiesAvgOrderByAggregateInput = {
@@ -16496,6 +17775,8 @@ export namespace Prisma {
     contact_phone?: SortOrder
     url?: SortOrder
     relevance_score?: SortOrder
+    raw_text?: SortOrder
+    content_hash?: SortOrder
   }
 
   export type opportunitiesMinOrderByAggregateInput = {
@@ -16526,6 +17807,8 @@ export namespace Prisma {
     contact_phone?: SortOrder
     url?: SortOrder
     relevance_score?: SortOrder
+    raw_text?: SortOrder
+    content_hash?: SortOrder
   }
 
   export type opportunitiesSumOrderByAggregateInput = {
@@ -16838,124 +18121,127 @@ export namespace Prisma {
   export type OrganizationCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    slug?: SortOrder
-    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    organizationLogo?: SortOrder
-    website?: SortOrder
-    missionStatement?: SortOrder
-    strategicPlan?: SortOrder
-    annualOperatingBudget?: SortOrder
-    fiscalYearEnd?: SortOrder
-    phone?: SortOrder
-    email?: SortOrder
-    organizationLeaderName?: SortOrder
+    slug?: SortOrder
+    role?: SortOrder
     address?: SortOrder
+    annualOperatingBudget?: SortOrder
     city?: SortOrder
+    email?: SortOrder
+    fiscalYearEnd?: SortOrder
+    missionStatement?: SortOrder
+    organizationLeaderName?: SortOrder
+    organizationLogo?: SortOrder
+    phone?: SortOrder
     state?: SortOrder
+    website?: SortOrder
     zipCode?: SortOrder
+    strategicPlan?: SortOrder
+    onboardingCompleted?: SortOrder
     countyName?: SortOrder
-    latitude?: SortOrder
-    longitude?: SortOrder
-    leaId?: SortOrder
-    stateLeaId?: SortOrder
-    enrollment?: SortOrder
-    numberOfSchools?: SortOrder
-    lowestGrade?: SortOrder
-    highestGrade?: SortOrder
-    urbanCentricLocale?: SortOrder
     districtDataYear?: SortOrder
+    enrollment?: SortOrder
+    highestGrade?: SortOrder
+    latitude?: SortOrder
+    leaId?: SortOrder
+    longitude?: SortOrder
+    lowestGrade?: SortOrder
+    numberOfSchools?: SortOrder
+    stateLeaId?: SortOrder
+    urbanCentricLocale?: SortOrder
   }
 
   export type OrganizationAvgOrderByAggregateInput = {
     annualOperatingBudget?: SortOrder
+    districtDataYear?: SortOrder
+    enrollment?: SortOrder
+    highestGrade?: SortOrder
     latitude?: SortOrder
     longitude?: SortOrder
-    enrollment?: SortOrder
-    numberOfSchools?: SortOrder
     lowestGrade?: SortOrder
-    highestGrade?: SortOrder
+    numberOfSchools?: SortOrder
     urbanCentricLocale?: SortOrder
-    districtDataYear?: SortOrder
   }
 
   export type OrganizationMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    slug?: SortOrder
-    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    organizationLogo?: SortOrder
-    website?: SortOrder
-    missionStatement?: SortOrder
-    strategicPlan?: SortOrder
-    annualOperatingBudget?: SortOrder
-    fiscalYearEnd?: SortOrder
-    phone?: SortOrder
-    email?: SortOrder
-    organizationLeaderName?: SortOrder
+    slug?: SortOrder
+    role?: SortOrder
     address?: SortOrder
+    annualOperatingBudget?: SortOrder
     city?: SortOrder
+    email?: SortOrder
+    fiscalYearEnd?: SortOrder
+    missionStatement?: SortOrder
+    organizationLeaderName?: SortOrder
+    organizationLogo?: SortOrder
+    phone?: SortOrder
     state?: SortOrder
+    website?: SortOrder
     zipCode?: SortOrder
+    strategicPlan?: SortOrder
+    onboardingCompleted?: SortOrder
     countyName?: SortOrder
-    latitude?: SortOrder
-    longitude?: SortOrder
-    leaId?: SortOrder
-    stateLeaId?: SortOrder
-    enrollment?: SortOrder
-    numberOfSchools?: SortOrder
-    lowestGrade?: SortOrder
-    highestGrade?: SortOrder
-    urbanCentricLocale?: SortOrder
     districtDataYear?: SortOrder
+    enrollment?: SortOrder
+    highestGrade?: SortOrder
+    latitude?: SortOrder
+    leaId?: SortOrder
+    longitude?: SortOrder
+    lowestGrade?: SortOrder
+    numberOfSchools?: SortOrder
+    stateLeaId?: SortOrder
+    urbanCentricLocale?: SortOrder
   }
 
   export type OrganizationMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    slug?: SortOrder
-    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    organizationLogo?: SortOrder
-    website?: SortOrder
-    missionStatement?: SortOrder
-    strategicPlan?: SortOrder
-    annualOperatingBudget?: SortOrder
-    fiscalYearEnd?: SortOrder
-    phone?: SortOrder
-    email?: SortOrder
-    organizationLeaderName?: SortOrder
+    slug?: SortOrder
+    role?: SortOrder
     address?: SortOrder
+    annualOperatingBudget?: SortOrder
     city?: SortOrder
+    email?: SortOrder
+    fiscalYearEnd?: SortOrder
+    missionStatement?: SortOrder
+    organizationLeaderName?: SortOrder
+    organizationLogo?: SortOrder
+    phone?: SortOrder
     state?: SortOrder
+    website?: SortOrder
     zipCode?: SortOrder
+    strategicPlan?: SortOrder
+    onboardingCompleted?: SortOrder
     countyName?: SortOrder
-    latitude?: SortOrder
-    longitude?: SortOrder
-    leaId?: SortOrder
-    stateLeaId?: SortOrder
-    enrollment?: SortOrder
-    numberOfSchools?: SortOrder
-    lowestGrade?: SortOrder
-    highestGrade?: SortOrder
-    urbanCentricLocale?: SortOrder
     districtDataYear?: SortOrder
+    enrollment?: SortOrder
+    highestGrade?: SortOrder
+    latitude?: SortOrder
+    leaId?: SortOrder
+    longitude?: SortOrder
+    lowestGrade?: SortOrder
+    numberOfSchools?: SortOrder
+    stateLeaId?: SortOrder
+    urbanCentricLocale?: SortOrder
   }
 
   export type OrganizationSumOrderByAggregateInput = {
     annualOperatingBudget?: SortOrder
+    districtDataYear?: SortOrder
+    enrollment?: SortOrder
+    highestGrade?: SortOrder
     latitude?: SortOrder
     longitude?: SortOrder
-    enrollment?: SortOrder
-    numberOfSchools?: SortOrder
     lowestGrade?: SortOrder
-    highestGrade?: SortOrder
+    numberOfSchools?: SortOrder
     urbanCentricLocale?: SortOrder
-    districtDataYear?: SortOrder
   }
 
   export type EnumOrganizationRoleWithAggregatesFilter<$PrismaModel = never> = {
@@ -17015,9 +18301,9 @@ export namespace Prisma {
     id?: SortOrder
     notes?: SortOrder
     createdAt?: SortOrder
-    organizationId?: SortOrder
     userId?: SortOrder
     opportunityId?: SortOrder
+    organizationId?: SortOrder
   }
 
   export type GrantBookmarkAvgOrderByAggregateInput = {
@@ -17028,18 +18314,18 @@ export namespace Prisma {
     id?: SortOrder
     notes?: SortOrder
     createdAt?: SortOrder
-    organizationId?: SortOrder
     userId?: SortOrder
     opportunityId?: SortOrder
+    organizationId?: SortOrder
   }
 
   export type GrantBookmarkMinOrderByAggregateInput = {
     id?: SortOrder
     notes?: SortOrder
     createdAt?: SortOrder
-    organizationId?: SortOrder
     userId?: SortOrder
     opportunityId?: SortOrder
+    organizationId?: SortOrder
   }
 
   export type GrantBookmarkSumOrderByAggregateInput = {
@@ -17066,8 +18352,8 @@ export namespace Prisma {
     risks?: SortOrder
     confidence?: SortOrder
     createdAt?: SortOrder
-    organizationId?: SortOrder
     opportunityId?: SortOrder
+    organizationId?: SortOrder
   }
 
   export type GrantEligibilityAnalysisAvgOrderByAggregateInput = {
@@ -17084,8 +18370,8 @@ export namespace Prisma {
     risks?: SortOrder
     confidence?: SortOrder
     createdAt?: SortOrder
-    organizationId?: SortOrder
     opportunityId?: SortOrder
+    organizationId?: SortOrder
   }
 
   export type GrantEligibilityAnalysisMinOrderByAggregateInput = {
@@ -17096,8 +18382,8 @@ export namespace Prisma {
     risks?: SortOrder
     confidence?: SortOrder
     createdAt?: SortOrder
-    organizationId?: SortOrder
     opportunityId?: SortOrder
+    organizationId?: SortOrder
   }
 
   export type GrantEligibilityAnalysisSumOrderByAggregateInput = {
@@ -17131,7 +18417,6 @@ export namespace Prisma {
   export type ApplicationCountOrderByAggregateInput = {
     id?: SortOrder
     opportunityId?: SortOrder
-    organizationId?: SortOrder
     status?: SortOrder
     content?: SortOrder
     contentHtml?: SortOrder
@@ -17142,6 +18427,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     submittedAt?: SortOrder
     lastEditedAt?: SortOrder
+    organizationId?: SortOrder
   }
 
   export type ApplicationAvgOrderByAggregateInput = {
@@ -17151,7 +18437,6 @@ export namespace Prisma {
   export type ApplicationMaxOrderByAggregateInput = {
     id?: SortOrder
     opportunityId?: SortOrder
-    organizationId?: SortOrder
     status?: SortOrder
     contentHtml?: SortOrder
     title?: SortOrder
@@ -17160,12 +18445,12 @@ export namespace Prisma {
     updatedAt?: SortOrder
     submittedAt?: SortOrder
     lastEditedAt?: SortOrder
+    organizationId?: SortOrder
   }
 
   export type ApplicationMinOrderByAggregateInput = {
     id?: SortOrder
     opportunityId?: SortOrder
-    organizationId?: SortOrder
     status?: SortOrder
     contentHtml?: SortOrder
     title?: SortOrder
@@ -17174,6 +18459,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     submittedAt?: SortOrder
     lastEditedAt?: SortOrder
+    organizationId?: SortOrder
   }
 
   export type ApplicationSumOrderByAggregateInput = {
@@ -17218,9 +18504,9 @@ export namespace Prisma {
     context?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    organizationId?: SortOrder
     userId?: SortOrder
     applicationId?: SortOrder
+    organizationId?: SortOrder
   }
 
   export type AiChatMaxOrderByAggregateInput = {
@@ -17229,9 +18515,9 @@ export namespace Prisma {
     context?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    organizationId?: SortOrder
     userId?: SortOrder
     applicationId?: SortOrder
+    organizationId?: SortOrder
   }
 
   export type AiChatMinOrderByAggregateInput = {
@@ -17240,9 +18526,9 @@ export namespace Prisma {
     context?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    organizationId?: SortOrder
     userId?: SortOrder
     applicationId?: SortOrder
+    organizationId?: SortOrder
   }
 
   export type EnumAiChatContextWithAggregatesFilter<$PrismaModel = never> = {
@@ -17344,6 +18630,57 @@ export namespace Prisma {
 
   export type RecommendationSumOrderByAggregateInput = {
     fitScore?: SortOrder
+  }
+
+  export type BigIntFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntFilter<$PrismaModel> | bigint | number
+  }
+
+  export type documentsCountOrderByAggregateInput = {
+    id?: SortOrder
+    content?: SortOrder
+    metadata?: SortOrder
+  }
+
+  export type documentsAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type documentsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    content?: SortOrder
+  }
+
+  export type documentsMinOrderByAggregateInput = {
+    id?: SortOrder
+    content?: SortOrder
+  }
+
+  export type documentsSumOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type BigIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntWithAggregatesFilter<$PrismaModel> | bigint | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedBigIntFilter<$PrismaModel>
+    _min?: NestedBigIntFilter<$PrismaModel>
+    _max?: NestedBigIntFilter<$PrismaModel>
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -17750,24 +19087,16 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOrganizationInput, UserUpdateWithoutOrganizationInput>, UserUncheckedUpdateWithoutOrganizationInput>
   }
 
-  export type UserCreateNestedOneWithoutGrantBookmarksInput = {
-    create?: XOR<UserCreateWithoutGrantBookmarksInput, UserUncheckedCreateWithoutGrantBookmarksInput>
-    connectOrCreate?: UserCreateOrConnectWithoutGrantBookmarksInput
-    connect?: UserWhereUniqueInput
-  }
-
   export type OrganizationCreateNestedOneWithoutGrantBookmarksInput = {
     create?: XOR<OrganizationCreateWithoutGrantBookmarksInput, OrganizationUncheckedCreateWithoutGrantBookmarksInput>
     connectOrCreate?: OrganizationCreateOrConnectWithoutGrantBookmarksInput
     connect?: OrganizationWhereUniqueInput
   }
 
-  export type UserUpdateOneRequiredWithoutGrantBookmarksNestedInput = {
+  export type UserCreateNestedOneWithoutGrantBookmarksInput = {
     create?: XOR<UserCreateWithoutGrantBookmarksInput, UserUncheckedCreateWithoutGrantBookmarksInput>
     connectOrCreate?: UserCreateOrConnectWithoutGrantBookmarksInput
-    upsert?: UserUpsertWithoutGrantBookmarksInput
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutGrantBookmarksInput, UserUpdateWithoutGrantBookmarksInput>, UserUncheckedUpdateWithoutGrantBookmarksInput>
   }
 
   export type OrganizationUpdateOneRequiredWithoutGrantBookmarksNestedInput = {
@@ -17776,6 +19105,14 @@ export namespace Prisma {
     upsert?: OrganizationUpsertWithoutGrantBookmarksInput
     connect?: OrganizationWhereUniqueInput
     update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutGrantBookmarksInput, OrganizationUpdateWithoutGrantBookmarksInput>, OrganizationUncheckedUpdateWithoutGrantBookmarksInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutGrantBookmarksNestedInput = {
+    create?: XOR<UserCreateWithoutGrantBookmarksInput, UserUncheckedCreateWithoutGrantBookmarksInput>
+    connectOrCreate?: UserCreateOrConnectWithoutGrantBookmarksInput
+    upsert?: UserUpsertWithoutGrantBookmarksInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutGrantBookmarksInput, UserUpdateWithoutGrantBookmarksInput>, UserUncheckedUpdateWithoutGrantBookmarksInput>
   }
 
   export type OrganizationCreateNestedOneWithoutEligibilityAnalysesInput = {
@@ -17869,16 +19206,16 @@ export namespace Prisma {
     connect?: ApplicationWhereUniqueInput
   }
 
-  export type UserCreateNestedOneWithoutAiChatsInput = {
-    create?: XOR<UserCreateWithoutAiChatsInput, UserUncheckedCreateWithoutAiChatsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutAiChatsInput
-    connect?: UserWhereUniqueInput
-  }
-
   export type OrganizationCreateNestedOneWithoutAiChatsInput = {
     create?: XOR<OrganizationCreateWithoutAiChatsInput, OrganizationUncheckedCreateWithoutAiChatsInput>
     connectOrCreate?: OrganizationCreateOrConnectWithoutAiChatsInput
     connect?: OrganizationWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutAiChatsInput = {
+    create?: XOR<UserCreateWithoutAiChatsInput, UserUncheckedCreateWithoutAiChatsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAiChatsInput
+    connect?: UserWhereUniqueInput
   }
 
   export type AiChatMessageUncheckedCreateNestedManyWithoutChatInput = {
@@ -17916,20 +19253,20 @@ export namespace Prisma {
     update?: XOR<XOR<ApplicationUpdateToOneWithWhereWithoutAiChatsInput, ApplicationUpdateWithoutAiChatsInput>, ApplicationUncheckedUpdateWithoutAiChatsInput>
   }
 
-  export type UserUpdateOneRequiredWithoutAiChatsNestedInput = {
-    create?: XOR<UserCreateWithoutAiChatsInput, UserUncheckedCreateWithoutAiChatsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutAiChatsInput
-    upsert?: UserUpsertWithoutAiChatsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAiChatsInput, UserUpdateWithoutAiChatsInput>, UserUncheckedUpdateWithoutAiChatsInput>
-  }
-
   export type OrganizationUpdateOneRequiredWithoutAiChatsNestedInput = {
     create?: XOR<OrganizationCreateWithoutAiChatsInput, OrganizationUncheckedCreateWithoutAiChatsInput>
     connectOrCreate?: OrganizationCreateOrConnectWithoutAiChatsInput
     upsert?: OrganizationUpsertWithoutAiChatsInput
     connect?: OrganizationWhereUniqueInput
     update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutAiChatsInput, OrganizationUpdateWithoutAiChatsInput>, OrganizationUncheckedUpdateWithoutAiChatsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutAiChatsNestedInput = {
+    create?: XOR<UserCreateWithoutAiChatsInput, UserUncheckedCreateWithoutAiChatsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAiChatsInput
+    upsert?: UserUpsertWithoutAiChatsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAiChatsInput, UserUpdateWithoutAiChatsInput>, UserUncheckedUpdateWithoutAiChatsInput>
   }
 
   export type AiChatMessageUncheckedUpdateManyWithoutChatNestedInput = {
@@ -17976,6 +19313,14 @@ export namespace Prisma {
     upsert?: OrganizationUpsertWithoutRecommendationsInput
     connect?: OrganizationWhereUniqueInput
     update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutRecommendationsInput, OrganizationUpdateWithoutRecommendationsInput>, OrganizationUncheckedUpdateWithoutRecommendationsInput>
+  }
+
+  export type BigIntFieldUpdateOperationsInput = {
+    set?: bigint | number
+    increment?: bigint | number
+    decrement?: bigint | number
+    multiply?: bigint | number
+    divide?: bigint | number
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -18385,6 +19730,33 @@ export namespace Prisma {
     _max?: NestedEnumMessageRoleFilter<$PrismaModel>
   }
 
+  export type NestedBigIntFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntFilter<$PrismaModel> | bigint | number
+  }
+
+  export type NestedBigIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntWithAggregatesFilter<$PrismaModel> | bigint | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedBigIntFilter<$PrismaModel>
+    _min?: NestedBigIntFilter<$PrismaModel>
+    _max?: NestedBigIntFilter<$PrismaModel>
+  }
+
   export type AiChatCreateWithoutUserInput = {
     id?: string
     title?: string | null
@@ -18402,8 +19774,8 @@ export namespace Prisma {
     context: $Enums.AiChatContext
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationId: string
     applicationId?: string | null
+    organizationId: string
     messages?: AiChatMessageUncheckedCreateNestedManyWithoutChatInput
   }
 
@@ -18429,8 +19801,8 @@ export namespace Prisma {
     id?: string
     notes?: string | null
     createdAt?: Date | string
-    organizationId: string
     opportunityId: number
+    organizationId: string
   }
 
   export type GrantBookmarkCreateOrConnectWithoutUserInput = {
@@ -18446,34 +19818,35 @@ export namespace Prisma {
   export type OrganizationCreateWithoutUserInput = {
     id?: string
     name: string
-    slug: string
-    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
+    slug: string
+    role?: $Enums.OrganizationRole
     address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    organizationLogo?: string | null
+    phone?: string | null
     state?: string | null
+    website?: string | null
     zipCode?: string | null
+    strategicPlan?: string | null
+    onboardingCompleted?: boolean
     countyName?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    leaId?: string | null
-    stateLeaId?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
     districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -18484,34 +19857,35 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutUserInput = {
     id?: string
     name: string
-    slug: string
-    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
+    slug: string
+    role?: $Enums.OrganizationRole
     address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    organizationLogo?: string | null
+    phone?: string | null
     state?: string | null
+    website?: string | null
     zipCode?: string | null
+    strategicPlan?: string | null
+    onboardingCompleted?: boolean
     countyName?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    leaId?: string | null
-    stateLeaId?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
     districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18549,9 +19923,9 @@ export namespace Prisma {
     context?: EnumAiChatContextFilter<"AiChat"> | $Enums.AiChatContext
     createdAt?: DateTimeFilter<"AiChat"> | Date | string
     updatedAt?: DateTimeFilter<"AiChat"> | Date | string
-    organizationId?: StringFilter<"AiChat"> | string
     userId?: UuidFilter<"AiChat"> | string
     applicationId?: StringNullableFilter<"AiChat"> | string | null
+    organizationId?: StringFilter<"AiChat"> | string
   }
 
   export type GrantBookmarkUpsertWithWhereUniqueWithoutUserInput = {
@@ -18577,9 +19951,9 @@ export namespace Prisma {
     id?: StringFilter<"GrantBookmark"> | string
     notes?: StringNullableFilter<"GrantBookmark"> | string | null
     createdAt?: DateTimeFilter<"GrantBookmark"> | Date | string
-    organizationId?: StringFilter<"GrantBookmark"> | string
     userId?: UuidFilter<"GrantBookmark"> | string
     opportunityId?: IntFilter<"GrantBookmark"> | number
+    organizationId?: StringFilter<"GrantBookmark"> | string
   }
 
   export type OrganizationUpsertWithoutUserInput = {
@@ -18596,34 +19970,35 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -18634,34 +20009,35 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18902,7 +20278,6 @@ export namespace Prisma {
     NOT?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
     id?: StringFilter<"Application"> | string
     opportunityId?: IntFilter<"Application"> | number
-    organizationId?: StringFilter<"Application"> | string
     status?: EnumApplicationStatusFilter<"Application"> | $Enums.ApplicationStatus
     content?: JsonNullableFilter<"Application">
     contentHtml?: StringNullableFilter<"Application"> | string | null
@@ -18913,6 +20288,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Application"> | Date | string
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
+    organizationId?: StringFilter<"Application"> | string
   }
 
   export type GrantBookmarkUpsertWithWhereUniqueWithoutOrganizationInput = {
@@ -18958,8 +20334,8 @@ export namespace Prisma {
     risks?: StringNullableFilter<"GrantEligibilityAnalysis"> | string | null
     confidence?: FloatNullableFilter<"GrantEligibilityAnalysis"> | number | null
     createdAt?: DateTimeFilter<"GrantEligibilityAnalysis"> | Date | string
-    organizationId?: StringFilter<"GrantEligibilityAnalysis"> | string
     opportunityId?: IntFilter<"GrantEligibilityAnalysis"> | number
+    organizationId?: StringFilter<"GrantEligibilityAnalysis"> | string
   }
 
   export type RecommendationUpsertWithWhereUniqueWithoutOrganizationInput = {
@@ -19030,6 +20406,89 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutUserNestedInput
   }
 
+  export type OrganizationCreateWithoutGrantBookmarksInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    slug: string
+    role?: $Enums.OrganizationRole
+    address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    organizationLogo?: string | null
+    phone?: string | null
+    state?: string | null
+    website?: string | null
+    zipCode?: string | null
+    strategicPlan?: string | null
+    onboardingCompleted?: boolean
+    countyName?: string | null
+    districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
+    aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
+    applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
+    recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
+    user?: UserCreateNestedOneWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutGrantBookmarksInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    slug: string
+    role?: $Enums.OrganizationRole
+    address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    organizationLogo?: string | null
+    phone?: string | null
+    state?: string | null
+    website?: string | null
+    zipCode?: string | null
+    strategicPlan?: string | null
+    onboardingCompleted?: boolean
+    countyName?: string | null
+    districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
+    aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
+    applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
+    recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
+    user?: UserUncheckedCreateNestedOneWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutGrantBookmarksInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutGrantBookmarksInput, OrganizationUncheckedCreateWithoutGrantBookmarksInput>
+  }
+
   export type UserCreateWithoutGrantBookmarksInput = {
     id: string
     email: string
@@ -19061,85 +20520,93 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutGrantBookmarksInput, UserUncheckedCreateWithoutGrantBookmarksInput>
   }
 
-  export type OrganizationCreateWithoutGrantBookmarksInput = {
-    id?: string
-    name: string
-    slug: string
-    role?: $Enums.OrganizationRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
-    address?: string | null
-    city?: string | null
-    state?: string | null
-    zipCode?: string | null
-    countyName?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    leaId?: string | null
-    stateLeaId?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
-    districtDataYear?: number | null
-    aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
-    applications?: ApplicationCreateNestedManyWithoutOrganizationInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
-    recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
-    user?: UserCreateNestedOneWithoutOrganizationInput
-  }
-
-  export type OrganizationUncheckedCreateWithoutGrantBookmarksInput = {
-    id?: string
-    name: string
-    slug: string
-    role?: $Enums.OrganizationRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
-    address?: string | null
-    city?: string | null
-    state?: string | null
-    zipCode?: string | null
-    countyName?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    leaId?: string | null
-    stateLeaId?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
-    districtDataYear?: number | null
-    aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
-    applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
-    recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
-    user?: UserUncheckedCreateNestedOneWithoutOrganizationInput
-  }
-
-  export type OrganizationCreateOrConnectWithoutGrantBookmarksInput = {
-    where: OrganizationWhereUniqueInput
+  export type OrganizationUpsertWithoutGrantBookmarksInput = {
+    update: XOR<OrganizationUpdateWithoutGrantBookmarksInput, OrganizationUncheckedUpdateWithoutGrantBookmarksInput>
     create: XOR<OrganizationCreateWithoutGrantBookmarksInput, OrganizationUncheckedCreateWithoutGrantBookmarksInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutGrantBookmarksInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutGrantBookmarksInput, OrganizationUncheckedUpdateWithoutGrantBookmarksInput>
+  }
+
+  export type OrganizationUpdateWithoutGrantBookmarksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
+    applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
+    recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
+    user?: UserUpdateOneWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutGrantBookmarksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
+    applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
+    recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
+    user?: UserUncheckedUpdateOneWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutGrantBookmarksInput = {
@@ -19179,124 +20646,38 @@ export namespace Prisma {
     aiChats?: AiChatUncheckedUpdateManyWithoutUserNestedInput
   }
 
-  export type OrganizationUpsertWithoutGrantBookmarksInput = {
-    update: XOR<OrganizationUpdateWithoutGrantBookmarksInput, OrganizationUncheckedUpdateWithoutGrantBookmarksInput>
-    create: XOR<OrganizationCreateWithoutGrantBookmarksInput, OrganizationUncheckedCreateWithoutGrantBookmarksInput>
-    where?: OrganizationWhereInput
-  }
-
-  export type OrganizationUpdateToOneWithWhereWithoutGrantBookmarksInput = {
-    where?: OrganizationWhereInput
-    data: XOR<OrganizationUpdateWithoutGrantBookmarksInput, OrganizationUncheckedUpdateWithoutGrantBookmarksInput>
-  }
-
-  export type OrganizationUpdateWithoutGrantBookmarksInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: NullableStringFieldUpdateOperationsInput | string | null
-    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
-    aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
-    applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
-    recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
-    user?: UserUpdateOneWithoutOrganizationNestedInput
-  }
-
-  export type OrganizationUncheckedUpdateWithoutGrantBookmarksInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: NullableStringFieldUpdateOperationsInput | string | null
-    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
-    aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
-    applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
-    recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
-    user?: UserUncheckedUpdateOneWithoutOrganizationNestedInput
-  }
-
   export type OrganizationCreateWithoutEligibilityAnalysesInput = {
     id?: string
     name: string
-    slug: string
-    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
+    slug: string
+    role?: $Enums.OrganizationRole
     address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    organizationLogo?: string | null
+    phone?: string | null
     state?: string | null
+    website?: string | null
     zipCode?: string | null
+    strategicPlan?: string | null
+    onboardingCompleted?: boolean
     countyName?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    leaId?: string | null
-    stateLeaId?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
     districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -19307,34 +20688,35 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutEligibilityAnalysesInput = {
     id?: string
     name: string
-    slug: string
-    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
+    slug: string
+    role?: $Enums.OrganizationRole
     address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    organizationLogo?: string | null
+    phone?: string | null
     state?: string | null
+    website?: string | null
     zipCode?: string | null
+    strategicPlan?: string | null
+    onboardingCompleted?: boolean
     countyName?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    leaId?: string | null
-    stateLeaId?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
     districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19361,34 +20743,35 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutEligibilityAnalysesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -19399,34 +20782,35 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutEligibilityAnalysesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19441,8 +20825,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     messages?: AiChatMessageCreateNestedManyWithoutChatInput
-    user: UserCreateNestedOneWithoutAiChatsInput
     organization: OrganizationCreateNestedOneWithoutAiChatsInput
+    user: UserCreateNestedOneWithoutAiChatsInput
   }
 
   export type AiChatUncheckedCreateWithoutApplicationInput = {
@@ -19451,8 +20835,8 @@ export namespace Prisma {
     context: $Enums.AiChatContext
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationId: string
     userId: string
+    organizationId: string
     messages?: AiChatMessageUncheckedCreateNestedManyWithoutChatInput
   }
 
@@ -19469,34 +20853,35 @@ export namespace Prisma {
   export type OrganizationCreateWithoutApplicationsInput = {
     id?: string
     name: string
-    slug: string
-    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
+    slug: string
+    role?: $Enums.OrganizationRole
     address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    organizationLogo?: string | null
+    phone?: string | null
     state?: string | null
+    website?: string | null
     zipCode?: string | null
+    strategicPlan?: string | null
+    onboardingCompleted?: boolean
     countyName?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    leaId?: string | null
-    stateLeaId?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
     districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
@@ -19507,34 +20892,35 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutApplicationsInput = {
     id?: string
     name: string
-    slug: string
-    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
+    slug: string
+    role?: $Enums.OrganizationRole
     address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    organizationLogo?: string | null
+    phone?: string | null
     state?: string | null
+    website?: string | null
     zipCode?: string | null
+    strategicPlan?: string | null
+    onboardingCompleted?: boolean
     countyName?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    leaId?: string | null
-    stateLeaId?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
     districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19577,34 +20963,35 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutApplicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
@@ -19615,34 +21002,35 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutApplicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19695,7 +21083,6 @@ export namespace Prisma {
   export type ApplicationUncheckedCreateWithoutAiChatsInput = {
     id?: string
     opportunityId: number
-    organizationId: string
     status?: $Enums.ApplicationStatus
     content?: NullableJsonNullValueInput | InputJsonValue
     contentHtml?: string | null
@@ -19706,11 +21093,95 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
+    organizationId: string
   }
 
   export type ApplicationCreateOrConnectWithoutAiChatsInput = {
     where: ApplicationWhereUniqueInput
     create: XOR<ApplicationCreateWithoutAiChatsInput, ApplicationUncheckedCreateWithoutAiChatsInput>
+  }
+
+  export type OrganizationCreateWithoutAiChatsInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    slug: string
+    role?: $Enums.OrganizationRole
+    address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    organizationLogo?: string | null
+    phone?: string | null
+    state?: string | null
+    website?: string | null
+    zipCode?: string | null
+    strategicPlan?: string | null
+    onboardingCompleted?: boolean
+    countyName?: string | null
+    districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
+    applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
+    recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
+    user?: UserCreateNestedOneWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutAiChatsInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    slug: string
+    role?: $Enums.OrganizationRole
+    address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    organizationLogo?: string | null
+    phone?: string | null
+    state?: string | null
+    website?: string | null
+    zipCode?: string | null
+    strategicPlan?: string | null
+    onboardingCompleted?: boolean
+    countyName?: string | null
+    districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
+    applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
+    recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
+    user?: UserUncheckedCreateNestedOneWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutAiChatsInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutAiChatsInput, OrganizationUncheckedCreateWithoutAiChatsInput>
   }
 
   export type UserCreateWithoutAiChatsInput = {
@@ -19742,87 +21213,6 @@ export namespace Prisma {
   export type UserCreateOrConnectWithoutAiChatsInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutAiChatsInput, UserUncheckedCreateWithoutAiChatsInput>
-  }
-
-  export type OrganizationCreateWithoutAiChatsInput = {
-    id?: string
-    name: string
-    slug: string
-    role?: $Enums.OrganizationRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
-    address?: string | null
-    city?: string | null
-    state?: string | null
-    zipCode?: string | null
-    countyName?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    leaId?: string | null
-    stateLeaId?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
-    districtDataYear?: number | null
-    applications?: ApplicationCreateNestedManyWithoutOrganizationInput
-    grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
-    recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
-    user?: UserCreateNestedOneWithoutOrganizationInput
-  }
-
-  export type OrganizationUncheckedCreateWithoutAiChatsInput = {
-    id?: string
-    name: string
-    slug: string
-    role?: $Enums.OrganizationRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
-    address?: string | null
-    city?: string | null
-    state?: string | null
-    zipCode?: string | null
-    countyName?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    leaId?: string | null
-    stateLeaId?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
-    districtDataYear?: number | null
-    applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
-    grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
-    recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
-    user?: UserUncheckedCreateNestedOneWithoutOrganizationInput
-  }
-
-  export type OrganizationCreateOrConnectWithoutAiChatsInput = {
-    where: OrganizationWhereUniqueInput
-    create: XOR<OrganizationCreateWithoutAiChatsInput, OrganizationUncheckedCreateWithoutAiChatsInput>
   }
 
   export type AiChatMessageUpsertWithWhereUniqueWithoutChatInput = {
@@ -19883,7 +21273,6 @@ export namespace Prisma {
   export type ApplicationUncheckedUpdateWithoutAiChatsInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
-    organizationId?: StringFieldUpdateOperationsInput | string
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     content?: NullableJsonNullValueInput | InputJsonValue
     contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19894,6 +21283,96 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type OrganizationUpsertWithoutAiChatsInput = {
+    update: XOR<OrganizationUpdateWithoutAiChatsInput, OrganizationUncheckedUpdateWithoutAiChatsInput>
+    create: XOR<OrganizationCreateWithoutAiChatsInput, OrganizationUncheckedCreateWithoutAiChatsInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutAiChatsInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutAiChatsInput, OrganizationUncheckedUpdateWithoutAiChatsInput>
+  }
+
+  export type OrganizationUpdateWithoutAiChatsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
+    recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
+    user?: UserUpdateOneWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutAiChatsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
+    recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
+    user?: UserUncheckedUpdateOneWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutAiChatsInput = {
@@ -19933,93 +21412,6 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutUserNestedInput
   }
 
-  export type OrganizationUpsertWithoutAiChatsInput = {
-    update: XOR<OrganizationUpdateWithoutAiChatsInput, OrganizationUncheckedUpdateWithoutAiChatsInput>
-    create: XOR<OrganizationCreateWithoutAiChatsInput, OrganizationUncheckedCreateWithoutAiChatsInput>
-    where?: OrganizationWhereInput
-  }
-
-  export type OrganizationUpdateToOneWithWhereWithoutAiChatsInput = {
-    where?: OrganizationWhereInput
-    data: XOR<OrganizationUpdateWithoutAiChatsInput, OrganizationUncheckedUpdateWithoutAiChatsInput>
-  }
-
-  export type OrganizationUpdateWithoutAiChatsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: NullableStringFieldUpdateOperationsInput | string | null
-    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
-    applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
-    grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
-    recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
-    user?: UserUpdateOneWithoutOrganizationNestedInput
-  }
-
-  export type OrganizationUncheckedUpdateWithoutAiChatsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: NullableStringFieldUpdateOperationsInput | string | null
-    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
-    applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
-    grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
-    recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
-    user?: UserUncheckedUpdateOneWithoutOrganizationNestedInput
-  }
-
   export type AiChatCreateWithoutMessagesInput = {
     id?: string
     title?: string | null
@@ -20027,8 +21419,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     application?: ApplicationCreateNestedOneWithoutAiChatsInput
-    user: UserCreateNestedOneWithoutAiChatsInput
     organization: OrganizationCreateNestedOneWithoutAiChatsInput
+    user: UserCreateNestedOneWithoutAiChatsInput
   }
 
   export type AiChatUncheckedCreateWithoutMessagesInput = {
@@ -20037,9 +21429,9 @@ export namespace Prisma {
     context: $Enums.AiChatContext
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationId: string
     userId: string
     applicationId?: string | null
+    organizationId: string
   }
 
   export type AiChatCreateOrConnectWithoutMessagesInput = {
@@ -20065,8 +21457,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     application?: ApplicationUpdateOneWithoutAiChatsNestedInput
-    user?: UserUpdateOneRequiredWithoutAiChatsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutAiChatsNestedInput
+    user?: UserUpdateOneRequiredWithoutAiChatsNestedInput
   }
 
   export type AiChatUncheckedUpdateWithoutMessagesInput = {
@@ -20075,42 +21467,43 @@ export namespace Prisma {
     context?: EnumAiChatContextFieldUpdateOperationsInput | $Enums.AiChatContext
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type OrganizationCreateWithoutRecommendationsInput = {
     id?: string
     name: string
-    slug: string
-    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
+    slug: string
+    role?: $Enums.OrganizationRole
     address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    organizationLogo?: string | null
+    phone?: string | null
     state?: string | null
+    website?: string | null
     zipCode?: string | null
+    strategicPlan?: string | null
+    onboardingCompleted?: boolean
     countyName?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    leaId?: string | null
-    stateLeaId?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
     districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -20121,34 +21514,35 @@ export namespace Prisma {
   export type OrganizationUncheckedCreateWithoutRecommendationsInput = {
     id?: string
     name: string
-    slug: string
-    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationLogo?: string | null
-    website?: string | null
-    missionStatement?: string | null
-    strategicPlan?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: string | null
-    phone?: string | null
-    email?: string | null
-    organizationLeaderName?: string | null
+    slug: string
+    role?: $Enums.OrganizationRole
     address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    organizationLogo?: string | null
+    phone?: string | null
     state?: string | null
+    website?: string | null
     zipCode?: string | null
+    strategicPlan?: string | null
+    onboardingCompleted?: boolean
     countyName?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    leaId?: string | null
-    stateLeaId?: string | null
-    enrollment?: number | null
-    numberOfSchools?: number | null
-    lowestGrade?: number | null
-    highestGrade?: number | null
-    urbanCentricLocale?: number | null
     districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -20175,34 +21569,35 @@ export namespace Prisma {
   export type OrganizationUpdateWithoutRecommendationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -20213,34 +21608,35 @@ export namespace Prisma {
   export type OrganizationUncheckedUpdateWithoutRecommendationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: StringFieldUpdateOperationsInput | string
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20254,16 +21650,16 @@ export namespace Prisma {
     context: $Enums.AiChatContext
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationId: string
     applicationId?: string | null
+    organizationId: string
   }
 
   export type GrantBookmarkCreateManyUserInput = {
     id?: string
     notes?: string | null
     createdAt?: Date | string
-    organizationId: string
     opportunityId: number
+    organizationId: string
   }
 
   export type AiChatUpdateWithoutUserInput = {
@@ -20283,8 +21679,8 @@ export namespace Prisma {
     context?: EnumAiChatContextFieldUpdateOperationsInput | $Enums.AiChatContext
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationId?: StringFieldUpdateOperationsInput | string
     messages?: AiChatMessageUncheckedUpdateManyWithoutChatNestedInput
   }
 
@@ -20294,8 +21690,8 @@ export namespace Prisma {
     context?: EnumAiChatContextFieldUpdateOperationsInput | $Enums.AiChatContext
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type GrantBookmarkUpdateWithoutUserInput = {
@@ -20310,16 +21706,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
+    organizationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type GrantBookmarkUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
+    organizationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type AiChatCreateManyOrganizationInput = {
@@ -20552,8 +21948,8 @@ export namespace Prisma {
     context: $Enums.AiChatContext
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationId: string
     userId: string
+    organizationId: string
   }
 
   export type AiChatUpdateWithoutApplicationInput = {
@@ -20563,8 +21959,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: AiChatMessageUpdateManyWithoutChatNestedInput
-    user?: UserUpdateOneRequiredWithoutAiChatsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutAiChatsNestedInput
+    user?: UserUpdateOneRequiredWithoutAiChatsNestedInput
   }
 
   export type AiChatUncheckedUpdateWithoutApplicationInput = {
@@ -20573,8 +21969,8 @@ export namespace Prisma {
     context?: EnumAiChatContextFieldUpdateOperationsInput | $Enums.AiChatContext
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
     messages?: AiChatMessageUncheckedUpdateManyWithoutChatNestedInput
   }
 
@@ -20584,8 +21980,8 @@ export namespace Prisma {
     context?: EnumAiChatContextFieldUpdateOperationsInput | $Enums.AiChatContext
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type AiChatMessageCreateManyChatInput = {
