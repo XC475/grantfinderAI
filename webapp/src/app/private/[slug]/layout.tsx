@@ -10,6 +10,9 @@ import prisma from "@/lib/prisma";
 // Note: Authentication and access checks are now handled by middleware.ts
 // This makes the layout lighter and prevents full page reloads on navigation
 
+// Note: Authentication and access checks are now handled by middleware.ts
+// This makes the layout lighter and prevents full page reloads on navigation
+
 export default async function OrganizationLayout({
   children,
   params,

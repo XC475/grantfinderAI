@@ -70,6 +70,8 @@ export async function POST(req: NextRequest) {
       message: message,
       timestamp: Date.now().toString(),
       opportunity_id: opportunityId || null,
+      // Top 100 available grants
+      available_grants: topGrants,
       // District information for personalized grant recommendations
       district_info: organization.leaId
         ? {

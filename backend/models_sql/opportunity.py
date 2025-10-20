@@ -54,6 +54,8 @@ class Opportunity(db.Model):
     attachments = Column(JSON)  # List of attachment URLs or metadata
     extra = Column(JSON)
     relevance_score = Column(Integer)  # 0-100 score of relevance to school districts
+    raw_text = Column(Text)  # Full raw text of the grant posting for vectorization
+    content_hash = Column(String)  # Hash of the main content div for change detection
 
     def __repr__(self):
         return f"<Opportunity {self.id} {self.title}>"

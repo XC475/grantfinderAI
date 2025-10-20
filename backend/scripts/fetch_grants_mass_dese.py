@@ -426,6 +426,10 @@ def apply_ai_results_to_mass_dese_opportunity(opportunity, ai_data):
             opportunity.attachments = ai_data["attachments"]
         if "extra" in ai_data:
             opportunity.extra = ai_data["extra"]
+
+        # Generate and populate raw_text using the helper function
+        opportunity.raw_text = helpers.format_opportunity_text(opportunity)
+
         return True
     except Exception as e:
         print(f"Error applying AI results to Mass DESE opportunity: {e}")
