@@ -150,6 +150,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     id: string;
     name: string;
     slug: string;
+    logoUrl: string | null;
   } | null>(null);
   const [loadingOrganization, setLoadingOrganization] = React.useState(true);
   const [isAdmin, setIsAdmin] = React.useState(false);

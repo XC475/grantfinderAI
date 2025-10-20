@@ -58,85 +58,8 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Fetch grants: first state-specific, then USA-wide to fill up to 100 total
     console.log(
-      "📊 [Recommendations API] Fetching grants for recommendations..."
-    );
-    let topGrants = [];
-
-    // Step 1: Fetch all posted grants for the organization's state (if available)
-    if (organization.state) {
-      console.log(
-        `📊 [Recommendations API] Fetching grants for state: ${organization.state}`
-      );
-      const stateGrantsUrl = new URL(
-        `${req.nextUrl.protocol}//${req.nextUrl.host}/api/grants/search`
-      );
-      stateGrantsUrl.searchParams.set("status", "posted");
-      stateGrantsUrl.searchParams.set("stateCode", organization.state);
-      stateGrantsUrl.searchParams.set("limit", "100"); // Fetch all state grants
-      stateGrantsUrl.searchParams.set("offset", "0");
-
-      const stateGrantsResponse = await fetch(stateGrantsUrl.toString(), {
-        headers: {
-          "x-api-key": process.env.INTERNAL_API_KEY || "",
-        },
-      });
-
-      if (stateGrantsResponse.ok) {
-        const stateGrantsData = await stateGrantsResponse.json();
-        topGrants = stateGrantsData.data || [];
-        console.log(
-          `📊 [Recommendations API] Fetched ${topGrants.length} state-specific grants`
-        );
-      } else {
-        console.warn("⚠️ [Recommendations API] Failed to fetch state grants");
-      }
-    }
-
-    // Step 2: Calculate how many more grants we need to reach 100
-    const remainingSlots = Math.max(0, 100 - topGrants.length);
-
-    if (remainingSlots > 0) {
-      console.log(
-        `📊 [Recommendations API] Fetching ${remainingSlots} USA-wide grants to fill remaining slots`
-      );
-      const usaGrantsUrl = new URL(
-        `${req.nextUrl.protocol}//${req.nextUrl.host}/api/grants/search`
-      );
-      usaGrantsUrl.searchParams.set("status", "posted");
-      usaGrantsUrl.searchParams.set("limit", remainingSlots.toString());
-      usaGrantsUrl.searchParams.set("offset", "0");
-
-      const usaGrantsResponse = await fetch(usaGrantsUrl.toString(), {
-        headers: {
-          "x-api-key": process.env.INTERNAL_API_KEY || "",
-        },
-      });
-
-      if (usaGrantsResponse.ok) {
-        const usaGrantsData = await usaGrantsResponse.json();
-        const usaGrants = usaGrantsData.data || [];
-
-        // Filter out any USA grants that are already in the state grants (by ID)
-        const stateGrantIds = new Set(
-          topGrants.map((g: { id: number }) => g.id)
-        );
-        const uniqueUsaGrants = usaGrants.filter(
-          (g: { id: number }) => !stateGrantIds.has(g.id)
-        );
-
-        topGrants = [...topGrants, ...uniqueUsaGrants];
-        console.log(
-          `📊 [Recommendations API] Added ${uniqueUsaGrants.length} USA-wide grants`
-        );
-      } else {
-        console.warn("⚠️ [Recommendations API] Failed to fetch USA grants");
-      }
-    }
-
-    console.log(
-      `📊 [Recommendations API] Total grants to send to n8n: ${topGrants.length}`
+      "📊 [Recommendations API] Preparing district profile for n8n..."
     );
 
     // Send to N8N with district information for recommendations
@@ -166,20 +89,14 @@ export async function POST(req: NextRequest) {
             highestGrade: organization.highestGrade,
             urbanCentricLocale: organization.urbanCentricLocale,
             districtDataYear: organization.districtDataYear,
+            annualOperatingBudget: organization.annualOperatingBudget
+              ? organization.annualOperatingBudget.toString()
+              : null,
+            fiscalYearEnd: organization.fiscalYearEnd || null,
+            missionStatement: organization.missionStatement || null,
+            strategicPlan: organization.strategicPlan || null,
           }
         : null,
-      // Organization context
-      organization_info: {
-        id: organization.id,
-        name: organization.name,
-        district_linked: !!organization.leaId,
-        missionStatement: organization.missionStatement || null,
-        strategicPlan: organization.strategicPlan || null,
-        annualOperatingBudget: organization.annualOperatingBudget
-          ? organization.annualOperatingBudget.toString()
-          : null,
-        fiscalYearEnd: organization.fiscalYearEnd || null,
-      },
     };
 
     console.log("🔍 [Recommendations API] Sending to n8n with district info:", {
@@ -210,57 +127,38 @@ export async function POST(req: NextRequest) {
       JSON.stringify(data, null, 2)
     );
 
-    // Handle n8n response format
-    let recommendations;
+    // Handle n8n response format - expect {output: "[...]"} structure
     let recommendationsArray = [];
 
-    if (Array.isArray(data)) {
-      // n8n returns array format
-      if (data.length > 0 && data[0].output) {
-        recommendations = data[0].output;
-      } else {
-        recommendations = data;
+    console.log("🔍 [Recommendations API] Raw n8n response type:", typeof data);
+
+    // Parse the response based on type - n8n returns {output: "[...]"}
+    if (typeof data === "object" && data.output) {
+      try {
+        if (typeof data.output === "string") {
+          // Parse the stringified JSON array
+          recommendationsArray = JSON.parse(data.output);
+          console.log(
+            `🔍 [Recommendations API] Parsed ${recommendationsArray.length} recommendations from output string`
+          );
+        } else if (Array.isArray(data.output)) {
+          // Already an array
+          recommendationsArray = data.output;
+        }
+      } catch (parseError) {
+        console.error(
+          "❌ [Recommendations API] Failed to parse output:",
+          parseError
+        );
       }
-    } else if (typeof data === "string") {
-      recommendations = data;
-    } else if (typeof data === "object") {
-      // Try to extract from various possible fields
-      recommendations =
-        data.response ||
-        data.message ||
-        data.content ||
-        data.recommendations ||
-        data.output ||
-        JSON.stringify(data);
-    } else {
-      recommendations = "OK";
+    } else if (Array.isArray(data)) {
+      // Direct array format
+      recommendationsArray = data;
     }
 
     console.log(
-      "🔍 [Recommendations API] Processed recommendations:",
-      typeof recommendations === "string" && recommendations.length > 100
-        ? recommendations.substring(0, 100) + "..."
-        : recommendations
+      `🔍 [Recommendations API] Processing ${recommendationsArray.length} recommendations`
     );
-
-    // Parse recommendations if it's a string
-    if (typeof recommendations === "string") {
-      try {
-        const parsed = JSON.parse(recommendations);
-        if (parsed.recommendations && Array.isArray(parsed.recommendations)) {
-          recommendationsArray = parsed.recommendations;
-        }
-      } catch {
-        console.warn("Could not parse recommendations as JSON");
-      }
-    } else if (Array.isArray(recommendations)) {
-      recommendationsArray = recommendations;
-    } else if (
-      recommendations?.recommendations &&
-      Array.isArray(recommendations.recommendations)
-    ) {
-      recommendationsArray = recommendations.recommendations;
-    }
 
     // Save recommendations to database
     if (recommendationsArray.length > 0) {
@@ -291,7 +189,8 @@ export async function POST(req: NextRequest) {
               fit_score?: number;
               fit_reasoning?: string;
               fit_description?: string;
-              district_name?: string;
+              organization_name?: string;
+              organization_id?: string;
               query_date?: string;
             }) => ({
               organizationId: userOrganizationId,
@@ -299,7 +198,7 @@ export async function POST(req: NextRequest) {
               fitScore: rec.fit_score || 0,
               fitReasoning: rec.fit_reasoning || "",
               fitDescription: rec.fit_description || "",
-              districtName: rec.district_name || "",
+              districtName: rec.organization_name || organization.name || "",
               queryDate: rec.query_date ? new Date(rec.query_date) : new Date(),
             })
           ),
@@ -317,12 +216,18 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Return the response to the client
-    return new Response(JSON.stringify({ recommendations }), {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    // Return the parsed recommendations array to the client
+    return new Response(
+      JSON.stringify({
+        recommendations: recommendationsArray,
+        count: recommendationsArray.length,
+      }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   } catch (error) {
     console.error("❌ [Recommendations API] Error:", error);
     return new Response("Error processing recommendations request", {

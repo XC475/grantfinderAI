@@ -37,7 +37,7 @@ interface Organization {
   id: string;
   name: string;
   slug: string;
-  organizationLogo: string | null;
+  logoUrl: string | null;
   website: string | null;
   missionStatement: string | null;
   strategicPlan: string | null;
@@ -104,6 +104,21 @@ export default function ProfilePage() {
 
     setUploading(true);
     try {
+      // Delete old logo if it exists
+      if (organization.logoUrl) {
+        try {
+          // Extract file path from URL
+          const urlParts = organization.logoUrl.split("/grantware/");
+          if (urlParts.length > 1) {
+            const oldFilePath = urlParts[1];
+            await supabase.storage.from("grantware").remove([oldFilePath]);
+          }
+        } catch (deleteError) {
+          console.warn("Failed to delete old logo:", deleteError);
+          // Continue with upload even if delete fails
+        }
+      }
+
       // Create a unique filename
       const fileExt = file.name.split(".").pop();
       const fileName = `${organization.id}-${Date.now()}.${fileExt}`;
@@ -122,10 +137,19 @@ export default function ProfilePage() {
       // Get public URL
       const {
         data: { publicUrl },
-      } = supabase.storage.from("grant ware").getPublicUrl(filePath);
+      } = supabase.storage.from("grantware").getPublicUrl(filePath);
 
-      // Update organization with logo URL
-      setOrganization({ ...organization, organizationLogo: publicUrl });
+      // Update organization in database
+      const response = await fetch(`/api/organizations/${organization.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ logoUrl: publicUrl }),
+      });
+
+      if (!response.ok) throw new Error("Failed to save logo URL");
+
+      // Update local state
+      setOrganization({ ...organization, logoUrl: publicUrl });
       toast.success("Logo uploaded successfully");
     } catch (error) {
       console.error("Error uploading logo:", error);
@@ -210,10 +234,10 @@ export default function ProfilePage() {
               <div className="grid gap-2">
                 <Label htmlFor="logo">Organization Logo</Label>
                 <div className="flex items-center gap-4">
-                  {organization.organizationLogo ? (
+                  {organization.logoUrl ? (
                     <div className="relative w-24 h-24 rounded-lg border-2 border-border overflow-hidden">
                       <Image
-                        src={organization.organizationLogo}
+                        src={organization.logoUrl}
                         alt="Organization logo"
                         width={96}
                         height={96}

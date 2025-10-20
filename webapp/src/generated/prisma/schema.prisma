@@ -49,6 +49,8 @@ model opportunities {
   attachments          Json?                   @db.Json
   extra                Json?                   @db.Json
   relevance_score      Int?
+  raw_text             String?
+  content_hash         String?                 @db.VarChar
 
   @@schema("public")
 }
@@ -75,39 +77,35 @@ model User {
 model Organization {
   id                     String                     @id @default(cuid())
   name                   String
-  slug                   String                     @unique
-  role                   OrganizationRole           @default(MEMBER)
   createdAt              DateTime                   @default(now())
   updatedAt              DateTime                   @updatedAt
-  // Basic Information
-  organizationLogo       String?
-  website                String?
-  missionStatement       String?
-  strategicPlan          String?                    @db.Text
-  annualOperatingBudget  Decimal?                   @db.Decimal(15, 2)
-  fiscalYearEnd          String?
-  // Contact Information
-  phone                  String?
-  email                  String?
-  organizationLeaderName String?
-  // Address
+  slug                   String                     @unique
+  role                   OrganizationRole           @default(MEMBER)
   address                String?
+  annualOperatingBudget  Decimal?                   @db.Decimal(15, 2)
   city                   String?
+  email                  String?
+  fiscalYearEnd          String?
+  missionStatement       String?
+  organizationLeaderName String?
+  logoUrl                String?
+  phone                  String?
   state                  String?
+  website                String?
   zipCode                String?
+  strategicPlan          String?
+  onboardingCompleted    Boolean                    @default(false)
   countyName             String?
-  latitude               Float?
-  longitude              Float?
-  // School District Data (for education organizations)
-  leaId                  String?                    @unique
-  stateLeaId             String?
-  enrollment             Int?
-  numberOfSchools        Int?
-  lowestGrade            Int?
-  highestGrade           Int?
-  urbanCentricLocale     Int?
   districtDataYear       Int?
-  // Relations
+  enrollment             Int?
+  highestGrade           Int?
+  latitude               Float?
+  leaId                  String?                    @unique
+  longitude              Float?
+  lowestGrade            Int?
+  numberOfSchools        Int?
+  stateLeaId             String?
+  urbanCentricLocale     Int?
   aiChats                AiChat[]
   applications           Application[]
   grantBookmarks         GrantBookmark[]
@@ -125,11 +123,11 @@ model GrantBookmark {
   id             String       @id @default(cuid())
   notes          String?
   createdAt      DateTime     @default(now())
-  organizationId String
   userId         String       @db.Uuid
   opportunityId  Int
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, opportunityId, organizationId])
   @@map("grant_bookmarks")
@@ -144,8 +142,8 @@ model GrantEligibilityAnalysis {
   risks          String?
   confidence     Float?
   createdAt      DateTime       @default(now())
-  organizationId String
   opportunityId  Int
+  organizationId String
   organization   Organization   @relation(fields: [organizationId], references: [id])
 
   @@unique([opportunityId, organizationId])
@@ -156,7 +154,6 @@ model GrantEligibilityAnalysis {
 model Application {
   id             String            @id @default(cuid())
   opportunityId  Int
-  organizationId String
   status         ApplicationStatus @default(DRAFT)
   content        Json?
   contentHtml    String?
@@ -167,6 +164,7 @@ model Application {
   updatedAt      DateTime          @updatedAt
   submittedAt    DateTime?
   lastEditedAt   DateTime          @default(now())
+  organizationId String
   aiChats        AiChat[]
   organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
@@ -183,13 +181,13 @@ model AiChat {
   context        AiChatContext
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
-  organizationId String
   userId         String          @db.Uuid
   applicationId  String?
+  organizationId String
   messages       AiChatMessage[]
   application    Application?    @relation(fields: [applicationId], references: [id])
-  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("ai_chats")
   @@schema("app")
@@ -213,8 +211,8 @@ model Recommendation {
   organizationId String
   opportunityId  String
   fitScore       Int
-  fitReasoning   String       @db.Text
-  fitDescription String       @db.Text
+  fitReasoning   String
+  fitDescription String
   districtName   String
   queryDate      DateTime
   createdAt      DateTime     @default(now())
@@ -224,6 +222,15 @@ model Recommendation {
   @@index([opportunityId])
   @@map("recommendations")
   @@schema("app")
+}
+
+model documents {
+  id        BigInt                 @id @default(autoincrement())
+  content   String?
+  metadata  Json?
+  embedding Unsupported("vector")?
+
+  @@schema("public")
 }
 
 enum opportunity_status_enum {

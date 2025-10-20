@@ -48,7 +48,7 @@ export async function PATCH(
       where: { id },
       data: {
         name: body.name,
-        organizationLogo: body.organizationLogo,
+        logoUrl: body.logoUrl,
         website: body.website,
         missionStatement: body.missionStatement,
         strategicPlan: body.strategicPlan,
@@ -63,12 +63,16 @@ export async function PATCH(
         city: body.city,
         state: body.state,
         zipCode: body.zipCode,
+        onboardingCompleted:
+          body.onboarding_completed !== undefined
+            ? body.onboarding_completed
+            : undefined,
       },
       select: {
         id: true,
         name: true,
         slug: true,
-        organizationLogo: true,
+        logoUrl: true,
         website: true,
         missionStatement: true,
         strategicPlan: true,
@@ -81,6 +85,7 @@ export async function PATCH(
         city: true,
         state: true,
         zipCode: true,
+        onboardingCompleted: true,
         createdAt: true,
         updatedAt: true,
       },
