@@ -16,7 +16,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
 from flask_server import __main__ as server
 from flask_server.db import db
-from models_sql import Opportunity, OpportunityStatusEnum
+from models_sql import Opportunity, OpportunityStatusEnum, FundingTypeEnum
 
 # Flask app context setup
 flask_app = server.create_app()
@@ -290,7 +290,8 @@ def prepare_mass_dese_grant(grant, session, fund_code):
     opportunity.status = OpportunityStatusEnum.posted
     opportunity.contact_email = contact
     opportunity.agency = agency_name
-    opportunity.funding_instrument = "grant"
+    opportunity.funding_instrument = "Grant"
+    opportunity.funding_type = FundingTypeEnum.state
     opportunity.relevance_score = 100
 
     # Construct URL to the detailed grant page

@@ -12,7 +12,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
 from flask_server import __main__ as server
 from flask_server.db import db
-from models_sql import Opportunity, OpportunityStatusEnum
+from models_sql import Opportunity, OpportunityStatusEnum, FundingTypeEnum
 import json
 
 # App + API setup
@@ -21,6 +21,26 @@ HEADERS = {"Content-Type": "application/json"}
 SEARCH_URL = "https://api.grants.gov/v1/api/search2"
 FETCH_URL = "https://api.grants.gov/v1/api/fetchOpportunity"
 model = "google/gemini-2.5-flash-preview-09-2025:online"
+
+
+def should_skip_grant(close_date, fiscal_year):
+    """
+    Determine if a grant should be skipped based on close_date and fiscal_year criteria.
+
+    Args:
+        close_date: The grant's close/deadline date (can be None)
+        fiscal_year: The grant's fiscal year (can be None)
+
+    Returns:
+        tuple: (should_skip, reason) where should_skip is boolean and reason is explanation
+    """
+    current_year = date.today().year
+
+    # Skip if no close date AND fiscal year is in the past
+    if not close_date and fiscal_year and fiscal_year < current_year:
+        return True, f"No close date and fiscal year {fiscal_year} is in the past"
+
+    return False, None
 
 
 def get_batch_prompt(grants_batch):
@@ -248,6 +268,9 @@ def prepare_forecasted_grant(op, session):
         )
         session.add(opportunity)
 
+    # Set funding type for all grants.gov opportunities as federal
+    opportunity.funding_type = FundingTypeEnum.federal
+
     # if opportunity not updated, skip
     if opportunity.last_updated and opportunity.last_updated.date() == last_updated:
         print(f"Skipping {opportunity.source_grant_id}, no update.")
@@ -302,6 +325,17 @@ def prepare_forecasted_grant(op, session):
     opportunity.total_funding_amount = (
         int(forecast["estimatedFunding"]) if forecast.get("estimatedFunding") else None
     )
+
+    # Check if this grant should be skipped based on close_date and fiscal_year
+    should_skip, skip_reason = should_skip_grant(
+        opportunity.close_date, opportunity.fiscal_year
+    )
+    if should_skip:
+        print(f"Skipping {opportunity.source_grant_id}: {skip_reason}")
+        # Remove from session if we just added it
+        if opportunity in session.new:
+            session.expunge(opportunity)
+        return None
 
     current_opportunity = {
         "index": 0,  # Will be set during batch processing
@@ -366,6 +400,9 @@ def prepare_posted_grant(op, opp_status, session):
             status=opp_status,
         )
         session.add(opportunity)
+
+    # Set funding type for all grants.gov opportunities as federal
+    opportunity.funding_type = FundingTypeEnum.federal
 
     # if opportunity not updated, skip
     if opportunity.last_updated and opportunity.last_updated.date() == last_updated:
@@ -440,6 +477,17 @@ def prepare_posted_grant(op, opp_status, session):
             opportunity.total_funding_amount = None
     else:
         opportunity.total_funding_amount = None
+
+    # Check if this grant should be skipped based on close_date and fiscal_year
+    should_skip, skip_reason = should_skip_grant(
+        opportunity.close_date, opportunity.fiscal_year
+    )
+    if should_skip:
+        print(f"Skipping {opportunity.source_grant_id}: {skip_reason}")
+        # Remove from session if we just added it
+        if opportunity in session.new:
+            session.expunge(opportunity)
+        return None
 
     current_opportunity = {
         "index": 0,  # Will be set during batch processing
