@@ -20,6 +20,13 @@ class OpportunityStatusEnum(str, PyEnum):
     archive = "archive"
 
 
+class FundingTypeEnum(str, PyEnum):
+    state = "state"
+    federal = "federal"
+    local = "local"
+    private = "private"
+
+
 class Opportunity(db.Model):
     __tablename__ = "opportunities"
 
@@ -47,6 +54,7 @@ class Opportunity(db.Model):
     eligibility = Column(Text)  # Raw eligibility text
     eligibility_summary = Column(String)  # e.g. Model generated summary
     last_updated = Column(DateTime)
+    funding_type = Column(Enum(FundingTypeEnum, name="funding_type_enum"))
     contact_name = Column(String)
     contact_email = Column(String)
     contact_phone = Column(String)

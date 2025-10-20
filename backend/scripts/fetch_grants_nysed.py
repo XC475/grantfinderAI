@@ -19,7 +19,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
 from flask_server import __main__ as server
 from flask_server.db import db
-from models_sql import Opportunity, OpportunityStatusEnum
+from models_sql import Opportunity, OpportunityStatusEnum, FundingTypeEnum
 
 # Flask app context setup
 flask_app = server.create_app()
@@ -279,7 +279,8 @@ def upsert_nysed_grant(grant_data: Dict, processed_data: Dict, session) -> bool:
         opportunity.category = processed_data.get("category")
         opportunity.url = url
         opportunity.attachments = grant_data["attachments"]
-        opportunity.funding_instrument = "grant"
+        opportunity.funding_instrument = "Grant"
+        opportunity.funding_type = FundingTypeEnum.state
         opportunity.status = OpportunityStatusEnum.closed
         opportunity.relevance_score = (
             100  # NYSED grants are highly relevant to NY school districts
