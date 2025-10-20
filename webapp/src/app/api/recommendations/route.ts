@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
-
+// UPDATED
 // Your n8n webhook URL for recommendations - replace with your actual webhook URL
 const N8N_RECOMMENDATIONS_URL = process.env.N8N_RECOMMENDATIONS_URL!;
 
@@ -70,8 +70,6 @@ export async function POST(req: NextRequest) {
       message: message,
       timestamp: Date.now().toString(),
       opportunity_id: opportunityId || null,
-      // Top 100 available grants
-      available_grants: topGrants,
       // District information for personalized grant recommendations
       district_info: organization.leaId
         ? {
