@@ -134,6 +134,16 @@ export const OrganizationRole: {
 
 export type OrganizationRole = (typeof OrganizationRole)[keyof typeof OrganizationRole]
 
+
+export const funding_type_enum: {
+  state: 'state',
+  federal: 'federal',
+  local: 'local',
+  private: 'private'
+};
+
+export type funding_type_enum = (typeof funding_type_enum)[keyof typeof funding_type_enum]
+
 }
 
 export type opportunity_status_enum = $Enums.opportunity_status_enum
@@ -159,6 +169,10 @@ export const MessageRole: typeof $Enums.MessageRole
 export type OrganizationRole = $Enums.OrganizationRole
 
 export const OrganizationRole: typeof $Enums.OrganizationRole
+
+export type funding_type_enum = $Enums.funding_type_enum
+
+export const funding_type_enum: typeof $Enums.funding_type_enum
 
 /**
  * ##  Prisma Client ʲˢ
@@ -3032,6 +3046,7 @@ export namespace Prisma {
     relevance_score: number | null
     raw_text: string | null
     content_hash: string | null
+    funding_type: $Enums.funding_type_enum | null
   }
 
   export type OpportunitiesMaxAggregateOutputType = {
@@ -3064,6 +3079,7 @@ export namespace Prisma {
     relevance_score: number | null
     raw_text: string | null
     content_hash: string | null
+    funding_type: $Enums.funding_type_enum | null
   }
 
   export type OpportunitiesCountAggregateOutputType = {
@@ -3098,6 +3114,7 @@ export namespace Prisma {
     relevance_score: number
     raw_text: number
     content_hash: number
+    funding_type: number
     _all: number
   }
 
@@ -3150,6 +3167,7 @@ export namespace Prisma {
     relevance_score?: true
     raw_text?: true
     content_hash?: true
+    funding_type?: true
   }
 
   export type OpportunitiesMaxAggregateInputType = {
@@ -3182,6 +3200,7 @@ export namespace Prisma {
     relevance_score?: true
     raw_text?: true
     content_hash?: true
+    funding_type?: true
   }
 
   export type OpportunitiesCountAggregateInputType = {
@@ -3216,6 +3235,7 @@ export namespace Prisma {
     relevance_score?: true
     raw_text?: true
     content_hash?: true
+    funding_type?: true
     _all?: true
   }
 
@@ -3337,6 +3357,7 @@ export namespace Prisma {
     relevance_score: number | null
     raw_text: string | null
     content_hash: string | null
+    funding_type: $Enums.funding_type_enum | null
     _count: OpportunitiesCountAggregateOutputType | null
     _avg: OpportunitiesAvgAggregateOutputType | null
     _sum: OpportunitiesSumAggregateOutputType | null
@@ -3390,6 +3411,7 @@ export namespace Prisma {
     relevance_score?: boolean
     raw_text?: boolean
     content_hash?: boolean
+    funding_type?: boolean
   }, ExtArgs["result"]["opportunities"]>
 
   export type opportunitiesSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3424,6 +3446,7 @@ export namespace Prisma {
     relevance_score?: boolean
     raw_text?: boolean
     content_hash?: boolean
+    funding_type?: boolean
   }, ExtArgs["result"]["opportunities"]>
 
   export type opportunitiesSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3458,6 +3481,7 @@ export namespace Prisma {
     relevance_score?: boolean
     raw_text?: boolean
     content_hash?: boolean
+    funding_type?: boolean
   }, ExtArgs["result"]["opportunities"]>
 
   export type opportunitiesSelectScalar = {
@@ -3492,9 +3516,10 @@ export namespace Prisma {
     relevance_score?: boolean
     raw_text?: boolean
     content_hash?: boolean
+    funding_type?: boolean
   }
 
-  export type opportunitiesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "source" | "state_code" | "source_grant_id" | "status" | "title" | "description" | "description_summary" | "agency" | "funding_instrument" | "category" | "fiscal_year" | "post_date" | "close_date" | "archive_date" | "cost_sharing" | "award_max" | "award_min" | "total_funding_amount" | "eligibility" | "eligibility_summary" | "last_updated" | "contact_name" | "contact_email" | "contact_phone" | "url" | "attachments" | "extra" | "relevance_score" | "raw_text" | "content_hash", ExtArgs["result"]["opportunities"]>
+  export type opportunitiesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "source" | "state_code" | "source_grant_id" | "status" | "title" | "description" | "description_summary" | "agency" | "funding_instrument" | "category" | "fiscal_year" | "post_date" | "close_date" | "archive_date" | "cost_sharing" | "award_max" | "award_min" | "total_funding_amount" | "eligibility" | "eligibility_summary" | "last_updated" | "contact_name" | "contact_email" | "contact_phone" | "url" | "attachments" | "extra" | "relevance_score" | "raw_text" | "content_hash" | "funding_type", ExtArgs["result"]["opportunities"]>
 
   export type $opportunitiesPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "opportunities"
@@ -3531,6 +3556,7 @@ export namespace Prisma {
       relevance_score: number | null
       raw_text: string | null
       content_hash: string | null
+      funding_type: $Enums.funding_type_enum | null
     }, ExtArgs["result"]["opportunities"]>
     composites: {}
   }
@@ -3985,6 +4011,7 @@ export namespace Prisma {
     readonly relevance_score: FieldRef<"opportunities", 'Int'>
     readonly raw_text: FieldRef<"opportunities", 'String'>
     readonly content_hash: FieldRef<"opportunities", 'String'>
+    readonly funding_type: FieldRef<"opportunities", 'funding_type_enum'>
   }
     
 
@@ -5569,13 +5596,11 @@ export namespace Prisma {
     fiscalYearEnd: string | null
     missionStatement: string | null
     organizationLeaderName: string | null
-    logoUrl: string | null
     phone: string | null
     state: string | null
     website: string | null
     zipCode: string | null
     strategicPlan: string | null
-    onboardingCompleted: boolean | null
     countyName: string | null
     districtDataYear: number | null
     enrollment: number | null
@@ -5587,6 +5612,8 @@ export namespace Prisma {
     numberOfSchools: number | null
     stateLeaId: string | null
     urbanCentricLocale: number | null
+    onboardingCompleted: boolean | null
+    logoUrl: string | null
   }
 
   export type OrganizationMaxAggregateOutputType = {
@@ -5603,13 +5630,11 @@ export namespace Prisma {
     fiscalYearEnd: string | null
     missionStatement: string | null
     organizationLeaderName: string | null
-    logoUrl: string | null
     phone: string | null
     state: string | null
     website: string | null
     zipCode: string | null
     strategicPlan: string | null
-    onboardingCompleted: boolean | null
     countyName: string | null
     districtDataYear: number | null
     enrollment: number | null
@@ -5621,6 +5646,8 @@ export namespace Prisma {
     numberOfSchools: number | null
     stateLeaId: string | null
     urbanCentricLocale: number | null
+    onboardingCompleted: boolean | null
+    logoUrl: string | null
   }
 
   export type OrganizationCountAggregateOutputType = {
@@ -5637,13 +5664,11 @@ export namespace Prisma {
     fiscalYearEnd: number
     missionStatement: number
     organizationLeaderName: number
-    logoUrl: number
     phone: number
     state: number
     website: number
     zipCode: number
     strategicPlan: number
-    onboardingCompleted: number
     countyName: number
     districtDataYear: number
     enrollment: number
@@ -5655,6 +5680,8 @@ export namespace Prisma {
     numberOfSchools: number
     stateLeaId: number
     urbanCentricLocale: number
+    onboardingCompleted: number
+    logoUrl: number
     _all: number
   }
 
@@ -5697,13 +5724,11 @@ export namespace Prisma {
     fiscalYearEnd?: true
     missionStatement?: true
     organizationLeaderName?: true
-    logoUrl?: true
     phone?: true
     state?: true
     website?: true
     zipCode?: true
     strategicPlan?: true
-    onboardingCompleted?: true
     countyName?: true
     districtDataYear?: true
     enrollment?: true
@@ -5715,6 +5740,8 @@ export namespace Prisma {
     numberOfSchools?: true
     stateLeaId?: true
     urbanCentricLocale?: true
+    onboardingCompleted?: true
+    logoUrl?: true
   }
 
   export type OrganizationMaxAggregateInputType = {
@@ -5731,13 +5758,11 @@ export namespace Prisma {
     fiscalYearEnd?: true
     missionStatement?: true
     organizationLeaderName?: true
-    logoUrl?: true
     phone?: true
     state?: true
     website?: true
     zipCode?: true
     strategicPlan?: true
-    onboardingCompleted?: true
     countyName?: true
     districtDataYear?: true
     enrollment?: true
@@ -5749,6 +5774,8 @@ export namespace Prisma {
     numberOfSchools?: true
     stateLeaId?: true
     urbanCentricLocale?: true
+    onboardingCompleted?: true
+    logoUrl?: true
   }
 
   export type OrganizationCountAggregateInputType = {
@@ -5765,13 +5792,11 @@ export namespace Prisma {
     fiscalYearEnd?: true
     missionStatement?: true
     organizationLeaderName?: true
-    logoUrl?: true
     phone?: true
     state?: true
     website?: true
     zipCode?: true
     strategicPlan?: true
-    onboardingCompleted?: true
     countyName?: true
     districtDataYear?: true
     enrollment?: true
@@ -5783,6 +5808,8 @@ export namespace Prisma {
     numberOfSchools?: true
     stateLeaId?: true
     urbanCentricLocale?: true
+    onboardingCompleted?: true
+    logoUrl?: true
     _all?: true
   }
 
@@ -5886,13 +5913,11 @@ export namespace Prisma {
     fiscalYearEnd: string | null
     missionStatement: string | null
     organizationLeaderName: string | null
-    logoUrl: string | null
     phone: string | null
     state: string | null
     website: string | null
     zipCode: string | null
     strategicPlan: string | null
-    onboardingCompleted: boolean
     countyName: string | null
     districtDataYear: number | null
     enrollment: number | null
@@ -5904,6 +5929,8 @@ export namespace Prisma {
     numberOfSchools: number | null
     stateLeaId: string | null
     urbanCentricLocale: number | null
+    onboardingCompleted: boolean
+    logoUrl: string | null
     _count: OrganizationCountAggregateOutputType | null
     _avg: OrganizationAvgAggregateOutputType | null
     _sum: OrganizationSumAggregateOutputType | null
@@ -5939,13 +5966,11 @@ export namespace Prisma {
     fiscalYearEnd?: boolean
     missionStatement?: boolean
     organizationLeaderName?: boolean
-    logoUrl?: boolean
     phone?: boolean
     state?: boolean
     website?: boolean
     zipCode?: boolean
     strategicPlan?: boolean
-    onboardingCompleted?: boolean
     countyName?: boolean
     districtDataYear?: boolean
     enrollment?: boolean
@@ -5957,6 +5982,8 @@ export namespace Prisma {
     numberOfSchools?: boolean
     stateLeaId?: boolean
     urbanCentricLocale?: boolean
+    onboardingCompleted?: boolean
+    logoUrl?: boolean
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
     grantBookmarks?: boolean | Organization$grantBookmarksArgs<ExtArgs>
@@ -5980,13 +6007,11 @@ export namespace Prisma {
     fiscalYearEnd?: boolean
     missionStatement?: boolean
     organizationLeaderName?: boolean
-    logoUrl?: boolean
     phone?: boolean
     state?: boolean
     website?: boolean
     zipCode?: boolean
     strategicPlan?: boolean
-    onboardingCompleted?: boolean
     countyName?: boolean
     districtDataYear?: boolean
     enrollment?: boolean
@@ -5998,6 +6023,8 @@ export namespace Prisma {
     numberOfSchools?: boolean
     stateLeaId?: boolean
     urbanCentricLocale?: boolean
+    onboardingCompleted?: boolean
+    logoUrl?: boolean
   }, ExtArgs["result"]["organization"]>
 
   export type OrganizationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6014,13 +6041,11 @@ export namespace Prisma {
     fiscalYearEnd?: boolean
     missionStatement?: boolean
     organizationLeaderName?: boolean
-    logoUrl?: boolean
     phone?: boolean
     state?: boolean
     website?: boolean
     zipCode?: boolean
     strategicPlan?: boolean
-    onboardingCompleted?: boolean
     countyName?: boolean
     districtDataYear?: boolean
     enrollment?: boolean
@@ -6032,6 +6057,8 @@ export namespace Prisma {
     numberOfSchools?: boolean
     stateLeaId?: boolean
     urbanCentricLocale?: boolean
+    onboardingCompleted?: boolean
+    logoUrl?: boolean
   }, ExtArgs["result"]["organization"]>
 
   export type OrganizationSelectScalar = {
@@ -6048,13 +6075,11 @@ export namespace Prisma {
     fiscalYearEnd?: boolean
     missionStatement?: boolean
     organizationLeaderName?: boolean
-    logoUrl?: boolean
     phone?: boolean
     state?: boolean
     website?: boolean
     zipCode?: boolean
     strategicPlan?: boolean
-    onboardingCompleted?: boolean
     countyName?: boolean
     districtDataYear?: boolean
     enrollment?: boolean
@@ -6066,9 +6091,11 @@ export namespace Prisma {
     numberOfSchools?: boolean
     stateLeaId?: boolean
     urbanCentricLocale?: boolean
+    onboardingCompleted?: boolean
+    logoUrl?: boolean
   }
 
-  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "slug" | "role" | "address" | "annualOperatingBudget" | "city" | "email" | "fiscalYearEnd" | "missionStatement" | "organizationLeaderName" | "logoUrl" | "phone" | "state" | "website" | "zipCode" | "strategicPlan" | "onboardingCompleted" | "countyName" | "districtDataYear" | "enrollment" | "highestGrade" | "latitude" | "leaId" | "longitude" | "lowestGrade" | "numberOfSchools" | "stateLeaId" | "urbanCentricLocale", ExtArgs["result"]["organization"]>
+  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "slug" | "role" | "address" | "annualOperatingBudget" | "city" | "email" | "fiscalYearEnd" | "missionStatement" | "organizationLeaderName" | "phone" | "state" | "website" | "zipCode" | "strategicPlan" | "countyName" | "districtDataYear" | "enrollment" | "highestGrade" | "latitude" | "leaId" | "longitude" | "lowestGrade" | "numberOfSchools" | "stateLeaId" | "urbanCentricLocale" | "onboardingCompleted" | "logoUrl", ExtArgs["result"]["organization"]>
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
@@ -6105,13 +6132,11 @@ export namespace Prisma {
       fiscalYearEnd: string | null
       missionStatement: string | null
       organizationLeaderName: string | null
-      logoUrl: string | null
       phone: string | null
       state: string | null
       website: string | null
       zipCode: string | null
       strategicPlan: string | null
-      onboardingCompleted: boolean
       countyName: string | null
       districtDataYear: number | null
       enrollment: number | null
@@ -6123,6 +6148,8 @@ export namespace Prisma {
       numberOfSchools: number | null
       stateLeaId: string | null
       urbanCentricLocale: number | null
+      onboardingCompleted: boolean
+      logoUrl: string | null
     }, ExtArgs["result"]["organization"]>
     composites: {}
   }
@@ -6565,13 +6592,11 @@ export namespace Prisma {
     readonly fiscalYearEnd: FieldRef<"Organization", 'String'>
     readonly missionStatement: FieldRef<"Organization", 'String'>
     readonly organizationLeaderName: FieldRef<"Organization", 'String'>
-    readonly logoUrl: FieldRef<"Organization", 'String'>
     readonly phone: FieldRef<"Organization", 'String'>
     readonly state: FieldRef<"Organization", 'String'>
     readonly website: FieldRef<"Organization", 'String'>
     readonly zipCode: FieldRef<"Organization", 'String'>
     readonly strategicPlan: FieldRef<"Organization", 'String'>
-    readonly onboardingCompleted: FieldRef<"Organization", 'Boolean'>
     readonly countyName: FieldRef<"Organization", 'String'>
     readonly districtDataYear: FieldRef<"Organization", 'Int'>
     readonly enrollment: FieldRef<"Organization", 'Int'>
@@ -6583,6 +6608,8 @@ export namespace Prisma {
     readonly numberOfSchools: FieldRef<"Organization", 'Int'>
     readonly stateLeaId: FieldRef<"Organization", 'String'>
     readonly urbanCentricLocale: FieldRef<"Organization", 'Int'>
+    readonly onboardingCompleted: FieldRef<"Organization", 'Boolean'>
+    readonly logoUrl: FieldRef<"Organization", 'String'>
   }
     
 
@@ -15035,7 +15062,8 @@ export namespace Prisma {
     extra: 'extra',
     relevance_score: 'relevance_score',
     raw_text: 'raw_text',
-    content_hash: 'content_hash'
+    content_hash: 'content_hash',
+    funding_type: 'funding_type'
   };
 
   export type OpportunitiesScalarFieldEnum = (typeof OpportunitiesScalarFieldEnum)[keyof typeof OpportunitiesScalarFieldEnum]
@@ -15070,13 +15098,11 @@ export namespace Prisma {
     fiscalYearEnd: 'fiscalYearEnd',
     missionStatement: 'missionStatement',
     organizationLeaderName: 'organizationLeaderName',
-    logoUrl: 'logoUrl',
     phone: 'phone',
     state: 'state',
     website: 'website',
     zipCode: 'zipCode',
     strategicPlan: 'strategicPlan',
-    onboardingCompleted: 'onboardingCompleted',
     countyName: 'countyName',
     districtDataYear: 'districtDataYear',
     enrollment: 'enrollment',
@@ -15087,7 +15113,9 @@ export namespace Prisma {
     lowestGrade: 'lowestGrade',
     numberOfSchools: 'numberOfSchools',
     stateLeaId: 'stateLeaId',
-    urbanCentricLocale: 'urbanCentricLocale'
+    urbanCentricLocale: 'urbanCentricLocale',
+    onboardingCompleted: 'onboardingCompleted',
+    logoUrl: 'logoUrl'
   };
 
   export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
@@ -15313,6 +15341,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'funding_type_enum'
+   */
+  export type Enumfunding_type_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'funding_type_enum'>
+    
+
+
+  /**
+   * Reference to a field of type 'funding_type_enum[]'
+   */
+  export type ListEnumfunding_type_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'funding_type_enum[]'>
+    
+
+
+  /**
    * Reference to a field of type 'OrganizationRole'
    */
   export type EnumOrganizationRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrganizationRole'>
@@ -15494,6 +15536,7 @@ export namespace Prisma {
     relevance_score?: IntNullableFilter<"opportunities"> | number | null
     raw_text?: StringNullableFilter<"opportunities"> | string | null
     content_hash?: StringNullableFilter<"opportunities"> | string | null
+    funding_type?: Enumfunding_type_enumNullableFilter<"opportunities"> | $Enums.funding_type_enum | null
   }
 
   export type opportunitiesOrderByWithRelationInput = {
@@ -15528,6 +15571,7 @@ export namespace Prisma {
     relevance_score?: SortOrderInput | SortOrder
     raw_text?: SortOrderInput | SortOrder
     content_hash?: SortOrderInput | SortOrder
+    funding_type?: SortOrderInput | SortOrder
   }
 
   export type opportunitiesWhereUniqueInput = Prisma.AtLeast<{
@@ -15565,6 +15609,7 @@ export namespace Prisma {
     relevance_score?: IntNullableFilter<"opportunities"> | number | null
     raw_text?: StringNullableFilter<"opportunities"> | string | null
     content_hash?: StringNullableFilter<"opportunities"> | string | null
+    funding_type?: Enumfunding_type_enumNullableFilter<"opportunities"> | $Enums.funding_type_enum | null
   }, "id">
 
   export type opportunitiesOrderByWithAggregationInput = {
@@ -15599,6 +15644,7 @@ export namespace Prisma {
     relevance_score?: SortOrderInput | SortOrder
     raw_text?: SortOrderInput | SortOrder
     content_hash?: SortOrderInput | SortOrder
+    funding_type?: SortOrderInput | SortOrder
     _count?: opportunitiesCountOrderByAggregateInput
     _avg?: opportunitiesAvgOrderByAggregateInput
     _max?: opportunitiesMaxOrderByAggregateInput
@@ -15641,6 +15687,7 @@ export namespace Prisma {
     relevance_score?: IntNullableWithAggregatesFilter<"opportunities"> | number | null
     raw_text?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
     content_hash?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
+    funding_type?: Enumfunding_type_enumNullableWithAggregatesFilter<"opportunities"> | $Enums.funding_type_enum | null
   }
 
   export type UserWhereInput = {
@@ -15741,13 +15788,11 @@ export namespace Prisma {
     fiscalYearEnd?: StringNullableFilter<"Organization"> | string | null
     missionStatement?: StringNullableFilter<"Organization"> | string | null
     organizationLeaderName?: StringNullableFilter<"Organization"> | string | null
-    logoUrl?: StringNullableFilter<"Organization"> | string | null
     phone?: StringNullableFilter<"Organization"> | string | null
     state?: StringNullableFilter<"Organization"> | string | null
     website?: StringNullableFilter<"Organization"> | string | null
     zipCode?: StringNullableFilter<"Organization"> | string | null
     strategicPlan?: StringNullableFilter<"Organization"> | string | null
-    onboardingCompleted?: BoolFilter<"Organization"> | boolean
     countyName?: StringNullableFilter<"Organization"> | string | null
     districtDataYear?: IntNullableFilter<"Organization"> | number | null
     enrollment?: IntNullableFilter<"Organization"> | number | null
@@ -15759,6 +15804,8 @@ export namespace Prisma {
     numberOfSchools?: IntNullableFilter<"Organization"> | number | null
     stateLeaId?: StringNullableFilter<"Organization"> | string | null
     urbanCentricLocale?: IntNullableFilter<"Organization"> | number | null
+    onboardingCompleted?: BoolFilter<"Organization"> | boolean
+    logoUrl?: StringNullableFilter<"Organization"> | string | null
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
@@ -15781,13 +15828,11 @@ export namespace Prisma {
     fiscalYearEnd?: SortOrderInput | SortOrder
     missionStatement?: SortOrderInput | SortOrder
     organizationLeaderName?: SortOrderInput | SortOrder
-    logoUrl?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     state?: SortOrderInput | SortOrder
     website?: SortOrderInput | SortOrder
     zipCode?: SortOrderInput | SortOrder
     strategicPlan?: SortOrderInput | SortOrder
-    onboardingCompleted?: SortOrder
     countyName?: SortOrderInput | SortOrder
     districtDataYear?: SortOrderInput | SortOrder
     enrollment?: SortOrderInput | SortOrder
@@ -15799,6 +15844,8 @@ export namespace Prisma {
     numberOfSchools?: SortOrderInput | SortOrder
     stateLeaId?: SortOrderInput | SortOrder
     urbanCentricLocale?: SortOrderInput | SortOrder
+    onboardingCompleted?: SortOrder
+    logoUrl?: SortOrderInput | SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     applications?: ApplicationOrderByRelationAggregateInput
     grantBookmarks?: GrantBookmarkOrderByRelationAggregateInput
@@ -15825,13 +15872,11 @@ export namespace Prisma {
     fiscalYearEnd?: StringNullableFilter<"Organization"> | string | null
     missionStatement?: StringNullableFilter<"Organization"> | string | null
     organizationLeaderName?: StringNullableFilter<"Organization"> | string | null
-    logoUrl?: StringNullableFilter<"Organization"> | string | null
     phone?: StringNullableFilter<"Organization"> | string | null
     state?: StringNullableFilter<"Organization"> | string | null
     website?: StringNullableFilter<"Organization"> | string | null
     zipCode?: StringNullableFilter<"Organization"> | string | null
     strategicPlan?: StringNullableFilter<"Organization"> | string | null
-    onboardingCompleted?: BoolFilter<"Organization"> | boolean
     countyName?: StringNullableFilter<"Organization"> | string | null
     districtDataYear?: IntNullableFilter<"Organization"> | number | null
     enrollment?: IntNullableFilter<"Organization"> | number | null
@@ -15842,6 +15887,8 @@ export namespace Prisma {
     numberOfSchools?: IntNullableFilter<"Organization"> | number | null
     stateLeaId?: StringNullableFilter<"Organization"> | string | null
     urbanCentricLocale?: IntNullableFilter<"Organization"> | number | null
+    onboardingCompleted?: BoolFilter<"Organization"> | boolean
+    logoUrl?: StringNullableFilter<"Organization"> | string | null
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
@@ -15864,13 +15911,11 @@ export namespace Prisma {
     fiscalYearEnd?: SortOrderInput | SortOrder
     missionStatement?: SortOrderInput | SortOrder
     organizationLeaderName?: SortOrderInput | SortOrder
-    logoUrl?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     state?: SortOrderInput | SortOrder
     website?: SortOrderInput | SortOrder
     zipCode?: SortOrderInput | SortOrder
     strategicPlan?: SortOrderInput | SortOrder
-    onboardingCompleted?: SortOrder
     countyName?: SortOrderInput | SortOrder
     districtDataYear?: SortOrderInput | SortOrder
     enrollment?: SortOrderInput | SortOrder
@@ -15882,6 +15927,8 @@ export namespace Prisma {
     numberOfSchools?: SortOrderInput | SortOrder
     stateLeaId?: SortOrderInput | SortOrder
     urbanCentricLocale?: SortOrderInput | SortOrder
+    onboardingCompleted?: SortOrder
+    logoUrl?: SortOrderInput | SortOrder
     _count?: OrganizationCountOrderByAggregateInput
     _avg?: OrganizationAvgOrderByAggregateInput
     _max?: OrganizationMaxOrderByAggregateInput
@@ -15906,13 +15953,11 @@ export namespace Prisma {
     fiscalYearEnd?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     missionStatement?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     organizationLeaderName?: StringNullableWithAggregatesFilter<"Organization"> | string | null
-    logoUrl?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     phone?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     state?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     website?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     zipCode?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     strategicPlan?: StringNullableWithAggregatesFilter<"Organization"> | string | null
-    onboardingCompleted?: BoolWithAggregatesFilter<"Organization"> | boolean
     countyName?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     districtDataYear?: IntNullableWithAggregatesFilter<"Organization"> | number | null
     enrollment?: IntNullableWithAggregatesFilter<"Organization"> | number | null
@@ -15924,6 +15969,8 @@ export namespace Prisma {
     numberOfSchools?: IntNullableWithAggregatesFilter<"Organization"> | number | null
     stateLeaId?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     urbanCentricLocale?: IntNullableWithAggregatesFilter<"Organization"> | number | null
+    onboardingCompleted?: BoolWithAggregatesFilter<"Organization"> | boolean
+    logoUrl?: StringNullableWithAggregatesFilter<"Organization"> | string | null
   }
 
   export type GrantBookmarkWhereInput = {
@@ -16490,6 +16537,7 @@ export namespace Prisma {
     relevance_score?: number | null
     raw_text?: string | null
     content_hash?: string | null
+    funding_type?: $Enums.funding_type_enum | null
   }
 
   export type opportunitiesUncheckedCreateInput = {
@@ -16524,6 +16572,7 @@ export namespace Prisma {
     relevance_score?: number | null
     raw_text?: string | null
     content_hash?: string | null
+    funding_type?: $Enums.funding_type_enum | null
   }
 
   export type opportunitiesUpdateInput = {
@@ -16557,6 +16606,7 @@ export namespace Prisma {
     relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
     raw_text?: NullableStringFieldUpdateOperationsInput | string | null
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
+    funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
   }
 
   export type opportunitiesUncheckedUpdateInput = {
@@ -16591,6 +16641,7 @@ export namespace Prisma {
     relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
     raw_text?: NullableStringFieldUpdateOperationsInput | string | null
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
+    funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
   }
 
   export type opportunitiesCreateManyInput = {
@@ -16625,6 +16676,7 @@ export namespace Prisma {
     relevance_score?: number | null
     raw_text?: string | null
     content_hash?: string | null
+    funding_type?: $Enums.funding_type_enum | null
   }
 
   export type opportunitiesUpdateManyMutationInput = {
@@ -16658,6 +16710,7 @@ export namespace Prisma {
     relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
     raw_text?: NullableStringFieldUpdateOperationsInput | string | null
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
+    funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
   }
 
   export type opportunitiesUncheckedUpdateManyInput = {
@@ -16692,6 +16745,7 @@ export namespace Prisma {
     relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
     raw_text?: NullableStringFieldUpdateOperationsInput | string | null
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
+    funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
   }
 
   export type UserCreateInput = {
@@ -16799,13 +16853,11 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    onboardingCompleted?: boolean
     countyName?: string | null
     districtDataYear?: number | null
     enrollment?: number | null
@@ -16817,6 +16869,8 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
+    onboardingCompleted?: boolean
+    logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -16839,13 +16893,11 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    onboardingCompleted?: boolean
     countyName?: string | null
     districtDataYear?: number | null
     enrollment?: number | null
@@ -16857,6 +16909,8 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
+    onboardingCompleted?: boolean
+    logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -16879,13 +16933,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -16897,6 +16949,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -16919,13 +16973,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -16937,6 +16989,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -16959,13 +17013,11 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    onboardingCompleted?: boolean
     countyName?: string | null
     districtDataYear?: number | null
     enrollment?: number | null
@@ -16977,6 +17029,8 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
+    onboardingCompleted?: boolean
+    logoUrl?: string | null
   }
 
   export type OrganizationUpdateManyMutationInput = {
@@ -16993,13 +17047,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -17011,6 +17063,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrganizationUncheckedUpdateManyInput = {
@@ -17027,13 +17081,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -17045,6 +17097,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type GrantBookmarkCreateInput = {
@@ -17699,6 +17753,13 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type Enumfunding_type_enumNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.funding_type_enum | Enumfunding_type_enumFieldRefInput<$PrismaModel> | null
+    in?: $Enums.funding_type_enum[] | ListEnumfunding_type_enumFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.funding_type_enum[] | ListEnumfunding_type_enumFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumfunding_type_enumNullableFilter<$PrismaModel> | $Enums.funding_type_enum | null
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -17736,6 +17797,7 @@ export namespace Prisma {
     relevance_score?: SortOrder
     raw_text?: SortOrder
     content_hash?: SortOrder
+    funding_type?: SortOrder
   }
 
   export type opportunitiesAvgOrderByAggregateInput = {
@@ -17777,6 +17839,7 @@ export namespace Prisma {
     relevance_score?: SortOrder
     raw_text?: SortOrder
     content_hash?: SortOrder
+    funding_type?: SortOrder
   }
 
   export type opportunitiesMinOrderByAggregateInput = {
@@ -17809,6 +17872,7 @@ export namespace Prisma {
     relevance_score?: SortOrder
     raw_text?: SortOrder
     content_hash?: SortOrder
+    funding_type?: SortOrder
   }
 
   export type opportunitiesSumOrderByAggregateInput = {
@@ -17926,6 +17990,16 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedJsonNullableFilter<$PrismaModel>
     _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type Enumfunding_type_enumNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.funding_type_enum | Enumfunding_type_enumFieldRefInput<$PrismaModel> | null
+    in?: $Enums.funding_type_enum[] | ListEnumfunding_type_enumFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.funding_type_enum[] | ListEnumfunding_type_enumFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumfunding_type_enumNullableWithAggregatesFilter<$PrismaModel> | $Enums.funding_type_enum | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumfunding_type_enumNullableFilter<$PrismaModel>
+    _max?: NestedEnumfunding_type_enumNullableFilter<$PrismaModel>
   }
 
   export type UuidFilter<$PrismaModel = never> = {
@@ -18132,13 +18206,11 @@ export namespace Prisma {
     fiscalYearEnd?: SortOrder
     missionStatement?: SortOrder
     organizationLeaderName?: SortOrder
-    logoUrl?: SortOrder
     phone?: SortOrder
     state?: SortOrder
     website?: SortOrder
     zipCode?: SortOrder
     strategicPlan?: SortOrder
-    onboardingCompleted?: SortOrder
     countyName?: SortOrder
     districtDataYear?: SortOrder
     enrollment?: SortOrder
@@ -18150,6 +18222,8 @@ export namespace Prisma {
     numberOfSchools?: SortOrder
     stateLeaId?: SortOrder
     urbanCentricLocale?: SortOrder
+    onboardingCompleted?: SortOrder
+    logoUrl?: SortOrder
   }
 
   export type OrganizationAvgOrderByAggregateInput = {
@@ -18178,13 +18252,11 @@ export namespace Prisma {
     fiscalYearEnd?: SortOrder
     missionStatement?: SortOrder
     organizationLeaderName?: SortOrder
-    logoUrl?: SortOrder
     phone?: SortOrder
     state?: SortOrder
     website?: SortOrder
     zipCode?: SortOrder
     strategicPlan?: SortOrder
-    onboardingCompleted?: SortOrder
     countyName?: SortOrder
     districtDataYear?: SortOrder
     enrollment?: SortOrder
@@ -18196,6 +18268,8 @@ export namespace Prisma {
     numberOfSchools?: SortOrder
     stateLeaId?: SortOrder
     urbanCentricLocale?: SortOrder
+    onboardingCompleted?: SortOrder
+    logoUrl?: SortOrder
   }
 
   export type OrganizationMinOrderByAggregateInput = {
@@ -18212,13 +18286,11 @@ export namespace Prisma {
     fiscalYearEnd?: SortOrder
     missionStatement?: SortOrder
     organizationLeaderName?: SortOrder
-    logoUrl?: SortOrder
     phone?: SortOrder
     state?: SortOrder
     website?: SortOrder
     zipCode?: SortOrder
     strategicPlan?: SortOrder
-    onboardingCompleted?: SortOrder
     countyName?: SortOrder
     districtDataYear?: SortOrder
     enrollment?: SortOrder
@@ -18230,6 +18302,8 @@ export namespace Prisma {
     numberOfSchools?: SortOrder
     stateLeaId?: SortOrder
     urbanCentricLocale?: SortOrder
+    onboardingCompleted?: SortOrder
+    logoUrl?: SortOrder
   }
 
   export type OrganizationSumOrderByAggregateInput = {
@@ -18709,6 +18783,10 @@ export namespace Prisma {
 
   export type NullableBoolFieldUpdateOperationsInput = {
     set?: boolean | null
+  }
+
+  export type NullableEnumfunding_type_enumFieldUpdateOperationsInput = {
+    set?: $Enums.funding_type_enum | null
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -19413,6 +19491,13 @@ export namespace Prisma {
     not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
   }
 
+  export type NestedEnumfunding_type_enumNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.funding_type_enum | Enumfunding_type_enumFieldRefInput<$PrismaModel> | null
+    in?: $Enums.funding_type_enum[] | ListEnumfunding_type_enumFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.funding_type_enum[] | ListEnumfunding_type_enumFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumfunding_type_enumNullableFilter<$PrismaModel> | $Enums.funding_type_enum | null
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -19537,6 +19622,16 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedEnumfunding_type_enumNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.funding_type_enum | Enumfunding_type_enumFieldRefInput<$PrismaModel> | null
+    in?: $Enums.funding_type_enum[] | ListEnumfunding_type_enumFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.funding_type_enum[] | ListEnumfunding_type_enumFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumfunding_type_enumNullableWithAggregatesFilter<$PrismaModel> | $Enums.funding_type_enum | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumfunding_type_enumNullableFilter<$PrismaModel>
+    _max?: NestedEnumfunding_type_enumNullableFilter<$PrismaModel>
   }
 
   export type NestedUuidFilter<$PrismaModel = never> = {
@@ -19829,13 +19924,11 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    onboardingCompleted?: boolean
     countyName?: string | null
     districtDataYear?: number | null
     enrollment?: number | null
@@ -19847,6 +19940,8 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
+    onboardingCompleted?: boolean
+    logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -19868,13 +19963,11 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    onboardingCompleted?: boolean
     countyName?: string | null
     districtDataYear?: number | null
     enrollment?: number | null
@@ -19886,6 +19979,8 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
+    onboardingCompleted?: boolean
+    logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19981,13 +20076,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -19999,6 +20092,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -20020,13 +20115,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -20038,6 +20131,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20420,13 +20515,11 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    onboardingCompleted?: boolean
     countyName?: string | null
     districtDataYear?: number | null
     enrollment?: number | null
@@ -20438,6 +20531,8 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
+    onboardingCompleted?: boolean
+    logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
@@ -20459,13 +20554,11 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    onboardingCompleted?: boolean
     countyName?: string | null
     districtDataYear?: number | null
     enrollment?: number | null
@@ -20477,6 +20570,8 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
+    onboardingCompleted?: boolean
+    logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
@@ -20545,13 +20640,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -20563,6 +20656,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
@@ -20584,13 +20679,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -20602,6 +20695,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20660,13 +20755,11 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    onboardingCompleted?: boolean
     countyName?: string | null
     districtDataYear?: number | null
     enrollment?: number | null
@@ -20678,6 +20771,8 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
+    onboardingCompleted?: boolean
+    logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -20699,13 +20794,11 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    onboardingCompleted?: boolean
     countyName?: string | null
     districtDataYear?: number | null
     enrollment?: number | null
@@ -20717,6 +20810,8 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
+    onboardingCompleted?: boolean
+    logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -20754,13 +20849,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -20772,6 +20865,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -20793,13 +20888,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -20811,6 +20904,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20864,13 +20959,11 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    onboardingCompleted?: boolean
     countyName?: string | null
     districtDataYear?: number | null
     enrollment?: number | null
@@ -20882,6 +20975,8 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
+    onboardingCompleted?: boolean
+    logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
@@ -20903,13 +20998,11 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    onboardingCompleted?: boolean
     countyName?: string | null
     districtDataYear?: number | null
     enrollment?: number | null
@@ -20921,6 +21014,8 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
+    onboardingCompleted?: boolean
+    logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
@@ -20974,13 +21069,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -20992,6 +21085,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
@@ -21013,13 +21108,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -21031,6 +21124,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -21115,13 +21210,11 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    onboardingCompleted?: boolean
     countyName?: string | null
     districtDataYear?: number | null
     enrollment?: number | null
@@ -21133,6 +21226,8 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
+    onboardingCompleted?: boolean
+    logoUrl?: string | null
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
@@ -21154,13 +21249,11 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    onboardingCompleted?: boolean
     countyName?: string | null
     districtDataYear?: number | null
     enrollment?: number | null
@@ -21172,6 +21265,8 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
+    onboardingCompleted?: boolean
+    logoUrl?: string | null
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
@@ -21311,13 +21406,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -21329,6 +21422,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
@@ -21350,13 +21445,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -21368,6 +21461,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -21486,13 +21581,11 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    onboardingCompleted?: boolean
     countyName?: string | null
     districtDataYear?: number | null
     enrollment?: number | null
@@ -21504,6 +21597,8 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
+    onboardingCompleted?: boolean
+    logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -21525,13 +21620,11 @@ export namespace Prisma {
     fiscalYearEnd?: string | null
     missionStatement?: string | null
     organizationLeaderName?: string | null
-    logoUrl?: string | null
     phone?: string | null
     state?: string | null
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    onboardingCompleted?: boolean
     countyName?: string | null
     districtDataYear?: number | null
     enrollment?: number | null
@@ -21543,6 +21636,8 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
+    onboardingCompleted?: boolean
+    logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -21580,13 +21675,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -21598,6 +21691,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -21619,13 +21714,11 @@ export namespace Prisma {
     fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
     missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
     organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     countyName?: NullableStringFieldUpdateOperationsInput | string | null
     districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
     enrollment?: NullableIntFieldUpdateOperationsInput | number | null
@@ -21637,6 +21730,8 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput

@@ -155,7 +155,8 @@ exports.Prisma.OpportunitiesScalarFieldEnum = {
   extra: 'extra',
   relevance_score: 'relevance_score',
   raw_text: 'raw_text',
-  content_hash: 'content_hash'
+  content_hash: 'content_hash',
+  funding_type: 'funding_type'
 };
 
 exports.Prisma.UserScalarFieldEnum = {
@@ -184,13 +185,11 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   fiscalYearEnd: 'fiscalYearEnd',
   missionStatement: 'missionStatement',
   organizationLeaderName: 'organizationLeaderName',
-  logoUrl: 'logoUrl',
   phone: 'phone',
   state: 'state',
   website: 'website',
   zipCode: 'zipCode',
   strategicPlan: 'strategicPlan',
-  onboardingCompleted: 'onboardingCompleted',
   countyName: 'countyName',
   districtDataYear: 'districtDataYear',
   enrollment: 'enrollment',
@@ -201,7 +200,9 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   lowestGrade: 'lowestGrade',
   numberOfSchools: 'numberOfSchools',
   stateLeaId: 'stateLeaId',
-  urbanCentricLocale: 'urbanCentricLocale'
+  urbanCentricLocale: 'urbanCentricLocale',
+  onboardingCompleted: 'onboardingCompleted',
+  logoUrl: 'logoUrl'
 };
 
 exports.Prisma.GrantBookmarkScalarFieldEnum = {
@@ -309,6 +310,13 @@ exports.opportunity_status_enum = exports.$Enums.opportunity_status_enum = {
   posted: 'posted',
   closed: 'closed',
   archive: 'archive'
+};
+
+exports.funding_type_enum = exports.$Enums.funding_type_enum = {
+  state: 'state',
+  federal: 'federal',
+  local: 'local',
+  private: 'private'
 };
 
 exports.OrganizationRole = exports.$Enums.OrganizationRole = {

@@ -51,6 +51,7 @@ model opportunities {
   relevance_score      Int?
   raw_text             String?
   content_hash         String?                 @db.VarChar
+  funding_type         funding_type_enum?
 
   @@schema("public")
 }
@@ -88,13 +89,11 @@ model Organization {
   fiscalYearEnd          String?
   missionStatement       String?
   organizationLeaderName String?
-  logoUrl                String?
   phone                  String?
   state                  String?
   website                String?
   zipCode                String?
   strategicPlan          String?
-  onboardingCompleted    Boolean                    @default(false)
   countyName             String?
   districtDataYear       Int?
   enrollment             Int?
@@ -106,6 +105,8 @@ model Organization {
   numberOfSchools        Int?
   stateLeaId             String?
   urbanCentricLocale     Int?
+  onboardingCompleted    Boolean                    @default(false)
+  logoUrl                String?
   aiChats                AiChat[]
   applications           Application[]
   grantBookmarks         GrantBookmark[]
@@ -287,4 +288,13 @@ enum OrganizationRole {
   MEMBER
 
   @@schema("app")
+}
+
+enum funding_type_enum {
+  state
+  federal
+  local
+  private
+
+  @@schema("public")
 }
