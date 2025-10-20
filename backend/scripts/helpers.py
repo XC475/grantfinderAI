@@ -61,3 +61,81 @@ def ai_extract_data(prompt: str, model: str) -> str | None:
     except Exception as e:
         print(f"Error communicating with OpenRouter: {e}")
         return None
+
+
+def format_opportunity_text(opportunity):
+    """
+    Format an opportunity object into structured text for the raw_text column.
+    """
+    text_parts = []
+
+    # Add each field if it exists and has a value
+    text_parts.append(f"Opportunity ID: {opportunity.id}")
+    text_parts.append(f"Source: {opportunity.source}")
+
+    if opportunity.source_grant_id:
+        text_parts.append(f"Source Grant ID: {opportunity.source_grant_id}")
+
+    text_parts.append(f"Status: {opportunity.status.value}")
+    text_parts.append(f"Title: {opportunity.title}")
+
+    if opportunity.agency:
+        text_parts.append(f"Agency: {opportunity.agency}")
+
+    if opportunity.category:
+        text_parts.append(f"Category: {opportunity.category}")
+
+    if opportunity.funding_instrument:
+        text_parts.append(f"Funding Instrument: {opportunity.funding_instrument}")
+
+    if opportunity.state_code:
+        text_parts.append(f"State: {opportunity.state_code}")
+
+    if opportunity.fiscal_year:
+        text_parts.append(f"Fiscal Year: {opportunity.fiscal_year}")
+
+    if opportunity.description_summary:
+        text_parts.append(f"Summary: {opportunity.description_summary}")
+
+    if opportunity.description:
+        text_parts.append(f"Description: {opportunity.description}")
+
+    if opportunity.total_funding_amount:
+        text_parts.append(f"Total Funding: ${opportunity.total_funding_amount:,}")
+
+    if opportunity.award_min:
+        text_parts.append(f"Award Minimum: ${opportunity.award_min:,}")
+
+    if opportunity.award_max:
+        text_parts.append(f"Award Maximum: ${opportunity.award_max:,}")
+
+    if opportunity.cost_sharing is not None:
+        cost_sharing_text = "Yes" if opportunity.cost_sharing else "No"
+        text_parts.append(f"Cost Sharing Required: {cost_sharing_text}")
+
+    if opportunity.post_date:
+        text_parts.append(f"Posted: {opportunity.post_date.strftime('%Y-%m-%d')}")
+
+    if opportunity.close_date:
+        text_parts.append(f"Closes: {opportunity.close_date.strftime('%Y-%m-%d')}")
+
+    if opportunity.eligibility_summary:
+        text_parts.append(f"Eligibility Summary: {opportunity.eligibility_summary}")
+
+    if opportunity.eligibility:
+        text_parts.append(f"Eligibility Details: {opportunity.eligibility}")
+
+    if opportunity.contact_name:
+        text_parts.append(f"Contact: {opportunity.contact_name}")
+
+    if opportunity.contact_email:
+        text_parts.append(f"Email: {opportunity.contact_email}")
+
+    if opportunity.contact_phone:
+        text_parts.append(f"Phone: {opportunity.contact_phone}")
+
+    if opportunity.url:
+        text_parts.append(f"URL: {opportunity.url}")
+
+    # Join all parts with newlines
+    return "\n".join(text_parts)
