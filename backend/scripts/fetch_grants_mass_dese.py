@@ -483,9 +483,9 @@ def process_mass_dese_batch(batch, session):
 def calculate_fund_code(fund_code_raw):
     """Calculate the fund code from the raw input."""
     if len(fund_code_raw) > 4:
-        # Split on '/', ',', or ';'
+        # Split on '/', ',', ';', or spaces (any whitespace)
         fund_codes = [
-            fc.strip() for fc in re.split(r"[/,;]", fund_code_raw) if fc.strip()
+            fc.strip() for fc in re.split(r"[/,;\s]+", fund_code_raw) if fc.strip()
         ]
         return "-".join(fund_codes)
     return fund_code_raw.strip()
