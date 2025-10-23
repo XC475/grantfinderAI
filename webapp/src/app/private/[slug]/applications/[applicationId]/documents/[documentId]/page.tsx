@@ -1,0 +1,124 @@
+"use client";
+
+import { useState, useEffect, use } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { DocumentEditor } from "@/components/applications/DocumentEditor";
+
+interface Document {
+  id: string;
+  title: string;
+  content?: string;
+  contentType: string;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface DocumentPageProps {
+  params: Promise<{ slug: string; applicationId: string; documentId: string }>;
+}
+
+export default function DocumentPage({ params }: DocumentPageProps) {
+  const [document, setDocument] = useState<Document | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const router = useRouter();
+
+  const { slug: organizationSlug, applicationId, documentId } = use(params);
+
+  const fetchDocument = async () => {
+    try {
+      const response = await fetch(
+        `/api/applications/${applicationId}/documents/${documentId}`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setDocument(data.document);
+      } else if (response.status === 404) {
+        toast.error("Document not found");
+        router.push(
+          `/private/${organizationSlug}/applications/${applicationId}`
+        );
+      } else {
+        throw new Error("Failed to fetch document");
+      }
+    } catch (error) {
+      console.error("Error fetching document:", error);
+      toast.error("Failed to load document");
+      router.push(`/private/${organizationSlug}/applications/${applicationId}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async (content: string) => {
+    setSaving(true);
+    try {
+      const response = await fetch(
+        `/api/applications/${applicationId}/documents/${documentId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            content,
+            contentType: "html",
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to save document");
+      }
+
+      const { document: updatedDocument } = await response.json();
+      setDocument(updatedDocument);
+    } catch (error) {
+      console.error("Error saving document:", error);
+      throw error;
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDocument();
+  }, [applicationId, documentId]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!document) {
+    return (
+      <div className="container max-w-6xl py-8">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Document Not Found</h1>
+          <p className="text-muted-foreground">
+            The document you're looking for doesn't exist or you don't have
+            access to it.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <DocumentEditor
+      document={document}
+      applicationId={applicationId}
+      organizationSlug={organizationSlug}
+      onSave={handleSave}
+      isSaving={saving}
+    />
+  );
+}
