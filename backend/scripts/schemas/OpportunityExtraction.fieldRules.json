@@ -1,0 +1,175 @@
+{
+  "global": {
+    "language": "en",
+    "output_only_json": true,
+    "temperature": 0,
+    "top_p": 1,
+    "missing_policy": "If a field cannot be determined, set it to null (do not invent).",
+    "preloaded_fields_policy": "If the user provides a non-null value for a field, do not change it. Only fill null/missing fields.",
+    "text_handling": [
+      "Strip scripts/styles/boilerplate when possible.",
+      "Preserve meaning; remove excessive whitespace; decode HTML entities."
+    ]
+  },
+  "fields": {
+    "source_grant_id": {
+      "how_to_find": [
+        "Look for fields labeled: Opportunity Number, CFDA/Assistance Listing, RFP ID, Solicitation #, Grant ID, Funding Opportunity Number (FON).",
+        "If multiple, prefer Funding Opportunity Number / Solicitation #."
+      ],
+      "normalize": ["trim", "collapse_spaces"]
+    },
+    "status": {
+      "mapping": {
+        "forecasted": ["forecast", "anticipated", "planned", "coming soon"],
+        "posted": ["open", "posted", "available", "accepting applications", "active"],
+        "closed": ["closed", "deadline passed", "no longer accepting", "expired"],
+        "archive": ["archived", "cancelled", "withdrawn", "superseded"]
+      },
+      "rules": [
+        "If the posting explicitly indicates the opportunity is in a planning/pre-release state AND explicitly states that applications are not yet being accepted, set 'forecasted'.",
+        "If the posting does not indicate planning/pre-release and the close_date is not passed (or no close_date is present), assume 'posted'.",
+        "If the close_date is in the past, assume 'closed' unless an archive_date is present and has already passed, or the listing explicitly states the opportunity is archived/cancelled; in those cases set 'archive'.",
+        "If page text contains both planning language and 'open' language, prefer 'forecasted' only when the page clearly says applications are not yet allowed; otherwise prefer 'posted'.",
+        "If none of the above rules apply or there is conflicting evidence, set null and record the rationale in extra.provenance.status."
+      ],
+      "disambiguation": "Prefer 'posted' when the close_date has not passed and there is no explicit planning/no-applications cue. Use 'forecasted' only for explicit planning/no-applications language. Use 'closed' for past close_date unless archive_date/published archive language indicates 'archive'."
+    },
+    "title": {
+      "how_to_find": ["Main page heading (h1/h2), 'Funding Opportunity Title', or title near the identifier."],
+      "normalize": ["trim", "decode_html_entities", "collapse_spaces", "titlecase_if_all_caps"]
+    },
+    "description": {
+      "how_to_find": ["Main body describing purpose, scope, activities, deliverables."],
+      "normalize": ["preserve_paragraphs", "remove_navigation", "remove_redundant_labels"]
+    },
+    "description_summary": {
+      "length": "20-60 words",
+      "style": "Plain, non-marketing tone; provide a concise, easily digestible summary of the opportunity's purpose, scope, key activities or deliverables, and expected outcomes or impacts."
+    },
+    "agency": {
+      "how_to_find": [
+        "Publisher/agency labels like 'Agency', 'Department', 'Office', 'Bureau', 'Division', 'Program Unit'.",
+        "If federal, prefer the highest-level department (e.g., 'U.S. Department of Education') and optionally the office in extra."
+      ],
+      "normalize": ["trim"]
+    },
+    "funding_instrument": {
+      "mapping_examples": {
+        "Grant": ["grant", "subgrant"],
+        "Cooperative Agreement": ["cooperative agreement"],
+        "Contract": ["contract", "procurement"],
+        "Loan": ["loan"],
+        "Prize": ["prize", "challenge"],
+        "Other": ["other", "agreement"]
+      },
+      "normalize": ["title_case_known_values"]
+    },
+    "category": {
+      "how_to_assign": [
+        "Map keywords/themes to one or more categories from the controlled list.",
+        "If uncertain, include 'Other' and add rationale in extra.category_notes."
+      ],
+      "examples": {
+        "STEM_Education": ["STEM", "science fair", "robotics"],
+        "Digital_Literacy_and_Technology": ["devices", "broadband", "edtech", "technology"],
+        "School_Safety_and_Security": ["security", "safety", "violence prevention"],
+        "Special_Education": ["IDEA", "special education", "IEP"],
+        "Teacher_Professional_Development": ["PD", "professional development", "training teachers"]
+      }
+    },
+    "fiscal_year": {
+      "how_to_find": ["Fields labeled 'Fiscal Year', 'FY 2025' etc."],
+      "normalize": ["extract_year_number"]
+    },
+    "post_date": {
+      "synonyms": ["posted", "publication date", "open date", "release date"],
+      "normalize": ["parse_date_to_yyyy_mm_dd"],
+      "notes": "If only month/year are given, prefer the first day of month (YYYY-MM-01) and note assumption in extra.date_assumptions."
+    },
+    "close_date": {
+      "synonyms": ["application deadline", "due date", "closing date", "submission deadline"],
+      "normalize": ["parse_date_to_yyyy_mm_dd"],
+      "edge_cases": ["Multiple deadlines: choose final deadline; if rolling, set null and record 'rolling' in extra.deadline_type"]
+    },
+    "archive_date": {
+      "how_to_find": ["'Archive date', 'superseded on', or deprecation notes; often absent."],
+      "normalize": ["parse_date_to_yyyy_mm_dd"]
+    },
+    "cost_sharing": {
+      "positive_cues": ["cost share required", "matching funds required", "match requirement", "1:1 match"],
+      "negative_cues": ["no cost share", "no match required", "no matching funds"],
+      "decision": "true if positive cues without negation; false if negative cues; null if unclear"
+    },
+    "award_min": {
+      "how_to_find": ["'Award floor', 'minimum award', 'award range'"],
+      "normalize": ["extract_currency_value_integer_usd"],
+      "notes": "If currency is not USD, still provide integer and record currency code in extra.currency (e.g., 'EUR')."
+    },
+    "award_max": {
+      "how_to_find": ["'Award ceiling', 'maximum award', 'up to', 'not to exceed'"],
+      "normalize": ["extract_currency_value_integer_usd"]
+    },
+    "total_funding_amount": {
+      "how_to_find": ["'Total program funding', 'estimated total program funding', 'available funding'"],
+      "normalize": ["extract_currency_value_integer_usd"]
+    },
+    "eligibility": {
+      "how_to_find": ["Sections labeled 'Eligibility', 'Eligible Applicants', 'Who May Apply'"],
+      "normalize": ["preserve_bullets_as_lines"]
+    },
+    "eligibility_summary": {
+      "length": "1-3 sentences",
+      "style": "Name key eligible entities (e.g., LEAs, SEAs, charter schools, nonprofits) and major exclusions."
+    },
+    "funding_type": {
+      "mapping_heuristics": [
+        "federal: mentions 'U.S. Department', grants.gov domain, CFDA/Assistance Listing.",
+        "state: state agency names (e.g., 'New York State Education Department'), .state.xx.us domains.",
+        "local: city/county/municipal departments.",
+        "private: foundations, nonprofits, corporations."
+      ]
+    },
+    "contact_name": {
+      "how_to_find": ["'Contact', 'Program Officer', signatures near email/phone."],
+      "normalize": ["title_case_name"]
+    },
+    "contact_email": {
+      "how_to_find": ["mailto links, text with '@'."],
+      "normalize": ["lowercase", "trim"]
+    },
+    "contact_phone": {
+      "how_to_find": ["'Phone', 'Tel', phone icons."]
+    },
+    "attachments": {
+    "how_to_find": [
+      "Anchor (<a>) tags with href attributes pointing to attachments (prefer absolute URLs when present).",
+      "Links with labels: 'RFP', 'Solicitation', 'NOFO', 'Application', 'Guidelines', 'Appendix'.",
+      "File extensions: pdf, doc, docx, xls, xlsx, csv, zip."
+    ],
+      "normalize": ["absolute_url_if_relative"]
+    },
+    "extra": {
+      "guidance": [
+        "Include useful display-ready fields like 'CFDA', 'Assistance Listing', 'Program Website', 'FAQ URL', 'Deadline Type', 'Notes'."
+      ]
+    },
+    "relevance_score": {
+      "scale": "0-100",
+      "rubric": [
+        "80-100: Clearly K-12/LEA focused or direct school district funding.",
+        "50-79: Education-related but mixed audiences (e.g., community orgs + schools).",
+        "20-49: Tangential to K-12 (e.g., broader public health where schools are eligible).",
+        "0-19: Not relevant to K-12/school districts."
+      ],
+      "fallback": "If uncertain, set null."
+    }
+  },
+  "normalizers": {
+    "extract_currency_value_integer_usd": "Strip currency symbols and formatting (e.g., $, commas). Parse the largest plausible integer. Do not do FX conversion; if non-USD is detected (€, £), return integer and record extra.currency='EUR' or 'GBP'.",
+    "parse_date_to_yyyy_mm_dd": "Recognize common formats (e.g., Jan 5, 2025; 2025-01-05; 01/05/2025). Output ISO date YYYY-MM-DD.",
+    "titlecase_if_all_caps": "If the title is all-caps, convert to Title Case.",
+    "preserve_bullets_as_lines": "Convert HTML lists to newline-separated bullets.",
+    "absolute_url_if_relative": "Resolve relative links against the page URL if provided."
+  }
+}

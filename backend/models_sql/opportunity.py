@@ -11,6 +11,7 @@ from sqlalchemy import (
 )
 from flask_server.db import db
 from enum import Enum as PyEnum
+import sqlalchemy.dialects.postgresql as pg
 
 
 class OpportunityStatusEnum(str, PyEnum):
@@ -25,6 +26,42 @@ class FundingTypeEnum(str, PyEnum):
     federal = "federal"
     local = "local"
     private = "private"
+
+
+class OpportunityCategoryEnum(str, PyEnum):
+    STEM_Education = "STEM_Education"
+    Math_and_Science_Education = "Math_and_Science_Education"
+    Career_and_Technical_Education = "Career_and_Technical_Education"
+    Special_Education = "Special_Education"
+    Early_Childhood_Education = "Early_Childhood_Education"
+    Teacher_Professional_Development = "Teacher_Professional_Development"
+    Leadership_and_Administration_Development = (
+        "Leadership_and_Administration_Development"
+    )
+    Social_Emotional_Learning = "Social_Emotional_Learning"
+    School_Climate_and_Culture = "School_Climate_and_Culture"
+    Bullying_Prevention = "Bullying_Prevention"
+    School_Safety_and_Security = "School_Safety_and_Security"
+    Digital_Literacy_and_Technology = "Digital_Literacy_and_Technology"
+    Educational_Technology_Innovation = "Educational_Technology_Innovation"
+    After_School_Programs = "After_School_Programs"
+    Arts_and_Music_Education = "Arts_and_Music_Education"
+    Environmental_Education = "Environmental_Education"
+    Health_and_Wellness = "Health_and_Wellness"
+    Nutrition_and_School_Meals = "Nutrition_and_School_Meals"
+    Student_Mental_Health = "Student_Mental_Health"
+    Equity_and_Inclusion = "Equity_and_Inclusion"
+    Community_Engagement = "Community_Engagement"
+    Parental_Involvement = "Parental_Involvement"
+    College_and_Career_Readiness = "College_and_Career_Readiness"
+    Civic_and_History_Education = "Civic_and_History_Education"
+    English_Language_Learners = "English_Language_Learners"
+    Financial_Literacy = "Financial_Literacy"
+    Educational_Research_and_Innovation = "Educational_Research_and_Innovation"
+    Facilities_and_Infrastructure = "Facilities_and_Infrastructure"
+    Data_and_Assessment_Initiatives = "Data_and_Assessment_Initiatives"
+    Transportation_and_Accessibility = "Transportation_and_Accessibility"
+    Other = "Other"
 
 
 class Opportunity(db.Model):
@@ -42,7 +79,10 @@ class Opportunity(db.Model):
     description_summary = Column(String)  # e.g. Model generated summary
     agency = Column(String)  # Agency awarding the grant
     funding_instrument = Column(String)  # e.g. "Grant", "Cooperative Agreement"
-    category = Column(String)  # e.g. "Research", "Education"
+    category = Column(
+        pg.ARRAY(Enum(OpportunityCategoryEnum, name="opportunity_category_enum")),
+        nullable=False,
+    )
     fiscal_year = Column(Integer)
     post_date = Column(Date)
     close_date = Column(Date)
