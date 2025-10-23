@@ -176,7 +176,15 @@ const MobileToolbarContent = ({
   </>
 );
 
-export function SimpleEditor() {
+interface SimpleEditorProps {
+  initialContent?: string;
+  onContentChange?: (content: string) => void;
+}
+
+export function SimpleEditor({
+  initialContent,
+  onContentChange,
+}: SimpleEditorProps = {}) {
   const isMobile = useIsMobile();
   const { height } = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
@@ -222,7 +230,12 @@ export function SimpleEditor() {
         onError: (error) => console.error("Upload failed:", error),
       }),
     ],
-    content,
+    content: initialContent || content,
+    onUpdate: ({ editor }) => {
+      if (onContentChange) {
+        onContentChange(editor.getHTML());
+      }
+    },
   });
 
   const rect = useCursorVisibility({
