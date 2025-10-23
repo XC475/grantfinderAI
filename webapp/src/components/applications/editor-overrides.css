@@ -1,0 +1,23 @@
+/* Override Tiptap Simple Editor styles to work within sidebar layout */
+
+.simple-editor-wrapper {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.simple-editor-content {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 1rem !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor {
+  padding: 2rem 1rem 2rem !important;
+  min-height: auto !important;
+  height: auto !important;
+}
