@@ -100,6 +100,30 @@ export function DynamicBreadcrumb({
         href: `/private/${organizationSlug}/settings`,
         isLast: true,
       });
+    } else if (segments[0] === "applications") {
+      items.push({
+        label: "Applications",
+        href: `/private/${organizationSlug}/applications`,
+        isLast: segments.length === 1,
+      });
+
+      // If we're viewing a specific application
+      if (segments.length > 1 && segments[1]) {
+        items.push({
+          label: "Application Details",
+          href: `/private/${organizationSlug}/applications/${segments[1]}`,
+          isLast: segments.length === 2,
+        });
+
+        // If we're viewing a document within an application
+        if (segments.length > 3 && segments[2] === "documents" && segments[3]) {
+          items.push({
+            label: "Document",
+            href: `/private/${organizationSlug}/applications/${segments[1]}/documents/${segments[3]}`,
+            isLast: true,
+          });
+        }
+      }
     } else {
       // For other pages, show the path
       segments.forEach((segment, index) => {
