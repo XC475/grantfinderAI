@@ -68,6 +68,11 @@ export type Recommendation = $Result.DefaultSelection<Prisma.$RecommendationPayl
  * 
  */
 export type documents = $Result.DefaultSelection<Prisma.$documentsPayload>
+/**
+ * Model application_documents
+ * 
+ */
+export type application_documents = $Result.DefaultSelection<Prisma.$application_documentsPayload>
 
 /**
  * Enums
@@ -144,6 +149,43 @@ export const funding_type_enum: {
 
 export type funding_type_enum = (typeof funding_type_enum)[keyof typeof funding_type_enum]
 
+
+export const opportunity_category_enum: {
+  STEM_Education: 'STEM_Education',
+  Math_and_Science_Education: 'Math_and_Science_Education',
+  Career_and_Technical_Education: 'Career_and_Technical_Education',
+  Special_Education: 'Special_Education',
+  Early_Childhood_Education: 'Early_Childhood_Education',
+  Teacher_Professional_Development: 'Teacher_Professional_Development',
+  Leadership_and_Administration_Development: 'Leadership_and_Administration_Development',
+  Social_Emotional_Learning: 'Social_Emotional_Learning',
+  School_Climate_and_Culture: 'School_Climate_and_Culture',
+  Bullying_Prevention: 'Bullying_Prevention',
+  School_Safety_and_Security: 'School_Safety_and_Security',
+  Digital_Literacy_and_Technology: 'Digital_Literacy_and_Technology',
+  Educational_Technology_Innovation: 'Educational_Technology_Innovation',
+  After_School_Programs: 'After_School_Programs',
+  Arts_and_Music_Education: 'Arts_and_Music_Education',
+  Environmental_Education: 'Environmental_Education',
+  Health_and_Wellness: 'Health_and_Wellness',
+  Nutrition_and_School_Meals: 'Nutrition_and_School_Meals',
+  Student_Mental_Health: 'Student_Mental_Health',
+  Equity_and_Inclusion: 'Equity_and_Inclusion',
+  Community_Engagement: 'Community_Engagement',
+  Parental_Involvement: 'Parental_Involvement',
+  College_and_Career_Readiness: 'College_and_Career_Readiness',
+  Civic_and_History_Education: 'Civic_and_History_Education',
+  English_Language_Learners: 'English_Language_Learners',
+  Financial_Literacy: 'Financial_Literacy',
+  Educational_Research_and_Innovation: 'Educational_Research_and_Innovation',
+  Facilities_and_Infrastructure: 'Facilities_and_Infrastructure',
+  Data_and_Assessment_Initiatives: 'Data_and_Assessment_Initiatives',
+  Transportation_and_Accessibility: 'Transportation_and_Accessibility',
+  Other: 'Other'
+};
+
+export type opportunity_category_enum = (typeof opportunity_category_enum)[keyof typeof opportunity_category_enum]
+
 }
 
 export type opportunity_status_enum = $Enums.opportunity_status_enum
@@ -173,6 +215,10 @@ export const OrganizationRole: typeof $Enums.OrganizationRole
 export type funding_type_enum = $Enums.funding_type_enum
 
 export const funding_type_enum: typeof $Enums.funding_type_enum
+
+export type opportunity_category_enum = $Enums.opportunity_category_enum
+
+export const opportunity_category_enum: typeof $Enums.opportunity_category_enum
 
 /**
  * ##  Prisma Client ʲˢ
@@ -401,6 +447,16 @@ export class PrismaClient<
     * ```
     */
   get documents(): Prisma.documentsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.application_documents`: Exposes CRUD operations for the **application_documents** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Application_documents
+    * const application_documents = await prisma.application_documents.findMany()
+    * ```
+    */
+  get application_documents(): Prisma.application_documentsDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -851,7 +907,8 @@ export namespace Prisma {
     AiChat: 'AiChat',
     AiChatMessage: 'AiChatMessage',
     Recommendation: 'Recommendation',
-    documents: 'documents'
+    documents: 'documents',
+    application_documents: 'application_documents'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -870,7 +927,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "documents"
+      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "documents" | "application_documents"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1688,6 +1745,80 @@ export namespace Prisma {
           }
         }
       }
+      application_documents: {
+        payload: Prisma.$application_documentsPayload<ExtArgs>
+        fields: Prisma.application_documentsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.application_documentsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$application_documentsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.application_documentsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$application_documentsPayload>
+          }
+          findFirst: {
+            args: Prisma.application_documentsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$application_documentsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.application_documentsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$application_documentsPayload>
+          }
+          findMany: {
+            args: Prisma.application_documentsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$application_documentsPayload>[]
+          }
+          create: {
+            args: Prisma.application_documentsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$application_documentsPayload>
+          }
+          createMany: {
+            args: Prisma.application_documentsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.application_documentsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$application_documentsPayload>[]
+          }
+          delete: {
+            args: Prisma.application_documentsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$application_documentsPayload>
+          }
+          update: {
+            args: Prisma.application_documentsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$application_documentsPayload>
+          }
+          deleteMany: {
+            args: Prisma.application_documentsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.application_documentsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.application_documentsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$application_documentsPayload>[]
+          }
+          upsert: {
+            args: Prisma.application_documentsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$application_documentsPayload>
+          }
+          aggregate: {
+            args: Prisma.Application_documentsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateApplication_documents>
+          }
+          groupBy: {
+            args: Prisma.application_documentsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Application_documentsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.application_documentsCountArgs<ExtArgs>
+            result: $Utils.Optional<Application_documentsCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1795,6 +1926,7 @@ export namespace Prisma {
     aiChatMessage?: AiChatMessageOmit
     recommendation?: RecommendationOmit
     documents?: documentsOmit
+    application_documents?: application_documentsOmit
   }
 
   /* Types for Logging */
@@ -1983,10 +2115,12 @@ export namespace Prisma {
 
   export type ApplicationCountOutputType = {
     aiChats: number
+    application_documents: number
   }
 
   export type ApplicationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | ApplicationCountOutputTypeCountAiChatsArgs
+    application_documents?: boolean | ApplicationCountOutputTypeCountApplication_documentsArgs
   }
 
   // Custom InputTypes
@@ -2005,6 +2139,13 @@ export namespace Prisma {
    */
   export type ApplicationCountOutputTypeCountAiChatsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AiChatWhereInput
+  }
+
+  /**
+   * ApplicationCountOutputType without action
+   */
+  export type ApplicationCountOutputTypeCountApplication_documentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: application_documentsWhereInput
   }
 
 
@@ -3027,7 +3168,6 @@ export namespace Prisma {
     description_summary: string | null
     agency: string | null
     funding_instrument: string | null
-    category: string | null
     fiscal_year: number | null
     post_date: Date | null
     close_date: Date | null
@@ -3060,7 +3200,6 @@ export namespace Prisma {
     description_summary: string | null
     agency: string | null
     funding_instrument: string | null
-    category: string | null
     fiscal_year: number | null
     post_date: Date | null
     close_date: Date | null
@@ -3093,7 +3232,6 @@ export namespace Prisma {
     description_summary: number
     agency: number
     funding_instrument: number
-    category: number
     fiscal_year: number
     post_date: number
     close_date: number
@@ -3115,6 +3253,7 @@ export namespace Prisma {
     raw_text: number
     content_hash: number
     funding_type: number
+    category: number
     _all: number
   }
 
@@ -3148,7 +3287,6 @@ export namespace Prisma {
     description_summary?: true
     agency?: true
     funding_instrument?: true
-    category?: true
     fiscal_year?: true
     post_date?: true
     close_date?: true
@@ -3181,7 +3319,6 @@ export namespace Prisma {
     description_summary?: true
     agency?: true
     funding_instrument?: true
-    category?: true
     fiscal_year?: true
     post_date?: true
     close_date?: true
@@ -3214,7 +3351,6 @@ export namespace Prisma {
     description_summary?: true
     agency?: true
     funding_instrument?: true
-    category?: true
     fiscal_year?: true
     post_date?: true
     close_date?: true
@@ -3236,6 +3372,7 @@ export namespace Prisma {
     raw_text?: true
     content_hash?: true
     funding_type?: true
+    category?: true
     _all?: true
   }
 
@@ -3336,7 +3473,6 @@ export namespace Prisma {
     description_summary: string | null
     agency: string | null
     funding_instrument: string | null
-    category: string | null
     fiscal_year: number | null
     post_date: Date | null
     close_date: Date | null
@@ -3358,6 +3494,7 @@ export namespace Prisma {
     raw_text: string | null
     content_hash: string | null
     funding_type: $Enums.funding_type_enum | null
+    category: $Enums.opportunity_category_enum[]
     _count: OpportunitiesCountAggregateOutputType | null
     _avg: OpportunitiesAvgAggregateOutputType | null
     _sum: OpportunitiesSumAggregateOutputType | null
@@ -3390,7 +3527,6 @@ export namespace Prisma {
     description_summary?: boolean
     agency?: boolean
     funding_instrument?: boolean
-    category?: boolean
     fiscal_year?: boolean
     post_date?: boolean
     close_date?: boolean
@@ -3412,6 +3548,7 @@ export namespace Prisma {
     raw_text?: boolean
     content_hash?: boolean
     funding_type?: boolean
+    category?: boolean
   }, ExtArgs["result"]["opportunities"]>
 
   export type opportunitiesSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3425,7 +3562,6 @@ export namespace Prisma {
     description_summary?: boolean
     agency?: boolean
     funding_instrument?: boolean
-    category?: boolean
     fiscal_year?: boolean
     post_date?: boolean
     close_date?: boolean
@@ -3447,6 +3583,7 @@ export namespace Prisma {
     raw_text?: boolean
     content_hash?: boolean
     funding_type?: boolean
+    category?: boolean
   }, ExtArgs["result"]["opportunities"]>
 
   export type opportunitiesSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3460,7 +3597,6 @@ export namespace Prisma {
     description_summary?: boolean
     agency?: boolean
     funding_instrument?: boolean
-    category?: boolean
     fiscal_year?: boolean
     post_date?: boolean
     close_date?: boolean
@@ -3482,6 +3618,7 @@ export namespace Prisma {
     raw_text?: boolean
     content_hash?: boolean
     funding_type?: boolean
+    category?: boolean
   }, ExtArgs["result"]["opportunities"]>
 
   export type opportunitiesSelectScalar = {
@@ -3495,7 +3632,6 @@ export namespace Prisma {
     description_summary?: boolean
     agency?: boolean
     funding_instrument?: boolean
-    category?: boolean
     fiscal_year?: boolean
     post_date?: boolean
     close_date?: boolean
@@ -3517,9 +3653,10 @@ export namespace Prisma {
     raw_text?: boolean
     content_hash?: boolean
     funding_type?: boolean
+    category?: boolean
   }
 
-  export type opportunitiesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "source" | "state_code" | "source_grant_id" | "status" | "title" | "description" | "description_summary" | "agency" | "funding_instrument" | "category" | "fiscal_year" | "post_date" | "close_date" | "archive_date" | "cost_sharing" | "award_max" | "award_min" | "total_funding_amount" | "eligibility" | "eligibility_summary" | "last_updated" | "contact_name" | "contact_email" | "contact_phone" | "url" | "attachments" | "extra" | "relevance_score" | "raw_text" | "content_hash" | "funding_type", ExtArgs["result"]["opportunities"]>
+  export type opportunitiesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "source" | "state_code" | "source_grant_id" | "status" | "title" | "description" | "description_summary" | "agency" | "funding_instrument" | "fiscal_year" | "post_date" | "close_date" | "archive_date" | "cost_sharing" | "award_max" | "award_min" | "total_funding_amount" | "eligibility" | "eligibility_summary" | "last_updated" | "contact_name" | "contact_email" | "contact_phone" | "url" | "attachments" | "extra" | "relevance_score" | "raw_text" | "content_hash" | "funding_type" | "category", ExtArgs["result"]["opportunities"]>
 
   export type $opportunitiesPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "opportunities"
@@ -3535,7 +3672,6 @@ export namespace Prisma {
       description_summary: string | null
       agency: string | null
       funding_instrument: string | null
-      category: string | null
       fiscal_year: number | null
       post_date: Date | null
       close_date: Date | null
@@ -3557,6 +3693,7 @@ export namespace Prisma {
       raw_text: string | null
       content_hash: string | null
       funding_type: $Enums.funding_type_enum | null
+      category: $Enums.opportunity_category_enum[]
     }, ExtArgs["result"]["opportunities"]>
     composites: {}
   }
@@ -3990,7 +4127,6 @@ export namespace Prisma {
     readonly description_summary: FieldRef<"opportunities", 'String'>
     readonly agency: FieldRef<"opportunities", 'String'>
     readonly funding_instrument: FieldRef<"opportunities", 'String'>
-    readonly category: FieldRef<"opportunities", 'String'>
     readonly fiscal_year: FieldRef<"opportunities", 'Int'>
     readonly post_date: FieldRef<"opportunities", 'DateTime'>
     readonly close_date: FieldRef<"opportunities", 'DateTime'>
@@ -4012,6 +4148,7 @@ export namespace Prisma {
     readonly raw_text: FieldRef<"opportunities", 'String'>
     readonly content_hash: FieldRef<"opportunities", 'String'>
     readonly funding_type: FieldRef<"opportunities", 'funding_type_enum'>
+    readonly category: FieldRef<"opportunities", 'opportunity_category_enum[]'>
   }
     
 
@@ -9675,6 +9812,7 @@ export namespace Prisma {
     lastEditedAt?: boolean
     organizationId?: boolean
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
+    application_documents?: boolean | Application$application_documentsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     _count?: boolean | ApplicationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
@@ -9732,6 +9870,7 @@ export namespace Prisma {
   export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "content" | "contentHtml" | "title" | "notes" | "documents" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId", ExtArgs["result"]["application"]>
   export type ApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
+    application_documents?: boolean | Application$application_documentsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     _count?: boolean | ApplicationCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -9746,6 +9885,7 @@ export namespace Prisma {
     name: "Application"
     objects: {
       aiChats: Prisma.$AiChatPayload<ExtArgs>[]
+      application_documents: Prisma.$application_documentsPayload<ExtArgs>[]
       organization: Prisma.$OrganizationPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -10157,6 +10297,7 @@ export namespace Prisma {
   export interface Prisma__ApplicationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     aiChats<T extends Application$aiChatsArgs<ExtArgs> = {}>(args?: Subset<T, Application$aiChatsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    application_documents<T extends Application$application_documentsArgs<ExtArgs> = {}>(args?: Subset<T, Application$application_documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$application_documentsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -10617,6 +10758,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AiChatScalarFieldEnum | AiChatScalarFieldEnum[]
+  }
+
+  /**
+   * Application.application_documents
+   */
+  export type Application$application_documentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the application_documents
+     */
+    select?: application_documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the application_documents
+     */
+    omit?: application_documentsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: application_documentsInclude<ExtArgs> | null
+    where?: application_documentsWhereInput
+    orderBy?: application_documentsOrderByWithRelationInput | application_documentsOrderByWithRelationInput[]
+    cursor?: application_documentsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Application_documentsScalarFieldEnum | Application_documentsScalarFieldEnum[]
   }
 
   /**
@@ -15011,6 +15176,1146 @@ export namespace Prisma {
 
 
   /**
+   * Model application_documents
+   */
+
+  export type AggregateApplication_documents = {
+    _count: Application_documentsCountAggregateOutputType | null
+    _avg: Application_documentsAvgAggregateOutputType | null
+    _sum: Application_documentsSumAggregateOutputType | null
+    _min: Application_documentsMinAggregateOutputType | null
+    _max: Application_documentsMaxAggregateOutputType | null
+  }
+
+  export type Application_documentsAvgAggregateOutputType = {
+    version: number | null
+  }
+
+  export type Application_documentsSumAggregateOutputType = {
+    version: number | null
+  }
+
+  export type Application_documentsMinAggregateOutputType = {
+    id: string | null
+    applicationId: string | null
+    title: string | null
+    content: string | null
+    contentType: string | null
+    version: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type Application_documentsMaxAggregateOutputType = {
+    id: string | null
+    applicationId: string | null
+    title: string | null
+    content: string | null
+    contentType: string | null
+    version: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type Application_documentsCountAggregateOutputType = {
+    id: number
+    applicationId: number
+    title: number
+    content: number
+    contentType: number
+    metadata: number
+    version: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type Application_documentsAvgAggregateInputType = {
+    version?: true
+  }
+
+  export type Application_documentsSumAggregateInputType = {
+    version?: true
+  }
+
+  export type Application_documentsMinAggregateInputType = {
+    id?: true
+    applicationId?: true
+    title?: true
+    content?: true
+    contentType?: true
+    version?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type Application_documentsMaxAggregateInputType = {
+    id?: true
+    applicationId?: true
+    title?: true
+    content?: true
+    contentType?: true
+    version?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type Application_documentsCountAggregateInputType = {
+    id?: true
+    applicationId?: true
+    title?: true
+    content?: true
+    contentType?: true
+    metadata?: true
+    version?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type Application_documentsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which application_documents to aggregate.
+     */
+    where?: application_documentsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of application_documents to fetch.
+     */
+    orderBy?: application_documentsOrderByWithRelationInput | application_documentsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: application_documentsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` application_documents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` application_documents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned application_documents
+    **/
+    _count?: true | Application_documentsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Application_documentsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Application_documentsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Application_documentsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Application_documentsMaxAggregateInputType
+  }
+
+  export type GetApplication_documentsAggregateType<T extends Application_documentsAggregateArgs> = {
+        [P in keyof T & keyof AggregateApplication_documents]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateApplication_documents[P]>
+      : GetScalarType<T[P], AggregateApplication_documents[P]>
+  }
+
+
+
+
+  export type application_documentsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: application_documentsWhereInput
+    orderBy?: application_documentsOrderByWithAggregationInput | application_documentsOrderByWithAggregationInput[]
+    by: Application_documentsScalarFieldEnum[] | Application_documentsScalarFieldEnum
+    having?: application_documentsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Application_documentsCountAggregateInputType | true
+    _avg?: Application_documentsAvgAggregateInputType
+    _sum?: Application_documentsSumAggregateInputType
+    _min?: Application_documentsMinAggregateInputType
+    _max?: Application_documentsMaxAggregateInputType
+  }
+
+  export type Application_documentsGroupByOutputType = {
+    id: string
+    applicationId: string
+    title: string
+    content: string | null
+    contentType: string
+    metadata: JsonValue | null
+    version: number
+    createdAt: Date
+    updatedAt: Date
+    _count: Application_documentsCountAggregateOutputType | null
+    _avg: Application_documentsAvgAggregateOutputType | null
+    _sum: Application_documentsSumAggregateOutputType | null
+    _min: Application_documentsMinAggregateOutputType | null
+    _max: Application_documentsMaxAggregateOutputType | null
+  }
+
+  type GetApplication_documentsGroupByPayload<T extends application_documentsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Application_documentsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Application_documentsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Application_documentsGroupByOutputType[P]>
+            : GetScalarType<T[P], Application_documentsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type application_documentsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    applicationId?: boolean
+    title?: boolean
+    content?: boolean
+    contentType?: boolean
+    metadata?: boolean
+    version?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    applications?: boolean | ApplicationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["application_documents"]>
+
+  export type application_documentsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    applicationId?: boolean
+    title?: boolean
+    content?: boolean
+    contentType?: boolean
+    metadata?: boolean
+    version?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    applications?: boolean | ApplicationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["application_documents"]>
+
+  export type application_documentsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    applicationId?: boolean
+    title?: boolean
+    content?: boolean
+    contentType?: boolean
+    metadata?: boolean
+    version?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    applications?: boolean | ApplicationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["application_documents"]>
+
+  export type application_documentsSelectScalar = {
+    id?: boolean
+    applicationId?: boolean
+    title?: boolean
+    content?: boolean
+    contentType?: boolean
+    metadata?: boolean
+    version?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type application_documentsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicationId" | "title" | "content" | "contentType" | "metadata" | "version" | "createdAt" | "updatedAt", ExtArgs["result"]["application_documents"]>
+  export type application_documentsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    applications?: boolean | ApplicationDefaultArgs<ExtArgs>
+  }
+  export type application_documentsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    applications?: boolean | ApplicationDefaultArgs<ExtArgs>
+  }
+  export type application_documentsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    applications?: boolean | ApplicationDefaultArgs<ExtArgs>
+  }
+
+  export type $application_documentsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "application_documents"
+    objects: {
+      applications: Prisma.$ApplicationPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      applicationId: string
+      title: string
+      content: string | null
+      contentType: string
+      metadata: Prisma.JsonValue | null
+      version: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["application_documents"]>
+    composites: {}
+  }
+
+  type application_documentsGetPayload<S extends boolean | null | undefined | application_documentsDefaultArgs> = $Result.GetResult<Prisma.$application_documentsPayload, S>
+
+  type application_documentsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<application_documentsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Application_documentsCountAggregateInputType | true
+    }
+
+  export interface application_documentsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['application_documents'], meta: { name: 'application_documents' } }
+    /**
+     * Find zero or one Application_documents that matches the filter.
+     * @param {application_documentsFindUniqueArgs} args - Arguments to find a Application_documents
+     * @example
+     * // Get one Application_documents
+     * const application_documents = await prisma.application_documents.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends application_documentsFindUniqueArgs>(args: SelectSubset<T, application_documentsFindUniqueArgs<ExtArgs>>): Prisma__application_documentsClient<$Result.GetResult<Prisma.$application_documentsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Application_documents that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {application_documentsFindUniqueOrThrowArgs} args - Arguments to find a Application_documents
+     * @example
+     * // Get one Application_documents
+     * const application_documents = await prisma.application_documents.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends application_documentsFindUniqueOrThrowArgs>(args: SelectSubset<T, application_documentsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__application_documentsClient<$Result.GetResult<Prisma.$application_documentsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Application_documents that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {application_documentsFindFirstArgs} args - Arguments to find a Application_documents
+     * @example
+     * // Get one Application_documents
+     * const application_documents = await prisma.application_documents.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends application_documentsFindFirstArgs>(args?: SelectSubset<T, application_documentsFindFirstArgs<ExtArgs>>): Prisma__application_documentsClient<$Result.GetResult<Prisma.$application_documentsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Application_documents that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {application_documentsFindFirstOrThrowArgs} args - Arguments to find a Application_documents
+     * @example
+     * // Get one Application_documents
+     * const application_documents = await prisma.application_documents.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends application_documentsFindFirstOrThrowArgs>(args?: SelectSubset<T, application_documentsFindFirstOrThrowArgs<ExtArgs>>): Prisma__application_documentsClient<$Result.GetResult<Prisma.$application_documentsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Application_documents that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {application_documentsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Application_documents
+     * const application_documents = await prisma.application_documents.findMany()
+     * 
+     * // Get first 10 Application_documents
+     * const application_documents = await prisma.application_documents.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const application_documentsWithIdOnly = await prisma.application_documents.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends application_documentsFindManyArgs>(args?: SelectSubset<T, application_documentsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$application_documentsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Application_documents.
+     * @param {application_documentsCreateArgs} args - Arguments to create a Application_documents.
+     * @example
+     * // Create one Application_documents
+     * const Application_documents = await prisma.application_documents.create({
+     *   data: {
+     *     // ... data to create a Application_documents
+     *   }
+     * })
+     * 
+     */
+    create<T extends application_documentsCreateArgs>(args: SelectSubset<T, application_documentsCreateArgs<ExtArgs>>): Prisma__application_documentsClient<$Result.GetResult<Prisma.$application_documentsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Application_documents.
+     * @param {application_documentsCreateManyArgs} args - Arguments to create many Application_documents.
+     * @example
+     * // Create many Application_documents
+     * const application_documents = await prisma.application_documents.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends application_documentsCreateManyArgs>(args?: SelectSubset<T, application_documentsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Application_documents and returns the data saved in the database.
+     * @param {application_documentsCreateManyAndReturnArgs} args - Arguments to create many Application_documents.
+     * @example
+     * // Create many Application_documents
+     * const application_documents = await prisma.application_documents.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Application_documents and only return the `id`
+     * const application_documentsWithIdOnly = await prisma.application_documents.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends application_documentsCreateManyAndReturnArgs>(args?: SelectSubset<T, application_documentsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$application_documentsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Application_documents.
+     * @param {application_documentsDeleteArgs} args - Arguments to delete one Application_documents.
+     * @example
+     * // Delete one Application_documents
+     * const Application_documents = await prisma.application_documents.delete({
+     *   where: {
+     *     // ... filter to delete one Application_documents
+     *   }
+     * })
+     * 
+     */
+    delete<T extends application_documentsDeleteArgs>(args: SelectSubset<T, application_documentsDeleteArgs<ExtArgs>>): Prisma__application_documentsClient<$Result.GetResult<Prisma.$application_documentsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Application_documents.
+     * @param {application_documentsUpdateArgs} args - Arguments to update one Application_documents.
+     * @example
+     * // Update one Application_documents
+     * const application_documents = await prisma.application_documents.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends application_documentsUpdateArgs>(args: SelectSubset<T, application_documentsUpdateArgs<ExtArgs>>): Prisma__application_documentsClient<$Result.GetResult<Prisma.$application_documentsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Application_documents.
+     * @param {application_documentsDeleteManyArgs} args - Arguments to filter Application_documents to delete.
+     * @example
+     * // Delete a few Application_documents
+     * const { count } = await prisma.application_documents.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends application_documentsDeleteManyArgs>(args?: SelectSubset<T, application_documentsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Application_documents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {application_documentsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Application_documents
+     * const application_documents = await prisma.application_documents.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends application_documentsUpdateManyArgs>(args: SelectSubset<T, application_documentsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Application_documents and returns the data updated in the database.
+     * @param {application_documentsUpdateManyAndReturnArgs} args - Arguments to update many Application_documents.
+     * @example
+     * // Update many Application_documents
+     * const application_documents = await prisma.application_documents.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Application_documents and only return the `id`
+     * const application_documentsWithIdOnly = await prisma.application_documents.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends application_documentsUpdateManyAndReturnArgs>(args: SelectSubset<T, application_documentsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$application_documentsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Application_documents.
+     * @param {application_documentsUpsertArgs} args - Arguments to update or create a Application_documents.
+     * @example
+     * // Update or create a Application_documents
+     * const application_documents = await prisma.application_documents.upsert({
+     *   create: {
+     *     // ... data to create a Application_documents
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Application_documents we want to update
+     *   }
+     * })
+     */
+    upsert<T extends application_documentsUpsertArgs>(args: SelectSubset<T, application_documentsUpsertArgs<ExtArgs>>): Prisma__application_documentsClient<$Result.GetResult<Prisma.$application_documentsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Application_documents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {application_documentsCountArgs} args - Arguments to filter Application_documents to count.
+     * @example
+     * // Count the number of Application_documents
+     * const count = await prisma.application_documents.count({
+     *   where: {
+     *     // ... the filter for the Application_documents we want to count
+     *   }
+     * })
+    **/
+    count<T extends application_documentsCountArgs>(
+      args?: Subset<T, application_documentsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Application_documentsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Application_documents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Application_documentsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Application_documentsAggregateArgs>(args: Subset<T, Application_documentsAggregateArgs>): Prisma.PrismaPromise<GetApplication_documentsAggregateType<T>>
+
+    /**
+     * Group by Application_documents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {application_documentsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends application_documentsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: application_documentsGroupByArgs['orderBy'] }
+        : { orderBy?: application_documentsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, application_documentsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetApplication_documentsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the application_documents model
+   */
+  readonly fields: application_documentsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for application_documents.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__application_documentsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    applications<T extends ApplicationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ApplicationDefaultArgs<ExtArgs>>): Prisma__ApplicationClient<$Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the application_documents model
+   */
+  interface application_documentsFieldRefs {
+    readonly id: FieldRef<"application_documents", 'String'>
+    readonly applicationId: FieldRef<"application_documents", 'String'>
+    readonly title: FieldRef<"application_documents", 'String'>
+    readonly content: FieldRef<"application_documents", 'String'>
+    readonly contentType: FieldRef<"application_documents", 'String'>
+    readonly metadata: FieldRef<"application_documents", 'Json'>
+    readonly version: FieldRef<"application_documents", 'Int'>
+    readonly createdAt: FieldRef<"application_documents", 'DateTime'>
+    readonly updatedAt: FieldRef<"application_documents", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * application_documents findUnique
+   */
+  export type application_documentsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the application_documents
+     */
+    select?: application_documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the application_documents
+     */
+    omit?: application_documentsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: application_documentsInclude<ExtArgs> | null
+    /**
+     * Filter, which application_documents to fetch.
+     */
+    where: application_documentsWhereUniqueInput
+  }
+
+  /**
+   * application_documents findUniqueOrThrow
+   */
+  export type application_documentsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the application_documents
+     */
+    select?: application_documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the application_documents
+     */
+    omit?: application_documentsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: application_documentsInclude<ExtArgs> | null
+    /**
+     * Filter, which application_documents to fetch.
+     */
+    where: application_documentsWhereUniqueInput
+  }
+
+  /**
+   * application_documents findFirst
+   */
+  export type application_documentsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the application_documents
+     */
+    select?: application_documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the application_documents
+     */
+    omit?: application_documentsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: application_documentsInclude<ExtArgs> | null
+    /**
+     * Filter, which application_documents to fetch.
+     */
+    where?: application_documentsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of application_documents to fetch.
+     */
+    orderBy?: application_documentsOrderByWithRelationInput | application_documentsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for application_documents.
+     */
+    cursor?: application_documentsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` application_documents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` application_documents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of application_documents.
+     */
+    distinct?: Application_documentsScalarFieldEnum | Application_documentsScalarFieldEnum[]
+  }
+
+  /**
+   * application_documents findFirstOrThrow
+   */
+  export type application_documentsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the application_documents
+     */
+    select?: application_documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the application_documents
+     */
+    omit?: application_documentsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: application_documentsInclude<ExtArgs> | null
+    /**
+     * Filter, which application_documents to fetch.
+     */
+    where?: application_documentsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of application_documents to fetch.
+     */
+    orderBy?: application_documentsOrderByWithRelationInput | application_documentsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for application_documents.
+     */
+    cursor?: application_documentsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` application_documents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` application_documents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of application_documents.
+     */
+    distinct?: Application_documentsScalarFieldEnum | Application_documentsScalarFieldEnum[]
+  }
+
+  /**
+   * application_documents findMany
+   */
+  export type application_documentsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the application_documents
+     */
+    select?: application_documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the application_documents
+     */
+    omit?: application_documentsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: application_documentsInclude<ExtArgs> | null
+    /**
+     * Filter, which application_documents to fetch.
+     */
+    where?: application_documentsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of application_documents to fetch.
+     */
+    orderBy?: application_documentsOrderByWithRelationInput | application_documentsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing application_documents.
+     */
+    cursor?: application_documentsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` application_documents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` application_documents.
+     */
+    skip?: number
+    distinct?: Application_documentsScalarFieldEnum | Application_documentsScalarFieldEnum[]
+  }
+
+  /**
+   * application_documents create
+   */
+  export type application_documentsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the application_documents
+     */
+    select?: application_documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the application_documents
+     */
+    omit?: application_documentsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: application_documentsInclude<ExtArgs> | null
+    /**
+     * The data needed to create a application_documents.
+     */
+    data: XOR<application_documentsCreateInput, application_documentsUncheckedCreateInput>
+  }
+
+  /**
+   * application_documents createMany
+   */
+  export type application_documentsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many application_documents.
+     */
+    data: application_documentsCreateManyInput | application_documentsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * application_documents createManyAndReturn
+   */
+  export type application_documentsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the application_documents
+     */
+    select?: application_documentsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the application_documents
+     */
+    omit?: application_documentsOmit<ExtArgs> | null
+    /**
+     * The data used to create many application_documents.
+     */
+    data: application_documentsCreateManyInput | application_documentsCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: application_documentsIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * application_documents update
+   */
+  export type application_documentsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the application_documents
+     */
+    select?: application_documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the application_documents
+     */
+    omit?: application_documentsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: application_documentsInclude<ExtArgs> | null
+    /**
+     * The data needed to update a application_documents.
+     */
+    data: XOR<application_documentsUpdateInput, application_documentsUncheckedUpdateInput>
+    /**
+     * Choose, which application_documents to update.
+     */
+    where: application_documentsWhereUniqueInput
+  }
+
+  /**
+   * application_documents updateMany
+   */
+  export type application_documentsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update application_documents.
+     */
+    data: XOR<application_documentsUpdateManyMutationInput, application_documentsUncheckedUpdateManyInput>
+    /**
+     * Filter which application_documents to update
+     */
+    where?: application_documentsWhereInput
+    /**
+     * Limit how many application_documents to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * application_documents updateManyAndReturn
+   */
+  export type application_documentsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the application_documents
+     */
+    select?: application_documentsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the application_documents
+     */
+    omit?: application_documentsOmit<ExtArgs> | null
+    /**
+     * The data used to update application_documents.
+     */
+    data: XOR<application_documentsUpdateManyMutationInput, application_documentsUncheckedUpdateManyInput>
+    /**
+     * Filter which application_documents to update
+     */
+    where?: application_documentsWhereInput
+    /**
+     * Limit how many application_documents to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: application_documentsIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * application_documents upsert
+   */
+  export type application_documentsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the application_documents
+     */
+    select?: application_documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the application_documents
+     */
+    omit?: application_documentsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: application_documentsInclude<ExtArgs> | null
+    /**
+     * The filter to search for the application_documents to update in case it exists.
+     */
+    where: application_documentsWhereUniqueInput
+    /**
+     * In case the application_documents found by the `where` argument doesn't exist, create a new application_documents with this data.
+     */
+    create: XOR<application_documentsCreateInput, application_documentsUncheckedCreateInput>
+    /**
+     * In case the application_documents was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<application_documentsUpdateInput, application_documentsUncheckedUpdateInput>
+  }
+
+  /**
+   * application_documents delete
+   */
+  export type application_documentsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the application_documents
+     */
+    select?: application_documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the application_documents
+     */
+    omit?: application_documentsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: application_documentsInclude<ExtArgs> | null
+    /**
+     * Filter which application_documents to delete.
+     */
+    where: application_documentsWhereUniqueInput
+  }
+
+  /**
+   * application_documents deleteMany
+   */
+  export type application_documentsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which application_documents to delete
+     */
+    where?: application_documentsWhereInput
+    /**
+     * Limit how many application_documents to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * application_documents without action
+   */
+  export type application_documentsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the application_documents
+     */
+    select?: application_documentsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the application_documents
+     */
+    omit?: application_documentsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: application_documentsInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -15042,7 +16347,6 @@ export namespace Prisma {
     description_summary: 'description_summary',
     agency: 'agency',
     funding_instrument: 'funding_instrument',
-    category: 'category',
     fiscal_year: 'fiscal_year',
     post_date: 'post_date',
     close_date: 'close_date',
@@ -15063,7 +16367,8 @@ export namespace Prisma {
     relevance_score: 'relevance_score',
     raw_text: 'raw_text',
     content_hash: 'content_hash',
-    funding_type: 'funding_type'
+    funding_type: 'funding_type',
+    category: 'category'
   };
 
   export type OpportunitiesScalarFieldEnum = (typeof OpportunitiesScalarFieldEnum)[keyof typeof OpportunitiesScalarFieldEnum]
@@ -15217,6 +16522,21 @@ export namespace Prisma {
   export type DocumentsScalarFieldEnum = (typeof DocumentsScalarFieldEnum)[keyof typeof DocumentsScalarFieldEnum]
 
 
+  export const Application_documentsScalarFieldEnum: {
+    id: 'id',
+    applicationId: 'applicationId',
+    title: 'title',
+    content: 'content',
+    contentType: 'contentType',
+    metadata: 'metadata',
+    version: 'version',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type Application_documentsScalarFieldEnum = (typeof Application_documentsScalarFieldEnum)[keyof typeof Application_documentsScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -15351,6 +16671,20 @@ export namespace Prisma {
    * Reference to a field of type 'funding_type_enum[]'
    */
   export type ListEnumfunding_type_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'funding_type_enum[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'opportunity_category_enum[]'
+   */
+  export type ListEnumopportunity_category_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'opportunity_category_enum[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'opportunity_category_enum'
+   */
+  export type Enumopportunity_category_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'opportunity_category_enum'>
     
 
 
@@ -15515,7 +16849,6 @@ export namespace Prisma {
     description_summary?: StringNullableFilter<"opportunities"> | string | null
     agency?: StringNullableFilter<"opportunities"> | string | null
     funding_instrument?: StringNullableFilter<"opportunities"> | string | null
-    category?: StringNullableFilter<"opportunities"> | string | null
     fiscal_year?: IntNullableFilter<"opportunities"> | number | null
     post_date?: DateTimeNullableFilter<"opportunities"> | Date | string | null
     close_date?: DateTimeNullableFilter<"opportunities"> | Date | string | null
@@ -15537,6 +16870,7 @@ export namespace Prisma {
     raw_text?: StringNullableFilter<"opportunities"> | string | null
     content_hash?: StringNullableFilter<"opportunities"> | string | null
     funding_type?: Enumfunding_type_enumNullableFilter<"opportunities"> | $Enums.funding_type_enum | null
+    category?: Enumopportunity_category_enumNullableListFilter<"opportunities">
   }
 
   export type opportunitiesOrderByWithRelationInput = {
@@ -15550,7 +16884,6 @@ export namespace Prisma {
     description_summary?: SortOrderInput | SortOrder
     agency?: SortOrderInput | SortOrder
     funding_instrument?: SortOrderInput | SortOrder
-    category?: SortOrderInput | SortOrder
     fiscal_year?: SortOrderInput | SortOrder
     post_date?: SortOrderInput | SortOrder
     close_date?: SortOrderInput | SortOrder
@@ -15572,6 +16905,7 @@ export namespace Prisma {
     raw_text?: SortOrderInput | SortOrder
     content_hash?: SortOrderInput | SortOrder
     funding_type?: SortOrderInput | SortOrder
+    category?: SortOrder
   }
 
   export type opportunitiesWhereUniqueInput = Prisma.AtLeast<{
@@ -15588,7 +16922,6 @@ export namespace Prisma {
     description_summary?: StringNullableFilter<"opportunities"> | string | null
     agency?: StringNullableFilter<"opportunities"> | string | null
     funding_instrument?: StringNullableFilter<"opportunities"> | string | null
-    category?: StringNullableFilter<"opportunities"> | string | null
     fiscal_year?: IntNullableFilter<"opportunities"> | number | null
     post_date?: DateTimeNullableFilter<"opportunities"> | Date | string | null
     close_date?: DateTimeNullableFilter<"opportunities"> | Date | string | null
@@ -15610,6 +16943,7 @@ export namespace Prisma {
     raw_text?: StringNullableFilter<"opportunities"> | string | null
     content_hash?: StringNullableFilter<"opportunities"> | string | null
     funding_type?: Enumfunding_type_enumNullableFilter<"opportunities"> | $Enums.funding_type_enum | null
+    category?: Enumopportunity_category_enumNullableListFilter<"opportunities">
   }, "id">
 
   export type opportunitiesOrderByWithAggregationInput = {
@@ -15623,7 +16957,6 @@ export namespace Prisma {
     description_summary?: SortOrderInput | SortOrder
     agency?: SortOrderInput | SortOrder
     funding_instrument?: SortOrderInput | SortOrder
-    category?: SortOrderInput | SortOrder
     fiscal_year?: SortOrderInput | SortOrder
     post_date?: SortOrderInput | SortOrder
     close_date?: SortOrderInput | SortOrder
@@ -15645,6 +16978,7 @@ export namespace Prisma {
     raw_text?: SortOrderInput | SortOrder
     content_hash?: SortOrderInput | SortOrder
     funding_type?: SortOrderInput | SortOrder
+    category?: SortOrder
     _count?: opportunitiesCountOrderByAggregateInput
     _avg?: opportunitiesAvgOrderByAggregateInput
     _max?: opportunitiesMaxOrderByAggregateInput
@@ -15666,7 +17000,6 @@ export namespace Prisma {
     description_summary?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
     agency?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
     funding_instrument?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
-    category?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
     fiscal_year?: IntNullableWithAggregatesFilter<"opportunities"> | number | null
     post_date?: DateTimeNullableWithAggregatesFilter<"opportunities"> | Date | string | null
     close_date?: DateTimeNullableWithAggregatesFilter<"opportunities"> | Date | string | null
@@ -15688,6 +17021,7 @@ export namespace Prisma {
     raw_text?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
     content_hash?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
     funding_type?: Enumfunding_type_enumNullableWithAggregatesFilter<"opportunities"> | $Enums.funding_type_enum | null
+    category?: Enumopportunity_category_enumNullableListFilter<"opportunities">
   }
 
   export type UserWhereInput = {
@@ -16135,6 +17469,7 @@ export namespace Prisma {
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
     organizationId?: StringFilter<"Application"> | string
     aiChats?: AiChatListRelationFilter
+    application_documents?: Application_documentsListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
   }
 
@@ -16153,6 +17488,7 @@ export namespace Prisma {
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
+    application_documents?: application_documentsOrderByRelationAggregateInput
     organization?: OrganizationOrderByWithRelationInput
   }
 
@@ -16175,6 +17511,7 @@ export namespace Prisma {
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
     organizationId?: StringFilter<"Application"> | string
     aiChats?: AiChatListRelationFilter
+    application_documents?: Application_documentsListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
   }, "id" | "opportunityId_organizationId">
 
@@ -16478,6 +17815,83 @@ export namespace Prisma {
     metadata?: JsonNullableWithAggregatesFilter<"documents">
   }
 
+  export type application_documentsWhereInput = {
+    AND?: application_documentsWhereInput | application_documentsWhereInput[]
+    OR?: application_documentsWhereInput[]
+    NOT?: application_documentsWhereInput | application_documentsWhereInput[]
+    id?: StringFilter<"application_documents"> | string
+    applicationId?: StringFilter<"application_documents"> | string
+    title?: StringFilter<"application_documents"> | string
+    content?: StringNullableFilter<"application_documents"> | string | null
+    contentType?: StringFilter<"application_documents"> | string
+    metadata?: JsonNullableFilter<"application_documents">
+    version?: IntFilter<"application_documents"> | number
+    createdAt?: DateTimeFilter<"application_documents"> | Date | string
+    updatedAt?: DateTimeFilter<"application_documents"> | Date | string
+    applications?: XOR<ApplicationScalarRelationFilter, ApplicationWhereInput>
+  }
+
+  export type application_documentsOrderByWithRelationInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+    title?: SortOrder
+    content?: SortOrderInput | SortOrder
+    contentType?: SortOrder
+    metadata?: SortOrderInput | SortOrder
+    version?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    applications?: ApplicationOrderByWithRelationInput
+  }
+
+  export type application_documentsWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: application_documentsWhereInput | application_documentsWhereInput[]
+    OR?: application_documentsWhereInput[]
+    NOT?: application_documentsWhereInput | application_documentsWhereInput[]
+    applicationId?: StringFilter<"application_documents"> | string
+    title?: StringFilter<"application_documents"> | string
+    content?: StringNullableFilter<"application_documents"> | string | null
+    contentType?: StringFilter<"application_documents"> | string
+    metadata?: JsonNullableFilter<"application_documents">
+    version?: IntFilter<"application_documents"> | number
+    createdAt?: DateTimeFilter<"application_documents"> | Date | string
+    updatedAt?: DateTimeFilter<"application_documents"> | Date | string
+    applications?: XOR<ApplicationScalarRelationFilter, ApplicationWhereInput>
+  }, "id">
+
+  export type application_documentsOrderByWithAggregationInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+    title?: SortOrder
+    content?: SortOrderInput | SortOrder
+    contentType?: SortOrder
+    metadata?: SortOrderInput | SortOrder
+    version?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: application_documentsCountOrderByAggregateInput
+    _avg?: application_documentsAvgOrderByAggregateInput
+    _max?: application_documentsMaxOrderByAggregateInput
+    _min?: application_documentsMinOrderByAggregateInput
+    _sum?: application_documentsSumOrderByAggregateInput
+  }
+
+  export type application_documentsScalarWhereWithAggregatesInput = {
+    AND?: application_documentsScalarWhereWithAggregatesInput | application_documentsScalarWhereWithAggregatesInput[]
+    OR?: application_documentsScalarWhereWithAggregatesInput[]
+    NOT?: application_documentsScalarWhereWithAggregatesInput | application_documentsScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"application_documents"> | string
+    applicationId?: StringWithAggregatesFilter<"application_documents"> | string
+    title?: StringWithAggregatesFilter<"application_documents"> | string
+    content?: StringNullableWithAggregatesFilter<"application_documents"> | string | null
+    contentType?: StringWithAggregatesFilter<"application_documents"> | string
+    metadata?: JsonNullableWithAggregatesFilter<"application_documents">
+    version?: IntWithAggregatesFilter<"application_documents"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"application_documents"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"application_documents"> | Date | string
+  }
+
   export type alembic_versionCreateInput = {
     version_num: string
   }
@@ -16516,7 +17930,6 @@ export namespace Prisma {
     description_summary?: string | null
     agency?: string | null
     funding_instrument?: string | null
-    category?: string | null
     fiscal_year?: number | null
     post_date?: Date | string | null
     close_date?: Date | string | null
@@ -16538,6 +17951,7 @@ export namespace Prisma {
     raw_text?: string | null
     content_hash?: string | null
     funding_type?: $Enums.funding_type_enum | null
+    category?: opportunitiesCreatecategoryInput | $Enums.opportunity_category_enum[]
   }
 
   export type opportunitiesUncheckedCreateInput = {
@@ -16551,7 +17965,6 @@ export namespace Prisma {
     description_summary?: string | null
     agency?: string | null
     funding_instrument?: string | null
-    category?: string | null
     fiscal_year?: number | null
     post_date?: Date | string | null
     close_date?: Date | string | null
@@ -16573,6 +17986,7 @@ export namespace Prisma {
     raw_text?: string | null
     content_hash?: string | null
     funding_type?: $Enums.funding_type_enum | null
+    category?: opportunitiesCreatecategoryInput | $Enums.opportunity_category_enum[]
   }
 
   export type opportunitiesUpdateInput = {
@@ -16585,7 +17999,6 @@ export namespace Prisma {
     description_summary?: NullableStringFieldUpdateOperationsInput | string | null
     agency?: NullableStringFieldUpdateOperationsInput | string | null
     funding_instrument?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
     fiscal_year?: NullableIntFieldUpdateOperationsInput | number | null
     post_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     close_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16607,6 +18020,7 @@ export namespace Prisma {
     raw_text?: NullableStringFieldUpdateOperationsInput | string | null
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
     funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
+    category?: opportunitiesUpdatecategoryInput | $Enums.opportunity_category_enum[]
   }
 
   export type opportunitiesUncheckedUpdateInput = {
@@ -16620,7 +18034,6 @@ export namespace Prisma {
     description_summary?: NullableStringFieldUpdateOperationsInput | string | null
     agency?: NullableStringFieldUpdateOperationsInput | string | null
     funding_instrument?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
     fiscal_year?: NullableIntFieldUpdateOperationsInput | number | null
     post_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     close_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16642,6 +18055,7 @@ export namespace Prisma {
     raw_text?: NullableStringFieldUpdateOperationsInput | string | null
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
     funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
+    category?: opportunitiesUpdatecategoryInput | $Enums.opportunity_category_enum[]
   }
 
   export type opportunitiesCreateManyInput = {
@@ -16655,7 +18069,6 @@ export namespace Prisma {
     description_summary?: string | null
     agency?: string | null
     funding_instrument?: string | null
-    category?: string | null
     fiscal_year?: number | null
     post_date?: Date | string | null
     close_date?: Date | string | null
@@ -16677,6 +18090,7 @@ export namespace Prisma {
     raw_text?: string | null
     content_hash?: string | null
     funding_type?: $Enums.funding_type_enum | null
+    category?: opportunitiesCreatecategoryInput | $Enums.opportunity_category_enum[]
   }
 
   export type opportunitiesUpdateManyMutationInput = {
@@ -16689,7 +18103,6 @@ export namespace Prisma {
     description_summary?: NullableStringFieldUpdateOperationsInput | string | null
     agency?: NullableStringFieldUpdateOperationsInput | string | null
     funding_instrument?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
     fiscal_year?: NullableIntFieldUpdateOperationsInput | number | null
     post_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     close_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16711,6 +18124,7 @@ export namespace Prisma {
     raw_text?: NullableStringFieldUpdateOperationsInput | string | null
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
     funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
+    category?: opportunitiesUpdatecategoryInput | $Enums.opportunity_category_enum[]
   }
 
   export type opportunitiesUncheckedUpdateManyInput = {
@@ -16724,7 +18138,6 @@ export namespace Prisma {
     description_summary?: NullableStringFieldUpdateOperationsInput | string | null
     agency?: NullableStringFieldUpdateOperationsInput | string | null
     funding_instrument?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
     fiscal_year?: NullableIntFieldUpdateOperationsInput | number | null
     post_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     close_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16746,6 +18159,7 @@ export namespace Prisma {
     raw_text?: NullableStringFieldUpdateOperationsInput | string | null
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
     funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
+    category?: opportunitiesUpdatecategoryInput | $Enums.opportunity_category_enum[]
   }
 
   export type UserCreateInput = {
@@ -17259,6 +18673,7 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
+    application_documents?: application_documentsCreateNestedManyWithoutApplicationsInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
   }
 
@@ -17277,6 +18692,7 @@ export namespace Prisma {
     lastEditedAt?: Date | string
     organizationId: string
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
+    application_documents?: application_documentsUncheckedCreateNestedManyWithoutApplicationsInput
   }
 
   export type ApplicationUpdateInput = {
@@ -17293,6 +18709,7 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
+    application_documents?: application_documentsUpdateManyWithoutApplicationsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
   }
 
@@ -17311,6 +18728,7 @@ export namespace Prisma {
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
+    application_documents?: application_documentsUncheckedUpdateManyWithoutApplicationsNestedInput
   }
 
   export type ApplicationCreateManyInput = {
@@ -17625,6 +19043,89 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
+  export type application_documentsCreateInput = {
+    id?: string
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    applications: ApplicationCreateNestedOneWithoutApplication_documentsInput
+  }
+
+  export type application_documentsUncheckedCreateInput = {
+    id?: string
+    applicationId: string
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type application_documentsUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    applications?: ApplicationUpdateOneRequiredWithoutApplication_documentsNestedInput
+  }
+
+  export type application_documentsUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    applicationId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type application_documentsCreateManyInput = {
+    id?: string
+    applicationId: string
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type application_documentsUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type application_documentsUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    applicationId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -17760,6 +19261,14 @@ export namespace Prisma {
     not?: NestedEnumfunding_type_enumNullableFilter<$PrismaModel> | $Enums.funding_type_enum | null
   }
 
+  export type Enumopportunity_category_enumNullableListFilter<$PrismaModel = never> = {
+    equals?: $Enums.opportunity_category_enum[] | ListEnumopportunity_category_enumFieldRefInput<$PrismaModel> | null
+    has?: $Enums.opportunity_category_enum | Enumopportunity_category_enumFieldRefInput<$PrismaModel> | null
+    hasEvery?: $Enums.opportunity_category_enum[] | ListEnumopportunity_category_enumFieldRefInput<$PrismaModel>
+    hasSome?: $Enums.opportunity_category_enum[] | ListEnumopportunity_category_enumFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -17776,7 +19285,6 @@ export namespace Prisma {
     description_summary?: SortOrder
     agency?: SortOrder
     funding_instrument?: SortOrder
-    category?: SortOrder
     fiscal_year?: SortOrder
     post_date?: SortOrder
     close_date?: SortOrder
@@ -17798,6 +19306,7 @@ export namespace Prisma {
     raw_text?: SortOrder
     content_hash?: SortOrder
     funding_type?: SortOrder
+    category?: SortOrder
   }
 
   export type opportunitiesAvgOrderByAggregateInput = {
@@ -17820,7 +19329,6 @@ export namespace Prisma {
     description_summary?: SortOrder
     agency?: SortOrder
     funding_instrument?: SortOrder
-    category?: SortOrder
     fiscal_year?: SortOrder
     post_date?: SortOrder
     close_date?: SortOrder
@@ -17853,7 +19361,6 @@ export namespace Prisma {
     description_summary?: SortOrder
     agency?: SortOrder
     funding_instrument?: SortOrder
-    category?: SortOrder
     fiscal_year?: SortOrder
     post_date?: SortOrder
     close_date?: SortOrder
@@ -18483,6 +19990,16 @@ export namespace Prisma {
     not?: NestedEnumApplicationStatusFilter<$PrismaModel> | $Enums.ApplicationStatus
   }
 
+  export type Application_documentsListRelationFilter = {
+    every?: application_documentsWhereInput
+    some?: application_documentsWhereInput
+    none?: application_documentsWhereInput
+  }
+
+  export type application_documentsOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type ApplicationOpportunityIdOrganizationIdCompoundUniqueInput = {
     opportunityId: number
     organizationId: string
@@ -18757,8 +20274,59 @@ export namespace Prisma {
     _max?: NestedBigIntFilter<$PrismaModel>
   }
 
+  export type ApplicationScalarRelationFilter = {
+    is?: ApplicationWhereInput
+    isNot?: ApplicationWhereInput
+  }
+
+  export type application_documentsCountOrderByAggregateInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    contentType?: SortOrder
+    metadata?: SortOrder
+    version?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type application_documentsAvgOrderByAggregateInput = {
+    version?: SortOrder
+  }
+
+  export type application_documentsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    contentType?: SortOrder
+    version?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type application_documentsMinOrderByAggregateInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    contentType?: SortOrder
+    version?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type application_documentsSumOrderByAggregateInput = {
+    version?: SortOrder
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
+  }
+
+  export type opportunitiesCreatecategoryInput = {
+    set: $Enums.opportunity_category_enum[]
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
@@ -18787,6 +20355,11 @@ export namespace Prisma {
 
   export type NullableEnumfunding_type_enumFieldUpdateOperationsInput = {
     set?: $Enums.funding_type_enum | null
+  }
+
+  export type opportunitiesUpdatecategoryInput = {
+    set?: $Enums.opportunity_category_enum[]
+    push?: $Enums.opportunity_category_enum | $Enums.opportunity_category_enum[]
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -19218,6 +20791,13 @@ export namespace Prisma {
     connect?: AiChatWhereUniqueInput | AiChatWhereUniqueInput[]
   }
 
+  export type application_documentsCreateNestedManyWithoutApplicationsInput = {
+    create?: XOR<application_documentsCreateWithoutApplicationsInput, application_documentsUncheckedCreateWithoutApplicationsInput> | application_documentsCreateWithoutApplicationsInput[] | application_documentsUncheckedCreateWithoutApplicationsInput[]
+    connectOrCreate?: application_documentsCreateOrConnectWithoutApplicationsInput | application_documentsCreateOrConnectWithoutApplicationsInput[]
+    createMany?: application_documentsCreateManyApplicationsInputEnvelope
+    connect?: application_documentsWhereUniqueInput | application_documentsWhereUniqueInput[]
+  }
+
   export type OrganizationCreateNestedOneWithoutApplicationsInput = {
     create?: XOR<OrganizationCreateWithoutApplicationsInput, OrganizationUncheckedCreateWithoutApplicationsInput>
     connectOrCreate?: OrganizationCreateOrConnectWithoutApplicationsInput
@@ -19229,6 +20809,13 @@ export namespace Prisma {
     connectOrCreate?: AiChatCreateOrConnectWithoutApplicationInput | AiChatCreateOrConnectWithoutApplicationInput[]
     createMany?: AiChatCreateManyApplicationInputEnvelope
     connect?: AiChatWhereUniqueInput | AiChatWhereUniqueInput[]
+  }
+
+  export type application_documentsUncheckedCreateNestedManyWithoutApplicationsInput = {
+    create?: XOR<application_documentsCreateWithoutApplicationsInput, application_documentsUncheckedCreateWithoutApplicationsInput> | application_documentsCreateWithoutApplicationsInput[] | application_documentsUncheckedCreateWithoutApplicationsInput[]
+    connectOrCreate?: application_documentsCreateOrConnectWithoutApplicationsInput | application_documentsCreateOrConnectWithoutApplicationsInput[]
+    createMany?: application_documentsCreateManyApplicationsInputEnvelope
+    connect?: application_documentsWhereUniqueInput | application_documentsWhereUniqueInput[]
   }
 
   export type EnumApplicationStatusFieldUpdateOperationsInput = {
@@ -19247,6 +20834,20 @@ export namespace Prisma {
     update?: AiChatUpdateWithWhereUniqueWithoutApplicationInput | AiChatUpdateWithWhereUniqueWithoutApplicationInput[]
     updateMany?: AiChatUpdateManyWithWhereWithoutApplicationInput | AiChatUpdateManyWithWhereWithoutApplicationInput[]
     deleteMany?: AiChatScalarWhereInput | AiChatScalarWhereInput[]
+  }
+
+  export type application_documentsUpdateManyWithoutApplicationsNestedInput = {
+    create?: XOR<application_documentsCreateWithoutApplicationsInput, application_documentsUncheckedCreateWithoutApplicationsInput> | application_documentsCreateWithoutApplicationsInput[] | application_documentsUncheckedCreateWithoutApplicationsInput[]
+    connectOrCreate?: application_documentsCreateOrConnectWithoutApplicationsInput | application_documentsCreateOrConnectWithoutApplicationsInput[]
+    upsert?: application_documentsUpsertWithWhereUniqueWithoutApplicationsInput | application_documentsUpsertWithWhereUniqueWithoutApplicationsInput[]
+    createMany?: application_documentsCreateManyApplicationsInputEnvelope
+    set?: application_documentsWhereUniqueInput | application_documentsWhereUniqueInput[]
+    disconnect?: application_documentsWhereUniqueInput | application_documentsWhereUniqueInput[]
+    delete?: application_documentsWhereUniqueInput | application_documentsWhereUniqueInput[]
+    connect?: application_documentsWhereUniqueInput | application_documentsWhereUniqueInput[]
+    update?: application_documentsUpdateWithWhereUniqueWithoutApplicationsInput | application_documentsUpdateWithWhereUniqueWithoutApplicationsInput[]
+    updateMany?: application_documentsUpdateManyWithWhereWithoutApplicationsInput | application_documentsUpdateManyWithWhereWithoutApplicationsInput[]
+    deleteMany?: application_documentsScalarWhereInput | application_documentsScalarWhereInput[]
   }
 
   export type OrganizationUpdateOneRequiredWithoutApplicationsNestedInput = {
@@ -19269,6 +20870,20 @@ export namespace Prisma {
     update?: AiChatUpdateWithWhereUniqueWithoutApplicationInput | AiChatUpdateWithWhereUniqueWithoutApplicationInput[]
     updateMany?: AiChatUpdateManyWithWhereWithoutApplicationInput | AiChatUpdateManyWithWhereWithoutApplicationInput[]
     deleteMany?: AiChatScalarWhereInput | AiChatScalarWhereInput[]
+  }
+
+  export type application_documentsUncheckedUpdateManyWithoutApplicationsNestedInput = {
+    create?: XOR<application_documentsCreateWithoutApplicationsInput, application_documentsUncheckedCreateWithoutApplicationsInput> | application_documentsCreateWithoutApplicationsInput[] | application_documentsUncheckedCreateWithoutApplicationsInput[]
+    connectOrCreate?: application_documentsCreateOrConnectWithoutApplicationsInput | application_documentsCreateOrConnectWithoutApplicationsInput[]
+    upsert?: application_documentsUpsertWithWhereUniqueWithoutApplicationsInput | application_documentsUpsertWithWhereUniqueWithoutApplicationsInput[]
+    createMany?: application_documentsCreateManyApplicationsInputEnvelope
+    set?: application_documentsWhereUniqueInput | application_documentsWhereUniqueInput[]
+    disconnect?: application_documentsWhereUniqueInput | application_documentsWhereUniqueInput[]
+    delete?: application_documentsWhereUniqueInput | application_documentsWhereUniqueInput[]
+    connect?: application_documentsWhereUniqueInput | application_documentsWhereUniqueInput[]
+    update?: application_documentsUpdateWithWhereUniqueWithoutApplicationsInput | application_documentsUpdateWithWhereUniqueWithoutApplicationsInput[]
+    updateMany?: application_documentsUpdateManyWithWhereWithoutApplicationsInput | application_documentsUpdateManyWithWhereWithoutApplicationsInput[]
+    deleteMany?: application_documentsScalarWhereInput | application_documentsScalarWhereInput[]
   }
 
   export type AiChatMessageCreateNestedManyWithoutChatInput = {
@@ -19399,6 +21014,20 @@ export namespace Prisma {
     decrement?: bigint | number
     multiply?: bigint | number
     divide?: bigint | number
+  }
+
+  export type ApplicationCreateNestedOneWithoutApplication_documentsInput = {
+    create?: XOR<ApplicationCreateWithoutApplication_documentsInput, ApplicationUncheckedCreateWithoutApplication_documentsInput>
+    connectOrCreate?: ApplicationCreateOrConnectWithoutApplication_documentsInput
+    connect?: ApplicationWhereUniqueInput
+  }
+
+  export type ApplicationUpdateOneRequiredWithoutApplication_documentsNestedInput = {
+    create?: XOR<ApplicationCreateWithoutApplication_documentsInput, ApplicationUncheckedCreateWithoutApplication_documentsInput>
+    connectOrCreate?: ApplicationCreateOrConnectWithoutApplication_documentsInput
+    upsert?: ApplicationUpsertWithoutApplication_documentsInput
+    connect?: ApplicationWhereUniqueInput
+    update?: XOR<XOR<ApplicationUpdateToOneWithWhereWithoutApplication_documentsInput, ApplicationUpdateWithoutApplication_documentsInput>, ApplicationUncheckedUpdateWithoutApplication_documentsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -20186,6 +21815,7 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
+    application_documents?: application_documentsCreateNestedManyWithoutApplicationsInput
   }
 
   export type ApplicationUncheckedCreateWithoutOrganizationInput = {
@@ -20202,6 +21832,7 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
+    application_documents?: application_documentsUncheckedCreateNestedManyWithoutApplicationsInput
   }
 
   export type ApplicationCreateOrConnectWithoutOrganizationInput = {
@@ -20945,6 +22576,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type application_documentsCreateWithoutApplicationsInput = {
+    id?: string
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type application_documentsUncheckedCreateWithoutApplicationsInput = {
+    id?: string
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type application_documentsCreateOrConnectWithoutApplicationsInput = {
+    where: application_documentsWhereUniqueInput
+    create: XOR<application_documentsCreateWithoutApplicationsInput, application_documentsUncheckedCreateWithoutApplicationsInput>
+  }
+
+  export type application_documentsCreateManyApplicationsInputEnvelope = {
+    data: application_documentsCreateManyApplicationsInput | application_documentsCreateManyApplicationsInput[]
+    skipDuplicates?: boolean
+  }
+
   export type OrganizationCreateWithoutApplicationsInput = {
     id?: string
     name: string
@@ -21042,6 +22705,37 @@ export namespace Prisma {
   export type AiChatUpdateManyWithWhereWithoutApplicationInput = {
     where: AiChatScalarWhereInput
     data: XOR<AiChatUpdateManyMutationInput, AiChatUncheckedUpdateManyWithoutApplicationInput>
+  }
+
+  export type application_documentsUpsertWithWhereUniqueWithoutApplicationsInput = {
+    where: application_documentsWhereUniqueInput
+    update: XOR<application_documentsUpdateWithoutApplicationsInput, application_documentsUncheckedUpdateWithoutApplicationsInput>
+    create: XOR<application_documentsCreateWithoutApplicationsInput, application_documentsUncheckedCreateWithoutApplicationsInput>
+  }
+
+  export type application_documentsUpdateWithWhereUniqueWithoutApplicationsInput = {
+    where: application_documentsWhereUniqueInput
+    data: XOR<application_documentsUpdateWithoutApplicationsInput, application_documentsUncheckedUpdateWithoutApplicationsInput>
+  }
+
+  export type application_documentsUpdateManyWithWhereWithoutApplicationsInput = {
+    where: application_documentsScalarWhereInput
+    data: XOR<application_documentsUpdateManyMutationInput, application_documentsUncheckedUpdateManyWithoutApplicationsInput>
+  }
+
+  export type application_documentsScalarWhereInput = {
+    AND?: application_documentsScalarWhereInput | application_documentsScalarWhereInput[]
+    OR?: application_documentsScalarWhereInput[]
+    NOT?: application_documentsScalarWhereInput | application_documentsScalarWhereInput[]
+    id?: StringFilter<"application_documents"> | string
+    applicationId?: StringFilter<"application_documents"> | string
+    title?: StringFilter<"application_documents"> | string
+    content?: StringNullableFilter<"application_documents"> | string | null
+    contentType?: StringFilter<"application_documents"> | string
+    metadata?: JsonNullableFilter<"application_documents">
+    version?: IntFilter<"application_documents"> | number
+    createdAt?: DateTimeFilter<"application_documents"> | Date | string
+    updatedAt?: DateTimeFilter<"application_documents"> | Date | string
   }
 
   export type OrganizationUpsertWithoutApplicationsInput = {
@@ -21172,6 +22866,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
+    application_documents?: application_documentsCreateNestedManyWithoutApplicationsInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
   }
 
@@ -21189,6 +22884,7 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
+    application_documents?: application_documentsUncheckedCreateNestedManyWithoutApplicationsInput
   }
 
   export type ApplicationCreateOrConnectWithoutAiChatsInput = {
@@ -21362,6 +23058,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    application_documents?: application_documentsUpdateManyWithoutApplicationsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
   }
 
@@ -21379,6 +23076,7 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
+    application_documents?: application_documentsUncheckedUpdateManyWithoutApplicationsNestedInput
   }
 
   export type OrganizationUpsertWithoutAiChatsInput = {
@@ -21739,6 +23437,90 @@ export namespace Prisma {
     user?: UserUncheckedUpdateOneWithoutOrganizationNestedInput
   }
 
+  export type ApplicationCreateWithoutApplication_documentsInput = {
+    id?: string
+    opportunityId: number
+    status?: $Enums.ApplicationStatus
+    content?: NullableJsonNullValueInput | InputJsonValue
+    contentHtml?: string | null
+    title?: string | null
+    notes?: string | null
+    documents?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedAt?: Date | string | null
+    lastEditedAt?: Date | string
+    aiChats?: AiChatCreateNestedManyWithoutApplicationInput
+    organization: OrganizationCreateNestedOneWithoutApplicationsInput
+  }
+
+  export type ApplicationUncheckedCreateWithoutApplication_documentsInput = {
+    id?: string
+    opportunityId: number
+    status?: $Enums.ApplicationStatus
+    content?: NullableJsonNullValueInput | InputJsonValue
+    contentHtml?: string | null
+    title?: string | null
+    notes?: string | null
+    documents?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedAt?: Date | string | null
+    lastEditedAt?: Date | string
+    organizationId: string
+    aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
+  }
+
+  export type ApplicationCreateOrConnectWithoutApplication_documentsInput = {
+    where: ApplicationWhereUniqueInput
+    create: XOR<ApplicationCreateWithoutApplication_documentsInput, ApplicationUncheckedCreateWithoutApplication_documentsInput>
+  }
+
+  export type ApplicationUpsertWithoutApplication_documentsInput = {
+    update: XOR<ApplicationUpdateWithoutApplication_documentsInput, ApplicationUncheckedUpdateWithoutApplication_documentsInput>
+    create: XOR<ApplicationCreateWithoutApplication_documentsInput, ApplicationUncheckedCreateWithoutApplication_documentsInput>
+    where?: ApplicationWhereInput
+  }
+
+  export type ApplicationUpdateToOneWithWhereWithoutApplication_documentsInput = {
+    where?: ApplicationWhereInput
+    data: XOR<ApplicationUpdateWithoutApplication_documentsInput, ApplicationUncheckedUpdateWithoutApplication_documentsInput>
+  }
+
+  export type ApplicationUpdateWithoutApplication_documentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    opportunityId?: IntFieldUpdateOperationsInput | number
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    content?: NullableJsonNullValueInput | InputJsonValue
+    contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    documents?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
+  }
+
+  export type ApplicationUncheckedUpdateWithoutApplication_documentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    opportunityId?: IntFieldUpdateOperationsInput | number
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    content?: NullableJsonNullValueInput | InputJsonValue
+    contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    documents?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
+  }
+
   export type AiChatCreateManyUserInput = {
     id?: string
     title?: string | null
@@ -21914,6 +23696,7 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
+    application_documents?: application_documentsUpdateManyWithoutApplicationsNestedInput
   }
 
   export type ApplicationUncheckedUpdateWithoutOrganizationInput = {
@@ -21930,6 +23713,7 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
+    application_documents?: application_documentsUncheckedUpdateManyWithoutApplicationsNestedInput
   }
 
   export type ApplicationUncheckedUpdateManyWithoutOrganizationInput = {
@@ -22047,6 +23831,17 @@ export namespace Prisma {
     organizationId: string
   }
 
+  export type application_documentsCreateManyApplicationsInput = {
+    id?: string
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type AiChatUpdateWithoutApplicationInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22077,6 +23872,39 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
     organizationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type application_documentsUpdateWithoutApplicationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type application_documentsUncheckedUpdateWithoutApplicationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type application_documentsUncheckedUpdateManyWithoutApplicationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AiChatMessageCreateManyChatInput = {

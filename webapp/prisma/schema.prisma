@@ -236,7 +236,7 @@ model documents {
 }
 
 model application_documents {
-  id            String      @id
+  id            String      @id @default(cuid())
   applicationId String
   title         String
   content       String?
@@ -244,12 +244,12 @@ model application_documents {
   metadata      Json?
   version       Int         @default(1)
   createdAt     DateTime    @default(now())
-  updatedAt     DateTime
+  updatedAt     DateTime    @updatedAt
   applications  Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
+  @@index([applicationId])
   @@index([updatedAt])
   @@index([applicationId, createdAt])
-  @@index([applicationId])
   @@schema("app")
 }
 
