@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { GrantInfoCard } from "./GrantInfoCard";
 import { DocumentList } from "./DocumentList";
 
@@ -60,7 +59,7 @@ export function ApplicationPage({
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
-  const fetchApplication = async () => {
+  const fetchApplication = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/applications?organizationSlug=${organizationSlug}`
@@ -81,7 +80,7 @@ export function ApplicationPage({
       toast.error("Failed to load application");
       return null;
     }
-  };
+  }, [organizationSlug, applicationId]);
 
   const fetchGrant = async (opportunityId: number) => {
     try {
@@ -99,7 +98,7 @@ export function ApplicationPage({
     }
   };
 
-  const fetchDocuments = async () => {
+  const fetchDocuments = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/applications/${applicationId}/documents`
@@ -112,7 +111,7 @@ export function ApplicationPage({
       console.error("Error fetching documents:", error);
       toast.error("Failed to load documents");
     }
-  };
+  }, [applicationId]);
 
   const handleEditDocument = (documentId: string) => {
     router.push(
@@ -173,7 +172,7 @@ export function ApplicationPage({
     };
 
     loadData();
-  }, [applicationId, organizationSlug]);
+  }, [applicationId, organizationSlug, fetchApplication, fetchDocuments]);
 
   if (loading) {
     return (
@@ -189,8 +188,8 @@ export function ApplicationPage({
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Application Not Found</h1>
           <p className="text-muted-foreground mb-4">
-            The application you're looking for doesn't exist or you don't have
-            access to it.
+            The application you&apos;re looking for doesn&apos;t exist or you
+            don&apos;t have access to it.
           </p>
         </div>
       </div>

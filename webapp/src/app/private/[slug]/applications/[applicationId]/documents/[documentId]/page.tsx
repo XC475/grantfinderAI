@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, use, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
@@ -28,7 +28,7 @@ export default function DocumentPage({ params }: DocumentPageProps) {
 
   const { slug: organizationSlug, applicationId, documentId } = use(params);
 
-  const fetchDocument = async () => {
+  const fetchDocument = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/applications/${applicationId}/documents/${documentId}`
@@ -52,7 +52,7 @@ export default function DocumentPage({ params }: DocumentPageProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [applicationId, documentId, organizationSlug, router]);
 
   const handleSave = async (content: string) => {
     setSaving(true);
@@ -88,7 +88,7 @@ export default function DocumentPage({ params }: DocumentPageProps) {
 
   useEffect(() => {
     fetchDocument();
-  }, [applicationId, documentId]);
+  }, [applicationId, documentId, fetchDocument]);
 
   if (loading) {
     return (
@@ -104,8 +104,8 @@ export default function DocumentPage({ params }: DocumentPageProps) {
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Document Not Found</h1>
           <p className="text-muted-foreground">
-            The document you're looking for doesn't exist or you don't have
-            access to it.
+            The document you&apos;re looking for doesn&apos;t exist or you
+            don&apos;t have access to it.
           </p>
         </div>
       </div>

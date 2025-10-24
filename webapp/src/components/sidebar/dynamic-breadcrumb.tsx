@@ -21,6 +21,7 @@ export function DynamicBreadcrumb({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [grantTitle, setGrantTitle] = useState<string | null>(null);
+  const [documentTitle, setDocumentTitle] = useState<string | null>(null);
 
   const fromBookmarks = searchParams.get("from") === "bookmarks";
 
@@ -118,7 +119,7 @@ export function DynamicBreadcrumb({
         // If we're viewing a document within an application
         if (segments.length > 3 && segments[2] === "documents" && segments[3]) {
           items.push({
-            label: "Document",
+            label: documentTitle || "Document",
             href: `/private/${organizationSlug}/applications/${segments[1]}/documents/${segments[3]}`,
             isLast: true,
           });
@@ -140,7 +141,7 @@ export function DynamicBreadcrumb({
     }
 
     return items;
-  }, [pathname, organizationSlug, grantTitle, fromBookmarks]);
+  }, [pathname, organizationSlug, grantTitle, documentTitle, fromBookmarks]);
 
   // Fetch grant title if we're on a grant detail page
   useEffect(() => {
@@ -161,6 +162,34 @@ export function DynamicBreadcrumb({
         });
     } else {
       setGrantTitle(null);
+    }
+  }, [pathname, organizationSlug]);
+
+  // Fetch document title if we're on a document page
+  useEffect(() => {
+    const path = pathname.replace(`/private/${organizationSlug}`, "");
+    const segments = path.split("/").filter(Boolean);
+
+    if (
+      segments[0] === "applications" &&
+      segments[1] &&
+      segments[2] === "documents" &&
+      segments[3]
+    ) {
+      const applicationId = segments[1];
+      const documentId = segments[3];
+      fetch(`/api/applications/${applicationId}/documents/${documentId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.document && data.document.title) {
+            setDocumentTitle(data.document.title);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching document title:", error);
+        });
+    } else {
+      setDocumentTitle(null);
     }
   }, [pathname, organizationSlug]);
 

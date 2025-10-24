@@ -106,12 +106,34 @@ export async function POST(
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
     }
 
-    // Create new document
+    // Create new document with getting started content if no content provided
+    const gettingStartedContent =
+      content ||
+      `
+      <h1>Welcome to Grantware AI</h1>
+      <p>This is your document workspace. Start writing your grant application here.</p>
+      <h2>Getting Started</h2>
+      <ul>
+        <li>Use the toolbar above to format your text</li>
+        <li>Add headings, lists, and other formatting as needed</li>
+        <li>Your work is automatically saved as you type</li>
+        <li>Use the save button to manually save your progress</li>
+      </ul>
+      <h2>Tips for Grant Writing</h2>
+      <ul>
+        <li>Clearly state your project objectives</li>
+        <li>Provide detailed budget information</li>
+        <li>Include measurable outcomes and timelines</li>
+        <li>Address all requirements from the grant guidelines</li>
+      </ul>
+      <p>Happy writing!</p>
+    `;
+
     const document = await prisma.application_documents.create({
       data: {
         applicationId: applicationId,
         title,
-        content: content || "",
+        content: gettingStartedContent,
         contentType,
         version: 1,
       },
