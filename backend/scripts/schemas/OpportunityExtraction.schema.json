@@ -60,6 +60,7 @@
     "post_date": { "type": ["string", "null"], "format": "date", "description": "YYYY-MM-DD." },
     "close_date": { "type": ["string", "null"], "format": "date", "description": "YYYY-MM-DD application deadline." },
     "archive_date": { "type": ["string", "null"], "format": "date", "description": "YYYY-MM-DD archive date if provided." },
+    "last_updated": { "type": ["string", "null"], "format": "date", "description": "YYYY-MM-DD last updated date." },
     "cost_sharing": { "type": ["boolean", "null"], "description": "True if cost share/match required; false if explicitly not required; null if unclear." },
     "award_max": { "type": ["integer", "null"], "minimum": 0 },
     "award_min": { "type": ["integer", "null"], "minimum": 0 },
@@ -75,17 +76,17 @@
         "pattern": "^\\([0-9]{3}\\) [0-9]{3}-[0-9]{4}$"
     },
     "attachments": {
-      "type": ["array", "null"],
-    "description": "List of downloadable resources (files) and links to other pages mentioned in the HTML. If an extracted href begins with '/', prepend the page origin (scheme + host) to form an absolute URL (e.g. '/path' -> 'https://example.com/path').",
-      "items": {
-        "type": "object",
-        "properties": {
-          "url": { "type": "string", "format": "uri" },
-          "title": { "type": ["string", "null"], "description": "Friendly title or filename." }
-        },
-        "required": ["url"],
-        "additionalProperties": false
-      }
+        "type": ["array", "null"],
+        "description": "List of attachments as objects with name and url pairs.",
+        "items": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string", "description": "Friendly title or filename." },
+                "url": { "type": "string", "format": "uri" }
+            },
+            "required": ["name", "url"],
+            "additionalProperties": false
+        }
     },
     "extra": { "type": ["object", "null"], "description": "Other useful fields for display; keys are headings, values are strings.", "additionalProperties": true },
     "relevance_score": { "type": ["integer", "null"], "minimum": 0, "maximum": 100 }

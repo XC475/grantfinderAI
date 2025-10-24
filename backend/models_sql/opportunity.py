@@ -70,7 +70,7 @@ class Opportunity(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     source = Column(String, nullable=False)
     state_code = Column(String)  # e.g. "MA" for Massachusetts, US for federal
-    source_grant_id = Column(String, nullable=False)  # ID from the source system
+    source_grant_id = Column(String)  # ID from the source system
     status = Column(
         Enum(OpportunityStatusEnum, name="opportunity_status_enum"), nullable=False
     )

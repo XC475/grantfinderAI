@@ -67,8 +67,9 @@
     },
     "category": {
       "how_to_assign": [
-        "Map keywords/themes to one or more categories from the controlled list.",
-        "If uncertain, include 'Other' and add rationale in extra.category_notes."
+        "Analyze the grant's purpose, target audience, and activities to map to one or more categories from the controlled list.",
+        "If multiple categories apply, include all relevant ones.",
+        "If no specific category clearly fits, you MUST select 'Other' as the fallback."
       ],
       "examples": {
         "STEM_Education": ["STEM", "science fair", "robotics"],
@@ -94,6 +95,10 @@
     },
     "archive_date": {
       "how_to_find": ["'Archive date', 'superseded on', or deprecation notes; often absent."],
+      "normalize": ["parse_date_to_yyyy_mm_dd"]
+    },
+    "last_updated": {
+      "how_to_find": ["'Last updated', 'updated on', or similar phrases; often absent."],
       "normalize": ["parse_date_to_yyyy_mm_dd"]
     },
     "cost_sharing": {
@@ -142,12 +147,22 @@
       "how_to_find": ["'Phone', 'Tel', phone icons."]
     },
     "attachments": {
-    "how_to_find": [
-      "Anchor (<a>) tags with href attributes pointing to attachments (prefer absolute URLs when present).",
-      "Links with labels: 'RFP', 'Solicitation', 'NOFO', 'Application', 'Guidelines', 'Appendix'.",
-      "File extensions: pdf, doc, docx, xls, xlsx, csv, zip."
-    ],
-      "normalize": ["absolute_url_if_relative"]
+      "how_to_find": [
+        "Anchor (<a>) tags with href attributes pointing to attachments (prefer absolute URLs when present).",
+        "Links with labels: 'RFP', 'Solicitation', 'NOFO', 'Application', 'Guidelines', 'Appendix'.",
+        "File extensions: pdf, doc, docx, xls, xlsx, csv, zip."
+      ],
+      "output_format": "Array of objects with 'name' and 'url' properties. Each object must have both fields.",
+      "name_extraction": [
+        "Use the link text as the 'name' if it's descriptive (e.g., 'Application Guidelines', 'RFP Document').",
+        "If link text is just 'Download' or 'Click here', use the filename from the URL or a descriptive label from nearby context."
+      ],
+      "examples": [
+        "{'name': 'Application Guidelines', 'url': 'https://example.com/guidelines.pdf'}",
+        "{'name': 'RFP Document', 'url': 'https://example.com/rfp.docx'}"
+      ],
+      "normalize": ["absolute_url_if_relative"],
+      "validation": "Ensure each attachment object has both 'name' (string) and 'url' (string) properties. Do not return bare URL strings."
     },
     "extra": {
       "guidance": [

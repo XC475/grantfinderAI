@@ -142,10 +142,20 @@ def format_opportunity_text(opportunity):
         text_parts.append(f"Cost Sharing Required: {cost_sharing_text}")
 
     if opportunity.post_date:
-        text_parts.append(f"Posted: {opportunity.post_date.strftime('%Y-%m-%d')}")
+        if hasattr(opportunity.post_date, "strftime"):
+            # It's a date object
+            text_parts.append(f"Posted: {opportunity.post_date.strftime('%Y-%m-%d')}")
+        else:
+            # It's already a string
+            text_parts.append(f"Posted: {opportunity.post_date}")
 
     if opportunity.close_date:
-        text_parts.append(f"Closes: {opportunity.close_date.strftime('%Y-%m-%d')}")
+        if hasattr(opportunity.close_date, "strftime"):
+            # It's a date object
+            text_parts.append(f"Closes: {opportunity.close_date.strftime('%Y-%m-%d')}")
+        else:
+            # It's already a string
+            text_parts.append(f"Closes: {opportunity.close_date}")
 
     if opportunity.eligibility_summary:
         text_parts.append(f"Eligibility Summary: {opportunity.eligibility_summary}")
@@ -632,6 +642,7 @@ def batch_smart_scrape_pipeline(
     force_update: bool = False,
     commit: bool = True,
     use_lightweight: bool = False,
+    post_dates: list = None,
 ):
     """
     Batch version of smart_scrape_pipeline for processing multiple grants efficiently.
@@ -643,6 +654,7 @@ def batch_smart_scrape_pipeline(
         force_update: Force updates even if content unchanged
         commit: Whether to commit changes
         use_lightweight: Use lightweight extraction
+        post_dates: Optional list of post dates (strings) corresponding to each URL in html_data_list
 
     Returns:
         Dict with statistics and details:
@@ -654,12 +666,25 @@ def batch_smart_scrape_pipeline(
     stats = {"created": 0, "updated": 0, "skipped": 0, "errors": 0}
     results = []
 
-    for item in html_data_list:
+    for i, item in enumerate(html_data_list):
         try:
             # Handle item-specific templates
             item_template = dict(opportunity_template)
             if "template" in item:
                 item_template.update(item["template"])
+
+            # Add post_date to template if provided
+            if post_dates and i < len(post_dates) and post_dates[i]:
+                # Convert date object to string if needed
+                post_date = post_dates[i]
+                if hasattr(post_date, "strftime"):
+                    # It's a date object, convert to YYYY-MM-DD string
+                    post_date_str = post_date.strftime("%Y-%m-%d")
+                else:
+                    # It's already a string
+                    post_date_str = str(post_date)
+
+                item_template["post_date"] = post_date_str
 
             result = smart_scrape_pipeline(
                 html_content=item["html"],
