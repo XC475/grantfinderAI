@@ -13,6 +13,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 from flask_server import __main__ as server
 from flask_server.db import db
 from models_sql import Opportunity, OpportunityStatusEnum, FundingTypeEnum
+from models_sql.opportunity import OpportunityCategoryEnum
 import json
 
 # App + API setup
@@ -43,6 +44,91 @@ def should_skip_grant(close_date, fiscal_year):
     return False, None
 
 
+def map_grants_gov_category(category_description):
+    """
+    Map grants.gov category descriptions to OpportunityCategoryEnum values.
+
+    Args:
+        category_description: The category description string from grants.gov
+
+    Returns:
+        List of OpportunityCategoryEnum values (defaults to ['Other'] if no mapping found)
+    """
+    if not category_description:
+        return [OpportunityCategoryEnum.Other]
+
+    # Convert to lowercase for case-insensitive matching
+    category_lower = category_description.lower().strip()
+
+    # Create mapping dictionary for common grants.gov categories
+    category_mappings = {
+        # Education categories
+        "education": [OpportunityCategoryEnum.Educational_Research_and_Innovation],
+        "elementary and secondary education": [
+            OpportunityCategoryEnum.Educational_Research_and_Innovation
+        ],
+        "higher education": [OpportunityCategoryEnum.College_and_Career_Readiness],
+        "vocational rehabilitation": [
+            OpportunityCategoryEnum.Career_and_Technical_Education
+        ],
+        "special education": [OpportunityCategoryEnum.Special_Education],
+        "student aid": [OpportunityCategoryEnum.College_and_Career_Readiness],
+        # STEM and Science
+        "science and technology": [OpportunityCategoryEnum.STEM_Education],
+        "mathematics and computer sciences": [
+            OpportunityCategoryEnum.Math_and_Science_Education
+        ],
+        "physical sciences": [OpportunityCategoryEnum.STEM_Education],
+        "life sciences": [OpportunityCategoryEnum.STEM_Education],
+        "engineering": [OpportunityCategoryEnum.STEM_Education],
+        # Health and Social Services
+        "health": [OpportunityCategoryEnum.Health_and_Wellness],
+        "mental health": [OpportunityCategoryEnum.Student_Mental_Health],
+        "nutrition": [OpportunityCategoryEnum.Nutrition_and_School_Meals],
+        "food and nutrition": [OpportunityCategoryEnum.Nutrition_and_School_Meals],
+        # Arts and Culture
+        "arts": [OpportunityCategoryEnum.Arts_and_Music_Education],
+        "humanities": [OpportunityCategoryEnum.Arts_and_Music_Education],
+        "cultural affairs": [OpportunityCategoryEnum.Arts_and_Music_Education],
+        # Technology
+        "information and statistics": [
+            OpportunityCategoryEnum.Digital_Literacy_and_Technology
+        ],
+        "telecommunications": [OpportunityCategoryEnum.Digital_Literacy_and_Technology],
+        # Community and Social
+        "community development": [OpportunityCategoryEnum.Community_Engagement],
+        "social services": [OpportunityCategoryEnum.Social_Emotional_Learning],
+        "civil rights": [OpportunityCategoryEnum.Equity_and_Inclusion],
+        # Environment and Infrastructure
+        "environment": [OpportunityCategoryEnum.Environmental_Education],
+        "natural resources": [OpportunityCategoryEnum.Environmental_Education],
+        "transportation": [OpportunityCategoryEnum.Transportation_and_Accessibility],
+        "infrastructure": [OpportunityCategoryEnum.Facilities_and_Infrastructure],
+        # Safety and Security
+        "law enforcement": [OpportunityCategoryEnum.School_Safety_and_Security],
+        "public safety": [OpportunityCategoryEnum.School_Safety_and_Security],
+        "disaster prevention and relief": [
+            OpportunityCategoryEnum.School_Safety_and_Security
+        ],
+        # Research and Development
+        "research and development": [
+            OpportunityCategoryEnum.Educational_Research_and_Innovation
+        ],
+        "regional development": [OpportunityCategoryEnum.Community_Engagement],
+    }
+
+    # Try to find a match
+    for key, enum_values in category_mappings.items():
+        if key in category_lower:
+            return enum_values
+
+    # If no specific mapping found, default to 'Other'
+    print(
+        f"Warning: No category mapping found for '{category_description}', defaulting to 'Other'"
+    )
+    return [OpportunityCategoryEnum.Other]
+
+
 def get_batch_prompt(grants_batch):
     """Generate the prompt for batch AI extraction based on multiple grant opportunities."""
     batch_json = json.dumps(grants_batch, indent=2)
@@ -66,6 +152,7 @@ For each grant, create an object with these exact fields:
 - index: The grant's position (0, 1, 2, etc.)
 - description_summary: Brief summary of grant purpose (focus on school district relevance)
 - eligibility_summary: Who can apply (explicitly state if public school districts, LEAs, or K-12 schools are eligible)
+- category: Array of one or more categories that best describe this grant (see allowed values below)
 - extra: Additional relevant details as JSON object
 - relevance_score: Integer 0-100 reflecting relevance to U.S. public school districts:
   * 90-100: Specifically targets K-12 schools, LEAs, or districts
@@ -73,12 +160,46 @@ For each grant, create an object with these exact fields:
   * 40-69: Schools technically eligible, broader focus
   * 0-39: Minimal relevance to districts
 
+ALLOWED CATEGORY VALUES (select 1-3 most appropriate):
+- "STEM_Education"
+- "Math_and_Science_Education"
+- "Career_and_Technical_Education"
+- "Special_Education"
+- "Early_Childhood_Education"
+- "Teacher_Professional_Development"
+- "Leadership_and_Administration_Development"
+- "Social_Emotional_Learning"
+- "School_Climate_and_Culture"
+- "Bullying_Prevention"
+- "School_Safety_and_Security"
+- "Digital_Literacy_and_Technology"
+- "Educational_Technology_Innovation"
+- "After_School_Programs"
+- "Arts_and_Music_Education"
+- "Environmental_Education"
+- "Health_and_Wellness"
+- "Nutrition_and_School_Meals"
+- "Student_Mental_Health"
+- "Equity_and_Inclusion"
+- "Community_Engagement"
+- "Parental_Involvement"
+- "College_and_Career_Readiness"
+- "Civic_and_History_Education"
+- "English_Language_Learners"
+- "Financial_Literacy"
+- "Educational_Research_and_Innovation"
+- "Facilities_and_Infrastructure"
+- "Data_and_Assessment_Initiatives"
+- "Transportation_and_Accessibility"
+- "Other"
+
 REQUIRED OUTPUT FORMAT (no other text):
 [
   {{
     "index": 0,
     "description_summary": "Brief grant description",
     "eligibility_summary": "Who can apply",
+    "category": ["Educational_Research_and_Innovation"],
     "extra": {{}},
     "relevance_score": 50
   }},
@@ -86,6 +207,7 @@ REQUIRED OUTPUT FORMAT (no other text):
     "index": 1,
     "description_summary": "Brief grant description",
     "eligibility_summary": "Who can apply",
+    "category": ["STEM_Education", "Teacher_Professional_Development"],
     "extra": {{"deadline_note": "Applications due by 5 PM"}},
     "relevance_score": 75
   }}
@@ -191,6 +313,7 @@ def process_grants_individually(grants_data):
                 Instructions:
                 - description_summary: Concise summary of grant purpose (focus on school district relevance)
                 - eligibility_summary: Who can apply (explicitly state if public school districts, LEAs, or K-12 schools are eligible)
+                - category: Array of one or more categories that best describe this grant (see allowed values below)
                 - extra: Additional relevant details as JSON object
                 - relevance_score: Integer 0-100 reflecting relevance to U.S. public school districts:
                   * 90-100: Specifically targets K-12 schools, LEAs, or districts
@@ -198,11 +321,45 @@ def process_grants_individually(grants_data):
                   * 40-69: Schools technically eligible, broader focus
                   * 0-39: Minimal relevance to districts
                 
+                ALLOWED CATEGORY VALUES (select 1-3 most appropriate):
+                - "STEM_Education"
+                - "Math_and_Science_Education"
+                - "Career_and_Technical_Education"
+                - "Special_Education"
+                - "Early_Childhood_Education"
+                - "Teacher_Professional_Development"
+                - "Leadership_and_Administration_Development"
+                - "Social_Emotional_Learning"
+                - "School_Climate_and_Culture"
+                - "Bullying_Prevention"
+                - "School_Safety_and_Security"
+                - "Digital_Literacy_and_Technology"
+                - "Educational_Technology_Innovation"
+                - "After_School_Programs"
+                - "Arts_and_Music_Education"
+                - "Environmental_Education"
+                - "Health_and_Wellness"
+                - "Nutrition_and_School_Meals"
+                - "Student_Mental_Health"
+                - "Equity_and_Inclusion"
+                - "Community_Engagement"
+                - "Parental_Involvement"
+                - "College_and_Career_Readiness"
+                - "Civic_and_History_Education"
+                - "English_Language_Learners"
+                - "Financial_Literacy"
+                - "Educational_Research_and_Innovation"
+                - "Facilities_and_Infrastructure"
+                - "Data_and_Assessment_Initiatives"
+                - "Transportation_and_Accessibility"
+                - "Other"
+                
                 Return ONLY a JSON object (not an array) with these keys:
                 {{
                     "index": {i},
                     "description_summary": "...",
                     "eligibility_summary": "...",
+                    "category": ["Educational_Research_and_Innovation"],
                     "extra": {{}},
                     "relevance_score": 50
                 }}
@@ -246,6 +403,13 @@ def prepare_forecasted_grant(op, session):
     # Get opportunity number
     opp_number = op.get("opportunityNumber")
 
+    # Ensure we have a valid opportunity number
+    if not opp_number:
+        print(
+            f"Warning: No opportunityNumber found for forecasted grant, skipping: {op.get('id', 'Unknown ID')}"
+        )
+        return None
+
     # Try to parse lastUpdatedDate in multiple formats
     last_updated_str = forecast.get("lastUpdatedDate")
     last_updated = helpers.parse_date(last_updated_str) if last_updated_str else None
@@ -276,8 +440,8 @@ def prepare_forecasted_grant(op, session):
         print(f"Skipping {opportunity.source_grant_id}, no update.")
         return None
 
-    # Extract category
-    opportunity.category = op.get("opportunityCategory", {}).get("description")
+    # Set default category - will be overridden by AI results
+    opportunity.category = [OpportunityCategoryEnum.Other]
 
     # Build the grants.gov detail URL using the opportunity ID
     opp_id = op.get("id")
@@ -342,7 +506,7 @@ def prepare_forecasted_grant(op, session):
         "opportunity_number": opportunity.source_grant_id,
         "title": opportunity.title,
         "funding_instrument": opportunity.funding_instrument,
-        "funding_category": opportunity.category,
+        "grants_gov_category": op.get("opportunityCategory", {}).get("description"),
         "description": opportunity.description[:2000]
         if opportunity.description
         else None,  # Limit for batch processing
@@ -379,6 +543,13 @@ def prepare_posted_grant(op, opp_status, session):
     # Get opportunity number
     opp_number = op.get("opportunityNumber")
 
+    # Ensure we have a valid opportunity number
+    if not opp_number:
+        print(
+            f"Warning: No opportunityNumber found for posted grant, skipping: {op.get('id', 'Unknown ID')}"
+        )
+        return None
+
     # Try to parse lastUpdatedDate
     last_updated_str = synopsis.get("lastUpdatedDate")
     last_updated = helpers.parse_date(last_updated_str) if last_updated_str else None
@@ -413,8 +584,8 @@ def prepare_posted_grant(op, opp_status, session):
     agency_details = op.get("agencyDetails", {}) or {}
     opportunity.agency = agency_details.get("agencyName") if agency_details else None
 
-    # Extract category
-    opportunity.category = op.get("opportunityCategory", {}).get("description")
+    # Set default category - will be overridden by AI results
+    opportunity.category = [OpportunityCategoryEnum.Other]
 
     # Build the grants.gov detail URL using the opportunity ID
     opp_id = op.get("id")
@@ -494,7 +665,7 @@ def prepare_posted_grant(op, opp_status, session):
         "opportunity_number": opportunity.source_grant_id,
         "title": opportunity.title,
         "funding_instrument": opportunity.funding_instrument,
-        "funding_category": opportunity.category,
+        "grants_gov_category": op.get("opportunityCategory", {}).get("description"),
         "description": opportunity.description[:2000]
         if opportunity.description
         else None,  # Limit for batch processing
@@ -547,6 +718,50 @@ def apply_ai_results_to_opportunity(opportunity, ai_data):
                     f"Invalid relevance score value: {ai_data['relevance_score']}. Setting to None."
                 )
                 opportunity.relevance_score = None
+
+        # Handle AI-selected categories
+        if "category" in ai_data:
+            try:
+                category_strings = ai_data["category"]
+                if isinstance(category_strings, list):
+                    # Convert string category names to enum objects
+                    category_enums = []
+                    for category_str in category_strings:
+                        try:
+                            category_enum = OpportunityCategoryEnum(category_str)
+                            category_enums.append(category_enum)
+                            print(f"AI selected category: {category_str}")
+                        except ValueError:
+                            print(
+                                f"Warning: Invalid AI category '{category_str}', skipping"
+                            )
+                            continue
+
+                    # If we have valid categories, use them; otherwise default to 'Other'
+                    if category_enums:
+                        opportunity.category = category_enums
+                    else:
+                        print("No valid AI categories found, defaulting to 'Other'")
+                        opportunity.category = [OpportunityCategoryEnum.Other]
+                elif isinstance(category_strings, str):
+                    # Handle single category string
+                    try:
+                        category_enum = OpportunityCategoryEnum(category_strings)
+                        opportunity.category = [category_enum]
+                        print(f"AI selected single category: {category_strings}")
+                    except ValueError:
+                        print(
+                            f"Warning: Invalid AI category '{category_strings}', defaulting to 'Other'"
+                        )
+                        opportunity.category = [OpportunityCategoryEnum.Other]
+                else:
+                    print(
+                        f"Warning: Unexpected category format from AI: {category_strings}, defaulting to 'Other'"
+                    )
+                    opportunity.category = [OpportunityCategoryEnum.Other]
+            except Exception as e:
+                print(f"Error processing AI categories: {e}, defaulting to 'Other'")
+                opportunity.category = [OpportunityCategoryEnum.Other]
 
         # Generate and populate raw_text using the helper function
         opportunity.raw_text = helpers.format_opportunity_text(opportunity)
