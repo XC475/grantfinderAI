@@ -199,7 +199,7 @@ export default function ApplicationsPage({
                         }
                       >
                         <FileText className="h-4 w-4 mr-1" />
-                        Edit Application
+                        Application Page
                       </Button>
                     </td>
                   </tr>

@@ -2,6 +2,7 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { DynamicBreadcrumb } from "@/components/sidebar/dynamic-breadcrumb";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
@@ -69,6 +70,9 @@ export default async function OrganizationLayout({
           <div className="flex items-center gap-2 px-4">
             <Separator orientation="vertical" className="mr-2 h-4" />
             <DynamicBreadcrumb organizationSlug={slug} />
+          </div>
+          <div className="ml-auto px-4">
+            <ThemeToggle />
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>

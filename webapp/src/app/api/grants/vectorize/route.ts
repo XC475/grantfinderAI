@@ -167,7 +167,12 @@ export async function POST(req: NextRequest) {
     let newCount = 0;
 
     for (const opportunity of allOpportunities) {
-      const currentHash = hashOpportunityContent(opportunity);
+      // Convert category array to string for hashing
+      const opportunityForHash = {
+        ...opportunity,
+        category: opportunity.category ? opportunity.category.join(", ") : null,
+      };
+      const currentHash = hashOpportunityContent(opportunityForHash);
       const existingDoc = existingDocsMap.get(opportunity.id);
 
       if (!existingDoc) {
@@ -285,7 +290,13 @@ export async function POST(req: NextRequest) {
           }
 
           // Calculate content hash for change detection
-          const contentHash = hashOpportunityContent(opportunity);
+          const opportunityForHash = {
+            ...opportunity,
+            category: opportunity.category
+              ? opportunity.category.join(", ")
+              : null,
+          };
+          const contentHash = hashOpportunityContent(opportunityForHash);
 
           // Prepare metadata with opportunity_id, key fields, and content hash
           const metadata = {

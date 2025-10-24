@@ -20,38 +20,38 @@ model alembic_version {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model opportunities {
-  id                   Int                     @id @default(autoincrement())
-  source               String                  @db.VarChar
-  state_code           String?                 @db.VarChar
-  source_grant_id      String                  @db.VarChar
+  id                   Int                         @id @default(autoincrement())
+  source               String                      @db.VarChar
+  state_code           String?                     @db.VarChar
+  source_grant_id      String                      @db.VarChar
   status               opportunity_status_enum
-  title                String                  @db.VarChar
+  title                String                      @db.VarChar
   description          String?
-  description_summary  String?                 @db.VarChar
-  agency               String?                 @db.VarChar
-  funding_instrument   String?                 @db.VarChar
-  category             String?                 @db.VarChar
+  description_summary  String?                     @db.VarChar
+  agency               String?                     @db.VarChar
+  funding_instrument   String?                     @db.VarChar
   fiscal_year          Int?
-  post_date            DateTime?               @db.Date
-  close_date           DateTime?               @db.Date
-  archive_date         DateTime?               @db.Date
+  post_date            DateTime?                   @db.Date
+  close_date           DateTime?                   @db.Date
+  archive_date         DateTime?                   @db.Date
   cost_sharing         Boolean?
   award_max            Int?
   award_min            Int?
   total_funding_amount Int?
   eligibility          String?
-  eligibility_summary  String?                 @db.VarChar
-  last_updated         DateTime?               @db.Timestamp(6)
-  contact_name         String?                 @db.VarChar
-  contact_email        String?                 @db.VarChar
-  contact_phone        String?                 @db.VarChar
-  url                  String?                 @db.VarChar
-  attachments          Json?                   @db.Json
-  extra                Json?                   @db.Json
+  eligibility_summary  String?                     @db.VarChar
+  last_updated         DateTime?                   @db.Timestamp(6)
+  contact_name         String?                     @db.VarChar
+  contact_email        String?                     @db.VarChar
+  contact_phone        String?                     @db.VarChar
+  url                  String?                     @db.VarChar
+  attachments          Json?                       @db.Json
+  extra                Json?                       @db.Json
   relevance_score      Int?
   raw_text             String?
-  content_hash         String?                 @db.VarChar
+  content_hash         String?                     @db.VarChar
   funding_type         funding_type_enum?
+  category             opportunity_category_enum[]
 
   @@schema("public")
 }
@@ -153,21 +153,22 @@ model GrantEligibilityAnalysis {
 }
 
 model Application {
-  id             String            @id @default(cuid())
-  opportunityId  Int
-  status         ApplicationStatus @default(DRAFT)
-  content        Json?
-  contentHtml    String?
-  title          String?
-  notes          String?
-  documents      Json?
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
-  submittedAt    DateTime?
-  lastEditedAt   DateTime          @default(now())
-  organizationId String
-  aiChats        AiChat[]
-  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  id                    String                  @id @default(cuid())
+  opportunityId         Int
+  status                ApplicationStatus       @default(DRAFT)
+  content               Json?
+  contentHtml           String?
+  title                 String?
+  notes                 String?
+  documents             Json?
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  submittedAt           DateTime?
+  lastEditedAt          DateTime                @default(now())
+  organizationId        String
+  aiChats               AiChat[]
+  application_documents application_documents[]
+  organization          Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@unique([opportunityId, organizationId])
   @@index([organizationId, status])
@@ -234,6 +235,24 @@ model documents {
   @@schema("public")
 }
 
+model application_documents {
+  id            String      @id @default(cuid())
+  applicationId String
+  title         String
+  content       String?
+  contentType   String      @default("html")
+  metadata      Json?
+  version       Int         @default(1)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  applications  Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([updatedAt])
+  @@index([applicationId, createdAt])
+  @@schema("app")
+}
+
 enum opportunity_status_enum {
   forecasted
   posted
@@ -295,6 +314,42 @@ enum funding_type_enum {
   federal
   local
   private
+
+  @@schema("public")
+}
+
+enum opportunity_category_enum {
+  STEM_Education
+  Math_and_Science_Education
+  Career_and_Technical_Education
+  Special_Education
+  Early_Childhood_Education
+  Teacher_Professional_Development
+  Leadership_and_Administration_Development
+  Social_Emotional_Learning
+  School_Climate_and_Culture
+  Bullying_Prevention
+  School_Safety_and_Security
+  Digital_Literacy_and_Technology
+  Educational_Technology_Innovation
+  After_School_Programs
+  Arts_and_Music_Education
+  Environmental_Education
+  Health_and_Wellness
+  Nutrition_and_School_Meals
+  Student_Mental_Health
+  Equity_and_Inclusion
+  Community_Engagement
+  Parental_Involvement
+  College_and_Career_Readiness
+  Civic_and_History_Education
+  English_Language_Learners
+  Financial_Literacy
+  Educational_Research_and_Innovation
+  Facilities_and_Infrastructure
+  Data_and_Assessment_Initiatives
+  Transportation_and_Accessibility
+  Other
 
   @@schema("public")
 }
