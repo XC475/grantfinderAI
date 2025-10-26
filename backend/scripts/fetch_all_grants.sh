@@ -24,6 +24,14 @@ if [ $? -ne 0 ]; then
   STATUS=1
 fi
 
+# Run the fetch_grants_walmart.py script
+echo "Running fetch_grants_walmart.py..."
+python scripts/fetch_grants_walmart.py
+if [ $? -ne 0 ]; then
+  echo "Error: fetch_grants_walmart.py failed."
+  STATUS=1
+fi
+
 
 # Run the fetch_grants_gov.py script
 echo "Running fetch_grants_gov.py..."
