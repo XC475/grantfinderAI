@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import crypto from "crypto";
 
 // Helper function to estimate tokens
 function estimateTokens(text: string): number {
   // Rough estimate: ~4 characters per token for English text
   return Math.ceil(text.length / 4);
+}
+
+// Helper function to hash raw_text content
+function hashRawText(rawText: string | null): string {
+  if (!rawText) return "";
+  return crypto.createHash("sha256").update(rawText).digest("hex");
 }
 
 export async function GET(req: NextRequest) {
@@ -35,57 +42,64 @@ export async function GET(req: NextRequest) {
       `📊 [Vectorize Estimate] Opportunities: ${totalOpportunities}, Documents: ${totalDocuments}`
     );
 
-    // Find opportunities that don't have corresponding documents
-    const existingDocumentIds = await prisma.$queryRaw<
-      Array<{ opportunity_id: number }>
+    // Get existing documents with their hashes (same logic as /vectorize)
+    const existingDocuments = await prisma.$queryRaw<
+      Array<{ opportunity_id: number; content_hash: string }>
     >`
-      SELECT DISTINCT (metadata->>'opportunity_id')::int as opportunity_id
+      SELECT 
+        (metadata->>'opportunity_id')::int as opportunity_id,
+        metadata->>'content_hash' as content_hash
       FROM public.documents
       WHERE metadata->>'opportunity_id' IS NOT NULL
     `;
 
-    const existingIds = new Set(
-      existingDocumentIds.map((d) => d.opportunity_id)
+    // Create a map of opportunity_id -> hash
+    const existingDocsMap = new Map(
+      existingDocuments.map((d) => [d.opportunity_id, d.content_hash])
     );
 
-    // Fetch opportunities that need vectorization
-    const opportunitiesToVectorize = await prisma.opportunities.findMany({
-      where: {
-        id: {
-          notIn: Array.from(existingIds),
-        },
-      },
+    console.log(
+      `📋 [Vectorize Estimate] Found ${existingDocuments.length} existing documents`
+    );
+
+    // Fetch ALL opportunities with raw_text to check for changes
+    const allOpportunities = await prisma.opportunities.findMany({
       select: {
         id: true,
-        source: true,
-        state_code: true,
-        source_grant_id: true,
-        status: true,
         title: true,
-        description: true,
-        description_summary: true,
-        agency: true,
-        funding_instrument: true,
-        category: true,
-        fiscal_year: true,
-        post_date: true,
-        close_date: true,
-        archive_date: true,
-        cost_sharing: true,
-        award_max: true,
-        award_min: true,
-        total_funding_amount: true,
-        eligibility: true,
-        eligibility_summary: true,
-        contact_name: true,
-        contact_email: true,
-        contact_phone: true,
-        url: true,
+        raw_text: true, // Primary content for estimation
       },
     });
 
+    // Determine which opportunities need vectorization (new or changed)
+    const opportunitiesToVectorize = [];
+    let newCount = 0;
+    let changedCount = 0;
+
+    for (const opportunity of allOpportunities) {
+      // Skip if no raw_text available
+      if (!opportunity.raw_text || !opportunity.raw_text.trim()) {
+        continue;
+      }
+
+      // Calculate hash from raw_text for change detection
+      const currentHash = hashRawText(opportunity.raw_text);
+      const existingHash = existingDocsMap.get(opportunity.id);
+
+      if (!existingHash) {
+        // New opportunity - needs vectorization
+        opportunitiesToVectorize.push(opportunity);
+        newCount++;
+      } else if (existingHash !== currentHash) {
+        // Content changed - needs re-vectorization
+        opportunitiesToVectorize.push(opportunity);
+        changedCount++;
+      }
+      // else: Hash matches - already up to date, skip
+    }
+
     console.log(
-      `🎯 [Vectorize Estimate] Found ${opportunitiesToVectorize.length} grants to analyze`
+      `🎯 [Vectorize Estimate] Found ${opportunitiesToVectorize.length} grants to analyze (${newCount} new, ${changedCount} changed)`
     );
 
     if (opportunitiesToVectorize.length === 0) {
@@ -106,6 +120,7 @@ export async function GET(req: NextRequest) {
       totalEstimatedTokens: 0,
       minCharacters: Infinity,
       maxCharacters: 0,
+      processedCount: 0, // Track actually processed grants
       samples: [] as Array<{
         id: number;
         title: string;
@@ -117,55 +132,24 @@ export async function GET(req: NextRequest) {
 
     // Analyze each grant
     opportunitiesToVectorize.forEach((opportunity) => {
-      // Create text representation (same as what would be embedded)
-      const contentParts = [
-        `Opportunity ID: ${opportunity.id}`,
-        `Source: ${opportunity.source}`,
-        opportunity.source_grant_id &&
-          `Source Grant ID: ${opportunity.source_grant_id}`,
-        `Status: ${opportunity.status}`,
-        `Title: ${opportunity.title}`,
-        opportunity.agency && `Agency: ${opportunity.agency}`,
-        opportunity.category && `Category: ${opportunity.category}`,
-        opportunity.funding_instrument &&
-          `Funding Instrument: ${opportunity.funding_instrument}`,
-        opportunity.state_code && `State: ${opportunity.state_code}`,
-        opportunity.fiscal_year && `Fiscal Year: ${opportunity.fiscal_year}`,
-        opportunity.description_summary &&
-          `Summary: ${opportunity.description_summary}`,
-        opportunity.description && `Description: ${opportunity.description}`,
-        opportunity.total_funding_amount &&
-          `Total Funding: $${opportunity.total_funding_amount.toLocaleString()}`,
-        opportunity.award_min &&
-          `Award Minimum: $${opportunity.award_min.toLocaleString()}`,
-        opportunity.award_max &&
-          `Award Maximum: $${opportunity.award_max.toLocaleString()}`,
-        opportunity.cost_sharing !== null &&
-          `Cost Sharing Required: ${opportunity.cost_sharing ? "Yes" : "No"}`,
-        opportunity.post_date &&
-          `Posted: ${opportunity.post_date.toISOString().split("T")[0]}`,
-        opportunity.close_date &&
-          `Closes: ${opportunity.close_date.toISOString().split("T")[0]}`,
-        opportunity.eligibility_summary &&
-          `Eligibility Summary: ${opportunity.eligibility_summary}`,
-        opportunity.eligibility &&
-          `Eligibility Details: ${opportunity.eligibility}`,
-        opportunity.contact_name && `Contact: ${opportunity.contact_name}`,
-        opportunity.contact_email && `Email: ${opportunity.contact_email}`,
-        opportunity.contact_phone && `Phone: ${opportunity.contact_phone}`,
-        opportunity.url && `URL: ${opportunity.url}`,
-      ]
-        .filter(Boolean)
-        .join("\n\n");
+      // Use raw_text for estimation
+      const contentForEstimation = opportunity.raw_text || "";
+
+      // If no raw_text, log and skip (should not happen due to filtering above, but defensive)
+      if (!contentForEstimation.trim()) {
+        console.warn(`⚠️ [Estimate] Grant ${opportunity.id} has no raw_text`);
+        return; // Skip from forEach
+      }
 
       // Calculate statistics
-      const charCount = contentParts.length;
-      const estimatedTokenCount = estimateTokens(contentParts);
+      const charCount = contentForEstimation.length;
+      const estimatedTokenCount = estimateTokens(contentForEstimation);
 
       textStats.totalCharacters += charCount;
       textStats.totalEstimatedTokens += estimatedTokenCount;
       textStats.minCharacters = Math.min(textStats.minCharacters, charCount);
       textStats.maxCharacters = Math.max(textStats.maxCharacters, charCount);
+      textStats.processedCount++; // Increment processed count
 
       // Store first 10 samples for detailed review
       if (textStats.samples.length < 10) {
@@ -174,18 +158,20 @@ export async function GET(req: NextRequest) {
           title: opportunity.title,
           characters: charCount,
           tokens: estimatedTokenCount,
-          preview: contentParts.substring(0, 200) + "...",
+          preview: contentForEstimation.substring(0, 200) + "...",
         });
       }
     });
 
-    // Calculate averages
-    const avgCharacters = Math.round(
-      textStats.totalCharacters / opportunitiesToVectorize.length
-    );
-    const avgTokens = Math.round(
-      textStats.totalEstimatedTokens / opportunitiesToVectorize.length
-    );
+    // Calculate averages using actually processed count
+    const avgCharacters =
+      textStats.processedCount > 0
+        ? Math.round(textStats.totalCharacters / textStats.processedCount)
+        : 0;
+    const avgTokens =
+      textStats.processedCount > 0
+        ? Math.round(textStats.totalEstimatedTokens / textStats.processedCount)
+        : 0;
 
     // Cost calculation for text-embedding-3-small
     const estimatedCostUSD =
@@ -207,12 +193,14 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `Analysis complete for ${opportunitiesToVectorize.length} grants`,
+      message: `Analysis complete for ${opportunitiesToVectorize.length} grants (${newCount} new, ${changedCount} changed)`,
       dryRun: true,
       stats: {
         opportunities: totalOpportunities,
         documents: totalDocuments,
         toVectorize: opportunitiesToVectorize.length,
+        new: newCount,
+        changed: changedCount,
         textStatistics: {
           avgCharacters,
           avgTokens,
@@ -223,6 +211,7 @@ export async function GET(req: NextRequest) {
           totalTokens: textStats.totalEstimatedTokens,
           estimatedCostUSD: estimatedCostUSD.toFixed(4),
           embeddingDimensions: 1536,
+          processedCount: textStats.processedCount,
           samples: textStats.samples,
         },
       },
