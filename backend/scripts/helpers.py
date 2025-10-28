@@ -9,6 +9,7 @@ from typing import Union
 import os
 from dateutil import parser
 import pytz
+import requests
 
 # Load environment variables
 load_dotenv()
@@ -71,7 +72,6 @@ def format_opportunity_text(opportunity):
     text_parts = []
 
     # Add each field if it exists and has a value
-    text_parts.append(f"Opportunity ID: {opportunity.id}")
     text_parts.append(f"Source: {opportunity.source}")
 
     if opportunity.source_grant_id:
@@ -182,6 +182,39 @@ def format_opportunity_text(opportunity):
 def calculate_content_hash(content: str) -> str:
     """Calculate MD5 hash of content for change detection."""
     return hashlib.md5(content.encode("utf-8")).hexdigest()
+
+
+def fetch_and_hash_page(page_url: str, timeout: int = 30) -> str:
+    """
+    Fetch page content and return both the HTML and its content hash.
+
+    Args:
+        page_url: URL to fetch
+        timeout: Request timeout in seconds
+
+    Returns:
+        Tuple of (html_content, content_hash)
+    """
+
+    try:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        }
+
+        response = requests.get(page_url, headers=headers, timeout=timeout)
+        response.raise_for_status()
+
+        # Get the raw HTML
+        html_content = response.text
+
+        # Calculate hash of the full HTML content
+        content_hash = calculate_content_hash(html_content)
+
+        return content_hash
+
+    except Exception as e:
+        print(f"⚠️  Failed to fetch/hash page {page_url}: {e}")
+        return ""
 
 
 def update_opportunity_from_json(opportunity, json_data):
@@ -635,6 +668,26 @@ def extract_with_preloaded(
         )
 
 
+def extract_with_firecrawl(
+    page_url: str,
+    preloaded_data: dict,
+):
+    """
+    Extract opportunity data using the Firecrawl agent with preloaded data.
+
+    Args:
+        page_url: URL of the page to extract from
+        preloaded_data: Pre-extracted data to include/override in results
+
+    Returns:
+        Dict containing the extracted opportunity data
+    """
+    from firecrawl_grant_agent import FirecrawlGrantAgent
+
+    agent = FirecrawlGrantAgent()
+    return agent.extract_opportunity(page_url=page_url, preloaded=preloaded_data)
+
+
 def batch_smart_scrape_pipeline(
     html_data_list: list,
     opportunity_template: dict,
@@ -642,18 +695,22 @@ def batch_smart_scrape_pipeline(
     force_update: bool = False,
     commit: bool = True,
     use_lightweight: bool = False,
+    use_firecrawl: bool = False,
     post_dates: list = None,
 ):
     """
     Batch version of smart_scrape_pipeline for processing multiple grants efficiently.
+    Can use either the original scraping agent or the new Firecrawl agent.
 
     Args:
-        html_data_list: List of dicts with 'html' and 'url' keys
+        html_data_list: List of dicts with 'html' and 'url' keys (for original agent)
+                       OR list of URLs (for firecrawl agent)
         opportunity_template: Default template for all opportunities
         db_session: Database session
         force_update: Force updates even if content unchanged
         commit: Whether to commit changes
-        use_lightweight: Use lightweight extraction
+        use_lightweight: Use lightweight extraction (only for original agent)
+        use_firecrawl: Use Firecrawl agent instead of original scraping agent
         post_dates: Optional list of post dates (strings) corresponding to each URL in html_data_list
 
     Returns:
@@ -663,6 +720,24 @@ def batch_smart_scrape_pipeline(
             "results": [list of individual results]
         }
     """
+    # If using Firecrawl, delegate to the specialized function
+    if use_firecrawl:
+        # Convert html_data_list to url_list if needed
+        if html_data_list and isinstance(html_data_list[0], dict):
+            url_list = [item["url"] for item in html_data_list]
+        else:
+            url_list = html_data_list
+
+        return batch_firecrawl_scrape_pipeline(
+            url_list=url_list,
+            opportunity_template=opportunity_template,
+            db_session=db_session,
+            force_update=force_update,
+            commit=commit,
+            post_dates=post_dates,
+        )
+
+    # Original implementation for non-Firecrawl usage
     stats = {"created": 0, "updated": 0, "skipped": 0, "errors": 0}
     results = []
 
@@ -729,3 +804,229 @@ def batch_smart_scrape_pipeline(
             raise
 
     return {"stats": stats, "results": results}
+
+
+def batch_firecrawl_scrape_pipeline(
+    url_list: list,
+    opportunity_template: dict,
+    db_session,
+    force_update: bool = False,
+    commit: bool = True,
+    post_dates: list = None,
+):
+    """
+    Batch scraping pipeline using Firecrawl agent for processing multiple grant URLs efficiently.
+
+    Args:
+        url_list: List of URLs to process
+        opportunity_template: Default template for all opportunities
+        db_session: Database session
+        force_update: Force updates even if content unchanged
+        commit: Whether to commit changes
+        post_dates: Optional list of post dates (strings) corresponding to each URL
+
+    Returns:
+        Dict with statistics and details:
+        {
+            "stats": {"created": 0, "updated": 0, "skipped": 0, "errors": 0},
+            "results": [list of individual results]
+        }
+    """
+    stats = {"created": 0, "updated": 0, "skipped": 0, "errors": 0}
+    results = []
+
+    for i, url in enumerate(url_list):
+        try:
+            # Handle item-specific templates
+            item_template = dict(opportunity_template)
+
+            # Add post_date to template if provided
+            if post_dates and i < len(post_dates) and post_dates[i]:
+                # Convert date object to string if needed
+                post_date = post_dates[i]
+                if hasattr(post_date, "strftime"):
+                    # It's a date object, convert to YYYY-MM-DD string
+                    post_date_str = post_date.strftime("%Y-%m-%d")
+                else:
+                    # It's already a string
+                    post_date_str = str(post_date)
+
+                item_template["post_date"] = post_date_str
+
+            result = firecrawl_scrape_pipeline(
+                page_url=url,
+                opportunity_template=item_template,
+                db_session=db_session,
+                force_update=force_update,
+                commit=False,
+            )
+
+            stats[result["action"]] += 1
+            results.append(result)
+            print(f"✅ {result['action'].upper()}: {result['reason']}")
+
+        except Exception as e:
+            # Rollback the session on error to clear any failed transaction state
+            try:
+                db_session.rollback()
+                print("🔄 Rolled back session after error")
+            except Exception as rollback_error:
+                print(f"Warning: Failed to rollback session: {rollback_error}")
+
+            stats["errors"] += 1
+            error_result = {
+                "action": "error",
+                "opportunity": None,
+                "reason": f"Error: {str(e)}",
+                "url": url,
+            }
+            results.append(error_result)
+            print(f"❌ ERROR processing {url}: {e}")
+
+    # Commit all changes at once if requested
+    if commit:
+        try:
+            db_session.commit()
+            print("💾 Committed all changes to database")
+        except Exception as e:
+            db_session.rollback()
+            print(f"❌ Failed to commit: {e}")
+            raise
+
+    return {"stats": stats, "results": results}
+
+
+def firecrawl_scrape_pipeline(
+    page_url: str,
+    opportunity_template: dict,
+    db_session,
+    force_update: bool = False,
+    commit: bool = True,
+):
+    """
+    Firecrawl-based scraping pipeline that:
+    1. Checks if opportunity exists in DB by URL
+    2. Fetches HTML and compares content hash to detect changes
+    3. Uses Firecrawl agent for extraction only when content has changed or is new
+    4. Uses existing/template fields as preloaded data
+    5. Creates or updates opportunities as needed
+
+    Args:
+        page_url: URL of the grant page
+        opportunity_template: Dict with predefined fields (e.g., {"source": "mass_dese", "funding_type": "state"})
+        db_session: Database session
+        force_update: Force extraction even if opportunity exists and content unchanged
+        commit: Whether to commit changes
+
+    Returns:
+        Dict with keys: "action", "opportunity", "reason"
+        - action: "created", "updated", "skipped"
+        - opportunity: The Opportunity object (or existing one if skipped)
+        - reason: Human readable explanation
+    """
+    from models_sql.opportunity import Opportunity
+
+    # Check if opportunity already exists by URL
+    existing_opportunity = db_session.query(Opportunity).filter_by(url=page_url).first()
+
+    # Fetch HTML and calculate content hash
+    content_hash = fetch_and_hash_page(page_url)
+
+    if not content_hash:
+        print(f"⚠️  Could not fetch/hash page content for {page_url}, proceeding anyway")
+    else:
+        print(f"📋 Content hash for {page_url}: {content_hash[:8]}...")
+
+    # Check if we can skip extraction based on existing opportunity and content hash
+    if existing_opportunity and not force_update and content_hash:
+        if existing_opportunity.content_hash == content_hash:
+            return {
+                "action": "skipped",
+                "opportunity": existing_opportunity,
+                "reason": f"Content unchanged (hash: {content_hash[:8]}...)",
+            }
+        else:
+            print(
+                f"🔄 Content changed for {page_url} (hash: {existing_opportunity.content_hash[:8] if existing_opportunity.content_hash else 'None'} -> {content_hash[:8]})"
+            )
+    elif existing_opportunity and not force_update and not content_hash:
+        # No content hash available, skip if opportunity exists and not forcing update
+        return {
+            "action": "skipped",
+            "opportunity": existing_opportunity,
+            "reason": "Opportunity exists and force_update=False (could not verify content hash)",
+        }
+
+    # Prepare preloaded data
+    preloaded_data = dict(opportunity_template)
+    preloaded_data["url"] = page_url
+
+    # If updating existing opportunity, use its data as preloaded
+    if existing_opportunity:
+        existing_preloaded = opportunity_to_preloaded_dict(existing_opportunity)
+        existing_preloaded.update(preloaded_data)  # Template overrides existing
+        preloaded_data = existing_preloaded
+
+    # Extract data using Firecrawl agent
+    print(f"🔥 Extracting data with Firecrawl for {page_url}")
+    extracted_data = extract_with_firecrawl(
+        page_url=page_url,
+        preloaded_data=preloaded_data,
+    )
+
+    if existing_opportunity:
+        # Update existing opportunity
+        update_opportunity_from_json(existing_opportunity, extracted_data)
+        existing_opportunity.raw_text = format_opportunity_text(existing_opportunity)
+
+        # Update content hash if we calculated it
+        if content_hash:
+            existing_opportunity.content_hash = content_hash
+
+        # DEBUG: Print whole Opportunity object with attributes
+        print(f"Updated Opportunity: {existing_opportunity.__dict__}")
+
+        if commit:
+            db_session.commit()
+
+        return {
+            "action": "updated",
+            "opportunity": existing_opportunity,
+            "reason": "Updated existing opportunity with Firecrawl data"
+            + (f" (new hash: {content_hash[:8]}...)" if content_hash else ""),
+        }
+    else:
+        # Create new opportunity
+        opportunity = Opportunity()
+
+        # Apply template fields first
+        for field_name, field_value in opportunity_template.items():
+            if hasattr(opportunity, field_name):
+                setattr(opportunity, field_name, field_value)
+
+        # Apply extracted data
+        update_opportunity_from_json(opportunity, extracted_data)
+
+        # Set metadata
+        opportunity.url = page_url  # Ensure URL is set
+        opportunity.raw_text = format_opportunity_text(opportunity)
+
+        # Set content hash if we calculated it
+        if content_hash:
+            opportunity.content_hash = content_hash
+
+        # Add to database
+        db_session.add(opportunity)
+
+        # DEBUG: Print whole Opportunity object with attributes
+        print(f"Created Opportunity: {opportunity.__dict__}")
+
+        if commit:
+            db_session.commit()
+
+        return {
+            "action": "created",
+            "opportunity": opportunity,
+            "reason": "New opportunity created with Firecrawl data"
+            + (f" (hash: {content_hash[:8]}...)" if content_hash else ""),
+        }

@@ -156,7 +156,8 @@ exports.Prisma.OpportunitiesScalarFieldEnum = {
   raw_text: 'raw_text',
   content_hash: 'content_hash',
   funding_type: 'funding_type',
-  category: 'category'
+  category: 'category',
+  rfp_url: 'rfp_url'
 };
 
 exports.Prisma.UserScalarFieldEnum = {
