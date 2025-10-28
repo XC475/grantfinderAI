@@ -24,15 +24,21 @@ type Grant = {
   close_date: string | null;
   post_date: string | null;
   url: string | null;
-  category: string | null;
+  category: string[] | null;
   status: string;
   state_code: string | null;
   funding_instrument: string | null;
   cost_sharing: boolean | null;
   fiscal_year: number | null;
-  cfda_numbers: string | null;
-  eligible_applicants: string | null;
-  additional_info: string | null;
+  contact_name: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+  attachments: Array<{
+    url: string;
+    title?: string;
+    description?: string;
+    type?: string;
+  }> | null;
 };
 
 function formatCurrency(amount: number | string | null) {
@@ -159,8 +165,14 @@ export default function GrantDetailPage() {
             <h1 className="text-3xl font-bold mb-2">{grant.title}</h1>
             <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="outline">{grant.status}</Badge>
-              {grant.category && (
-                <Badge variant="secondary">{grant.category}</Badge>
+              {grant.category && grant.category.length > 0 && (
+                <>
+                  {grant.category.map((cat, index) => (
+                    <Badge key={index} variant="secondary">
+                      {cat.replace(/_/g, " ")}
+                    </Badge>
+                  ))}
+                </>
               )}
               {grant.funding_instrument && (
                 <Badge variant="secondary">{grant.funding_instrument}</Badge>
@@ -261,14 +273,6 @@ export default function GrantDetailPage() {
                 <p className="text-lg">{grant.fiscal_year}</p>
               </div>
             )}
-            {grant.cfda_numbers && (
-              <div>
-                <h3 className="font-semibold text-sm text-gray-600 mb-1">
-                  CFDA Number(s)
-                </h3>
-                <p className="text-lg">{grant.cfda_numbers}</p>
-              </div>
-            )}
           </div>
         </CardContent>
       </Card>
@@ -304,42 +308,105 @@ export default function GrantDetailPage() {
       )}
 
       {/* Eligibility */}
-      {(grant.eligibility_summary || grant.eligible_applicants) && (
+      {grant.eligibility_summary && (
         <Card className="mb-6">
           <CardHeader>
             <CardTitle>Eligibility</CardTitle>
           </CardHeader>
           <CardContent>
-            {grant.eligibility_summary && (
-              <div className="mb-4">
-                <h3 className="font-semibold text-sm text-gray-600 mb-2">
-                  Summary
-                </h3>
-                <p className="text-sm">{grant.eligibility_summary}</p>
-              </div>
-            )}
-            {grant.eligible_applicants && (
-              <div>
-                <h3 className="font-semibold text-sm text-gray-600 mb-2">
-                  Eligible Applicants
-                </h3>
-                <p className="text-sm">{grant.eligible_applicants}</p>
-              </div>
-            )}
+            <div>
+              <h3 className="font-semibold text-sm text-gray-600 mb-2">
+                Summary
+              </h3>
+              <p className="text-sm">{grant.eligibility_summary}</p>
+            </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Additional Information */}
-      {grant.additional_info && (
+      {/* Attachments */}
+      {grant.attachments && grant.attachments.length > 0 && (
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Additional Information</CardTitle>
+            <CardTitle>Attachments</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm whitespace-pre-wrap">
-              {grant.additional_info}
-            </p>
+            <div className="space-y-3">
+              {grant.attachments.map((attachment, index) => (
+                <div key={index}>
+                  {attachment.title && (
+                    <p className="font-medium text-sm mb-1">
+                      {attachment.title}
+                    </p>
+                  )}
+                  {attachment.description && (
+                    <p className="text-xs text-gray-600 mb-2">
+                      {attachment.description}
+                    </p>
+                  )}
+                  <a
+                    href={attachment.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-600 hover:underline break-all"
+                  >
+                    {attachment.url}
+                  </a>
+                  {attachment.type && (
+                    <Badge variant="outline" className="text-xs mt-2 ml-2">
+                      {attachment.type}
+                    </Badge>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Contact Information */}
+      {(grant.contact_name || grant.contact_email || grant.contact_phone) && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Contact Information</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {grant.contact_name && (
+                <div>
+                  <h3 className="font-semibold text-sm text-gray-600 mb-1">
+                    Contact Person
+                  </h3>
+                  <p className="text-sm">{grant.contact_name}</p>
+                </div>
+              )}
+              {grant.contact_email && (
+                <div>
+                  <h3 className="font-semibold text-sm text-gray-600 mb-1">
+                    Email
+                  </h3>
+                  <a
+                    href={`mailto:${grant.contact_email}`}
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    {grant.contact_email}
+                  </a>
+                </div>
+              )}
+              {grant.contact_phone && (
+                <div>
+                  <h3 className="font-semibold text-sm text-gray-600 mb-1">
+                    Phone
+                  </h3>
+                  <a
+                    href={`tel:${grant.contact_phone}`}
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    {grant.contact_phone}
+                  </a>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
       )}
