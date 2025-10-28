@@ -90,11 +90,13 @@ function GrantsSearchPage() {
     agencies: string[];
     sources: string[];
     fiscalYears: number[];
+    categories: string[];
   }>({
     states: [],
     agencies: [],
     sources: [],
     fiscalYears: [],
+    categories: [],
   });
   const [pagination, setPagination] = useState({
     total: 0,
@@ -441,12 +443,13 @@ function GrantsSearchPage() {
                   <SelectTrigger>
                     <SelectValue placeholder="All categories" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-[300px]">
                     <SelectItem value="all">All categories</SelectItem>
-                    <SelectItem value="Discretionary">Discretionary</SelectItem>
-                    <SelectItem value="Entitlement/Allocation">
-                      Entitlement/Allocation
-                    </SelectItem>
+                    {filterOptions.categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category.replace(/_/g, " ")}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
