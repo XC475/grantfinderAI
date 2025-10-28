@@ -408,9 +408,9 @@ function GrantsSearchPage() {
               />
             </div>
 
-            {/* Basic Filters */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div>
+            {/* Basic Filters - Single Row */}
+            <div className="flex gap-4">
+              <div style={{ flex: "1 1 0" }}>
                 <label className="block text-sm font-medium mb-2">Status</label>
                 <Select
                   value={statusFilter || "all"}
@@ -421,7 +421,7 @@ function GrantsSearchPage() {
                   <SelectTrigger>
                     <SelectValue placeholder="All statuses" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent side="bottom" avoidCollisions={false}>
                     <SelectItem value="all">All statuses</SelectItem>
                     <SelectItem value="posted">Posted</SelectItem>
                     <SelectItem value="forecasted">Forecasted</SelectItem>
@@ -430,7 +430,7 @@ function GrantsSearchPage() {
                 </Select>
               </div>
 
-              <div>
+              <div style={{ flex: "1 1 0" }}>
                 <label className="block text-sm font-medium mb-2">
                   Category
                 </label>
@@ -443,7 +443,11 @@ function GrantsSearchPage() {
                   <SelectTrigger>
                     <SelectValue placeholder="All categories" />
                   </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
+                  <SelectContent
+                    side="bottom"
+                    avoidCollisions={false}
+                    className="max-h-[300px]"
+                  >
                     <SelectItem value="all">All categories</SelectItem>
                     {filterOptions.categories.map((category) => (
                       <SelectItem key={category} value={category}>
@@ -454,7 +458,7 @@ function GrantsSearchPage() {
                 </Select>
               </div>
 
-              <div>
+              <div style={{ flex: "1 1 0" }}>
                 <label className="block text-sm font-medium mb-2">
                   Amount Range
                 </label>
@@ -474,7 +478,7 @@ function GrantsSearchPage() {
                 </div>
               </div>
 
-              <div>
+              <div style={{ flex: "1 1 0" }}>
                 <label className="block text-sm font-medium mb-2">State</label>
                 <Select
                   value={stateCode || "all"}
@@ -485,7 +489,7 @@ function GrantsSearchPage() {
                   <SelectTrigger>
                     <SelectValue placeholder="All states" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent side="bottom" avoidCollisions={false}>
                     <SelectItem value="all">All states</SelectItem>
                     {filterOptions.states.map((state) => (
                       <SelectItem key={state} value={state}>
@@ -522,8 +526,9 @@ function GrantsSearchPage() {
             {/* Advanced Filters */}
             {showAdvanced && (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div>
+                {/* Advanced Filters Row 1: Agency, Funding Instrument, Cost Sharing, Fiscal Year, Source */}
+                <div className="flex gap-4">
+                  <div style={{ flex: "1 1 0" }}>
                     <label className="block text-sm font-medium mb-2">
                       Agency
                     </label>
@@ -536,7 +541,7 @@ function GrantsSearchPage() {
                       <SelectTrigger>
                         <SelectValue placeholder="All agencies" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent side="bottom" avoidCollisions={false}>
                         <SelectItem value="all">All agencies</SelectItem>
                         {filterOptions.agencies.map((agencyName) => (
                           <SelectItem key={agencyName} value={agencyName}>
@@ -547,7 +552,7 @@ function GrantsSearchPage() {
                     </Select>
                   </div>
 
-                  <div>
+                  <div style={{ flex: "1 1 0" }}>
                     <label className="block text-sm font-medium mb-2">
                       Funding Instrument
                     </label>
@@ -560,7 +565,7 @@ function GrantsSearchPage() {
                       <SelectTrigger>
                         <SelectValue placeholder="All types" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent side="bottom" avoidCollisions={false}>
                         <SelectItem value="all">All types</SelectItem>
                         <SelectItem value="Grant">Grant</SelectItem>
                         <SelectItem value="Cooperative Agreement">
@@ -573,7 +578,7 @@ function GrantsSearchPage() {
                     </Select>
                   </div>
 
-                  <div>
+                  <div style={{ flex: "1 1 0" }}>
                     <label className="block text-sm font-medium mb-2">
                       Cost Sharing
                     </label>
@@ -586,7 +591,7 @@ function GrantsSearchPage() {
                       <SelectTrigger>
                         <SelectValue placeholder="Any" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent side="bottom" avoidCollisions={false}>
                         <SelectItem value="all">Any</SelectItem>
                         <SelectItem value="true">Required</SelectItem>
                         <SelectItem value="false">Not Required</SelectItem>
@@ -594,7 +599,7 @@ function GrantsSearchPage() {
                     </Select>
                   </div>
 
-                  <div>
+                  <div style={{ flex: "1 1 0" }}>
                     <label className="block text-sm font-medium mb-2">
                       Fiscal Year
                     </label>
@@ -607,7 +612,7 @@ function GrantsSearchPage() {
                       <SelectTrigger>
                         <SelectValue placeholder="All years" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent side="bottom" avoidCollisions={false}>
                         <SelectItem value="all">All years</SelectItem>
                         {filterOptions.fiscalYears.map((year) => (
                           <SelectItem key={year} value={year.toString()}>
@@ -617,10 +622,8 @@ function GrantsSearchPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div>
+                  <div style={{ flex: "1 1 0" }}>
                     <label className="block text-sm font-medium mb-2">
                       Source
                     </label>
@@ -633,7 +636,7 @@ function GrantsSearchPage() {
                       <SelectTrigger>
                         <SelectValue placeholder="All sources" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent side="bottom" avoidCollisions={false}>
                         <SelectItem value="all">All sources</SelectItem>
                         {filterOptions.sources.map((sourceName) => (
                           <SelectItem key={sourceName} value={sourceName}>
@@ -643,8 +646,11 @@ function GrantsSearchPage() {
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
 
-                  <div>
+                {/* Advanced Filters Row 2: Close Date From, Close Date To */}
+                <div className="flex gap-4">
+                  <div style={{ flex: "1 1 0" }}>
                     <label className="block text-sm font-medium mb-2">
                       Close Date From
                     </label>
@@ -655,7 +661,7 @@ function GrantsSearchPage() {
                     />
                   </div>
 
-                  <div>
+                  <div style={{ flex: "1 1 0" }}>
                     <label className="block text-sm font-medium mb-2">
                       Close Date To
                     </label>
