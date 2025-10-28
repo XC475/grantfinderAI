@@ -11,58 +11,10 @@ const openai = new OpenAI({
 // Model to use for embeddings
 const EMBEDDING_MODEL = "text-embedding-3-small";
 
-// Type for opportunity content
-interface OpportunityContent {
-  id?: number;
-  title?: string | null;
-  description?: string | null;
-  description_summary?: string | null;
-  agency?: string | null;
-  category?: string | null;
-  funding_instrument?: string | null;
-  state_code?: string | null;
-  fiscal_year?: number | null;
-  eligibility?: string | null;
-  eligibility_summary?: string | null;
-  total_funding_amount?: number | null;
-  award_min?: number | null;
-  award_max?: number | null;
-  cost_sharing?: boolean | null;
-  post_date?: Date | null;
-  close_date?: Date | null;
-  contact_name?: string | null;
-  contact_email?: string | null;
-  contact_phone?: string | null;
-  url?: string | null;
-  status?: string | null;
-}
-
-// Helper function to create a hash of opportunity content
-function hashOpportunityContent(opportunity: OpportunityContent): string {
-  const contentToHash = JSON.stringify({
-    title: opportunity.title,
-    description: opportunity.description,
-    description_summary: opportunity.description_summary,
-    agency: opportunity.agency,
-    category: opportunity.category,
-    funding_instrument: opportunity.funding_instrument,
-    state_code: opportunity.state_code,
-    fiscal_year: opportunity.fiscal_year,
-    eligibility: opportunity.eligibility,
-    eligibility_summary: opportunity.eligibility_summary,
-    total_funding_amount: opportunity.total_funding_amount,
-    award_min: opportunity.award_min,
-    award_max: opportunity.award_max,
-    cost_sharing: opportunity.cost_sharing,
-    post_date: opportunity.post_date,
-    close_date: opportunity.close_date,
-    contact_name: opportunity.contact_name,
-    contact_email: opportunity.contact_email,
-    contact_phone: opportunity.contact_phone,
-    url: opportunity.url,
-    status: opportunity.status,
-  });
-  return crypto.createHash("sha256").update(contentToHash).digest("hex");
+// Helper function to create a hash of raw_text content
+function hashRawText(rawText: string | null): string {
+  if (!rawText) return "";
+  return crypto.createHash("sha256").update(rawText).digest("hex");
 }
 
 export async function POST(req: NextRequest) {
@@ -92,18 +44,6 @@ export async function POST(req: NextRequest) {
     console.log(
       `📊 [Vectorize] Opportunities: ${totalOpportunities}, Documents: ${totalDocuments}`
     );
-
-    if (totalDocuments >= totalOpportunities) {
-      return NextResponse.json({
-        success: true,
-        message: "All grants are already vectorized",
-        stats: {
-          opportunities: totalOpportunities,
-          documents: totalDocuments,
-          vectorized: 0,
-        },
-      });
-    }
 
     // Get existing documents with their hashes
     const existingDocuments = await prisma.$queryRaw<
@@ -138,25 +78,18 @@ export async function POST(req: NextRequest) {
         source_grant_id: true,
         status: true,
         title: true,
-        description: true,
-        description_summary: true,
         agency: true,
-        funding_instrument: true,
         category: true,
+        funding_instrument: true,
         fiscal_year: true,
+        total_funding_amount: true,
+        award_min: true,
+        award_max: true,
+        cost_sharing: true,
         post_date: true,
         close_date: true,
-        archive_date: true,
-        cost_sharing: true,
-        award_max: true,
-        award_min: true,
-        total_funding_amount: true,
-        eligibility: true,
-        eligibility_summary: true,
-        contact_name: true,
-        contact_email: true,
-        contact_phone: true,
         url: true,
+        raw_text: true, // Primary content for vectorization
       },
     });
 
@@ -167,12 +100,16 @@ export async function POST(req: NextRequest) {
     let newCount = 0;
 
     for (const opportunity of allOpportunities) {
-      // Convert category array to string for hashing
-      const opportunityForHash = {
-        ...opportunity,
-        category: opportunity.category ? opportunity.category.join(", ") : null,
-      };
-      const currentHash = hashOpportunityContent(opportunityForHash);
+      // Skip if no raw_text available
+      if (!opportunity.raw_text || !opportunity.raw_text.trim()) {
+        console.warn(
+          `⚠️ [Vectorize] Skipping grant ${opportunity.id}: no raw_text available`
+        );
+        continue;
+      }
+
+      // Calculate hash from raw_text for change detection
+      const currentHash = hashRawText(opportunity.raw_text);
       const existingDoc = existingDocsMap.get(opportunity.id);
 
       if (!existingDoc) {
@@ -185,7 +122,7 @@ export async function POST(req: NextRequest) {
         documentsToDelete.push(existingDoc.docId);
         changedCount++;
       }
-      // else: unchanged, skip
+      // else: Hash matches and raw_text exists - already up to date
     }
 
     console.log(
@@ -229,55 +166,28 @@ export async function POST(req: NextRequest) {
         `⚙️ [Vectorize] Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(opportunitiesToVectorize.length / BATCH_SIZE)}`
       );
 
-      const batchPromises = batch.map(async (opportunity) => {
+      // Process each grant in the batch sequentially
+      for (const opportunity of batch) {
         try {
-          // Create text representation of the grant with all fields
-          const contentParts = [
-            `Opportunity ID: ${opportunity.id}`,
-            `Source: ${opportunity.source}`,
-            opportunity.source_grant_id &&
-              `Source Grant ID: ${opportunity.source_grant_id}`,
-            `Status: ${opportunity.status}`,
-            `Title: ${opportunity.title}`,
-            opportunity.agency && `Agency: ${opportunity.agency}`,
-            opportunity.category && `Category: ${opportunity.category}`,
-            opportunity.funding_instrument &&
-              `Funding Instrument: ${opportunity.funding_instrument}`,
-            opportunity.state_code && `State: ${opportunity.state_code}`,
-            opportunity.fiscal_year &&
-              `Fiscal Year: ${opportunity.fiscal_year}`,
-            opportunity.description_summary &&
-              `Summary: ${opportunity.description_summary}`,
-            opportunity.description &&
-              `Description: ${opportunity.description}`,
-            opportunity.total_funding_amount &&
-              `Total Funding: $${opportunity.total_funding_amount.toLocaleString()}`,
-            opportunity.award_min &&
-              `Award Minimum: $${opportunity.award_min.toLocaleString()}`,
-            opportunity.award_max &&
-              `Award Maximum: $${opportunity.award_max.toLocaleString()}`,
-            opportunity.cost_sharing !== null &&
-              `Cost Sharing Required: ${opportunity.cost_sharing ? "Yes" : "No"}`,
-            opportunity.post_date &&
-              `Posted: ${opportunity.post_date.toISOString().split("T")[0]}`,
-            opportunity.close_date &&
-              `Closes: ${opportunity.close_date.toISOString().split("T")[0]}`,
-            opportunity.eligibility_summary &&
-              `Eligibility Summary: ${opportunity.eligibility_summary}`,
-            opportunity.eligibility &&
-              `Eligibility Details: ${opportunity.eligibility}`,
-            opportunity.contact_name && `Contact: ${opportunity.contact_name}`,
-            opportunity.contact_email && `Email: ${opportunity.contact_email}`,
-            opportunity.contact_phone && `Phone: ${opportunity.contact_phone}`,
-            opportunity.url && `URL: ${opportunity.url}`,
-          ]
-            .filter(Boolean)
-            .join("\n\n");
+          // Use raw_text directly for embedding
+          const contentForEmbedding = opportunity.raw_text || "";
+
+          // Skip if no content (should already be filtered, but double-check)
+          if (!contentForEmbedding.trim()) {
+            console.warn(
+              `⚠️ [Vectorize] Grant ${opportunity.id} has no raw_text, skipping...`
+            );
+            errors.push({
+              id: opportunity.id,
+              error: "No raw_text available for vectorization",
+            });
+            continue;
+          }
 
           // Generate embedding using OpenAI
           const embeddingResponse = await openai.embeddings.create({
             model: EMBEDDING_MODEL,
-            input: contentParts,
+            input: contentForEmbedding,
           });
 
           const embedding = embeddingResponse.data[0].embedding;
@@ -289,14 +199,8 @@ export async function POST(req: NextRequest) {
             );
           }
 
-          // Calculate content hash for change detection
-          const opportunityForHash = {
-            ...opportunity,
-            category: opportunity.category
-              ? opportunity.category.join(", ")
-              : null,
-          };
-          const contentHash = hashOpportunityContent(opportunityForHash);
+          // Calculate hash of raw_text for change detection
+          const contentHash = hashRawText(opportunity.raw_text);
 
           // Prepare metadata with opportunity_id, key fields, and content hash
           const metadata = {
@@ -317,16 +221,17 @@ export async function POST(req: NextRequest) {
             post_date: opportunity.post_date?.toISOString(),
             close_date: opportunity.close_date?.toISOString(),
             url: opportunity.url,
-            content_hash: contentHash,
+            content_hash: contentHash, // Hash of raw_text
             vectorized_at: new Date().toISOString(),
             model: EMBEDDING_MODEL,
+            source_field: "raw_text", // Track that we used raw_text
           };
 
           // Insert into documents table with raw SQL to handle vector type
           await prisma.$executeRaw`
             INSERT INTO public.documents (content, metadata, embedding)
             VALUES (
-              ${contentParts},
+              ${contentForEmbedding},
               ${JSON.stringify(metadata)}::jsonb,
               ${`[${embedding.join(",")}]`}::vector
             )
@@ -346,10 +251,7 @@ export async function POST(req: NextRequest) {
             error: error instanceof Error ? error.message : "Unknown error",
           });
         }
-      });
-
-      // Wait for batch to complete
-      await Promise.all(batchPromises);
+      }
 
       // Add a small delay between batches to respect rate limits
       if (i + BATCH_SIZE < opportunitiesToVectorize.length) {
