@@ -104,6 +104,7 @@ class Opportunity(db.Model):
     relevance_score = Column(Integer)  # 0-100 score of relevance to school districts
     raw_text = Column(Text)  # Full raw text of the grant posting for vectorization
     content_hash = Column(String)  # Hash of the main content div for change detection
+    rfp_url = Column(String)  # URL to the RFP document if available
 
     def __repr__(self):
         return f"<Opportunity {self.id} {self.title}>"

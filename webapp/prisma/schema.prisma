@@ -52,6 +52,7 @@ model opportunities {
   content_hash         String?                     @db.VarChar
   funding_type         funding_type_enum?
   category             opportunity_category_enum[]
+  rfp_url              String?                     @db.VarChar
 
   @@schema("public")
 }
