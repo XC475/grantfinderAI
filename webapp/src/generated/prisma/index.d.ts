@@ -3466,7 +3466,7 @@ export namespace Prisma {
     id: number
     source: string
     state_code: string | null
-    source_grant_id: string
+    source_grant_id: string | null
     status: $Enums.opportunity_status_enum
     title: string
     description: string | null
@@ -3665,7 +3665,7 @@ export namespace Prisma {
       id: number
       source: string
       state_code: string | null
-      source_grant_id: string
+      source_grant_id: string | null
       status: $Enums.opportunity_status_enum
       title: string
       description: string | null
@@ -16842,7 +16842,7 @@ export namespace Prisma {
     id?: IntFilter<"opportunities"> | number
     source?: StringFilter<"opportunities"> | string
     state_code?: StringNullableFilter<"opportunities"> | string | null
-    source_grant_id?: StringFilter<"opportunities"> | string
+    source_grant_id?: StringNullableFilter<"opportunities"> | string | null
     status?: Enumopportunity_status_enumFilter<"opportunities"> | $Enums.opportunity_status_enum
     title?: StringFilter<"opportunities"> | string
     description?: StringNullableFilter<"opportunities"> | string | null
@@ -16877,7 +16877,7 @@ export namespace Prisma {
     id?: SortOrder
     source?: SortOrder
     state_code?: SortOrderInput | SortOrder
-    source_grant_id?: SortOrder
+    source_grant_id?: SortOrderInput | SortOrder
     status?: SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
@@ -16915,7 +16915,7 @@ export namespace Prisma {
     NOT?: opportunitiesWhereInput | opportunitiesWhereInput[]
     source?: StringFilter<"opportunities"> | string
     state_code?: StringNullableFilter<"opportunities"> | string | null
-    source_grant_id?: StringFilter<"opportunities"> | string
+    source_grant_id?: StringNullableFilter<"opportunities"> | string | null
     status?: Enumopportunity_status_enumFilter<"opportunities"> | $Enums.opportunity_status_enum
     title?: StringFilter<"opportunities"> | string
     description?: StringNullableFilter<"opportunities"> | string | null
@@ -16950,7 +16950,7 @@ export namespace Prisma {
     id?: SortOrder
     source?: SortOrder
     state_code?: SortOrderInput | SortOrder
-    source_grant_id?: SortOrder
+    source_grant_id?: SortOrderInput | SortOrder
     status?: SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
@@ -16993,7 +16993,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"opportunities"> | number
     source?: StringWithAggregatesFilter<"opportunities"> | string
     state_code?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
-    source_grant_id?: StringWithAggregatesFilter<"opportunities"> | string
+    source_grant_id?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
     status?: Enumopportunity_status_enumWithAggregatesFilter<"opportunities"> | $Enums.opportunity_status_enum
     title?: StringWithAggregatesFilter<"opportunities"> | string
     description?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
@@ -17923,7 +17923,7 @@ export namespace Prisma {
   export type opportunitiesCreateInput = {
     source: string
     state_code?: string | null
-    source_grant_id: string
+    source_grant_id?: string | null
     status: $Enums.opportunity_status_enum
     title: string
     description?: string | null
@@ -17958,7 +17958,7 @@ export namespace Prisma {
     id?: number
     source: string
     state_code?: string | null
-    source_grant_id: string
+    source_grant_id?: string | null
     status: $Enums.opportunity_status_enum
     title: string
     description?: string | null
@@ -17992,7 +17992,7 @@ export namespace Prisma {
   export type opportunitiesUpdateInput = {
     source?: StringFieldUpdateOperationsInput | string
     state_code?: NullableStringFieldUpdateOperationsInput | string | null
-    source_grant_id?: StringFieldUpdateOperationsInput | string
+    source_grant_id?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumopportunity_status_enumFieldUpdateOperationsInput | $Enums.opportunity_status_enum
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18027,7 +18027,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     source?: StringFieldUpdateOperationsInput | string
     state_code?: NullableStringFieldUpdateOperationsInput | string | null
-    source_grant_id?: StringFieldUpdateOperationsInput | string
+    source_grant_id?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumopportunity_status_enumFieldUpdateOperationsInput | $Enums.opportunity_status_enum
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18062,7 +18062,7 @@ export namespace Prisma {
     id?: number
     source: string
     state_code?: string | null
-    source_grant_id: string
+    source_grant_id?: string | null
     status: $Enums.opportunity_status_enum
     title: string
     description?: string | null
@@ -18096,7 +18096,7 @@ export namespace Prisma {
   export type opportunitiesUpdateManyMutationInput = {
     source?: StringFieldUpdateOperationsInput | string
     state_code?: NullableStringFieldUpdateOperationsInput | string | null
-    source_grant_id?: StringFieldUpdateOperationsInput | string
+    source_grant_id?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumopportunity_status_enumFieldUpdateOperationsInput | $Enums.opportunity_status_enum
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18131,7 +18131,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     source?: StringFieldUpdateOperationsInput | string
     state_code?: NullableStringFieldUpdateOperationsInput | string | null
-    source_grant_id?: StringFieldUpdateOperationsInput | string
+    source_grant_id?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumopportunity_status_enumFieldUpdateOperationsInput | $Enums.opportunity_status_enum
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null

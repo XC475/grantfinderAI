@@ -23,7 +23,7 @@ model opportunities {
   id                   Int                         @id @default(autoincrement())
   source               String                      @db.VarChar
   state_code           String?                     @db.VarChar
-  source_grant_id      String                      @db.VarChar
+  source_grant_id      String?                     @db.VarChar
   status               opportunity_status_enum
   title                String                      @db.VarChar
   description          String?
