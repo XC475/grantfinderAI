@@ -15,6 +15,12 @@ interface DynamicBreadcrumbProps {
   organizationSlug: string;
 }
 
+// Helper function to truncate text at 50 characters
+function truncateText(text: string, maxLength: number = 50): string {
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + "...";
+}
+
 export function DynamicBreadcrumb({
   organizationSlug,
 }: DynamicBreadcrumbProps) {
@@ -201,18 +207,25 @@ export function DynamicBreadcrumb({
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        {breadcrumbs.map((item, index) => (
-          <div key={item.href + index} className="flex items-center gap-2">
-            {index > 0 && <BreadcrumbSeparator />}
-            <BreadcrumbItem>
-              {item.isLast ? (
-                <BreadcrumbPage>{item.label}</BreadcrumbPage>
-              ) : (
-                <BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
-              )}
-            </BreadcrumbItem>
-          </div>
-        ))}
+        {breadcrumbs.map((item, index) => {
+          const truncatedLabel = truncateText(item.label);
+          return (
+            <div key={item.href + index} className="flex items-center gap-2">
+              {index > 0 && <BreadcrumbSeparator />}
+              <BreadcrumbItem>
+                {item.isLast ? (
+                  <BreadcrumbPage title={item.label}>
+                    {truncatedLabel}
+                  </BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink href={item.href} title={item.label}>
+                    {truncatedLabel}
+                  </BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+            </div>
+          );
+        })}
       </BreadcrumbList>
     </Breadcrumb>
   );
