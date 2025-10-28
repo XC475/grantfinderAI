@@ -41,6 +41,14 @@ if [ $? -ne 0 ]; then
   STATUS=1
 fi
 
+# Run the update_expired_grants_status.py script
+echo "Running update_expired_grants_status.py..."
+python scripts/update_expired_grants_status.py --live
+if [ $? -ne 0 ]; then
+  echo "Error: update_expired_grants_status.py failed."
+  STATUS=1
+fi
+
 # Final status
 if [ $STATUS -ne 0 ]; then
   echo "One or more scripts failed."
