@@ -12,11 +12,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Filter, X, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Search,
+  Filter,
+  X,
+  ChevronDown,
+  ChevronUp,
+  CalendarIcon,
+} from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { Loading } from "@/components/ui/spinner";
 import { GrantCard, GrantCardData } from "@/components/grants/GrantCard";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/tiptap-ui-primitive/popover/popover";
+import { format } from "date-fns";
 
 interface Grant extends GrantCardData {
   contact_name: string | null;
@@ -72,8 +86,10 @@ function GrantsSearchPage() {
   const [costSharing, setCostSharing] = useState("");
   const [fiscalYear, setFiscalYear] = useState("");
   const [source, setSource] = useState("");
-  const [closeDateFrom, setCloseDateFrom] = useState("");
-  const [closeDateTo, setCloseDateTo] = useState("");
+  const [closeDateFrom, setCloseDateFrom] = useState<Date | undefined>(
+    undefined
+  );
+  const [closeDateTo, setCloseDateTo] = useState<Date | undefined>(undefined);
   const [savedGrants, setSavedGrants] = useState<number[]>([]);
   const [savingGrant, setSavingGrant] = useState<number | null>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -175,8 +191,10 @@ function GrantsSearchPage() {
       if (costSharing) params.append("costSharing", costSharing);
       if (fiscalYear) params.append("fiscalYear", fiscalYear);
       if (source) params.append("source", source);
-      if (closeDateFrom) params.append("closeDateFrom", closeDateFrom);
-      if (closeDateTo) params.append("closeDateTo", closeDateTo);
+      if (closeDateFrom)
+        params.append("closeDateFrom", format(closeDateFrom, "yyyy-MM-dd"));
+      if (closeDateTo)
+        params.append("closeDateTo", format(closeDateTo, "yyyy-MM-dd"));
       params.append("limit", pagination.limit.toString());
       const offset = resetOffset
         ? 0
@@ -375,8 +393,8 @@ function GrantsSearchPage() {
     setCostSharing("");
     setFiscalYear("");
     setSource("");
-    setCloseDateFrom("");
-    setCloseDateTo("");
+    setCloseDateFrom(undefined);
+    setCloseDateTo(undefined);
     setPagination((prev) => ({ ...prev, offset: 0 }));
     // fetchGrants will be triggered automatically by the useEffect hooks
   };
@@ -654,22 +672,68 @@ function GrantsSearchPage() {
                     <label className="block text-sm font-medium mb-2">
                       Close Date From
                     </label>
-                    <Input
-                      type="date"
-                      value={closeDateFrom}
-                      onChange={(e) => setCloseDateFrom(e.target.value)}
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left font-normal"
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {closeDateFrom ? (
+                            format(closeDateFrom, "PPP")
+                          ) : (
+                            <span className="text-muted-foreground">
+                              Pick a date
+                            </span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-auto p-0 border rounded-md"
+                        align="start"
+                      >
+                        <Calendar
+                          mode="single"
+                          selected={closeDateFrom}
+                          onSelect={setCloseDateFrom}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
 
                   <div style={{ flex: "1 1 0" }}>
                     <label className="block text-sm font-medium mb-2">
                       Close Date To
                     </label>
-                    <Input
-                      type="date"
-                      value={closeDateTo}
-                      onChange={(e) => setCloseDateTo(e.target.value)}
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left font-normal"
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {closeDateTo ? (
+                            format(closeDateTo, "PPP")
+                          ) : (
+                            <span className="text-muted-foreground">
+                              Pick a date
+                            </span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-auto p-0 border rounded-md"
+                        align="start"
+                      >
+                        <Calendar
+                          mode="single"
+                          selected={closeDateTo}
+                          onSelect={setCloseDateTo}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
               </>
