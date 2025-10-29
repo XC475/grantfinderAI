@@ -148,10 +148,10 @@ export async function GET(req: NextRequest) {
       supabaseQuery = supabaseQuery.eq("status", status);
     }
 
-    // Add category filter
+    // Add category filter (category is an array, so we check if it contains the selected value)
     if (category) {
       console.log(`🔍 [${requestId}] Adding category filter: "${category}"`);
-      supabaseQuery = supabaseQuery.eq("category", category);
+      supabaseQuery = supabaseQuery.contains("category", [category]);
     }
 
     // Add amount range filters

@@ -19,7 +19,7 @@ export type GrantCardData = {
   description: string | null;
   source_grant_id: string;
   status: string;
-  category: string | null;
+  category: string[] | null;
   total_funding_amount: number | null;
   award_min: number | null;
   award_max: number | null;
@@ -193,9 +193,14 @@ export function GrantCard({
             </div>
           </div>
 
-          {grant.category && (
-            <div className="text-sm">
-              <span className="font-medium">Category:</span> {grant.category}
+          {grant.category && grant.category.length > 0 && (
+            <div className="flex flex-wrap gap-2 items-center">
+              <span className="text-sm font-medium">Categories:</span>
+              {grant.category.map((cat, index) => (
+                <Badge key={index} variant="secondary" className="text-xs">
+                  {cat.replace(/_/g, " ")}
+                </Badge>
+              ))}
             </div>
           )}
 

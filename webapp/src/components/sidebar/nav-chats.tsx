@@ -9,6 +9,7 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -28,6 +29,7 @@ export function NavChats({
   const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
+  const { state } = useSidebar();
 
   useEffect(() => {
     fetchChats();
@@ -123,6 +125,11 @@ export function NavChats({
         </div>
       </SidebarGroup>
     );
+  }
+
+  // Don't show chats when sidebar is collapsed
+  if (state === "collapsed") {
+    return null;
   }
 
   return (

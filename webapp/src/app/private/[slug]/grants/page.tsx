@@ -12,11 +12,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Filter, X, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Search,
+  Filter,
+  X,
+  ChevronDown,
+  ChevronUp,
+  CalendarIcon,
+} from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { Loading } from "@/components/ui/spinner";
 import { GrantCard, GrantCardData } from "@/components/grants/GrantCard";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/tiptap-ui-primitive/popover/popover";
+import { format } from "date-fns";
 
 interface Grant extends GrantCardData {
   contact_name: string | null;
@@ -72,8 +86,10 @@ function GrantsSearchPage() {
   const [costSharing, setCostSharing] = useState("");
   const [fiscalYear, setFiscalYear] = useState("");
   const [source, setSource] = useState("");
-  const [closeDateFrom, setCloseDateFrom] = useState("");
-  const [closeDateTo, setCloseDateTo] = useState("");
+  const [closeDateFrom, setCloseDateFrom] = useState<Date | undefined>(
+    undefined
+  );
+  const [closeDateTo, setCloseDateTo] = useState<Date | undefined>(undefined);
   const [savedGrants, setSavedGrants] = useState<number[]>([]);
   const [savingGrant, setSavingGrant] = useState<number | null>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -90,11 +106,13 @@ function GrantsSearchPage() {
     agencies: string[];
     sources: string[];
     fiscalYears: number[];
+    categories: string[];
   }>({
     states: [],
     agencies: [],
     sources: [],
     fiscalYears: [],
+    categories: [],
   });
   const [pagination, setPagination] = useState({
     total: 0,
@@ -173,8 +191,10 @@ function GrantsSearchPage() {
       if (costSharing) params.append("costSharing", costSharing);
       if (fiscalYear) params.append("fiscalYear", fiscalYear);
       if (source) params.append("source", source);
-      if (closeDateFrom) params.append("closeDateFrom", closeDateFrom);
-      if (closeDateTo) params.append("closeDateTo", closeDateTo);
+      if (closeDateFrom)
+        params.append("closeDateFrom", format(closeDateFrom, "yyyy-MM-dd"));
+      if (closeDateTo)
+        params.append("closeDateTo", format(closeDateTo, "yyyy-MM-dd"));
       params.append("limit", pagination.limit.toString());
       const offset = resetOffset
         ? 0
@@ -373,8 +393,8 @@ function GrantsSearchPage() {
     setCostSharing("");
     setFiscalYear("");
     setSource("");
-    setCloseDateFrom("");
-    setCloseDateTo("");
+    setCloseDateFrom(undefined);
+    setCloseDateTo(undefined);
     setPagination((prev) => ({ ...prev, offset: 0 }));
     // fetchGrants will be triggered automatically by the useEffect hooks
   };
@@ -406,9 +426,9 @@ function GrantsSearchPage() {
               />
             </div>
 
-            {/* Basic Filters */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div>
+            {/* Basic Filters - Single Row */}
+            <div className="flex gap-4">
+              <div style={{ flex: "1 1 0" }}>
                 <label className="block text-sm font-medium mb-2">Status</label>
                 <Select
                   value={statusFilter || "all"}
@@ -419,7 +439,7 @@ function GrantsSearchPage() {
                   <SelectTrigger>
                     <SelectValue placeholder="All statuses" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent side="bottom" avoidCollisions={false}>
                     <SelectItem value="all">All statuses</SelectItem>
                     <SelectItem value="posted">Posted</SelectItem>
                     <SelectItem value="forecasted">Forecasted</SelectItem>
@@ -428,7 +448,7 @@ function GrantsSearchPage() {
                 </Select>
               </div>
 
-              <div>
+              <div style={{ flex: "1 1 0" }}>
                 <label className="block text-sm font-medium mb-2">
                   Category
                 </label>
@@ -441,17 +461,22 @@ function GrantsSearchPage() {
                   <SelectTrigger>
                     <SelectValue placeholder="All categories" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent
+                    side="bottom"
+                    avoidCollisions={false}
+                    className="max-h-[300px]"
+                  >
                     <SelectItem value="all">All categories</SelectItem>
-                    <SelectItem value="Discretionary">Discretionary</SelectItem>
-                    <SelectItem value="Entitlement/Allocation">
-                      Entitlement/Allocation
-                    </SelectItem>
+                    {filterOptions.categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category.replace(/_/g, " ")}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              <div>
+              <div style={{ flex: "1 1 0" }}>
                 <label className="block text-sm font-medium mb-2">
                   Amount Range
                 </label>
@@ -471,7 +496,7 @@ function GrantsSearchPage() {
                 </div>
               </div>
 
-              <div>
+              <div style={{ flex: "1 1 0" }}>
                 <label className="block text-sm font-medium mb-2">State</label>
                 <Select
                   value={stateCode || "all"}
@@ -482,7 +507,7 @@ function GrantsSearchPage() {
                   <SelectTrigger>
                     <SelectValue placeholder="All states" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent side="bottom" avoidCollisions={false}>
                     <SelectItem value="all">All states</SelectItem>
                     {filterOptions.states.map((state) => (
                       <SelectItem key={state} value={state}>
@@ -519,8 +544,9 @@ function GrantsSearchPage() {
             {/* Advanced Filters */}
             {showAdvanced && (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div>
+                {/* Advanced Filters Row 1: Agency, Funding Instrument, Cost Sharing, Fiscal Year, Source */}
+                <div className="flex gap-4">
+                  <div style={{ flex: "1 1 0" }}>
                     <label className="block text-sm font-medium mb-2">
                       Agency
                     </label>
@@ -533,7 +559,7 @@ function GrantsSearchPage() {
                       <SelectTrigger>
                         <SelectValue placeholder="All agencies" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent side="bottom" avoidCollisions={false}>
                         <SelectItem value="all">All agencies</SelectItem>
                         {filterOptions.agencies.map((agencyName) => (
                           <SelectItem key={agencyName} value={agencyName}>
@@ -544,7 +570,7 @@ function GrantsSearchPage() {
                     </Select>
                   </div>
 
-                  <div>
+                  <div style={{ flex: "1 1 0" }}>
                     <label className="block text-sm font-medium mb-2">
                       Funding Instrument
                     </label>
@@ -557,7 +583,7 @@ function GrantsSearchPage() {
                       <SelectTrigger>
                         <SelectValue placeholder="All types" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent side="bottom" avoidCollisions={false}>
                         <SelectItem value="all">All types</SelectItem>
                         <SelectItem value="Grant">Grant</SelectItem>
                         <SelectItem value="Cooperative Agreement">
@@ -570,7 +596,7 @@ function GrantsSearchPage() {
                     </Select>
                   </div>
 
-                  <div>
+                  <div style={{ flex: "1 1 0" }}>
                     <label className="block text-sm font-medium mb-2">
                       Cost Sharing
                     </label>
@@ -583,7 +609,7 @@ function GrantsSearchPage() {
                       <SelectTrigger>
                         <SelectValue placeholder="Any" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent side="bottom" avoidCollisions={false}>
                         <SelectItem value="all">Any</SelectItem>
                         <SelectItem value="true">Required</SelectItem>
                         <SelectItem value="false">Not Required</SelectItem>
@@ -591,7 +617,7 @@ function GrantsSearchPage() {
                     </Select>
                   </div>
 
-                  <div>
+                  <div style={{ flex: "1 1 0" }}>
                     <label className="block text-sm font-medium mb-2">
                       Fiscal Year
                     </label>
@@ -604,7 +630,7 @@ function GrantsSearchPage() {
                       <SelectTrigger>
                         <SelectValue placeholder="All years" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent side="bottom" avoidCollisions={false}>
                         <SelectItem value="all">All years</SelectItem>
                         {filterOptions.fiscalYears.map((year) => (
                           <SelectItem key={year} value={year.toString()}>
@@ -614,10 +640,8 @@ function GrantsSearchPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div>
+                  <div style={{ flex: "1 1 0" }}>
                     <label className="block text-sm font-medium mb-2">
                       Source
                     </label>
@@ -630,7 +654,7 @@ function GrantsSearchPage() {
                       <SelectTrigger>
                         <SelectValue placeholder="All sources" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent side="bottom" avoidCollisions={false}>
                         <SelectItem value="all">All sources</SelectItem>
                         {filterOptions.sources.map((sourceName) => (
                           <SelectItem key={sourceName} value={sourceName}>
@@ -640,27 +664,76 @@ function GrantsSearchPage() {
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
 
-                  <div>
+                {/* Advanced Filters Row 2: Close Date From, Close Date To */}
+                <div className="flex gap-4">
+                  <div style={{ flex: "1 1 0" }}>
                     <label className="block text-sm font-medium mb-2">
                       Close Date From
                     </label>
-                    <Input
-                      type="date"
-                      value={closeDateFrom}
-                      onChange={(e) => setCloseDateFrom(e.target.value)}
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left font-normal"
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {closeDateFrom ? (
+                            format(closeDateFrom, "PPP")
+                          ) : (
+                            <span className="text-muted-foreground">
+                              Pick a date
+                            </span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-auto p-0 border rounded-md"
+                        align="start"
+                      >
+                        <Calendar
+                          mode="single"
+                          selected={closeDateFrom}
+                          onSelect={setCloseDateFrom}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
 
-                  <div>
+                  <div style={{ flex: "1 1 0" }}>
                     <label className="block text-sm font-medium mb-2">
                       Close Date To
                     </label>
-                    <Input
-                      type="date"
-                      value={closeDateTo}
-                      onChange={(e) => setCloseDateTo(e.target.value)}
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left font-normal"
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {closeDateTo ? (
+                            format(closeDateTo, "PPP")
+                          ) : (
+                            <span className="text-muted-foreground">
+                              Pick a date
+                            </span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-auto p-0 border rounded-md"
+                        align="start"
+                      >
+                        <Calendar
+                          mode="single"
+                          selected={closeDateTo}
+                          onSelect={setCloseDateTo}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
               </>
