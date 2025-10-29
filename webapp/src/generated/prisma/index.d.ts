@@ -3187,6 +3187,7 @@ export namespace Prisma {
     raw_text: string | null
     content_hash: string | null
     funding_type: $Enums.funding_type_enum | null
+    rfp_url: string | null
   }
 
   export type OpportunitiesMaxAggregateOutputType = {
@@ -3219,6 +3220,7 @@ export namespace Prisma {
     raw_text: string | null
     content_hash: string | null
     funding_type: $Enums.funding_type_enum | null
+    rfp_url: string | null
   }
 
   export type OpportunitiesCountAggregateOutputType = {
@@ -3254,6 +3256,7 @@ export namespace Prisma {
     content_hash: number
     funding_type: number
     category: number
+    rfp_url: number
     _all: number
   }
 
@@ -3306,6 +3309,7 @@ export namespace Prisma {
     raw_text?: true
     content_hash?: true
     funding_type?: true
+    rfp_url?: true
   }
 
   export type OpportunitiesMaxAggregateInputType = {
@@ -3338,6 +3342,7 @@ export namespace Prisma {
     raw_text?: true
     content_hash?: true
     funding_type?: true
+    rfp_url?: true
   }
 
   export type OpportunitiesCountAggregateInputType = {
@@ -3373,6 +3378,7 @@ export namespace Prisma {
     content_hash?: true
     funding_type?: true
     category?: true
+    rfp_url?: true
     _all?: true
   }
 
@@ -3495,6 +3501,7 @@ export namespace Prisma {
     content_hash: string | null
     funding_type: $Enums.funding_type_enum | null
     category: $Enums.opportunity_category_enum[]
+    rfp_url: string | null
     _count: OpportunitiesCountAggregateOutputType | null
     _avg: OpportunitiesAvgAggregateOutputType | null
     _sum: OpportunitiesSumAggregateOutputType | null
@@ -3549,6 +3556,7 @@ export namespace Prisma {
     content_hash?: boolean
     funding_type?: boolean
     category?: boolean
+    rfp_url?: boolean
   }, ExtArgs["result"]["opportunities"]>
 
   export type opportunitiesSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3584,6 +3592,7 @@ export namespace Prisma {
     content_hash?: boolean
     funding_type?: boolean
     category?: boolean
+    rfp_url?: boolean
   }, ExtArgs["result"]["opportunities"]>
 
   export type opportunitiesSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3619,6 +3628,7 @@ export namespace Prisma {
     content_hash?: boolean
     funding_type?: boolean
     category?: boolean
+    rfp_url?: boolean
   }, ExtArgs["result"]["opportunities"]>
 
   export type opportunitiesSelectScalar = {
@@ -3654,9 +3664,10 @@ export namespace Prisma {
     content_hash?: boolean
     funding_type?: boolean
     category?: boolean
+    rfp_url?: boolean
   }
 
-  export type opportunitiesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "source" | "state_code" | "source_grant_id" | "status" | "title" | "description" | "description_summary" | "agency" | "funding_instrument" | "fiscal_year" | "post_date" | "close_date" | "archive_date" | "cost_sharing" | "award_max" | "award_min" | "total_funding_amount" | "eligibility" | "eligibility_summary" | "last_updated" | "contact_name" | "contact_email" | "contact_phone" | "url" | "attachments" | "extra" | "relevance_score" | "raw_text" | "content_hash" | "funding_type" | "category", ExtArgs["result"]["opportunities"]>
+  export type opportunitiesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "source" | "state_code" | "source_grant_id" | "status" | "title" | "description" | "description_summary" | "agency" | "funding_instrument" | "fiscal_year" | "post_date" | "close_date" | "archive_date" | "cost_sharing" | "award_max" | "award_min" | "total_funding_amount" | "eligibility" | "eligibility_summary" | "last_updated" | "contact_name" | "contact_email" | "contact_phone" | "url" | "attachments" | "extra" | "relevance_score" | "raw_text" | "content_hash" | "funding_type" | "category" | "rfp_url", ExtArgs["result"]["opportunities"]>
 
   export type $opportunitiesPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "opportunities"
@@ -3694,6 +3705,7 @@ export namespace Prisma {
       content_hash: string | null
       funding_type: $Enums.funding_type_enum | null
       category: $Enums.opportunity_category_enum[]
+      rfp_url: string | null
     }, ExtArgs["result"]["opportunities"]>
     composites: {}
   }
@@ -4149,6 +4161,7 @@ export namespace Prisma {
     readonly content_hash: FieldRef<"opportunities", 'String'>
     readonly funding_type: FieldRef<"opportunities", 'funding_type_enum'>
     readonly category: FieldRef<"opportunities", 'opportunity_category_enum[]'>
+    readonly rfp_url: FieldRef<"opportunities", 'String'>
   }
     
 
@@ -16368,7 +16381,8 @@ export namespace Prisma {
     raw_text: 'raw_text',
     content_hash: 'content_hash',
     funding_type: 'funding_type',
-    category: 'category'
+    category: 'category',
+    rfp_url: 'rfp_url'
   };
 
   export type OpportunitiesScalarFieldEnum = (typeof OpportunitiesScalarFieldEnum)[keyof typeof OpportunitiesScalarFieldEnum]
@@ -16871,6 +16885,7 @@ export namespace Prisma {
     content_hash?: StringNullableFilter<"opportunities"> | string | null
     funding_type?: Enumfunding_type_enumNullableFilter<"opportunities"> | $Enums.funding_type_enum | null
     category?: Enumopportunity_category_enumNullableListFilter<"opportunities">
+    rfp_url?: StringNullableFilter<"opportunities"> | string | null
   }
 
   export type opportunitiesOrderByWithRelationInput = {
@@ -16906,6 +16921,7 @@ export namespace Prisma {
     content_hash?: SortOrderInput | SortOrder
     funding_type?: SortOrderInput | SortOrder
     category?: SortOrder
+    rfp_url?: SortOrderInput | SortOrder
   }
 
   export type opportunitiesWhereUniqueInput = Prisma.AtLeast<{
@@ -16944,6 +16960,7 @@ export namespace Prisma {
     content_hash?: StringNullableFilter<"opportunities"> | string | null
     funding_type?: Enumfunding_type_enumNullableFilter<"opportunities"> | $Enums.funding_type_enum | null
     category?: Enumopportunity_category_enumNullableListFilter<"opportunities">
+    rfp_url?: StringNullableFilter<"opportunities"> | string | null
   }, "id">
 
   export type opportunitiesOrderByWithAggregationInput = {
@@ -16979,6 +16996,7 @@ export namespace Prisma {
     content_hash?: SortOrderInput | SortOrder
     funding_type?: SortOrderInput | SortOrder
     category?: SortOrder
+    rfp_url?: SortOrderInput | SortOrder
     _count?: opportunitiesCountOrderByAggregateInput
     _avg?: opportunitiesAvgOrderByAggregateInput
     _max?: opportunitiesMaxOrderByAggregateInput
@@ -17022,6 +17040,7 @@ export namespace Prisma {
     content_hash?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
     funding_type?: Enumfunding_type_enumNullableWithAggregatesFilter<"opportunities"> | $Enums.funding_type_enum | null
     category?: Enumopportunity_category_enumNullableListFilter<"opportunities">
+    rfp_url?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
   }
 
   export type UserWhereInput = {
@@ -17952,6 +17971,7 @@ export namespace Prisma {
     content_hash?: string | null
     funding_type?: $Enums.funding_type_enum | null
     category?: opportunitiesCreatecategoryInput | $Enums.opportunity_category_enum[]
+    rfp_url?: string | null
   }
 
   export type opportunitiesUncheckedCreateInput = {
@@ -17987,6 +18007,7 @@ export namespace Prisma {
     content_hash?: string | null
     funding_type?: $Enums.funding_type_enum | null
     category?: opportunitiesCreatecategoryInput | $Enums.opportunity_category_enum[]
+    rfp_url?: string | null
   }
 
   export type opportunitiesUpdateInput = {
@@ -18021,6 +18042,7 @@ export namespace Prisma {
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
     funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
     category?: opportunitiesUpdatecategoryInput | $Enums.opportunity_category_enum[]
+    rfp_url?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type opportunitiesUncheckedUpdateInput = {
@@ -18056,6 +18078,7 @@ export namespace Prisma {
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
     funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
     category?: opportunitiesUpdatecategoryInput | $Enums.opportunity_category_enum[]
+    rfp_url?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type opportunitiesCreateManyInput = {
@@ -18091,6 +18114,7 @@ export namespace Prisma {
     content_hash?: string | null
     funding_type?: $Enums.funding_type_enum | null
     category?: opportunitiesCreatecategoryInput | $Enums.opportunity_category_enum[]
+    rfp_url?: string | null
   }
 
   export type opportunitiesUpdateManyMutationInput = {
@@ -18125,6 +18149,7 @@ export namespace Prisma {
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
     funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
     category?: opportunitiesUpdatecategoryInput | $Enums.opportunity_category_enum[]
+    rfp_url?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type opportunitiesUncheckedUpdateManyInput = {
@@ -18160,6 +18185,7 @@ export namespace Prisma {
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
     funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
     category?: opportunitiesUpdatecategoryInput | $Enums.opportunity_category_enum[]
+    rfp_url?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserCreateInput = {
@@ -19307,6 +19333,7 @@ export namespace Prisma {
     content_hash?: SortOrder
     funding_type?: SortOrder
     category?: SortOrder
+    rfp_url?: SortOrder
   }
 
   export type opportunitiesAvgOrderByAggregateInput = {
@@ -19348,6 +19375,7 @@ export namespace Prisma {
     raw_text?: SortOrder
     content_hash?: SortOrder
     funding_type?: SortOrder
+    rfp_url?: SortOrder
   }
 
   export type opportunitiesMinOrderByAggregateInput = {
@@ -19380,6 +19408,7 @@ export namespace Prisma {
     raw_text?: SortOrder
     content_hash?: SortOrder
     funding_type?: SortOrder
+    rfp_url?: SortOrder
   }
 
   export type opportunitiesSumOrderByAggregateInput = {
