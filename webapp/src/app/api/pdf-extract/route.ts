@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
-// Force Node.js runtime instead of Edge runtime to support DOM APIs needed by pdf-parse
+// Force Node.js runtime instead of Edge runtime
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
@@ -43,55 +43,76 @@ export async function POST(req: NextRequest) {
 
     // Convert file to buffer
     const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    const uint8Array = new Uint8Array(arrayBuffer);
 
-    // Use dynamic import to load pdf-parse only at runtime in Node.js context
-    // This prevents DOMMatrix errors during module initialization
-    const { PDFParse } = await import("pdf-parse");
-    const { join } = await import("path");
+    // Use pdfjs-dist directly for text extraction (no canvas/native dependencies needed)
+    const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
+    const path = await import("path");
 
-    // Configure worker for Node.js/Next.js environment
-    const workerPath = join(
+    // Set the worker source to the correct location
+    // This is required for pdfjs to work properly
+    const workerPath = path.join(
       process.cwd(),
       "node_modules",
-      "pdf-parse",
-      "dist",
-      "worker",
+      "pdfjs-dist",
+      "legacy",
+      "build",
       "pdf.worker.mjs"
     );
-    PDFParse.setWorker(workerPath);
 
-    // Use pdf-parse v2 to extract text
-    const parser = new PDFParse({ data: buffer });
+    pdfjsLib.GlobalWorkerOptions.workerSrc = workerPath;
 
-    try {
-      const result = await parser.getText();
+    // Load PDF document
+    const loadingTask = pdfjsLib.getDocument({
+      data: uint8Array,
+      useSystemFonts: true,
+      useWorkerFetch: false,
+      isEvalSupported: false,
+      standardFontDataUrl: undefined,
+      disableAutoFetch: true,
+      disableStream: true,
+    });
 
-      // Extract and clean the text
-      let extractedText = result.text;
+    const pdfDocument = await loadingTask.promise;
+    const numPages = pdfDocument.numPages;
 
-      // Basic text cleaning
-      extractedText = extractedText
-        .replace(/\r\n/g, "\n") // Normalize line endings
-        .replace(/\n{3,}/g, "\n\n") // Remove excessive line breaks
-        .trim();
-
-      if (!extractedText || extractedText.length === 0) {
-        return NextResponse.json(
-          { error: "No text could be extracted from the PDF" },
-          { status: 400 }
-        );
-      }
-
-      return NextResponse.json({
-        success: true,
-        text: extractedText,
-        pageCount: result.total,
-      });
-    } finally {
-      // Always call destroy() to free memory
-      await parser.destroy();
+    // Extract text from all pages
+    const textPromises: Promise<string>[] = [];
+    for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+      textPromises.push(
+        pdfDocument.getPage(pageNum).then(async (page) => {
+          const textContent = await page.getTextContent();
+          const strings = textContent.items.map((item: unknown) => {
+            return typeof item === "object" && item !== null && "str" in item
+              ? String((item as { str: string }).str)
+              : "";
+          });
+          return strings.join(" ");
+        })
+      );
     }
+
+    const pagesText = await Promise.all(textPromises);
+    let extractedText = pagesText.join("\n\n");
+
+    // Basic text cleaning
+    extractedText = extractedText
+      .replace(/\s+/g, " ") // Normalize whitespace
+      .replace(/\n{3,}/g, "\n\n") // Remove excessive line breaks
+      .trim();
+
+    if (!extractedText || extractedText.length === 0) {
+      return NextResponse.json(
+        { error: "No text could be extracted from the PDF" },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      text: extractedText,
+      pageCount: numPages,
+    });
   } catch (error) {
     console.error("Error extracting PDF text:", error);
     return NextResponse.json(
