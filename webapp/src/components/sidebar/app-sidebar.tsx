@@ -32,6 +32,44 @@ import {
 } from "@/components/ui/sidebar";
 import { createClient } from "@/utils/supabase/client";
 
+// ============================================================
+// SIDEBAR CONFIGURATION
+// ============================================================
+// ✅ LIVE CONFIGURATION - Changes here apply immediately!
+//
+// This configuration uses inline CSS with !important flags to override
+// all hardcoded Tailwind classes in the sidebar components.
+//
+// When you change these values:
+// ✅ Sidebar width adjusts (both opened and collapsed states)
+// ✅ All navigation icon sizes change
+// ✅ Content is horizontally centered when collapsed
+// ✅ Icons are centered in their buttons when collapsed
+// ✅ Text labels hide when collapsed, tooltips appear on hover
+//
+const SIDEBAR_CONFIG = {
+  // ===== SIDEBAR DIMENSIONS =====
+  // Width when sidebar is opened/expanded (default: 16rem = 256px)
+  width: "16rem",
+
+  // Width when sidebar is collapsed - shows only icons (default: 3.5rem = 56px)
+  // Recommended range: 3rem (48px) to 4rem (64px) for optimal icon centering
+  widthCollapsed: "3.5rem",
+
+  // ===== PAGE LINK ICON SIZES =====
+  // Icon size for page navigation links (default: 1rem = 16px)
+  // These are the icons next to page titles like:
+  // - Dashboard, AI Assistant, Grant Search, Recommendations, Bookmarks
+  // - Applications, Profile
+  // - Admin > Users
+  // Common sizes: 0.875rem (14px), 1rem (16px), 1.125rem (18px), 1.25rem (20px)
+  navigationIconSize: "1.12rem",
+
+  // ===== OTHER ICON SIZES =====
+  // Icon size for the organization logo at the top (default: 2rem = 32px)
+  organizationLogoSize: "2rem",
+} as const;
+
 // This is sample data.
 const data = {
   teams: [
@@ -241,28 +279,88 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const isOnSettingsPage = pathname.includes("/settings");
 
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <TeamSwitcher
-          organization={organization}
-          currentSlug={organizationSlug}
-          loading={loadingOrganization}
-        />
-      </SidebarHeader>
-      <SidebarContent>
-        {isOnSettingsPage ? (
-          <NavSettings organizationSlug={organizationSlug} />
-        ) : (
-          <>
-            <NavMain items={navItems} />
-            <NavOrganization items={navOrganizationItems} />
-            {isAdmin && <NavAdmin items={navAdminItems} />}
-            <NavChats organizationSlug={organizationSlug} />
-          </>
-        )}
-      </SidebarContent>
-      <SidebarFooter>{user && <NavUser user={user} />}</SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
+    <>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            /* Center all content when sidebar is collapsed */
+            [data-state="collapsed"] [data-sidebar="content"],
+            [data-state="collapsed"] [data-sidebar="header"],
+            [data-state="collapsed"] [data-sidebar="footer"] {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            }
+
+            /* Center menu items */
+            [data-state="collapsed"] [data-sidebar="menu"] {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              width: 100%;
+            }
+
+            /* Center individual menu buttons and their icons */
+            [data-state="collapsed"] [data-sidebar="menu-button"] {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+
+            /* Center groups */
+            [data-state="collapsed"] [data-sidebar="group"] {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              width: 100%;
+            }
+          `,
+        }}
+      />
+      <Sidebar
+        collapsible="icon"
+        style={
+          {
+            "--sidebar-width": SIDEBAR_CONFIG.width,
+            "--sidebar-width-icon": SIDEBAR_CONFIG.widthCollapsed,
+          } as React.CSSProperties
+        }
+        {...props}
+      >
+        <SidebarHeader>
+          <TeamSwitcher
+            organization={organization}
+            currentSlug={organizationSlug}
+            loading={loadingOrganization}
+            logoSize={SIDEBAR_CONFIG.organizationLogoSize}
+          />
+        </SidebarHeader>
+        <SidebarContent>
+          {isOnSettingsPage ? (
+            <NavSettings organizationSlug={organizationSlug} />
+          ) : (
+            <>
+              <NavMain
+                items={navItems}
+                iconSize={SIDEBAR_CONFIG.navigationIconSize}
+              />
+              <NavOrganization
+                items={navOrganizationItems}
+                iconSize={SIDEBAR_CONFIG.navigationIconSize}
+              />
+              {isAdmin && (
+                <NavAdmin
+                  items={navAdminItems}
+                  iconSize={SIDEBAR_CONFIG.navigationIconSize}
+                />
+              )}
+              <NavChats organizationSlug={organizationSlug} />
+            </>
+          )}
+        </SidebarContent>
+        <SidebarFooter>{user && <NavUser user={user} />}</SidebarFooter>
+        <SidebarRail />
+      </Sidebar>
+    </>
   );
 }

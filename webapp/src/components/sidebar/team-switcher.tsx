@@ -21,20 +21,38 @@ interface TeamSwitcherProps {
   organization: Organization | null;
   currentSlug: string | null;
   loading?: boolean;
+  logoSize?: string;
 }
 
 export function TeamSwitcher({
   organization,
   currentSlug: _currentSlug,
   loading = false,
+  logoSize = "2rem",
 }: TeamSwitcherProps) {
   if (loading) {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton size="lg" disabled>
-            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-              <Loader2 className="size-4 animate-spin" />
+          <SidebarMenuButton
+            size="lg"
+            disabled
+            style={{
+              minWidth: logoSize,
+              minHeight: logoSize,
+            }}
+          >
+            <div
+              className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square items-center justify-center rounded-lg shrink-0"
+              style={{ width: logoSize, height: logoSize }}
+            >
+              <Loader2
+                style={{
+                  width: `calc(${logoSize} / 2)`,
+                  height: `calc(${logoSize} / 2)`,
+                }}
+                className="animate-spin"
+              />
             </div>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">Loading...</span>
@@ -50,9 +68,24 @@ export function TeamSwitcher({
     return (
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton size="lg" disabled>
-            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-              <Building2 className="size-4" />
+          <SidebarMenuButton
+            size="lg"
+            disabled
+            style={{
+              minWidth: logoSize,
+              minHeight: logoSize,
+            }}
+          >
+            <div
+              className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square items-center justify-center rounded-lg shrink-0"
+              style={{ width: logoSize, height: logoSize }}
+            >
+              <Building2
+                style={{
+                  width: `calc(${logoSize} / 2)`,
+                  height: `calc(${logoSize} / 2)`,
+                }}
+              />
             </div>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">No Organization</span>
@@ -64,24 +97,44 @@ export function TeamSwitcher({
     );
   }
 
+  const logoSizeNum = parseInt(logoSize);
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <SidebarMenuButton size="lg">
+        <SidebarMenuButton
+          size="lg"
+          style={{
+            // Prevent the logo from being resized when sidebar collapses
+            minWidth: logoSize,
+            minHeight: logoSize,
+          }}
+        >
           {organization.logoUrl ? (
-            <div className="flex aspect-square size-8 items-center justify-center rounded-lg overflow-hidden">
+            <div
+              className="flex aspect-square items-center justify-center rounded-lg overflow-hidden shrink-0"
+              style={{ width: logoSize, height: logoSize }}
+            >
               <Image
                 src={organization.logoUrl}
                 alt={organization.name}
-                width={32}
-                height={32}
+                width={logoSizeNum}
+                height={logoSizeNum}
                 className="w-full h-full object-cover"
                 unoptimized
               />
             </div>
           ) : (
-            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-              <Building2 className="size-4" />
+            <div
+              className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square items-center justify-center rounded-lg shrink-0"
+              style={{ width: logoSize, height: logoSize }}
+            >
+              <Building2
+                style={{
+                  width: `calc(${logoSize} / 2)`,
+                  height: `calc(${logoSize} / 2)`,
+                }}
+              />
             </div>
           )}
           <div className="grid flex-1 text-left text-sm leading-tight">

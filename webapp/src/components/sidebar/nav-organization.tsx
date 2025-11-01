@@ -13,12 +13,14 @@ import {
 
 export function NavOrganization({
   items,
+  iconSize = "1rem",
 }: {
   items: {
     title: string;
     url: string;
     icon?: LucideIcon;
   }[];
+  iconSize?: string;
 }) {
   return (
     <SidebarGroup>
@@ -28,7 +30,9 @@ export function NavOrganization({
           <SidebarMenuItem key={item.title}>
             <SidebarMenuButton asChild tooltip={item.title}>
               <Link href={item.url}>
-                {item.icon && <item.icon />}
+                {item.icon && (
+                  <item.icon style={{ width: iconSize, height: iconSize }} />
+                )}
                 <span>{item.title}</span>
               </Link>
             </SidebarMenuButton>
