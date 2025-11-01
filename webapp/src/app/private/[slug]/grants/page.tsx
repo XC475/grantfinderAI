@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -182,6 +182,13 @@ function GrantsSearchPage() {
   // Bookmarks state
   const [bookmarks, setBookmarks] = useState<BookmarkData[]>([]);
   const [loadingBookmarks, setLoadingBookmarks] = useState(false);
+
+  // Cache state with timestamps (5 minute TTL)
+  const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
+  const cacheTimestamps = useRef({
+    recommendations: 0,
+    bookmarks: 0,
+  });
 
   // Get user session
   useEffect(() => {
@@ -372,6 +379,8 @@ function GrantsSearchPage() {
           throw new Error(msg || "Failed to remove bookmark");
         }
         toast.success("Grant removed from saved grants");
+        // Invalidate bookmarks cache
+        cacheTimestamps.current.bookmarks = 0;
       } else {
         setSavedGrants((prev) => [...prev, grantId]);
         const res = await fetch(`/api/grants/${grantId}/bookmark`, {
@@ -384,6 +393,8 @@ function GrantsSearchPage() {
           throw new Error(msg || "Failed to save bookmark");
         }
         toast.success("Grant saved to your collection");
+        // Invalidate bookmarks cache
+        cacheTimestamps.current.bookmarks = 0;
       }
     } catch (error) {
       console.error("Error saving grant:", error);
@@ -429,6 +440,8 @@ function GrantsSearchPage() {
       setGrantApplications((prev) => [...prev, grantId]);
       if (data.alsoBookmarked) {
         setSavedGrants((prev) => [...prev, grantId]);
+        // Invalidate bookmarks cache
+        cacheTimestamps.current.bookmarks = 0;
       }
 
       toast.success("Application created successfully!");
@@ -460,8 +473,19 @@ function GrantsSearchPage() {
     // fetchGrants will be triggered automatically by the useEffect hooks
   };
 
+  // Check if cache is valid
+  const isCacheValid = (cacheKey: 'recommendations' | 'bookmarks') => {
+    const timestamp = cacheTimestamps.current[cacheKey];
+    return timestamp > 0 && Date.now() - timestamp < CACHE_TTL;
+  };
+
   // Fetch recommendations
-  const fetchRecommendations = async () => {
+  const fetchRecommendations = async (force = false) => {
+    // Check cache validity
+    if (!force && isCacheValid('recommendations') && recommendations.length > 0) {
+      console.log('📦 Using cached recommendations');
+      return;
+    }
     setLoadingRecommendations(true);
     try {
       // Fetch organization data
@@ -499,6 +523,8 @@ function GrantsSearchPage() {
         );
 
         setRecommendations(recsWithGrants);
+        cacheTimestamps.current.recommendations = Date.now();
+        console.log('✅ Recommendations fetched and cached');
       }
     } catch (error) {
       console.error("Error fetching recommendations:", error);
@@ -526,7 +552,8 @@ function GrantsSearchPage() {
       }
 
       toast.success("Recommendations generated successfully!");
-      await fetchRecommendations();
+      // Force refresh after generating new recommendations
+      await fetchRecommendations(true);
     } catch (error) {
       console.error("Error generating recommendations:", error);
       toast.error("Failed to generate recommendations. Please try again.");
@@ -536,13 +563,20 @@ function GrantsSearchPage() {
   };
 
   // Fetch bookmarks
-  const fetchBookmarks = async () => {
+  const fetchBookmarks = async (force = false) => {
+    // Check cache validity
+    if (!force && isCacheValid('bookmarks') && bookmarks.length > 0) {
+      console.log('📦 Using cached bookmarks');
+      return;
+    }
     setLoadingBookmarks(true);
     try {
       const res = await fetch("/api/bookmarks");
       if (!res.ok) throw new Error(`Failed: ${res.status}`);
       const data = await res.json();
       setBookmarks(data);
+      cacheTimestamps.current.bookmarks = Date.now();
+      console.log('✅ Bookmarks fetched and cached');
     } catch (e) {
       console.error(e);
       toast.error("Failed to load bookmarks");
@@ -562,6 +596,8 @@ function GrantsSearchPage() {
       );
       // Also update savedGrants state for consistency
       setSavedGrants((prev) => prev.filter((id) => id !== opportunityId));
+      // Invalidate cache since data changed
+      cacheTimestamps.current.bookmarks = 0;
       toast.success("Removed from bookmarks");
     } catch (e) {
       console.error(e);
@@ -578,8 +614,8 @@ function GrantsSearchPage() {
     }
   }, [activeTab]);
 
-  // Helper functions for recommendations
-  const isProfileComplete = () => {
+  // Memoized computed values
+  const isProfileComplete = useMemo(() => {
     if (!organization) return false;
     return !!(
       organization.name &&
@@ -592,7 +628,44 @@ function GrantsSearchPage() {
       organization.annualOperatingBudget &&
       organization.fiscalYearEnd
     );
-  };
+  }, [organization]);
+
+  const hasActiveFilters = useMemo(() => {
+    return !!(
+      searchQuery ||
+      statusFilter ||
+      categoryFilter ||
+      minAmount ||
+      maxAmount ||
+      stateCode ||
+      agency ||
+      fundingInstrument ||
+      costSharing ||
+      fiscalYear ||
+      source ||
+      closeDateFrom ||
+      closeDateTo
+    );
+  }, [
+    searchQuery,
+    statusFilter,
+    categoryFilter,
+    minAmount,
+    maxAmount,
+    stateCode,
+    agency,
+    fundingInstrument,
+    costSharing,
+    fiscalYear,
+    source,
+    closeDateFrom,
+    closeDateTo,
+  ]);
+
+  // Memoized bookmarked grants from bookmarks tab
+  const bookmarkedGrantIds = useMemo(() => {
+    return bookmarks.map((b) => b.opportunityId);
+  }, [bookmarks]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -1052,19 +1125,7 @@ function GrantsSearchPage() {
             <p className="text-sm text-gray-600">
               Showing {grants.length} of {pagination.total} grants
             </p>
-            {(searchQuery ||
-              statusFilter ||
-              categoryFilter ||
-              minAmount ||
-              maxAmount ||
-              stateCode ||
-              agency ||
-              fundingInstrument ||
-              costSharing ||
-              fiscalYear ||
-              source ||
-              closeDateFrom ||
-              closeDateTo) && (
+            {hasActiveFilters && (
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Filter className="h-4 w-4" />
                 Filters applied
@@ -1135,7 +1196,7 @@ function GrantsSearchPage() {
           ) : (
             <>
               {/* Profile Incomplete Alert */}
-              {!isProfileComplete() && (
+              {!isProfileComplete && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertTitle>Profile Incomplete</AlertTitle>
@@ -1156,7 +1217,7 @@ function GrantsSearchPage() {
               )}
 
               {/* Run Recommendations Button */}
-              {isProfileComplete() && recommendations.length === 0 && (
+              {isProfileComplete && recommendations.length === 0 && (
                 <Card>
                   <CardContent className="flex flex-col items-center justify-center py-12">
                     <Sparkles className="h-12 w-12 text-muted-foreground mb-4" />
@@ -1190,7 +1251,7 @@ function GrantsSearchPage() {
               )}
 
               {/* Show Recommendations */}
-              {isProfileComplete() && recommendations.length > 0 && (
+              {isProfileComplete && recommendations.length > 0 && (
                 <>
                   <div className="flex items-center justify-between mb-4">
                     <div>
