@@ -200,6 +200,20 @@ export default function ProfilePage() {
 
       const data = await response.json();
 
+      // Update the database with extracted text
+      const updateResponse = await fetch(
+        `/api/organizations/${organization.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ strategicPlan: data.text }),
+        }
+      );
+
+      if (!updateResponse.ok) {
+        throw new Error("Failed to save extracted text to database");
+      }
+
       // Update the strategic plan field with extracted text
       setOrganization({
         ...organization,
@@ -207,7 +221,7 @@ export default function ProfilePage() {
       });
 
       toast.success(
-        `Text extracted successfully from ${data.pageCount} page${data.pageCount > 1 ? "s" : ""}`
+        `Text extracted successfully from ${data.pageCount} page${data.pageCount > 1 ? "s" : ""} and saved`
       );
     } catch (error) {
       console.error("Error uploading PDF:", error);
@@ -255,13 +269,27 @@ export default function ProfilePage() {
 
       const data = await response.json();
 
+      // Update the database with AI summary
+      const updateResponse = await fetch(
+        `/api/organizations/${organization.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ strategicPlan: data.summary }),
+        }
+      );
+
+      if (!updateResponse.ok) {
+        throw new Error("Failed to save summary to database");
+      }
+
       // Update the strategic plan field with the AI summary
       setOrganization({
         ...organization,
         strategicPlan: data.summary,
       });
 
-      toast.success("Strategic plan summarized successfully with AI");
+      toast.success("Strategic plan summarized successfully with AI and saved");
     } catch (error) {
       console.error("Error summarizing strategic plan:", error);
       toast.error(
