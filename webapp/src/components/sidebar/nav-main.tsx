@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ChevronRight, type LucideIcon } from "lucide-react";
 
 import {
@@ -33,6 +34,22 @@ export function NavMain({
     }[];
   }[];
 }) {
+  const pathname = usePathname();
+
+  const handleClick = (e: React.MouseEvent, url: string) => {
+    // If clicking AI Assistant while already on chat, hard navigate to reset state
+    if (url.includes("/chat")) {
+      const normalizedUrl = url.endsWith("/") ? url.slice(0, -1) : url;
+      const normalizedPath = pathname.endsWith("/")
+        ? pathname.slice(0, -1)
+        : pathname;
+      if (normalizedPath.startsWith(normalizedUrl)) {
+        e.preventDefault();
+        window.location.href = url;
+      }
+    }
+  };
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -77,7 +94,7 @@ export function NavMain({
           return (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild tooltip={item.title}>
-                <Link href={item.url}>
+                <Link href={item.url} onClick={(e) => handleClick(e, item.url)}>
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                 </Link>

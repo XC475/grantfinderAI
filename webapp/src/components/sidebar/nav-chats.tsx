@@ -157,16 +157,19 @@ export function NavChats({
     <SidebarGroup>
       <div className="flex items-center justify-between">
         <SidebarGroupLabel>Chats</SidebarGroupLabel>
-        <Button variant="ghost" size="sm" asChild className="h-6 w-6 p-0">
-          <Link
-            href={
-              organizationSlug
-                ? `/private/${organizationSlug}/chat`
-                : "/private/chat"
-            }
-          >
-            <Plus className="h-4 w-4" />
-          </Link>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-6 w-6 p-0"
+          onClick={() => {
+            const chatUrl = organizationSlug
+              ? `/private/${organizationSlug}/chat`
+              : "/private/chat";
+            // Always perform a hard navigation so the chat resets to initial state
+            window.location.href = chatUrl;
+          }}
+        >
+          <Plus className="h-4 w-4" />
         </Button>
       </div>
 
