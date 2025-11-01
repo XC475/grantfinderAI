@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     const joinedText = Array.isArray(text) ? text.join("\n\n") : text;
 
     // Basic text cleaning
-    let extractedText = joinedText
+    const extractedText = joinedText
       .replace(/\s+/g, " ") // Normalize whitespace
       .replace(/\n{3,}/g, "\n\n") // Remove excessive line breaks
       .trim();
