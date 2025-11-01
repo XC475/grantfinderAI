@@ -1,7 +1,7 @@
 interface PromptSuggestionsProps {
-  label: string
-  append: (message: { role: "user"; content: string }) => void
-  suggestions: string[]
+  label: string;
+  append: (message: { role: "user"; content: string }) => void;
+  suggestions: string[];
 }
 
 export function PromptSuggestions({
@@ -10,7 +10,7 @@ export function PromptSuggestions({
   suggestions,
 }: PromptSuggestionsProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-8 md:px-16 lg:px-24">
       <h2 className="text-center text-2xl font-bold">{label}</h2>
       <div className="flex gap-6 text-sm">
         {suggestions.map((suggestion) => (
@@ -24,5 +24,5 @@ export function PromptSuggestions({
         ))}
       </div>
     </div>
-  )
+  );
 }
