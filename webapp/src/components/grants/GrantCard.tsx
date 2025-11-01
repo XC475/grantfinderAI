@@ -98,7 +98,7 @@ export function GrantCard({
             <CardTitle className="text-lg mb-2 hover:text-primary transition-colors">
               {grant.title}
             </CardTitle>
-            <CardDescription className="text-sm text-gray-600 mb-3">
+            <CardDescription className="text-sm text-muted-foreground mb-3">
               {grant.agency || grant.source} • {grant.source_grant_id}
             </CardDescription>
           </Link>
@@ -163,7 +163,7 @@ export function GrantCard({
         <div className="space-y-3">
           {grant.description && (
             <div
-              className="text-sm text-gray-700 line-clamp-3"
+              className="text-sm text-muted-foreground line-clamp-3"
               dangerouslySetInnerHTML={{ __html: grant.description }}
             />
           )}

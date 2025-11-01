@@ -689,7 +689,7 @@ function GrantsSearchPage() {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">Grants</h1>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Discover, search, and manage grant opportunities
         </p>
       </div>
@@ -705,7 +705,7 @@ function GrantsSearchPage() {
                 ${
                   activeTab === "search"
                     ? "border-primary text-primary"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
                 }
               `}
             >
@@ -725,7 +725,7 @@ function GrantsSearchPage() {
                 ${
                   activeTab === "recommendations"
                     ? "border-primary text-primary"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
                 }
               `}
             >
@@ -745,7 +745,7 @@ function GrantsSearchPage() {
                 ${
                   activeTab === "bookmarks"
                     ? "border-primary text-primary"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
                 }
               `}
             >
@@ -1126,11 +1126,11 @@ function GrantsSearchPage() {
           )}
 
           <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               Showing {grants.length} of {pagination.total} grants
             </p>
             {hasActiveFilters && (
-              <div className="flex items-center gap-2 text-sm text-gray-500">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Filter className="h-4 w-4" />
                 Filters applied
               </div>
@@ -1145,10 +1145,10 @@ function GrantsSearchPage() {
               </div>
             ) : grants.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-gray-600 mb-4">
+                <p className="text-muted-foreground mb-4">
                   No grants found. Try adjusting your search criteria.
                 </p>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-muted-foreground/70">
                   <p>Total grants in database: {pagination.total}</p>
                   {pagination.total === 0 && (
                     <p className="mt-2 text-orange-600">
@@ -1407,9 +1407,9 @@ function GrantsSearchPage() {
             </div>
           ) : bookmarks.length === 0 ? (
             <div className="py-16 text-center">
-              <Bookmark className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-600 mb-2">No saved grants yet.</p>
-              <p className="text-sm text-gray-500">
+              <Bookmark className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+              <p className="text-muted-foreground mb-2">No saved grants yet.</p>
+              <p className="text-sm text-muted-foreground/70">
                 Bookmark grants from the search to see them here.
               </p>
             </div>
