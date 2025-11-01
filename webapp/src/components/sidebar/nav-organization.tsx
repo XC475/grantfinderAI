@@ -9,6 +9,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 export function NavOrganization({
@@ -22,6 +23,9 @@ export function NavOrganization({
   }[];
   iconSize?: string;
 }) {
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Organization</SidebarGroupLabel>
@@ -33,7 +37,7 @@ export function NavOrganization({
                 {item.icon && (
                   <item.icon style={{ width: iconSize, height: iconSize }} />
                 )}
-                <span>{item.title}</span>
+                {!isCollapsed && <span>{item.title}</span>}
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
