@@ -400,7 +400,7 @@ function GrantsSearchPage() {
   };
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
+    <div className="p-4 mx-auto w-full">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Grant Opportunities</h1>
         <p className="text-gray-600">
