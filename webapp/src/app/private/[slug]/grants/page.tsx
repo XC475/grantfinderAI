@@ -225,6 +225,11 @@ function GrantsSearchPage() {
     }
   }, [slug]);
 
+  // Fetch bookmarks count on initial load to determine tab order
+  useEffect(() => {
+    fetchBookmarks();
+  }, []);
+
   // Fetch filter options
   useEffect(() => {
     const fetchFilterOptions = async () => {
