@@ -205,7 +205,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
           Organization Profile
