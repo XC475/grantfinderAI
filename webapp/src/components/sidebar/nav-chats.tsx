@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Trash2, MessageSquare, Plus } from "lucide-react";
+import { Trash2, MessageSquare, Plus, Loader2 } from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -12,6 +12,14 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Spinner } from "@/components/ui/spinner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Chat {
   id: string;
@@ -28,6 +36,9 @@ export function NavChats({
 }) {
   const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [chatToDelete, setChatToDelete] = useState<Chat | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const pathname = usePathname();
   const { state } = useSidebar();
 
@@ -70,26 +81,36 @@ export function NavChats({
     }
   };
 
-  const deleteChat = async (chatId: string) => {
-    if (!confirm("Are you sure you want to delete this chat?")) return;
+  const handleDeleteClick = (chat: Chat) => {
+    setChatToDelete(chat);
+    setDeleteDialogOpen(true);
+  };
 
+  const confirmDelete = async () => {
+    if (!chatToDelete) return;
+
+    setIsDeleting(true);
     try {
-      const response = await fetch(`/api/chats/${chatId}`, {
+      const response = await fetch(`/api/chats/${chatToDelete.id}`, {
         method: "DELETE",
       });
 
       if (response.ok) {
-        setChats((prev) => prev.filter((chat) => chat.id !== chatId));
+        setChats((prev) => prev.filter((chat) => chat.id !== chatToDelete.id));
         // If we're currently viewing this chat, redirect to new chat
         const chatUrl = organizationSlug
           ? `/private/${organizationSlug}/chat`
           : "/private/chat";
-        if (pathname.includes(`chatId=${chatId}`)) {
+        if (pathname.includes(`chatId=${chatToDelete.id}`)) {
           window.location.href = chatUrl;
         }
       }
     } catch (error) {
       console.error("Error deleting chat:", error);
+    } finally {
+      setIsDeleting(false);
+      setDeleteDialogOpen(false);
+      setChatToDelete(null);
     }
   };
 
@@ -179,7 +200,7 @@ export function NavChats({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => deleteChat(chat.id)}
+                onClick={() => handleDeleteClick(chat)}
                 className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
               >
                 <Trash2 className="h-3 w-3" />
@@ -188,6 +209,40 @@ export function NavChats({
           ))}
         </SidebarMenu>
       )}
+
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Delete chat?</DialogTitle>
+            <DialogDescription>
+              This will delete <strong>{chatToDelete?.title}</strong>.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteDialogOpen(false)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SidebarGroup>
   );
 }
