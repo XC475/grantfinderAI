@@ -12,6 +12,7 @@
     "@ai-sdk/react": "^2.0.51",
     "@floating-ui/react": "^0.27.16",
     "@hookform/resolvers": "^5.2.2",
+    "@napi-rs/canvas": "^0.1.81",
     "@prisma/client": "^6.16.2",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-collapsible": "^1.1.12",
