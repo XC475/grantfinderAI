@@ -28,6 +28,7 @@ import {
   Image as ImageIcon,
   Info,
   Save,
+  Sparkles,
 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -61,7 +62,10 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [summarizing, setSummarizing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const pdfInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -156,6 +160,145 @@ export default function ProfilePage() {
       toast.error("Failed to upload logo");
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handlePdfUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file || !organization) return;
+
+    // Validate file type
+    if (file.type !== "application/pdf") {
+      toast.error("Please upload a PDF file");
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File size must be less than 10MB");
+      return;
+    }
+
+    setUploadingPdf(true);
+    try {
+      // Create form data
+      const formData = new FormData();
+      formData.append("file", file);
+
+      // Upload to PDF extraction API
+      const response = await fetch("/api/pdf-extract", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to extract text from PDF");
+      }
+
+      const data = await response.json();
+
+      // Update the database with extracted text
+      const updateResponse = await fetch(
+        `/api/organizations/${organization.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ strategicPlan: data.text }),
+        }
+      );
+
+      if (!updateResponse.ok) {
+        throw new Error("Failed to save extracted text to database");
+      }
+
+      // Update the strategic plan field with extracted text
+      setOrganization({
+        ...organization,
+        strategicPlan: data.text,
+      });
+
+      toast.success(
+        `Text extracted successfully from ${data.pageCount} page${data.pageCount > 1 ? "s" : ""} and saved`
+      );
+    } catch (error) {
+      console.error("Error uploading PDF:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to extract text from PDF"
+      );
+    } finally {
+      setUploadingPdf(false);
+      // Reset the file input
+      if (pdfInputRef.current) {
+        pdfInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleSummarizeWithAI = async () => {
+    if (!organization || !organization.strategicPlan) {
+      toast.error("Please add a strategic plan first");
+      return;
+    }
+
+    if (organization.strategicPlan.length < 100) {
+      toast.error("Strategic plan is too short to summarize");
+      return;
+    }
+
+    setSummarizing(true);
+    try {
+      const response = await fetch("/api/strategic-plan-summarize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          strategicPlanText: organization.strategicPlan,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to summarize strategic plan");
+      }
+
+      const data = await response.json();
+
+      // Update the database with AI summary
+      const updateResponse = await fetch(
+        `/api/organizations/${organization.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ strategicPlan: data.summary }),
+        }
+      );
+
+      if (!updateResponse.ok) {
+        throw new Error("Failed to save summary to database");
+      }
+
+      // Update the strategic plan field with the AI summary
+      setOrganization({
+        ...organization,
+        strategicPlan: data.summary,
+      });
+
+      toast.success("Strategic plan summarized successfully with AI and saved");
+    } catch (error) {
+      console.error("Error summarizing strategic plan:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to summarize strategic plan"
+      );
+    } finally {
+      setSummarizing(false);
     }
   };
 
@@ -361,6 +504,64 @@ export default function ProfilePage() {
                   rows={6}
                   placeholder="Paste your organization's strategic plan document here..."
                 />
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      ref={pdfInputRef}
+                      type="file"
+                      accept="application/pdf"
+                      onChange={handlePdfUpload}
+                      className="hidden"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => pdfInputRef.current?.click()}
+                      disabled={uploadingPdf || summarizing}
+                    >
+                      {uploadingPdf ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Extracting text...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="mr-2 h-4 w-4" />
+                          Upload PDF
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSummarizeWithAI}
+                      disabled={
+                        summarizing ||
+                        uploadingPdf ||
+                        !organization?.strategicPlan ||
+                        organization.strategicPlan.length < 100
+                      }
+                    >
+                      {summarizing ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Summarizing...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          Summarize with AI
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Upload a PDF to extract text, or use AI to summarize and
+                    extract grant-relevant information
+                  </p>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
