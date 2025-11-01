@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ChevronRight, type LucideIcon } from "lucide-react";
 
 import {
@@ -17,10 +18,12 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 export function NavMain({
   items,
+  iconSize = "1rem",
 }: {
   items: {
     title: string;
@@ -32,7 +35,26 @@ export function NavMain({
       url: string;
     }[];
   }[];
+  iconSize?: string;
 }) {
+  const pathname = usePathname();
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+
+  const handleClick = (e: React.MouseEvent, url: string) => {
+    // If clicking AI Assistant while already on chat, hard navigate to reset state
+    if (url.includes("/chat")) {
+      const normalizedUrl = url.endsWith("/") ? url.slice(0, -1) : url;
+      const normalizedPath = pathname.endsWith("/")
+        ? pathname.slice(0, -1)
+        : pathname;
+      if (normalizedPath.startsWith(normalizedUrl)) {
+        e.preventDefault();
+        window.location.href = url;
+      }
+    }
+  };
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -50,9 +72,17 @@ export function NavMain({
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton tooltip={item.title}>
-                      {item.icon && <item.icon />}
-                      <span>{item.title}</span>
-                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      {item.icon && (
+                        <item.icon
+                          style={{ width: iconSize, height: iconSize }}
+                        />
+                      )}
+                      {!isCollapsed && (
+                        <>
+                          <span>{item.title}</span>
+                          <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                        </>
+                      )}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
@@ -77,9 +107,11 @@ export function NavMain({
           return (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild tooltip={item.title}>
-                <Link href={item.url}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
+                <Link href={item.url} onClick={(e) => handleClick(e, item.url)}>
+                  {item.icon && (
+                    <item.icon style={{ width: iconSize, height: iconSize }} />
+                  )}
+                  {!isCollapsed && <span>{item.title}</span>}
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

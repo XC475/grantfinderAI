@@ -31,7 +31,7 @@ export default async function RootLayout({
   const pathname = headersList.get("x-pathname") || "";
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

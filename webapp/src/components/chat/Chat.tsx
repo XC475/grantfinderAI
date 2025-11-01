@@ -107,7 +107,10 @@ export function ChatDemo(props: ChatDemoProps) {
           throw new Error("No response body");
         }
 
-        let assistantContent = "";
+        let fullContent = "";
+        let displayedContent = "";
+        let isStreamComplete = false;
+
         const assistantMessage: Message = {
           id: `assistant-${Date.now()}`,
           role: "assistant",
@@ -118,22 +121,52 @@ export function ChatDemo(props: ChatDemoProps) {
         // Add empty assistant message immediately
         setMessages((prev) => [...prev, assistantMessage]);
 
+        // Smooth character-by-character display
+        const smoothDisplay = async () => {
+          while (
+            !isStreamComplete ||
+            displayedContent.length < fullContent.length
+          ) {
+            if (displayedContent.length < fullContent.length) {
+              // Display next few characters for smoother feel
+              const charsToAdd = Math.min(
+                2,
+                fullContent.length - displayedContent.length
+              );
+              displayedContent = fullContent.slice(
+                0,
+                displayedContent.length + charsToAdd
+              );
+
+              setMessages((prev) =>
+                prev.map((msg) =>
+                  msg.id === assistantMessage.id
+                    ? { ...msg, content: displayedContent }
+                    : msg
+                )
+              );
+
+              // Adjust this delay for speed (lower = faster)
+              await new Promise((resolve) => setTimeout(resolve, 15));
+            } else {
+              await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+          }
+        };
+
+        // Start smooth display
+        smoothDisplay();
+
         try {
           while (true) {
             const { done, value } = await reader.read();
-            if (done) break;
+            if (done) {
+              isStreamComplete = true;
+              break;
+            }
 
             const chunk = new TextDecoder().decode(value);
-            assistantContent += chunk;
-
-            // Update the assistant message with the new content
-            setMessages((prev) =>
-              prev.map((msg) =>
-                msg.id === assistantMessage.id
-                  ? { ...msg, content: assistantContent }
-                  : msg
-              )
-            );
+            fullContent += chunk;
           }
 
           // After streaming is complete, notify sidebar to refresh (for message count and timestamp)

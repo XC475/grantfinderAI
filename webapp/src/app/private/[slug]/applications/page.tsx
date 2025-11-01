@@ -100,7 +100,7 @@ export default function ApplicationsPage({
 
   if (applications.length === 0) {
     return (
-      <div className="container max-w-6xl py-8">
+      <div className="container max-w-6xl py-8 p-4">
         <Card>
           <CardHeader>
             <CardTitle>Applications</CardTitle>
@@ -127,7 +127,7 @@ export default function ApplicationsPage({
   }
 
   return (
-    <div className="container max-w-6xl py-8">
+    <div className="container max-w-6xl py-8 p-4">
       <Card>
         <CardHeader>
           <CardTitle>Applications</CardTitle>

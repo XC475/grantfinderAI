@@ -14,45 +14,42 @@ import {
 import { FilePreview } from "@/components/ui/file-preview";
 import { MarkdownRenderer } from "@/components/ui/markdown-renderer";
 
-const chatBubbleVariants = cva(
-  "group/message relative break-words rounded-lg p-3 text-sm sm:max-w-[70%]",
-  {
-    variants: {
-      isUser: {
-        true: "bg-primary text-primary-foreground",
-        false: "bg-muted text-foreground",
-      },
-      animation: {
-        none: "",
-        slide: "duration-300 animate-in fade-in-0",
-        scale: "duration-300 animate-in fade-in-0 zoom-in-75",
-        fade: "duration-500 animate-in fade-in-0",
-      },
+const chatBubbleVariants = cva("group/message relative break-words text-base", {
+  variants: {
+    isUser: {
+      true: "bg-primary text-primary-foreground rounded-lg p-3 sm:max-w-[70%]",
+      false: "text-foreground w-full",
     },
-    compoundVariants: [
-      {
-        isUser: true,
-        animation: "slide",
-        class: "slide-in-from-right",
-      },
-      {
-        isUser: false,
-        animation: "slide",
-        class: "slide-in-from-left",
-      },
-      {
-        isUser: true,
-        animation: "scale",
-        class: "origin-bottom-right",
-      },
-      {
-        isUser: false,
-        animation: "scale",
-        class: "origin-bottom-left",
-      },
-    ],
-  }
-);
+    animation: {
+      none: "",
+      slide: "duration-300 animate-in fade-in-0",
+      scale: "duration-300 animate-in fade-in-0 zoom-in-75",
+      fade: "duration-500 animate-in fade-in-0",
+    },
+  },
+  compoundVariants: [
+    {
+      isUser: true,
+      animation: "slide",
+      class: "slide-in-from-right",
+    },
+    {
+      isUser: false,
+      animation: "slide",
+      class: "slide-in-from-left",
+    },
+    {
+      isUser: true,
+      animation: "scale",
+      class: "origin-bottom-right",
+    },
+    {
+      isUser: false,
+      animation: "scale",
+      class: "origin-bottom-left",
+    },
+  ],
+});
 
 type Animation = VariantProps<typeof chatBubbleVariants>["animation"];
 
@@ -169,7 +166,10 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   if (isUser) {
     return (
       <div
-        className={cn("flex flex-col", isUser ? "items-end" : "items-start")}
+        className={cn(
+          "flex flex-col w-full",
+          isUser ? "items-end" : "items-start"
+        )}
       >
         {files ? (
           <div className="mb-1 flex flex-wrap gap-2">
@@ -204,7 +204,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
         return (
           <div
             className={cn(
-              "flex flex-col",
+              "flex flex-col w-full",
               isUser ? "items-end" : "items-start"
             )}
             key={`text-${index}`}
@@ -250,7 +250,12 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   }
 
   return (
-    <div className={cn("flex flex-col", isUser ? "items-end" : "items-start")}>
+    <div
+      className={cn(
+        "flex flex-col w-full",
+        isUser ? "items-end" : "items-start"
+      )}
+    >
       <div className={cn(chatBubbleVariants({ isUser, animation }))}>
         <MarkdownRenderer>{content}</MarkdownRenderer>
         {actions ? (

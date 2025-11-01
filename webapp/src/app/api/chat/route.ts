@@ -4,10 +4,14 @@ import prisma from "@/lib/prisma";
 
 // Your n8n webhook URL - replace with your actual webhook URL
 const N8N_WEBHOOK_URL = process.env.N8N_SEARCH_URL!;
-const BASE_URL = process.env.BASE_URL!;
 
 export async function POST(req: NextRequest) {
   const { messages, chatId, organizationId } = await req.json();
+
+  // Construct base URL from request
+  const protocol = req.headers.get("x-forwarded-proto") || "http";
+  const host = req.headers.get("host") || "localhost:3000";
+  const baseUrl = `${protocol}://${host}`;
 
   // Get authenticated user
   const supabase = await createClient();
@@ -83,6 +87,11 @@ export async function POST(req: NextRequest) {
     });
 
     // 3. Send to N8N with district information
+    // Construct full base URL including organization slug if available
+    const fullBaseUrl = organization.slug
+      ? `${baseUrl}/private/${organization.slug}`
+      : baseUrl;
+
     const n8nMessage = {
       app_source: "grantfinder-ai-webapp",
       user_id: user.id,
@@ -91,7 +100,7 @@ export async function POST(req: NextRequest) {
       message: lastUserMessage.content,
       timestamp: Date.now().toString(),
       message_id: userMessage.id,
-      base_url: BASE_URL,
+      base_url: fullBaseUrl,
       conversation_history: messages,
       // District information for personalized grant recommendations
       district_info: organization.leaId
@@ -148,10 +157,47 @@ export async function POST(req: NextRequest) {
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
     let buffer = ""; // Buffer for incomplete JSON chunks
+    let clientDisconnected = false;
+
+    // Save response to database after stream completes
+    const saveToDatabase = async () => {
+      try {
+        // After streaming completes, save to database
+        console.log("🔍 [Grant Finder API] Full n8n response:", fullText);
+
+        // 4. Save assistant response
+        await prisma.aiChatMessage.create({
+          data: {
+            role: "ASSISTANT",
+            content: fullText,
+            chatId: chat.id,
+            metadata: {
+              timestamp: Date.now(),
+              model: "n8n-agent",
+              source: "n8n",
+              clientDisconnected,
+            },
+          },
+        });
+
+        // 5. Update chat's updatedAt
+        await prisma.aiChat.update({
+          where: { id: chat.id },
+          data: { updatedAt: new Date() },
+        });
+
+        console.log(
+          `✅ [Grant Finder API] Saved response to DB${clientDisconnected ? " (client disconnected)" : ""}`
+        );
+      } catch (error) {
+        console.error("❌ [Grant Finder API] Error saving to database:", error);
+      }
+    };
 
     const stream = new ReadableStream({
       async start(controller) {
         try {
+          // Stream content to client while available
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
@@ -170,7 +216,6 @@ export async function POST(req: NextRequest) {
               if (!line.trim()) continue;
 
               try {
-                // Parse the JSON chunk from n8n
                 const jsonChunk = JSON.parse(line);
 
                 // Only process "item" type chunks that have content
@@ -178,8 +223,17 @@ export async function POST(req: NextRequest) {
                   const content = jsonChunk.content;
                   fullText += content;
 
-                  // Send only the content to client (not the JSON wrapper)
-                  controller.enqueue(encoder.encode(content));
+                  // Try to send to client, but don't fail if disconnected
+                  try {
+                    controller.enqueue(encoder.encode(content));
+                  } catch {
+                    if (!clientDisconnected) {
+                      clientDisconnected = true;
+                      console.log(
+                        "ℹ️ [Grant Finder API] Client disconnected, continuing in background"
+                      );
+                    }
+                  }
                 }
                 // Log begin/end events for debugging
                 else if (jsonChunk.type === "begin") {
@@ -188,10 +242,7 @@ export async function POST(req: NextRequest) {
                   console.log("🔍 [Grant Finder API] Stream ended");
                 }
               } catch {
-                console.warn(
-                  "⚠️ [Grant Finder API] Failed to parse JSON chunk:",
-                  line
-                );
+                // Silently skip unparseable chunks
               }
             }
           }
@@ -202,42 +253,44 @@ export async function POST(req: NextRequest) {
               const jsonChunk = JSON.parse(buffer);
               if (jsonChunk.type === "item" && jsonChunk.content) {
                 fullText += jsonChunk.content;
-                controller.enqueue(encoder.encode(jsonChunk.content));
+                try {
+                  controller.enqueue(encoder.encode(jsonChunk.content));
+                } catch {
+                  clientDisconnected = true;
+                }
               }
             } catch {
-              console.warn("⚠️ [Grant Finder API] Failed to parse final chunk");
+              // Silently skip final unparseable chunk
             }
           }
 
-          // Close the stream
-          controller.close();
+          // Close the stream if still connected
+          try {
+            controller.close();
+          } catch {
+            // Controller already closed by client disconnect
+            clientDisconnected = true;
+          }
 
-          // After streaming completes, save to database
-          console.log("🔍 [Grant Finder API] Full n8n response:", fullText);
-
-          // 4. Save assistant response
-          await prisma.aiChatMessage.create({
-            data: {
-              role: "ASSISTANT",
-              content: fullText,
-              chatId: chat.id,
-              metadata: {
-                timestamp: Date.now(),
-                model: "n8n-agent",
-                source: "n8n",
-              },
-            },
-          });
-
-          // 5. Update chat's updatedAt
-          await prisma.aiChat.update({
-            where: { id: chat.id },
-            data: { updatedAt: new Date() },
-          });
+          // Save to database (runs in background if client disconnected)
+          await saveToDatabase();
         } catch (error) {
-          console.error("❌ [Grant Finder API] Streaming error:", error);
-          controller.error(error);
+          clientDisconnected = true;
+          console.log(
+            "ℹ️ [Grant Finder API] Stream error (likely client disconnect):",
+            error
+          );
+          // Still save to database even on error
+          await saveToDatabase();
+        } finally {
+          reader.releaseLock();
         }
+      },
+      cancel() {
+        clientDisconnected = true;
+        console.log(
+          "ℹ️ [Grant Finder API] Client cancelled stream, will save to DB when complete"
+        );
       },
     });
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp, Info, Loader2, Mic, Paperclip, Square } from "lucide-react";
 import { omit } from "remeda";
@@ -216,6 +216,10 @@ export function MessageInput({
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [textAreaHeight, setTextAreaHeight] = useState<number>(0);
+  const [manualHeight, setManualHeight] = useState<number | null>(null);
+  const [isResizing, setIsResizing] = useState(false);
+  const resizeStartY = useRef<number>(0);
+  const resizeStartHeight = useRef<number>(0);
 
   useEffect(() => {
     if (textAreaRef.current) {
@@ -228,82 +232,143 @@ export function MessageInput({
 
   useAutosizeTextArea({
     ref: textAreaRef,
-    maxHeight: 240,
+    maxHeight: manualHeight || 240,
     borderWidth: 1,
     dependencies: [props.value, showFileList],
   });
 
+  // Handle resize start
+  const handleResizeStart = useCallback(
+    (clientY: number) => {
+      if (isEmpty) return; // Don't allow resize in empty state
+      setIsResizing(true);
+      resizeStartY.current = clientY;
+      resizeStartHeight.current = textAreaRef.current?.offsetHeight || 48;
+    },
+    [isEmpty]
+  );
+
+  // Handle resize move
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaY = resizeStartY.current - e.clientY;
+      const newHeight = Math.max(
+        48,
+        Math.min(600, resizeStartHeight.current + deltaY)
+      );
+      setManualHeight(newHeight);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const deltaY = resizeStartY.current - e.touches[0].clientY;
+      const newHeight = Math.max(
+        48,
+        Math.min(600, resizeStartHeight.current + deltaY)
+      );
+      setManualHeight(newHeight);
+    };
+
+    const handleEnd = () => {
+      setIsResizing(false);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleEnd);
+    document.addEventListener("touchmove", handleTouchMove);
+    document.addEventListener("touchend", handleEnd);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleEnd);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleEnd);
+    };
+  }, [isResizing]);
+
   return (
-    <div
-      className="relative flex w-full"
-      onDragOver={onDragOver}
-      onDragLeave={onDragLeave}
-      onDrop={onDrop}
-    >
-      {enableInterrupt && (
-        <InterruptPrompt
-          isOpen={showInterruptPrompt}
-          close={() => setShowInterruptPrompt(false)}
-        />
-      )}
-
-      <RecordingPrompt
-        isVisible={isRecording}
-        onStopRecording={stopRecording}
-      />
-
-      <div className="relative flex w-full items-center space-x-2">
-        <div className="relative flex-1">
-          <textarea
-            aria-label="Write your prompt here"
-            placeholder={currentPlaceholder}
-            ref={textAreaRef}
-            onPaste={onPaste}
-            onKeyDown={onKeyDown}
-            className={cn(
-              "mb-2 z-10 w-full grow resize-none rounded-xl border border-input bg-background text-sm ring-offset-background transition-[border] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
-              isEmpty ? "p-3 pr-24" : "p-4 pr-24 min-h-[180px]",
-              showFileList && "pb-16",
-              className
-            )}
-            {...(props.allowAttachments
-              ? omit(props, ["allowAttachments", "files", "setFiles"])
-              : omit(props, ["allowAttachments"]))}
+    <div className="w-full px-8 md:px-16 lg:px-24">
+      <div
+        className="relative flex w-full"
+        onDragOver={onDragOver}
+        onDragLeave={onDragLeave}
+        onDrop={onDrop}
+      >
+        {enableInterrupt && (
+          <InterruptPrompt
+            isOpen={showInterruptPrompt}
+            close={() => setShowInterruptPrompt(false)}
           />
+        )}
 
-          {props.allowAttachments && (
-            <div className="absolute inset-x-3 bottom-0 z-20 overflow-x-scroll py-3">
-              <div className="flex space-x-3">
-                <AnimatePresence mode="popLayout">
-                  {props.files?.map((file) => {
-                    return (
-                      <FilePreview
-                        key={file.name + String(file.lastModified)}
-                        file={file}
-                        onRemove={() => {
-                          props.setFiles((files) => {
-                            if (!files) return null;
+        <RecordingPrompt
+          isVisible={isRecording}
+          onStopRecording={stopRecording}
+        />
 
-                            const filtered = Array.from(files).filter(
-                              (f) => f !== file
-                            );
-                            if (filtered.length === 0) return null;
-                            return filtered;
-                          });
-                        }}
-                      />
-                    );
-                  })}
-                </AnimatePresence>
+        <div className="relative flex w-full items-center">
+          <div className="relative w-full">
+            {/* Resize handle - only show when not empty */}
+            {!isEmpty && (
+              <div
+                className="absolute left-0 right-0 top-0 z-30 flex h-3 cursor-ns-resize items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
+                onMouseDown={(e) => handleResizeStart(e.clientY)}
+                onTouchStart={(e) => handleResizeStart(e.touches[0].clientY)}
+              >
+                <div className="h-1 w-12 rounded-full bg-border" />
               </div>
-            </div>
-          )}
-        </div>
-      </div>
+            )}
+            <textarea
+              aria-label="Write your prompt here"
+              placeholder={currentPlaceholder}
+              ref={textAreaRef}
+              onPaste={onPaste}
+              onKeyDown={onKeyDown}
+              className={cn(
+                "mb-2 z-10 w-full grow resize-none rounded-xl border border-input bg-background text-sm ring-offset-background transition-[border] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+                isEmpty ? "p-3 pr-24" : "p-3 pr-24",
+                showFileList && "pb-16",
+                className
+              )}
+              {...(props.allowAttachments
+                ? omit(props, ["allowAttachments", "files", "setFiles"])
+                : omit(props, ["allowAttachments"]))}
+            />
 
-      <div className="absolute right-3 top-3 z-20 flex gap-2">
-        {/* Attachment button - commented out */}
-        {/* {props.allowAttachments && (
+            {props.allowAttachments && (
+              <div className="absolute inset-x-3 bottom-0 z-20 overflow-x-scroll py-3">
+                <div className="flex space-x-3">
+                  <AnimatePresence mode="popLayout">
+                    {props.files?.map((file) => {
+                      return (
+                        <FilePreview
+                          key={file.name + String(file.lastModified)}
+                          file={file}
+                          onRemove={() => {
+                            props.setFiles((files) => {
+                              if (!files) return null;
+
+                              const filtered = Array.from(files).filter(
+                                (f) => f !== file
+                              );
+                              if (filtered.length === 0) return null;
+                              return filtered;
+                            });
+                          }}
+                        />
+                      );
+                    })}
+                  </AnimatePresence>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="absolute right-3 top-3 z-20 flex gap-2">
+          {/* Attachment button - commented out */}
+          {/* {props.allowAttachments && (
           <Button
             type="button"
             size="icon"
@@ -318,50 +383,53 @@ export function MessageInput({
             <Paperclip className="h-4 w-4" />
           </Button>
         )} */}
-        {isSpeechSupported && (
-          <Button
-            type="button"
-            variant="outline"
-            className={cn("h-8 w-8", isListening && "text-primary")}
-            aria-label="Voice input"
-            size="icon"
-            onClick={toggleListening}
-          >
-            <Mic className="h-4 w-4" />
-          </Button>
+          {isSpeechSupported && (
+            <Button
+              type="button"
+              variant="outline"
+              className={cn("h-8 w-8", isListening && "text-primary")}
+              aria-label="Voice input"
+              size="icon"
+              onClick={toggleListening}
+            >
+              <Mic className="h-4 w-4" />
+            </Button>
+          )}
+          {isGenerating && stop ? (
+            <Button
+              type="button"
+              size="icon"
+              className="h-8 w-8"
+              aria-label="Stop generating"
+              onClick={stop}
+            >
+              <Square className="h-3 w-3 animate-pulse" fill="currentColor" />
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              size="icon"
+              className="h-8 w-8 transition-opacity"
+              aria-label="Send message"
+              disabled={props.value === "" || isGenerating}
+            >
+              <ArrowUp className="h-5 w-5" />
+            </Button>
+          )}
+        </div>
+
+        {props.allowAttachments && (
+          <FileUploadOverlay isDragging={isDragging} />
         )}
-        {isGenerating && stop ? (
-          <Button
-            type="button"
-            size="icon"
-            className="h-8 w-8"
-            aria-label="Stop generating"
-            onClick={stop}
-          >
-            <Square className="h-3 w-3 animate-pulse" fill="currentColor" />
-          </Button>
-        ) : (
-          <Button
-            type="submit"
-            size="icon"
-            className="h-8 w-8 transition-opacity"
-            aria-label="Send message"
-            disabled={props.value === "" || isGenerating}
-          >
-            <ArrowUp className="h-5 w-5" />
-          </Button>
-        )}
+
+        <RecordingControls
+          isRecording={isRecording}
+          isTranscribing={isTranscribing}
+          audioStream={audioStream}
+          textAreaHeight={textAreaHeight}
+          onStopRecording={stopRecording}
+        />
       </div>
-
-      {props.allowAttachments && <FileUploadOverlay isDragging={isDragging} />}
-
-      <RecordingControls
-        isRecording={isRecording}
-        isTranscribing={isTranscribing}
-        audioStream={audioStream}
-        textAreaHeight={textAreaHeight}
-        onStopRecording={stopRecording}
-      />
     </div>
   );
 }

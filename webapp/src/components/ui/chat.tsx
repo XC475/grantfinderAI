@@ -258,16 +258,16 @@ export function ChatMessages({
       onScroll={handleScroll}
       onTouchStart={handleTouchStart}
     >
-      <div className="max-w-full [grid-column:1/1] [grid-row:1/1]">
+      <div className="max-w-full mx-auto w-full [grid-column:1/1] [grid-row:1/1]">
         {children}
       </div>
 
       {!shouldAutoScroll && (
-        <div className="pointer-events-none flex flex-1 items-end justify-end [grid-column:1/1] [grid-row:1/1]">
-          <div className="sticky bottom-0 left-0 flex w-full justify-end">
+        <div className="pointer-events-none flex flex-1 items-end justify-center [grid-column:1/1] [grid-row:1/1]">
+          <div className="sticky bottom-0 left-0 flex w-full justify-center">
             <Button
-              onClick={scrollToBottom}
-              className="pointer-events-auto h-8 w-8 rounded-full ease-in-out animate-in fade-in-0 slide-in-from-bottom-1"
+              onClick={() => scrollToBottom("smooth")}
+              className="pointer-events-auto h-8 w-8 rounded-full bg-background border border-border shadow-md hover:shadow-lg hover:bg-accent ease-in-out animate-in fade-in-0 slide-in-from-bottom-1"
               size="icon"
               variant="ghost"
             >
