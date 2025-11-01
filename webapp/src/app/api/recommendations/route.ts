@@ -130,18 +130,30 @@ export async function POST(req: NextRequest) {
 
     console.log("🔍 [Recommendations API] Raw n8n response type:", typeof data);
 
-    // Parse the response based on type - n8n returns {output: "[...]"}
+    // Parse the response based on type - n8n returns {output: "[...]"} or {output: "{...}"}
     if (typeof data === "object" && data.output) {
       try {
         if (typeof data.output === "string") {
-          // Parse the stringified JSON array
-          recommendationsArray = JSON.parse(data.output);
+          // Parse the stringified JSON
+          const parsed = JSON.parse(data.output);
+
+          // Check if it's an array or a single object
+          if (Array.isArray(parsed)) {
+            recommendationsArray = parsed;
+          } else if (typeof parsed === "object" && parsed !== null) {
+            // Single object - wrap it in an array
+            recommendationsArray = [parsed];
+          }
+
           console.log(
-            `🔍 [Recommendations API] Parsed ${recommendationsArray.length} recommendations from output string`
+            `🔍 [Recommendations API] Parsed ${recommendationsArray.length} recommendation(s) from output string`
           );
         } else if (Array.isArray(data.output)) {
           // Already an array
           recommendationsArray = data.output;
+        } else if (typeof data.output === "object" && data.output !== null) {
+          // Single object - wrap it in an array
+          recommendationsArray = [data.output];
         }
       } catch (parseError) {
         console.error(
@@ -152,6 +164,9 @@ export async function POST(req: NextRequest) {
     } else if (Array.isArray(data)) {
       // Direct array format
       recommendationsArray = data;
+    } else if (typeof data === "object" && data !== null) {
+      // Single object response - wrap it in an array
+      recommendationsArray = [data];
     }
 
     console.log(
