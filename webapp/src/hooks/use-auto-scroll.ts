@@ -10,11 +10,11 @@ export function useAutoScroll(dependencies: React.DependencyList) {
   const previousScrollTop = useRef<number | null>(null);
   const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
     if (containerRef.current) {
       containerRef.current.scrollTo({
         top: containerRef.current.scrollHeight,
-        behavior: "smooth",
+        behavior,
       });
     }
   };
@@ -61,7 +61,7 @@ export function useAutoScroll(dependencies: React.DependencyList) {
 
   useEffect(() => {
     if (shouldAutoScroll) {
-      scrollToBottom();
+      scrollToBottom("auto");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
