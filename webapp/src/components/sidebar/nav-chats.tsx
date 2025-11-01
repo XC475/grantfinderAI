@@ -4,7 +4,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Trash2, MessageSquare, Plus, Loader2 } from "lucide-react";
+import {
+  Trash2,
+  MessageSquare,
+  Plus,
+  Loader2,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -39,6 +46,7 @@ export function NavChats({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [chatToDelete, setChatToDelete] = useState<Chat | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
   const { state } = useSidebar();
 
@@ -138,12 +146,26 @@ export function NavChats({
   if (loading) {
     return (
       <SidebarGroup>
-        <div className="flex items-center justify-between">
-          <SidebarGroupLabel>Chats</SidebarGroupLabel>
+        <div className="group/header flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <SidebarGroupLabel>Chats</SidebarGroupLabel>
+            <button
+              className="opacity-0 group-hover/header:opacity-100 h-4 w-4 text-muted-foreground cursor-pointer"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+            >
+              {isCollapsed ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
+              )}
+            </button>
+          </div>
         </div>
-        <div className="flex items-center justify-center py-4">
-          <Spinner size="sm" />
-        </div>
+        {!isCollapsed && (
+          <div className="flex items-center justify-center py-4">
+            <Spinner size="sm" />
+          </div>
+        )}
       </SidebarGroup>
     );
   }
@@ -155,8 +177,20 @@ export function NavChats({
 
   return (
     <SidebarGroup>
-      <div className="flex items-center justify-between">
-        <SidebarGroupLabel>Chats</SidebarGroupLabel>
+      <div className="group/header flex items-center justify-between">
+        <div className="flex items-center gap-1">
+          <SidebarGroupLabel>Chats</SidebarGroupLabel>
+          <button
+            className="opacity-0 group-hover/header:opacity-100 h-4 w-4 text-muted-foreground cursor-pointer"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+          >
+            {isCollapsed ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </button>
+        </div>
         <Button
           variant="ghost"
           size="sm"
@@ -173,44 +207,48 @@ export function NavChats({
         </Button>
       </div>
 
-      {chats.length === 0 ? (
-        <div className="text-sm text-muted-foreground py-4 px-2">
-          No chats yet. Start a new conversation!
-        </div>
-      ) : (
-        <SidebarMenu>
-          {chats.map((chat) => (
-            <div
-              key={chat.id}
-              className="group flex items-center gap-2 p-2 text-sm hover:bg-muted rounded-md"
-            >
-              <MessageSquare className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-              <Link
-                href={
-                  organizationSlug
-                    ? `/private/${organizationSlug}/chat?chatId=${chat.id}`
-                    : `/private/chat?chatId=${chat.id}`
-                }
-                className="flex-1 min-w-0"
-              >
-                <div className="font-medium truncate">{chat.title}</div>
-                <div className="text-xs text-muted-foreground flex items-center gap-2">
-                  <span>{chat._count.messages} messages</span>
-                  <span>•</span>
-                  <span>{formatDate(chat.updatedAt)}</span>
-                </div>
-              </Link>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDeleteClick(chat)}
-                className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
-              >
-                <Trash2 className="h-3 w-3" />
-              </Button>
+      {!isCollapsed && (
+        <>
+          {chats.length === 0 ? (
+            <div className="text-sm text-muted-foreground py-4 px-2">
+              No chats yet. Start a new conversation!
             </div>
-          ))}
-        </SidebarMenu>
+          ) : (
+            <SidebarMenu>
+              {chats.map((chat) => (
+                <div
+                  key={chat.id}
+                  className="group flex items-center gap-2 p-2 text-sm hover:bg-muted rounded-md"
+                >
+                  <MessageSquare className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                  <Link
+                    href={
+                      organizationSlug
+                        ? `/private/${organizationSlug}/chat?chatId=${chat.id}`
+                        : `/private/chat?chatId=${chat.id}`
+                    }
+                    className="flex-1 min-w-0"
+                  >
+                    <div className="font-medium truncate">{chat.title}</div>
+                    <div className="text-xs text-muted-foreground flex items-center gap-2">
+                      <span>{chat._count.messages} messages</span>
+                      <span>•</span>
+                      <span>{formatDate(chat.updatedAt)}</span>
+                    </div>
+                  </Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDeleteClick(chat)}
+                    className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+            </SidebarMenu>
+          )}
+        </>
       )}
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
