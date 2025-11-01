@@ -8,12 +8,10 @@ import {
   GalleryVerticalEnd,
   BotMessageSquare,
   FileText,
-  Bookmark,
   ClipboardList,
   LayoutDashboard,
   Building2,
   Users,
-  Sparkles,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
@@ -108,19 +106,9 @@ const data = {
       icon: BotMessageSquare,
     },
     {
-      title: "Grant Search",
+      title: "Grants",
       url: "/private/grants",
       icon: FileText,
-    },
-    {
-      title: "Recommendations",
-      url: "/private/recommendations",
-      icon: Sparkles,
-    },
-    {
-      title: "Bookmarks",
-      url: "/private/bookmarks",
-      icon: Bookmark,
     },
   ],
   navOrganization: [
