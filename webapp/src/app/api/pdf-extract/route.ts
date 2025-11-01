@@ -42,12 +42,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Convert file to buffer
+    // Convert file to Uint8Array (required by unpdf)
     const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    const uint8Array = new Uint8Array(arrayBuffer);
 
     // Use unpdf - designed for serverless environments without canvas dependencies
-    const { text, totalPages } = await extractText(buffer);
+    const { text, totalPages } = await extractText(uint8Array);
 
     // unpdf returns text as an array (one per page), join them
     const joinedText = Array.isArray(text) ? text.join("\n\n") : text;
