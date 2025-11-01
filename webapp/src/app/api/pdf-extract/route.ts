@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { extractText } from "unpdf";
 
 // Force Node.js runtime instead of Edge runtime
 export const runtime = "nodejs";
@@ -43,60 +44,16 @@ export async function POST(req: NextRequest) {
 
     // Convert file to buffer
     const arrayBuffer = await file.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
+    const buffer = Buffer.from(arrayBuffer);
 
-    // Use pdfjs-dist directly for text extraction (no canvas/native dependencies needed)
-    const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
-    const path = await import("path");
+    // Use unpdf - designed for serverless environments without canvas dependencies
+    const { text, totalPages } = await extractText(buffer);
 
-    // Set the worker source to the correct location
-    // This is required for pdfjs to work properly
-    const workerPath = path.join(
-      process.cwd(),
-      "node_modules",
-      "pdfjs-dist",
-      "legacy",
-      "build",
-      "pdf.worker.mjs"
-    );
-
-    pdfjsLib.GlobalWorkerOptions.workerSrc = workerPath;
-
-    // Load PDF document
-    const loadingTask = pdfjsLib.getDocument({
-      data: uint8Array,
-      useSystemFonts: true,
-      useWorkerFetch: false,
-      isEvalSupported: false,
-      standardFontDataUrl: undefined,
-      disableAutoFetch: true,
-      disableStream: true,
-    });
-
-    const pdfDocument = await loadingTask.promise;
-    const numPages = pdfDocument.numPages;
-
-    // Extract text from all pages
-    const textPromises: Promise<string>[] = [];
-    for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-      textPromises.push(
-        pdfDocument.getPage(pageNum).then(async (page) => {
-          const textContent = await page.getTextContent();
-          const strings = textContent.items.map((item: unknown) => {
-            return typeof item === "object" && item !== null && "str" in item
-              ? String((item as { str: string }).str)
-              : "";
-          });
-          return strings.join(" ");
-        })
-      );
-    }
-
-    const pagesText = await Promise.all(textPromises);
-    let extractedText = pagesText.join("\n\n");
+    // unpdf returns text as an array (one per page), join them
+    const joinedText = Array.isArray(text) ? text.join("\n\n") : text;
 
     // Basic text cleaning
-    extractedText = extractedText
+    let extractedText = joinedText
       .replace(/\s+/g, " ") // Normalize whitespace
       .replace(/\n{3,}/g, "\n\n") // Remove excessive line breaks
       .trim();
@@ -111,7 +68,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       text: extractedText,
-      pageCount: numPages,
+      pageCount: totalPages,
     });
   } catch (error) {
     console.error("Error extracting PDF text:", error);
