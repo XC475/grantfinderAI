@@ -28,6 +28,7 @@ import {
   Image as ImageIcon,
   Info,
   Save,
+  Sparkles,
 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -62,6 +63,7 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [summarizing, setSummarizing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
@@ -220,6 +222,55 @@ export default function ProfilePage() {
       if (pdfInputRef.current) {
         pdfInputRef.current.value = "";
       }
+    }
+  };
+
+  const handleSummarizeWithAI = async () => {
+    if (!organization || !organization.strategicPlan) {
+      toast.error("Please add a strategic plan first");
+      return;
+    }
+
+    if (organization.strategicPlan.length < 100) {
+      toast.error("Strategic plan is too short to summarize");
+      return;
+    }
+
+    setSummarizing(true);
+    try {
+      const response = await fetch("/api/strategic-plan-summarize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          strategicPlanText: organization.strategicPlan,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to summarize strategic plan");
+      }
+
+      const data = await response.json();
+
+      // Update the strategic plan field with the AI summary
+      setOrganization({
+        ...organization,
+        strategicPlan: data.summary,
+      });
+
+      toast.success("Strategic plan summarized successfully with AI");
+    } catch (error) {
+      console.error("Error summarizing strategic plan:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to summarize strategic plan"
+      );
+    } finally {
+      setSummarizing(false);
     }
   };
 
@@ -425,35 +476,62 @@ export default function ProfilePage() {
                   rows={6}
                   placeholder="Paste your organization's strategic plan document here..."
                 />
-                <div className="flex items-center gap-2">
-                  <input
-                    ref={pdfInputRef}
-                    type="file"
-                    accept="application/pdf"
-                    onChange={handlePdfUpload}
-                    className="hidden"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => pdfInputRef.current?.click()}
-                    disabled={uploadingPdf}
-                  >
-                    {uploadingPdf ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Extracting text...
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload PDF
-                      </>
-                    )}
-                  </Button>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      ref={pdfInputRef}
+                      type="file"
+                      accept="application/pdf"
+                      onChange={handlePdfUpload}
+                      className="hidden"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => pdfInputRef.current?.click()}
+                      disabled={uploadingPdf || summarizing}
+                    >
+                      {uploadingPdf ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Extracting text...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="mr-2 h-4 w-4" />
+                          Upload PDF
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSummarizeWithAI}
+                      disabled={
+                        summarizing ||
+                        uploadingPdf ||
+                        !organization?.strategicPlan ||
+                        organization.strategicPlan.length < 100
+                      }
+                    >
+                      {summarizing ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Summarizing...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          Summarize with AI
+                        </>
+                      )}
+                    </Button>
+                  </div>
                   <p className="text-xs text-muted-foreground">
-                    Upload a PDF to extract and populate the strategic plan text
+                    Upload a PDF to extract text, or use AI to summarize and
+                    extract grant-relevant information
                   </p>
                 </div>
               </div>
