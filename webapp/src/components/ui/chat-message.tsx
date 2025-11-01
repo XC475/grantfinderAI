@@ -14,7 +14,7 @@ import {
 import { FilePreview } from "@/components/ui/file-preview";
 import { MarkdownRenderer } from "@/components/ui/markdown-renderer";
 
-const chatBubbleVariants = cva("group/message relative break-words text-sm", {
+const chatBubbleVariants = cva("group/message relative break-words text-base", {
   variants: {
     isUser: {
       true: "bg-primary text-primary-foreground rounded-lg p-3 sm:max-w-[70%]",
