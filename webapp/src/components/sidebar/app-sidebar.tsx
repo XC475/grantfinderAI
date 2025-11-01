@@ -29,6 +29,7 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { createClient } from "@/utils/supabase/client";
 
@@ -327,13 +328,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         }
         {...props}
       >
-        <SidebarHeader>
+        <SidebarHeader className="flex flex-row items-center justify-between">
           <TeamSwitcher
             organization={organization}
             currentSlug={organizationSlug}
             loading={loadingOrganization}
             logoSize={SIDEBAR_CONFIG.organizationLogoSize}
           />
+          <SidebarTrigger className="group-data-[collapsible=icon]:hidden" />
         </SidebarHeader>
         <SidebarContent>
           {isOnSettingsPage ? (
