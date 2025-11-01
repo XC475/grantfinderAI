@@ -61,7 +61,9 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const pdfInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -156,6 +158,68 @@ export default function ProfilePage() {
       toast.error("Failed to upload logo");
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handlePdfUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file || !organization) return;
+
+    // Validate file type
+    if (file.type !== "application/pdf") {
+      toast.error("Please upload a PDF file");
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File size must be less than 10MB");
+      return;
+    }
+
+    setUploadingPdf(true);
+    try {
+      // Create form data
+      const formData = new FormData();
+      formData.append("file", file);
+
+      // Upload to PDF extraction API
+      const response = await fetch("/api/pdf-extract", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to extract text from PDF");
+      }
+
+      const data = await response.json();
+
+      // Update the strategic plan field with extracted text
+      setOrganization({
+        ...organization,
+        strategicPlan: data.text,
+      });
+
+      toast.success(
+        `Text extracted successfully from ${data.pageCount} page${data.pageCount > 1 ? "s" : ""}`
+      );
+    } catch (error) {
+      console.error("Error uploading PDF:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to extract text from PDF"
+      );
+    } finally {
+      setUploadingPdf(false);
+      // Reset the file input
+      if (pdfInputRef.current) {
+        pdfInputRef.current.value = "";
+      }
     }
   };
 
@@ -361,6 +425,37 @@ export default function ProfilePage() {
                   rows={6}
                   placeholder="Paste your organization's strategic plan document here..."
                 />
+                <div className="flex items-center gap-2">
+                  <input
+                    ref={pdfInputRef}
+                    type="file"
+                    accept="application/pdf"
+                    onChange={handlePdfUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => pdfInputRef.current?.click()}
+                    disabled={uploadingPdf}
+                  >
+                    {uploadingPdf ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Extracting text...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="mr-2 h-4 w-4" />
+                        Upload PDF
+                      </>
+                    )}
+                  </Button>
+                  <p className="text-xs text-muted-foreground">
+                    Upload a PDF to extract and populate the strategic plan text
+                  </p>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
