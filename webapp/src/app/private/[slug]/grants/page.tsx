@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,10 +19,17 @@ import {
   ChevronDown,
   ChevronUp,
   CalendarIcon,
+  Sparkles,
+  Bookmark,
+  AlertCircle,
+  BarChart3,
+  DollarSign,
+  ExternalLink,
+  Calendar as CalendarIconSolid,
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
-import { Loading } from "@/components/ui/spinner";
+import { Loading, Spinner } from "@/components/ui/spinner";
 import { GrantCard, GrantCardData } from "@/components/grants/GrantCard";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -31,6 +38,9 @@ import {
   PopoverTrigger,
 } from "@/components/tiptap-ui-primitive/popover/popover";
 import { format } from "date-fns";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import prisma from "@/lib/prisma";
 
 interface Grant extends GrantCardData {
   contact_name: string | null;
@@ -68,9 +78,50 @@ interface ApplicationData {
   opportunityId: string;
 }
 
+type TabView = "search" | "recommendations" | "bookmarks";
+
+interface Recommendation {
+  id: string;
+  opportunityId: string;
+  fitScore: number;
+  fitReasoning: string;
+  fitDescription: string;
+  districtName: string;
+  queryDate: string;
+  createdAt: string;
+  grant?: Grant;
+}
+
+interface BookmarkData {
+  id: string;
+  createdAt: string;
+  opportunityId: number;
+  opportunity: GrantCardData | null;
+}
+
+interface Organization {
+  id: string;
+  name: string;
+  state: string | null;
+  city: string | null;
+  phone: string | null;
+  email: string | null;
+  missionStatement: string | null;
+  strategicPlan: string | null;
+  annualOperatingBudget: number | null;
+  fiscalYearEnd: string | null;
+}
+
 function GrantsSearchPage() {
   const params = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const slug = params.slug as string;
+  
+  // Tab state
+  const [activeTab, setActiveTab] = useState<TabView>(
+    (searchParams.get("tab") as TabView) || "search"
+  );
   const [grants, setGrants] = useState<Grant[]>([]);
   const [loading, setLoading] = useState(true);
   const [initialLoad, setInitialLoad] = useState(true);
@@ -121,6 +172,16 @@ function GrantsSearchPage() {
     hasMore: false,
   });
   const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
+  
+  // Recommendations state
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [loadingRecommendations, setLoadingRecommendations] = useState(false);
+  const [runningRecommendations, setRunningRecommendations] = useState(false);
+  const [organization, setOrganization] = useState<Organization | null>(null);
+  
+  // Bookmarks state
+  const [bookmarks, setBookmarks] = useState<BookmarkData[]>([]);
+  const [loadingBookmarks, setLoadingBookmarks] = useState(false);
 
   // Get user session
   useEffect(() => {
@@ -399,17 +460,230 @@ function GrantsSearchPage() {
     // fetchGrants will be triggered automatically by the useEffect hooks
   };
 
+  // Fetch recommendations
+  const fetchRecommendations = async () => {
+    setLoadingRecommendations(true);
+    try {
+      // Fetch organization data
+      const orgResponse = await fetch("/api/organizations");
+      if (orgResponse.ok) {
+        const orgData = await orgResponse.json();
+        setOrganization(orgData);
+      }
+
+      // Fetch existing recommendations
+      const recResponse = await fetch("/api/recommendations/list");
+      if (recResponse.ok) {
+        const recData = await recResponse.json();
+        const recs = recData.recommendations || [];
+
+        // Fetch grant details for each recommendation
+        const recsWithGrants = await Promise.all(
+          recs.map(async (rec: Recommendation) => {
+            try {
+              const grantResponse = await fetch(`/api/grants/${rec.opportunityId}`);
+              if (grantResponse.ok) {
+                const grantData = await grantResponse.json();
+                return { ...rec, grant: grantData };
+              }
+            } catch (error) {
+              console.error(`Failed to fetch grant ${rec.opportunityId}:`, error);
+            }
+            return rec;
+          })
+        );
+
+        setRecommendations(recsWithGrants);
+      }
+    } catch (error) {
+      console.error("Error fetching recommendations:", error);
+      toast.error("Failed to load recommendations");
+    } finally {
+      setLoadingRecommendations(false);
+    }
+  };
+
+  const handleRunRecommendations = async () => {
+    setRunningRecommendations(true);
+    try {
+      const response = await fetch("/api/recommendations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: "Generate grant recommendations for our organization",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate recommendations");
+      }
+
+      toast.success("Recommendations generated successfully!");
+      await fetchRecommendations();
+    } catch (error) {
+      console.error("Error generating recommendations:", error);
+      toast.error("Failed to generate recommendations. Please try again.");
+    } finally {
+      setRunningRecommendations(false);
+    }
+  };
+
+  // Fetch bookmarks
+  const fetchBookmarks = async () => {
+    setLoadingBookmarks(true);
+    try {
+      const res = await fetch("/api/bookmarks");
+      if (!res.ok) throw new Error(`Failed: ${res.status}`);
+      const data = await res.json();
+      setBookmarks(data);
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to load bookmarks");
+    } finally {
+      setLoadingBookmarks(false);
+    }
+  };
+
+  const removeBookmark = async (opportunityId: number) => {
+    try {
+      const res = await fetch(`/api/grants/${opportunityId}/bookmark`, {
+        method: "DELETE",
+      });
+      if (!res.ok && res.status !== 204) throw new Error("Failed to remove");
+      setBookmarks((prev) =>
+        prev.filter((b) => b.opportunityId !== opportunityId)
+      );
+      // Also update savedGrants state for consistency
+      setSavedGrants((prev) => prev.filter((id) => id !== opportunityId));
+      toast.success("Removed from bookmarks");
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to remove bookmark");
+    }
+  };
+
+  // Fetch data based on active tab
+  useEffect(() => {
+    if (activeTab === "recommendations") {
+      fetchRecommendations();
+    } else if (activeTab === "bookmarks") {
+      fetchBookmarks();
+    }
+  }, [activeTab]);
+
+  // Helper functions for recommendations
+  const isProfileComplete = () => {
+    if (!organization) return false;
+    return !!(
+      organization.name &&
+      organization.state &&
+      organization.city &&
+      organization.phone &&
+      organization.email &&
+      organization.missionStatement &&
+      organization.strategicPlan &&
+      organization.annualOperatingBudget &&
+      organization.fiscalYearEnd
+    );
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  const handleTabChange = (tab: TabView) => {
+    setActiveTab(tab);
+    router.push(`/private/${slug}/grants?tab=${tab}`, { scroll: false });
+  };
+
   return (
     <div className="p-4 mx-auto w-full">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Grant Opportunities</h1>
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold mb-2">Grants</h1>
         <p className="text-gray-600">
-          Search and discover funding opportunities that match your needs.
+          Discover, search, and manage grant opportunities
         </p>
       </div>
 
-      {/* Search Form */}
-      <Card className="mb-6">
+      {/* Tab Navigation */}
+      <div className="mb-6">
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex space-x-8">
+            <button
+              onClick={() => handleTabChange("search")}
+              className={`
+                py-4 px-1 border-b-2 font-medium text-sm transition-colors
+                ${
+                  activeTab === "search"
+                    ? "border-primary text-primary"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }
+              `}
+            >
+              <Search className="inline h-4 w-4 mr-2" />
+              Search Grants
+              {pagination.total > 0 && (
+                <span className="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                  {pagination.total}
+                </span>
+              )}
+            </button>
+
+            <button
+              onClick={() => handleTabChange("recommendations")}
+              className={`
+                py-4 px-1 border-b-2 font-medium text-sm transition-colors
+                ${
+                  activeTab === "recommendations"
+                    ? "border-primary text-primary"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }
+              `}
+            >
+              <Sparkles className="inline h-4 w-4 mr-2" />
+              Recommendations
+              {recommendations.length > 0 && (
+                <span className="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+                  {recommendations.length}
+                </span>
+              )}
+            </button>
+
+            <button
+              onClick={() => handleTabChange("bookmarks")}
+              className={`
+                py-4 px-1 border-b-2 font-medium text-sm transition-colors
+                ${
+                  activeTab === "bookmarks"
+                    ? "border-primary text-primary"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }
+              `}
+            >
+              <Bookmark className="inline h-4 w-4 mr-2" />
+              Bookmarks
+              {bookmarks.length > 0 && (
+                <span className="ml-2 text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded-full">
+                  {bookmarks.length}
+                </span>
+              )}
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      {/* Conditional Content Based on Active Tab */}
+      {activeTab === "search" && (
+        <>
+          {/* Search Form */}
+          <Card className="mb-6">
         <CardHeader>
           <CardTitle>Search Grants</CardTitle>
         </CardHeader>
@@ -790,9 +1064,11 @@ function GrantsSearchPage() {
       </div>
 
       {/* Grants List */}
-      <div className="space-y-4">
+      <div className="space-y-4 min-h-[400px]">
         {loading && grants.length === 0 ? (
-          <Loading message="Loading grants..." />
+          <div className="flex items-center justify-center h-[400px]">
+            <Loading message="Loading grants..." />
+          </div>
         ) : grants.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-600 mb-4">
@@ -832,6 +1108,252 @@ function GrantsSearchPage() {
             {loading ? "Loading..." : "Load More"}
           </Button>
         </div>
+      )}
+        </>
+      )}
+
+      {/* Recommendations View */}
+      {activeTab === "recommendations" && (
+        <>
+          {loadingRecommendations ? (
+            <div className="flex items-center justify-center min-h-[400px]">
+              <Spinner size="lg" />
+            </div>
+          ) : (
+            <>
+              {/* Profile Incomplete Alert */}
+              {!isProfileComplete() && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Profile Incomplete</AlertTitle>
+                  <AlertDescription className="flex items-center justify-between">
+                    <span>
+                      Please complete all required fields in your organization profile
+                      to get personalized grant recommendations.
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => router.push(`/private/${slug}/profile`)}
+                    >
+                      Go to Profile
+                    </Button>
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Run Recommendations Button */}
+              {isProfileComplete() && recommendations.length === 0 && (
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center py-12">
+                    <Sparkles className="h-12 w-12 text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium mb-2">
+                      Ready to Get Recommendations
+                    </h3>
+                    <p className="text-sm text-muted-foreground text-center mb-6 max-w-md">
+                      Your profile is complete! Click the button below to generate
+                      AI-powered grant recommendations tailored to your organization.
+                    </p>
+                    <Button
+                      onClick={handleRunRecommendations}
+                      disabled={runningRecommendations}
+                      size="lg"
+                    >
+                      {runningRecommendations ? (
+                        <>
+                          <Spinner size="sm" className="mr-2" />
+                          Generating Recommendations...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-5 w-5 mr-2" />
+                          Run Recommendations
+                        </>
+                      )}
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Show Recommendations */}
+              {isProfileComplete() && recommendations.length > 0 && (
+                <>
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground">
+                        Showing {recommendations.length} personalized recommendations
+                      </p>
+                    </div>
+                    <Button
+                      onClick={handleRunRecommendations}
+                      disabled={runningRecommendations}
+                      variant="outline"
+                      size="sm"
+                    >
+                      {runningRecommendations ? (
+                        <>
+                          <Spinner size="sm" className="mr-2" />
+                          Regenerating...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-4 w-4 mr-2" />
+                          Regenerate
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {recommendations.map((rec) => (
+                      <Card
+                        key={rec.id}
+                        className="hover:shadow-md transition-shadow flex flex-col"
+                      >
+                        <CardHeader>
+                          <div className="flex items-start justify-between gap-2">
+                            <CardTitle className="text-lg leading-tight line-clamp-2">
+                              {rec.grant?.title || `Grant #${rec.opportunityId}`}
+                            </CardTitle>
+                            <Badge
+                              variant={
+                                rec.fitScore >= 80
+                                  ? "default"
+                                  : rec.fitScore >= 60
+                                    ? "secondary"
+                                    : "outline"
+                              }
+                              className="shrink-0"
+                            >
+                              <BarChart3 className="h-3 w-3 mr-1" />
+                              {rec.fitScore}%
+                            </Badge>
+                          </div>
+                          {rec.grant?.agency && (
+                            <p className="text-sm text-muted-foreground">
+                              {rec.grant.agency}
+                            </p>
+                          )}
+                        </CardHeader>
+                        <CardContent className="flex flex-col h-full flex-1">
+                          <div className="flex-1 space-y-4">
+                            {rec.grant && (
+                              <div className="space-y-2 text-sm pb-3 border-b">
+                                <div className="flex items-center gap-2">
+                                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                                  <span className="font-medium">
+                                    {rec.grant.total_funding_amount
+                                      ? `$${rec.grant.total_funding_amount.toLocaleString()}`
+                                      : rec.grant.award_min && rec.grant.award_max
+                                        ? `$${rec.grant.award_min.toLocaleString()} - $${rec.grant.award_max.toLocaleString()}`
+                                        : "Amount not specified"}
+                                  </span>
+                                </div>
+                                {rec.grant.close_date && (
+                                  <div className="flex items-center gap-2">
+                                    <CalendarIconSolid className="h-4 w-4 text-muted-foreground" />
+                                    <span>
+                                      Closes: {formatDate(rec.grant.close_date)}
+                                    </span>
+                                  </div>
+                                )}
+                                <Badge variant="secondary" className="text-xs">
+                                  {rec.grant.status}
+                                </Badge>
+                              </div>
+                            )}
+
+                            <div>
+                              <h4 className="font-medium text-sm mb-1">
+                                Why This Fits
+                              </h4>
+                              <p className="text-sm text-muted-foreground line-clamp-3">
+                                {rec.fitDescription}
+                              </p>
+                            </div>
+
+                            <details className="text-xs text-muted-foreground">
+                              <summary className="cursor-pointer font-medium hover:text-foreground">
+                                View detailed analysis
+                              </summary>
+                              <p className="mt-2 pl-2 border-l-2 border-blue-200">
+                                {rec.fitReasoning}
+                              </p>
+                            </details>
+
+                            <div className="text-xs text-muted-foreground flex items-center gap-2">
+                              <CalendarIconSolid className="h-3 w-3" />
+                              <span>Analyzed: {formatDate(rec.queryDate)}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex justify-between items-center mt-4 pt-4 border-t">
+                            <span className="text-xs text-muted-foreground">
+                              {rec.districtName}
+                            </span>
+                            <Button size="sm" variant="outline" asChild>
+                              <a
+                                href={
+                                  rec.grant?.url ||
+                                  `/private/${slug}/grants/${rec.opportunityId}`
+                                }
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                View Grant
+                                <ExternalLink className="h-4 w-4 ml-2" />
+                              </a>
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </>
+              )}
+            </>
+          )}
+        </>
+      )}
+
+      {/* Bookmarks View */}
+      {activeTab === "bookmarks" && (
+        <>
+          {loadingBookmarks ? (
+            <div className="flex items-center justify-center min-h-[400px]">
+              <Loading message="Loading bookmarks..." />
+            </div>
+          ) : bookmarks.length === 0 ? (
+            <div className="py-16 text-center">
+              <Bookmark className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-600 mb-2">No saved grants yet.</p>
+              <p className="text-sm text-gray-500">
+                Bookmark grants from the search to see them here.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {bookmarks.map((b) => {
+                const opp = b.opportunity;
+                if (!opp) return null;
+
+                return (
+                  <GrantCard
+                    key={b.id}
+                    grant={opp}
+                    organizationSlug={slug}
+                    isSaved={true}
+                    hasApplication={grantApplications.includes(opp.id)}
+                    isCreatingApplication={creatingApplication === opp.id}
+                    onToggleBookmark={removeBookmark}
+                    onCreateApplication={handleCreateApplication}
+                    fromBookmarks={true}
+                  />
+                );
+              })}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
