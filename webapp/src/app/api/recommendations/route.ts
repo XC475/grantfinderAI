@@ -129,16 +129,36 @@ export async function POST(req: NextRequest) {
     let recommendationsArray = [];
 
     console.log("🔍 [Recommendations API] Raw n8n response type:", typeof data);
+    console.log("🔍 [Recommendations API] Is array?", Array.isArray(data));
 
-    // Parse the response based on type - n8n returns {output: "[...]"} or {output: "{...}"}
-    if (typeof data === "object" && data.output) {
+    // Parse the response based on type - n8n returns [{output: "..."}] or {output: "..."}
+    let outputData = data;
+
+    // If data is an array, get the first element
+    if (Array.isArray(data) && data.length > 0) {
+      outputData = data[0];
+      console.log("🔍 [Recommendations API] Extracted first array element");
+    }
+
+    // Now check for output field in the extracted data
+    if (typeof outputData === "object" && outputData.output) {
       try {
-        if (typeof data.output === "string") {
+        if (typeof outputData.output === "string") {
           // Parse the stringified JSON
-          const parsed = JSON.parse(data.output);
+          const parsed = JSON.parse(outputData.output);
+          console.log(
+            "🔍 [Recommendations API] Parsed output:",
+            JSON.stringify(parsed, null, 2)
+          );
 
-          // Check if it's an array or a single object
-          if (Array.isArray(parsed)) {
+          // Check if parsed has ranked_grants field
+          if (parsed.ranked_grants && Array.isArray(parsed.ranked_grants)) {
+            recommendationsArray = parsed.ranked_grants;
+            console.log(
+              `🔍 [Recommendations API] Extracted ${recommendationsArray.length} grants from ranked_grants`
+            );
+          } else if (Array.isArray(parsed)) {
+            // Check if it's an array
             recommendationsArray = parsed;
           } else if (typeof parsed === "object" && parsed !== null) {
             // Single object - wrap it in an array
@@ -148,12 +168,15 @@ export async function POST(req: NextRequest) {
           console.log(
             `🔍 [Recommendations API] Parsed ${recommendationsArray.length} recommendation(s) from output string`
           );
-        } else if (Array.isArray(data.output)) {
+        } else if (Array.isArray(outputData.output)) {
           // Already an array
-          recommendationsArray = data.output;
-        } else if (typeof data.output === "object" && data.output !== null) {
+          recommendationsArray = outputData.output;
+        } else if (
+          typeof outputData.output === "object" &&
+          outputData.output !== null
+        ) {
           // Single object - wrap it in an array
-          recommendationsArray = [data.output];
+          recommendationsArray = [outputData.output];
         }
       } catch (parseError) {
         console.error(
@@ -161,12 +184,9 @@ export async function POST(req: NextRequest) {
           parseError
         );
       }
-    } else if (Array.isArray(data)) {
-      // Direct array format
-      recommendationsArray = data;
-    } else if (typeof data === "object" && data !== null) {
+    } else if (typeof outputData === "object" && outputData !== null) {
       // Single object response - wrap it in an array
-      recommendationsArray = [data];
+      recommendationsArray = [outputData];
     }
 
     console.log(
