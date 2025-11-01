@@ -182,7 +182,8 @@ function GrantsSearchPage() {
   // Bookmarks state
   const [bookmarks, setBookmarks] = useState<BookmarkData[]>([]);
   const [loadingBookmarks, setLoadingBookmarks] = useState(false);
-  const [bookmarksInitiallyFetched, setBookmarksInitiallyFetched] = useState(false);
+  const [bookmarksInitiallyFetched, setBookmarksInitiallyFetched] =
+    useState(false);
 
   // Cache state with timestamps (5 minute TTL)
   const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
@@ -236,7 +237,9 @@ function GrantsSearchPage() {
     if (bookmarksInitiallyFetched && !searchParams.get("tab")) {
       if (bookmarks.length > 0) {
         setActiveTab("bookmarks");
-        console.log("📌 Auto-switching to Bookmarks tab (you have saved grants)");
+        console.log(
+          "📌 Auto-switching to Bookmarks tab (you have saved grants)"
+        );
       }
     }
   }, [bookmarksInitiallyFetched, bookmarks.length, searchParams]);
@@ -616,7 +619,7 @@ function GrantsSearchPage() {
       console.log(
         `✅ Bookmarks fetched and cached (${validBookmarks.length} valid)`
       );
-      
+
       // Mark as initially fetched for tab switching logic
       if (!bookmarksInitiallyFetched) {
         setBookmarksInitiallyFetched(true);
