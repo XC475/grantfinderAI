@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,6 +22,7 @@ import {
   CalendarIcon,
   Sparkles,
   Bookmark,
+  BookmarkCheck,
   AlertCircle,
   BarChart3,
   DollarSign,
@@ -1364,19 +1366,47 @@ function GrantsSearchPage() {
                               {rec.grant?.title ||
                                 `Grant #${rec.opportunityId}`}
                             </CardTitle>
-                            <Badge
-                              variant={
-                                rec.fitScore >= 80
-                                  ? "default"
-                                  : rec.fitScore >= 60
-                                    ? "secondary"
-                                    : "outline"
-                              }
-                              className="shrink-0"
-                            >
-                              <BarChart3 className="h-3 w-3 mr-1" />
-                              {rec.fitScore}%
-                            </Badge>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <Badge
+                                variant={
+                                  rec.fitScore >= 80
+                                    ? "default"
+                                    : rec.fitScore >= 60
+                                      ? "secondary"
+                                      : "outline"
+                                }
+                              >
+                                <BarChart3 className="h-3 w-3 mr-1" />
+                                {rec.fitScore}%
+                              </Badge>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  if (rec.grant) {
+                                    handleSaveGrant(rec.grant.id);
+                                  }
+                                }}
+                                disabled={savingGrant === rec.grant?.id}
+                                className="h-8 w-8 p-0"
+                                aria-label={
+                                  rec.grant &&
+                                  savedGrants.includes(rec.grant.id)
+                                    ? "Remove bookmark"
+                                    : "Add bookmark"
+                                }
+                              >
+                                {savingGrant === rec.grant?.id ? (
+                                  <Spinner size="sm" />
+                                ) : rec.grant &&
+                                  savedGrants.includes(rec.grant.id) ? (
+                                  <BookmarkCheck className="h-4 w-4 text-primary" />
+                                ) : (
+                                  <Bookmark className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </div>
                           </div>
                           {rec.grant?.agency && (
                             <p className="text-sm text-muted-foreground">
@@ -1437,22 +1467,13 @@ function GrantsSearchPage() {
                             </div>
                           </div>
 
-                          <div className="flex justify-between items-center mt-4 pt-4 border-t">
-                            <span className="text-xs text-muted-foreground">
-                              {rec.districtName}
-                            </span>
+                          <div className="flex justify-end items-center mt-4 pt-4 border-t">
                             <Button size="sm" variant="outline" asChild>
-                              <a
-                                href={
-                                  rec.grant?.url ||
-                                  `/private/${slug}/grants/${rec.opportunityId}`
-                                }
-                                target="_blank"
-                                rel="noopener noreferrer"
+                              <Link
+                                href={`/private/${slug}/grants/${rec.opportunityId}`}
                               >
                                 View Grant
-                                <ExternalLink className="h-4 w-4 ml-2" />
-                              </a>
+                              </Link>
                             </Button>
                           </div>
                         </CardContent>
