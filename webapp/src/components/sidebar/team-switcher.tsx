@@ -164,7 +164,7 @@ export function TeamSwitcher({
             </SidebarMenuButton>
 
             {/* Trigger - shows on hover, positioned at same spot as logo */}
-            <div className="absolute top-0 left-0 opacity-0 group-hover/logo:opacity-100 transition-opacity">
+            <div className="absolute top-0 left-0 opacity-0 group-hover/logo:opacity-100 transition-opacity ml-0.5 mt-2">
               <SidebarTrigger />
             </div>
           </div>
