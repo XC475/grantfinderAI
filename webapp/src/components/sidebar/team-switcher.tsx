@@ -8,6 +8,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 interface Organization {
@@ -30,6 +31,9 @@ export function TeamSwitcher({
   loading = false,
   logoSize = "2rem",
 }: TeamSwitcherProps) {
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+
   if (loading) {
     return (
       <SidebarMenu>
@@ -54,10 +58,12 @@ export function TeamSwitcher({
                 className="animate-spin"
               />
             </div>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">Loading...</span>
-              <span className="truncate text-xs">Organization</span>
-            </div>
+            {!isCollapsed && (
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">Loading...</span>
+                <span className="truncate text-xs">Organization</span>
+              </div>
+            )}
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
@@ -87,10 +93,12 @@ export function TeamSwitcher({
                 }}
               />
             </div>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">No Organization</span>
-              <span className="truncate text-xs">Error</span>
-            </div>
+            {!isCollapsed && (
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">No Organization</span>
+                <span className="truncate text-xs">Error</span>
+              </div>
+            )}
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
@@ -137,10 +145,12 @@ export function TeamSwitcher({
               />
             </div>
           )}
-          <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-medium">{organization.name}</span>
-            <span className="truncate text-xs">Organization</span>
-          </div>
+          {!isCollapsed && (
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-medium">{organization.name}</span>
+              <span className="truncate text-xs">Organization</span>
+            </div>
+          )}
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>
