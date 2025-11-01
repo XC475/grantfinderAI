@@ -15,6 +15,9 @@ const workerPath = join(
 );
 PDFParse.setWorker(workerPath);
 
+// Force Node.js runtime instead of Edge runtime to support DOM APIs needed by pdf-parse
+export const runtime = "nodejs";
+
 export async function POST(req: NextRequest) {
   try {
     // Verify authentication
