@@ -474,7 +474,7 @@ function GrantsSearchPage() {
   };
 
   // Check if cache is valid
-  const isCacheValid = (cacheKey: 'recommendations' | 'bookmarks') => {
+  const isCacheValid = (cacheKey: "recommendations" | "bookmarks") => {
     const timestamp = cacheTimestamps.current[cacheKey];
     return timestamp > 0 && Date.now() - timestamp < CACHE_TTL;
   };
@@ -482,8 +482,12 @@ function GrantsSearchPage() {
   // Fetch recommendations
   const fetchRecommendations = async (force = false) => {
     // Check cache validity
-    if (!force && isCacheValid('recommendations') && recommendations.length > 0) {
-      console.log('📦 Using cached recommendations');
+    if (
+      !force &&
+      isCacheValid("recommendations") &&
+      recommendations.length > 0
+    ) {
+      console.log("📦 Using cached recommendations");
       return;
     }
     setLoadingRecommendations(true);
@@ -524,7 +528,7 @@ function GrantsSearchPage() {
 
         setRecommendations(recsWithGrants);
         cacheTimestamps.current.recommendations = Date.now();
-        console.log('✅ Recommendations fetched and cached');
+        console.log("✅ Recommendations fetched and cached");
       }
     } catch (error) {
       console.error("Error fetching recommendations:", error);
@@ -565,8 +569,8 @@ function GrantsSearchPage() {
   // Fetch bookmarks
   const fetchBookmarks = async (force = false) => {
     // Check cache validity
-    if (!force && isCacheValid('bookmarks') && bookmarks.length > 0) {
-      console.log('📦 Using cached bookmarks');
+    if (!force && isCacheValid("bookmarks") && bookmarks.length > 0) {
+      console.log("📦 Using cached bookmarks");
       return;
     }
     setLoadingBookmarks(true);
@@ -576,7 +580,7 @@ function GrantsSearchPage() {
       const data = await res.json();
       setBookmarks(data);
       cacheTimestamps.current.bookmarks = Date.now();
-      console.log('✅ Bookmarks fetched and cached');
+      console.log("✅ Bookmarks fetched and cached");
     } catch (e) {
       console.error(e);
       toast.error("Failed to load bookmarks");
