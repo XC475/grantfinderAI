@@ -1,19 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
-import { PDFParse } from "pdf-parse";
-import { join } from "path";
-
-// Configure worker for Node.js/Next.js environment
-// Point to the worker file in node_modules
-const workerPath = join(
-  process.cwd(),
-  "node_modules",
-  "pdf-parse",
-  "dist",
-  "worker",
-  "pdf.worker.mjs"
-);
-PDFParse.setWorker(workerPath);
 
 // Force Node.js runtime instead of Edge runtime to support DOM APIs needed by pdf-parse
 export const runtime = "nodejs";
@@ -59,8 +45,23 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
+    // Use dynamic import to load pdf-parse only at runtime in Node.js context
+    // This prevents DOMMatrix errors during module initialization
+    const { PDFParse } = await import("pdf-parse");
+    const { join } = await import("path");
+
+    // Configure worker for Node.js/Next.js environment
+    const workerPath = join(
+      process.cwd(),
+      "node_modules",
+      "pdf-parse",
+      "dist",
+      "worker",
+      "pdf.worker.mjs"
+    );
+    PDFParse.setWorker(workerPath);
+
     // Use pdf-parse v2 to extract text
-    // Note: pdf-parse must be installed: npm install pdf-parse
     const parser = new PDFParse({ data: buffer });
 
     try {
