@@ -752,7 +752,7 @@ function GrantsSearchPage() {
               <Bookmark className="inline h-4 w-4 mr-2" />
               Bookmarks
               {bookmarks.length > 0 && (
-                <span className="ml-2 text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded-full">
+                <span className="ml-2 text-xs bg-cyan-100 text-cyan-600 px-2 py-1 rounded-full">
                   {bookmarks.length}
                 </span>
               )}
