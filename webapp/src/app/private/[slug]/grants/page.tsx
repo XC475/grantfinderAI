@@ -578,9 +578,24 @@ function GrantsSearchPage() {
       const res = await fetch("/api/bookmarks");
       if (!res.ok) throw new Error(`Failed: ${res.status}`);
       const data = await res.json();
-      setBookmarks(data);
+      
+      // Filter out bookmarks with missing opportunities and log them
+      const validBookmarks = data.filter((b: BookmarkData) => {
+        if (!b.opportunity) {
+          console.warn(`⚠️ Bookmark ${b.id} has no opportunity (grant may have been deleted)`);
+          return false;
+        }
+        return true;
+      });
+      
+      const invalidCount = data.length - validBookmarks.length;
+      if (invalidCount > 0) {
+        console.warn(`⚠️ ${invalidCount} bookmark(s) reference deleted grants`);
+      }
+      
+      setBookmarks(validBookmarks);
       cacheTimestamps.current.bookmarks = Date.now();
-      console.log("✅ Bookmarks fetched and cached");
+      console.log(`✅ Bookmarks fetched and cached (${validBookmarks.length} valid)`);
     } catch (e) {
       console.error(e);
       toast.error("Failed to load bookmarks");
@@ -1415,24 +1430,19 @@ function GrantsSearchPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {bookmarks.map((b) => {
-                const opp = b.opportunity;
-                if (!opp) return null;
-
-                return (
-                  <GrantCard
-                    key={b.id}
-                    grant={opp}
-                    organizationSlug={slug}
-                    isSaved={true}
-                    hasApplication={grantApplications.includes(opp.id)}
-                    isCreatingApplication={creatingApplication === opp.id}
-                    onToggleBookmark={removeBookmark}
-                    onCreateApplication={handleCreateApplication}
-                    fromBookmarks={true}
-                  />
-                );
-              })}
+              {bookmarks.map((b) => (
+                <GrantCard
+                  key={b.id}
+                  grant={b.opportunity!}
+                  organizationSlug={slug}
+                  isSaved={true}
+                  hasApplication={grantApplications.includes(b.opportunity!.id)}
+                  isCreatingApplication={creatingApplication === b.opportunity!.id}
+                  onToggleBookmark={removeBookmark}
+                  onCreateApplication={handleCreateApplication}
+                  fromBookmarks={true}
+                />
+              ))}
             </div>
           )}
         </>
