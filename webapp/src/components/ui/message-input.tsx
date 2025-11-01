@@ -234,76 +234,77 @@ export function MessageInput({
   });
 
   return (
-    <div
-      className="relative flex w-full"
-      onDragOver={onDragOver}
-      onDragLeave={onDragLeave}
-      onDrop={onDrop}
-    >
-      {enableInterrupt && (
-        <InterruptPrompt
-          isOpen={showInterruptPrompt}
-          close={() => setShowInterruptPrompt(false)}
-        />
-      )}
-
-      <RecordingPrompt
-        isVisible={isRecording}
-        onStopRecording={stopRecording}
-      />
-
-      <div className="relative flex w-full items-center space-x-2">
-        <div className="relative flex-1">
-          <textarea
-            aria-label="Write your prompt here"
-            placeholder={currentPlaceholder}
-            ref={textAreaRef}
-            onPaste={onPaste}
-            onKeyDown={onKeyDown}
-            className={cn(
-              "mb-2 z-10 w-full grow resize-none rounded-xl border border-input bg-background text-sm ring-offset-background transition-[border] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
-              isEmpty ? "p-3 pr-24" : "p-4 pr-24 min-h-[180px]",
-              showFileList && "pb-16",
-              className
-            )}
-            {...(props.allowAttachments
-              ? omit(props, ["allowAttachments", "files", "setFiles"])
-              : omit(props, ["allowAttachments"]))}
+    <div className="w-full px-8 md:px-16 lg:px-24">
+      <div
+        className="relative flex w-full"
+        onDragOver={onDragOver}
+        onDragLeave={onDragLeave}
+        onDrop={onDrop}
+      >
+        {enableInterrupt && (
+          <InterruptPrompt
+            isOpen={showInterruptPrompt}
+            close={() => setShowInterruptPrompt(false)}
           />
+        )}
 
-          {props.allowAttachments && (
-            <div className="absolute inset-x-3 bottom-0 z-20 overflow-x-scroll py-3">
-              <div className="flex space-x-3">
-                <AnimatePresence mode="popLayout">
-                  {props.files?.map((file) => {
-                    return (
-                      <FilePreview
-                        key={file.name + String(file.lastModified)}
-                        file={file}
-                        onRemove={() => {
-                          props.setFiles((files) => {
-                            if (!files) return null;
+        <RecordingPrompt
+          isVisible={isRecording}
+          onStopRecording={stopRecording}
+        />
 
-                            const filtered = Array.from(files).filter(
-                              (f) => f !== file
-                            );
-                            if (filtered.length === 0) return null;
-                            return filtered;
-                          });
-                        }}
-                      />
-                    );
-                  })}
-                </AnimatePresence>
+        <div className="relative flex w-full items-center">
+          <div className="relative w-full">
+            <textarea
+              aria-label="Write your prompt here"
+              placeholder={currentPlaceholder}
+              ref={textAreaRef}
+              onPaste={onPaste}
+              onKeyDown={onKeyDown}
+              className={cn(
+                "mb-2 z-10 w-full grow resize-none rounded-xl border border-input bg-background text-sm ring-offset-background transition-[border] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+                isEmpty ? "p-3 pr-24" : "p-3 pr-24",
+                showFileList && "pb-16",
+                className
+              )}
+              {...(props.allowAttachments
+                ? omit(props, ["allowAttachments", "files", "setFiles"])
+                : omit(props, ["allowAttachments"]))}
+            />
+
+            {props.allowAttachments && (
+              <div className="absolute inset-x-3 bottom-0 z-20 overflow-x-scroll py-3">
+                <div className="flex space-x-3">
+                  <AnimatePresence mode="popLayout">
+                    {props.files?.map((file) => {
+                      return (
+                        <FilePreview
+                          key={file.name + String(file.lastModified)}
+                          file={file}
+                          onRemove={() => {
+                            props.setFiles((files) => {
+                              if (!files) return null;
+
+                              const filtered = Array.from(files).filter(
+                                (f) => f !== file
+                              );
+                              if (filtered.length === 0) return null;
+                              return filtered;
+                            });
+                          }}
+                        />
+                      );
+                    })}
+                  </AnimatePresence>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className="absolute right-3 top-3 z-20 flex gap-2">
-        {/* Attachment button - commented out */}
-        {/* {props.allowAttachments && (
+        <div className="absolute right-3 top-3 z-20 flex gap-2">
+          {/* Attachment button - commented out */}
+          {/* {props.allowAttachments && (
           <Button
             type="button"
             size="icon"
@@ -318,50 +319,53 @@ export function MessageInput({
             <Paperclip className="h-4 w-4" />
           </Button>
         )} */}
-        {isSpeechSupported && (
-          <Button
-            type="button"
-            variant="outline"
-            className={cn("h-8 w-8", isListening && "text-primary")}
-            aria-label="Voice input"
-            size="icon"
-            onClick={toggleListening}
-          >
-            <Mic className="h-4 w-4" />
-          </Button>
+          {isSpeechSupported && (
+            <Button
+              type="button"
+              variant="outline"
+              className={cn("h-8 w-8", isListening && "text-primary")}
+              aria-label="Voice input"
+              size="icon"
+              onClick={toggleListening}
+            >
+              <Mic className="h-4 w-4" />
+            </Button>
+          )}
+          {isGenerating && stop ? (
+            <Button
+              type="button"
+              size="icon"
+              className="h-8 w-8"
+              aria-label="Stop generating"
+              onClick={stop}
+            >
+              <Square className="h-3 w-3 animate-pulse" fill="currentColor" />
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              size="icon"
+              className="h-8 w-8 transition-opacity"
+              aria-label="Send message"
+              disabled={props.value === "" || isGenerating}
+            >
+              <ArrowUp className="h-5 w-5" />
+            </Button>
+          )}
+        </div>
+
+        {props.allowAttachments && (
+          <FileUploadOverlay isDragging={isDragging} />
         )}
-        {isGenerating && stop ? (
-          <Button
-            type="button"
-            size="icon"
-            className="h-8 w-8"
-            aria-label="Stop generating"
-            onClick={stop}
-          >
-            <Square className="h-3 w-3 animate-pulse" fill="currentColor" />
-          </Button>
-        ) : (
-          <Button
-            type="submit"
-            size="icon"
-            className="h-8 w-8 transition-opacity"
-            aria-label="Send message"
-            disabled={props.value === "" || isGenerating}
-          >
-            <ArrowUp className="h-5 w-5" />
-          </Button>
-        )}
+
+        <RecordingControls
+          isRecording={isRecording}
+          isTranscribing={isTranscribing}
+          audioStream={audioStream}
+          textAreaHeight={textAreaHeight}
+          onStopRecording={stopRecording}
+        />
       </div>
-
-      {props.allowAttachments && <FileUploadOverlay isDragging={isDragging} />}
-
-      <RecordingControls
-        isRecording={isRecording}
-        isTranscribing={isTranscribing}
-        audioStream={audioStream}
-        textAreaHeight={textAreaHeight}
-        onStopRecording={stopRecording}
-      />
     </div>
   );
 }

@@ -173,7 +173,7 @@ const COMPONENTS = {
   pre: ({ children }: { children?: React.ReactNode }) => children,
   ol: withClass("ol", "list-decimal space-y-2 pl-6"),
   ul: withClass("ul", "list-disc space-y-2 pl-6"),
-  li: withClass("li", "my-1.5"),
+  li: withClass("li", "my-1.5 text-base"),
   table: withClass(
     "table",
     "w-full border-collapse overflow-y-auto rounded-md border border-foreground/20"
@@ -187,7 +187,7 @@ const COMPONENTS = {
     "border border-foreground/20 px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right"
   ),
   tr: withClass("tr", "m-0 border-t p-0 even:bg-muted"),
-  p: withClass("p", "whitespace-pre-wrap"),
+  p: withClass("p", "whitespace-pre-wrap text-base"),
   hr: withClass("hr", "border-foreground/20"),
 };
 
