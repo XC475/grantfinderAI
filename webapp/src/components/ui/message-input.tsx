@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp, Info, Loader2, Mic, Paperclip, Square } from "lucide-react";
 import { omit } from "remeda";
@@ -216,6 +216,10 @@ export function MessageInput({
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [textAreaHeight, setTextAreaHeight] = useState<number>(0);
+  const [manualHeight, setManualHeight] = useState<number | null>(null);
+  const [isResizing, setIsResizing] = useState(false);
+  const resizeStartY = useRef<number>(0);
+  const resizeStartHeight = useRef<number>(0);
 
   useEffect(() => {
     if (textAreaRef.current) {
@@ -228,10 +232,60 @@ export function MessageInput({
 
   useAutosizeTextArea({
     ref: textAreaRef,
-    maxHeight: 240,
+    maxHeight: manualHeight || 240,
     borderWidth: 1,
     dependencies: [props.value, showFileList],
   });
+
+  // Handle resize start
+  const handleResizeStart = useCallback(
+    (clientY: number) => {
+      if (isEmpty) return; // Don't allow resize in empty state
+      setIsResizing(true);
+      resizeStartY.current = clientY;
+      resizeStartHeight.current = textAreaRef.current?.offsetHeight || 48;
+    },
+    [isEmpty]
+  );
+
+  // Handle resize move
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaY = resizeStartY.current - e.clientY;
+      const newHeight = Math.max(
+        48,
+        Math.min(600, resizeStartHeight.current + deltaY)
+      );
+      setManualHeight(newHeight);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const deltaY = resizeStartY.current - e.touches[0].clientY;
+      const newHeight = Math.max(
+        48,
+        Math.min(600, resizeStartHeight.current + deltaY)
+      );
+      setManualHeight(newHeight);
+    };
+
+    const handleEnd = () => {
+      setIsResizing(false);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleEnd);
+    document.addEventListener("touchmove", handleTouchMove);
+    document.addEventListener("touchend", handleEnd);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleEnd);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleEnd);
+    };
+  }, [isResizing]);
 
   return (
     <div className="w-full px-8 md:px-16 lg:px-24">
@@ -255,6 +309,16 @@ export function MessageInput({
 
         <div className="relative flex w-full items-center">
           <div className="relative w-full">
+            {/* Resize handle - only show when not empty */}
+            {!isEmpty && (
+              <div
+                className="absolute left-0 right-0 top-0 z-30 flex h-3 cursor-ns-resize items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
+                onMouseDown={(e) => handleResizeStart(e.clientY)}
+                onTouchStart={(e) => handleResizeStart(e.touches[0].clientY)}
+              >
+                <div className="h-1 w-12 rounded-full bg-border" />
+              </div>
+            )}
             <textarea
               aria-label="Write your prompt here"
               placeholder={currentPlaceholder}
