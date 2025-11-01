@@ -118,9 +118,9 @@ function GrantsSearchPage() {
   const searchParams = useSearchParams();
   const slug = params.slug as string;
 
-  // Tab state
+  // Tab state - default to recommendations as it's now the primary tab
   const [activeTab, setActiveTab] = useState<TabView>(
-    (searchParams.get("tab") as TabView) || "search"
+    (searchParams.get("tab") as TabView) || "recommendations"
   );
   const [grants, setGrants] = useState<Grant[]>([]);
   const [loading, setLoading] = useState(true);
@@ -578,24 +578,28 @@ function GrantsSearchPage() {
       const res = await fetch("/api/bookmarks");
       if (!res.ok) throw new Error(`Failed: ${res.status}`);
       const data = await res.json();
-      
+
       // Filter out bookmarks with missing opportunities and log them
       const validBookmarks = data.filter((b: BookmarkData) => {
         if (!b.opportunity) {
-          console.warn(`⚠️ Bookmark ${b.id} has no opportunity (grant may have been deleted)`);
+          console.warn(
+            `⚠️ Bookmark ${b.id} has no opportunity (grant may have been deleted)`
+          );
           return false;
         }
         return true;
       });
-      
+
       const invalidCount = data.length - validBookmarks.length;
       if (invalidCount > 0) {
         console.warn(`⚠️ ${invalidCount} bookmark(s) reference deleted grants`);
       }
-      
+
       setBookmarks(validBookmarks);
       cacheTimestamps.current.bookmarks = Date.now();
-      console.log(`✅ Bookmarks fetched and cached (${validBookmarks.length} valid)`);
+      console.log(
+        `✅ Bookmarks fetched and cached (${validBookmarks.length} valid)`
+      );
     } catch (e) {
       console.error(e);
       toast.error("Failed to load bookmarks");
@@ -713,26 +717,28 @@ function GrantsSearchPage() {
       <div className="mb-6">
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-8">
-            <button
-              onClick={() => handleTabChange("search")}
-              className={`
-                py-4 px-1 border-b-2 font-medium text-sm transition-colors
-                ${
-                  activeTab === "search"
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                }
-              `}
-            >
-              <Search className="inline h-4 w-4 mr-2" />
-              Search Grants
-              {pagination.total > 0 && (
-                <span className="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                  {pagination.total}
+            {/* Bookmarks first if any exist */}
+            {bookmarks.length > 0 && (
+              <button
+                onClick={() => handleTabChange("bookmarks")}
+                className={`
+                  py-4 px-1 border-b-2 font-medium text-sm transition-colors
+                  ${
+                    activeTab === "bookmarks"
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
+                  }
+                `}
+              >
+                <Bookmark className="inline h-4 w-4 mr-2" />
+                Bookmarks
+                <span className="ml-2 text-xs bg-cyan-100 text-cyan-600 px-2 py-1 rounded-full">
+                  {bookmarks.length}
                 </span>
-              )}
-            </button>
+              </button>
+            )}
 
+            {/* Recommendations */}
             <button
               onClick={() => handleTabChange("recommendations")}
               className={`
@@ -753,25 +759,44 @@ function GrantsSearchPage() {
               )}
             </button>
 
+            {/* Search Grants */}
             <button
-              onClick={() => handleTabChange("bookmarks")}
+              onClick={() => handleTabChange("search")}
               className={`
                 py-4 px-1 border-b-2 font-medium text-sm transition-colors
                 ${
-                  activeTab === "bookmarks"
+                  activeTab === "search"
                     ? "border-primary text-primary"
                     : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
                 }
               `}
             >
-              <Bookmark className="inline h-4 w-4 mr-2" />
-              Bookmarks
-              {bookmarks.length > 0 && (
-                <span className="ml-2 text-xs bg-cyan-100 text-cyan-600 px-2 py-1 rounded-full">
-                  {bookmarks.length}
+              <Search className="inline h-4 w-4 mr-2" />
+              Search Grants
+              {pagination.total > 0 && (
+                <span className="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                  {pagination.total}
                 </span>
               )}
             </button>
+
+            {/* Bookmarks last if none exist */}
+            {bookmarks.length === 0 && (
+              <button
+                onClick={() => handleTabChange("bookmarks")}
+                className={`
+                  py-4 px-1 border-b-2 font-medium text-sm transition-colors
+                  ${
+                    activeTab === "bookmarks"
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
+                  }
+                `}
+              >
+                <Bookmark className="inline h-4 w-4 mr-2" />
+                Bookmarks
+              </button>
+            )}
           </nav>
         </div>
       </div>
@@ -1437,7 +1462,9 @@ function GrantsSearchPage() {
                   organizationSlug={slug}
                   isSaved={true}
                   hasApplication={grantApplications.includes(b.opportunity!.id)}
-                  isCreatingApplication={creatingApplication === b.opportunity!.id}
+                  isCreatingApplication={
+                    creatingApplication === b.opportunity!.id
+                  }
                   onToggleBookmark={removeBookmark}
                   onCreateApplication={handleCreateApplication}
                   fromBookmarks={true}
