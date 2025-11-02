@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Save, Loader2, MessageSquare } from "lucide-react";
+import { Save, Loader2 } from "lucide-react";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { DocumentChatSidebar } from "./DocumentChatSidebar";
 import { cn } from "@/lib/utils";
@@ -78,7 +78,7 @@ export function DocumentEditor({
   return (
     <div className="flex h-full bg-background relative">
       {/* Floating action buttons - top right */}
-      <div className="fixed top-20 right-6 z-50 flex items-center gap-2">
+      <div className="fixed top-20 right-6 z-40 flex items-center gap-2">
         {hasUnsavedChanges && (
           <span className="text-sm text-muted-foreground whitespace-nowrap bg-background/95 backdrop-blur-sm px-3 py-1.5 rounded-md border shadow-sm">
             • Unsaved
@@ -100,15 +100,6 @@ export function DocumentEditor({
             {isSaving ? "Saving..." : "Save"}
           </Button>
         )}
-        <Button
-          variant={isChatOpen ? "default" : "outline"}
-          size="sm"
-          onClick={() => setIsChatOpen(!isChatOpen)}
-          className="shadow-sm"
-        >
-          <MessageSquare className="h-4 w-4 mr-2" />
-          Assistant
-        </Button>
       </div>
 
       {/* Main editor area */}
@@ -132,15 +123,13 @@ export function DocumentEditor({
       </div>
 
       {/* Chat sidebar */}
-      {isChatOpen && (
-        <DocumentChatSidebar
-          documentId={document.id}
-          documentTitle={title}
-          documentContent={content}
-          isOpen={isChatOpen}
-          onClose={() => setIsChatOpen(false)}
-        />
-      )}
+      <DocumentChatSidebar
+        documentId={document.id}
+        documentTitle={title}
+        documentContent={content}
+        isOpen={isChatOpen}
+        onToggle={() => setIsChatOpen(!isChatOpen)}
+      />
     </div>
   );
 }
