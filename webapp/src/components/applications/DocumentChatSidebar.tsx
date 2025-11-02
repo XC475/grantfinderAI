@@ -10,7 +10,7 @@ import {
   PanelLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Chat } from "@/components/ui/chat";
+import { DocumentSidebarChat } from "./DocumentSidebarChat";
 import { Message } from "@/components/ui/chat-message";
 import { cn } from "@/lib/utils";
 
@@ -175,15 +175,6 @@ export function DocumentChatSidebar({
     setIsLoading(false);
   }, []);
 
-  const append = useCallback(
-    (message: { role: "user"; content: string }) => {
-      setInput(message.content);
-      // Trigger submit after input is set
-      setTimeout(() => handleSubmit(), 100);
-    },
-    [handleSubmit]
-  );
-
   const handleSuggestedAction = (action: string) => {
     setInput(action);
     // Small delay to ensure the input is set before submitting
@@ -220,7 +211,7 @@ export function DocumentChatSidebar({
       <div
         className={cn(
           "relative mt-[-60px] flex flex-col h-full border-l bg-background transition-all duration-300",
-          isOpen ? "w-[40%]" : "w-0"
+          isOpen ? "w-[40%] min-w-[320px]" : "w-0"
         )}
       >
         {/* Sidebar Trigger - positioned outside sidebar at header level when open */}
@@ -284,16 +275,15 @@ export function DocumentChatSidebar({
               </div>
 
               {/* Input at bottom when empty */}
-              <div className="pt-4">
-                <Chat
-                  className="h-auto"
+              <div className="pt-4 min-w-0">
+                <DocumentSidebarChat
+                  className="h-auto min-w-0"
                   messages={messages}
                   handleSubmit={handleSubmit}
                   input={input}
                   handleInputChange={handleInputChange}
                   isGenerating={isLoading}
                   stop={stop}
-                  append={append}
                   setMessages={setMessages}
                   isEmpty={isEmpty}
                   placeholder="How can I help you with this document?"
@@ -301,16 +291,15 @@ export function DocumentChatSidebar({
               </div>
             </div>
           ) : (
-            <div className="flex-1 flex flex-col">
-              <Chat
-                className="flex-1"
+            <div className="flex-1 flex flex-col min-w-0">
+              <DocumentSidebarChat
+                className="flex-1 min-w-0"
                 messages={messages}
                 handleSubmit={handleSubmit}
                 input={input}
                 handleInputChange={handleInputChange}
                 isGenerating={isLoading}
                 stop={stop}
-                append={append}
                 setMessages={setMessages}
                 isEmpty={isEmpty}
                 placeholder="How can I help you with this document?"
