@@ -9597,6 +9597,7 @@ export namespace Prisma {
     contentHtml: string | null
     title: string | null
     notes: string | null
+    attachments_markdown: string | null
     createdAt: Date | null
     updatedAt: Date | null
     submittedAt: Date | null
@@ -9611,6 +9612,7 @@ export namespace Prisma {
     contentHtml: string | null
     title: string | null
     notes: string | null
+    attachments_markdown: string | null
     createdAt: Date | null
     updatedAt: Date | null
     submittedAt: Date | null
@@ -9628,6 +9630,7 @@ export namespace Prisma {
     notes: number
     documents: number
     checklist: number
+    attachments_markdown: number
     createdAt: number
     updatedAt: number
     submittedAt: number
@@ -9652,6 +9655,7 @@ export namespace Prisma {
     contentHtml?: true
     title?: true
     notes?: true
+    attachments_markdown?: true
     createdAt?: true
     updatedAt?: true
     submittedAt?: true
@@ -9666,6 +9670,7 @@ export namespace Prisma {
     contentHtml?: true
     title?: true
     notes?: true
+    attachments_markdown?: true
     createdAt?: true
     updatedAt?: true
     submittedAt?: true
@@ -9683,6 +9688,7 @@ export namespace Prisma {
     notes?: true
     documents?: true
     checklist?: true
+    attachments_markdown?: true
     createdAt?: true
     updatedAt?: true
     submittedAt?: true
@@ -9787,6 +9793,7 @@ export namespace Prisma {
     notes: string | null
     documents: JsonValue | null
     checklist: JsonValue | null
+    attachments_markdown: string | null
     createdAt: Date
     updatedAt: Date
     submittedAt: Date | null
@@ -9823,6 +9830,7 @@ export namespace Prisma {
     notes?: boolean
     documents?: boolean
     checklist?: boolean
+    attachments_markdown?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     submittedAt?: boolean
@@ -9844,6 +9852,7 @@ export namespace Prisma {
     notes?: boolean
     documents?: boolean
     checklist?: boolean
+    attachments_markdown?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     submittedAt?: boolean
@@ -9862,6 +9871,7 @@ export namespace Prisma {
     notes?: boolean
     documents?: boolean
     checklist?: boolean
+    attachments_markdown?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     submittedAt?: boolean
@@ -9880,6 +9890,7 @@ export namespace Prisma {
     notes?: boolean
     documents?: boolean
     checklist?: boolean
+    attachments_markdown?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     submittedAt?: boolean
@@ -9887,7 +9898,7 @@ export namespace Prisma {
     organizationId?: boolean
   }
 
-  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "content" | "contentHtml" | "title" | "notes" | "documents" | "checklist" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId", ExtArgs["result"]["application"]>
+  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "content" | "contentHtml" | "title" | "notes" | "documents" | "checklist" | "attachments_markdown" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId", ExtArgs["result"]["application"]>
   export type ApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     application_documents?: boolean | Application$application_documentsArgs<ExtArgs>
@@ -9918,6 +9929,7 @@ export namespace Prisma {
       notes: string | null
       documents: Prisma.JsonValue | null
       checklist: Prisma.JsonValue | null
+      attachments_markdown: string | null
       createdAt: Date
       updatedAt: Date
       submittedAt: Date | null
@@ -10358,6 +10370,7 @@ export namespace Prisma {
     readonly notes: FieldRef<"Application", 'String'>
     readonly documents: FieldRef<"Application", 'Json'>
     readonly checklist: FieldRef<"Application", 'Json'>
+    readonly attachments_markdown: FieldRef<"Application", 'String'>
     readonly createdAt: FieldRef<"Application", 'DateTime'>
     readonly updatedAt: FieldRef<"Application", 'DateTime'>
     readonly submittedAt: FieldRef<"Application", 'DateTime'>
@@ -16486,6 +16499,7 @@ export namespace Prisma {
     notes: 'notes',
     documents: 'documents',
     checklist: 'checklist',
+    attachments_markdown: 'attachments_markdown',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     submittedAt: 'submittedAt',
@@ -17493,6 +17507,7 @@ export namespace Prisma {
     notes?: StringNullableFilter<"Application"> | string | null
     documents?: JsonNullableFilter<"Application">
     checklist?: JsonNullableFilter<"Application">
+    attachments_markdown?: StringNullableFilter<"Application"> | string | null
     createdAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
@@ -17513,6 +17528,7 @@ export namespace Prisma {
     notes?: SortOrderInput | SortOrder
     documents?: SortOrderInput | SortOrder
     checklist?: SortOrderInput | SortOrder
+    attachments_markdown?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     submittedAt?: SortOrderInput | SortOrder
@@ -17537,6 +17553,7 @@ export namespace Prisma {
     notes?: StringNullableFilter<"Application"> | string | null
     documents?: JsonNullableFilter<"Application">
     checklist?: JsonNullableFilter<"Application">
+    attachments_markdown?: StringNullableFilter<"Application"> | string | null
     createdAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
@@ -17557,6 +17574,7 @@ export namespace Prisma {
     notes?: SortOrderInput | SortOrder
     documents?: SortOrderInput | SortOrder
     checklist?: SortOrderInput | SortOrder
+    attachments_markdown?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     submittedAt?: SortOrderInput | SortOrder
@@ -17582,6 +17600,7 @@ export namespace Prisma {
     notes?: StringNullableWithAggregatesFilter<"Application"> | string | null
     documents?: JsonNullableWithAggregatesFilter<"Application">
     checklist?: JsonNullableWithAggregatesFilter<"Application">
+    attachments_markdown?: StringNullableWithAggregatesFilter<"Application"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
     submittedAt?: DateTimeNullableWithAggregatesFilter<"Application"> | Date | string | null
@@ -18710,6 +18729,7 @@ export namespace Prisma {
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
@@ -18729,6 +18749,7 @@ export namespace Prisma {
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
@@ -18748,6 +18769,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -18767,6 +18789,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -18786,6 +18809,7 @@ export namespace Prisma {
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
@@ -18803,6 +18827,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -18819,6 +18844,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -20066,6 +20092,7 @@ export namespace Prisma {
     notes?: SortOrder
     documents?: SortOrder
     checklist?: SortOrder
+    attachments_markdown?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     submittedAt?: SortOrder
@@ -20084,6 +20111,7 @@ export namespace Prisma {
     contentHtml?: SortOrder
     title?: SortOrder
     notes?: SortOrder
+    attachments_markdown?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     submittedAt?: SortOrder
@@ -20098,6 +20126,7 @@ export namespace Prisma {
     contentHtml?: SortOrder
     title?: SortOrder
     notes?: SortOrder
+    attachments_markdown?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     submittedAt?: SortOrder
@@ -21863,6 +21892,7 @@ export namespace Prisma {
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
@@ -21881,6 +21911,7 @@ export namespace Prisma {
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
@@ -22065,6 +22096,7 @@ export namespace Prisma {
     notes?: StringNullableFilter<"Application"> | string | null
     documents?: JsonNullableFilter<"Application">
     checklist?: JsonNullableFilter<"Application">
+    attachments_markdown?: StringNullableFilter<"Application"> | string | null
     createdAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
@@ -22918,6 +22950,7 @@ export namespace Prisma {
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
@@ -22936,6 +22969,7 @@ export namespace Prisma {
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
@@ -23112,6 +23146,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23130,6 +23165,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23506,6 +23542,7 @@ export namespace Prisma {
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
@@ -23524,6 +23561,7 @@ export namespace Prisma {
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
@@ -23558,6 +23596,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23576,6 +23615,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23678,6 +23718,7 @@ export namespace Prisma {
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
@@ -23756,6 +23797,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23774,6 +23816,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23792,6 +23835,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

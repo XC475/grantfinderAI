@@ -16,6 +16,7 @@ interface TodoChecklistProps {
   initialTodos?: TodoItem[];
   onUpdate?: (todos: TodoItem[]) => Promise<void>;
   className?: string;
+  isGenerating?: boolean;
 }
 
 export function TodoChecklist({
@@ -23,6 +24,7 @@ export function TodoChecklist({
   initialTodos = [],
   onUpdate,
   className,
+  isGenerating = false,
 }: TodoChecklistProps) {
   const [todos, setTodos] = useState<TodoItem[]>(initialTodos);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -125,43 +127,66 @@ export function TodoChecklist({
         )}
       </div>
 
-      {/* Todo list */}
-      <div className="space-y-1">
-        {todos.map((todo) => (
-          <TodoItem
-            key={todo.id}
-            todo={todo}
-            isEditing={editingId === todo.id}
-            onToggle={() => handleToggleTodo(todo.id)}
-            onTextChange={(text) => handleTextChange(todo.id, text)}
-            onBlur={(text) => handleTextBlur(todo.id, text)}
-            onKeyDown={(e, text) => handleKeyDown(e, todo.id, text)}
-            onStartEdit={() => setEditingId(todo.id)}
-            disabled={isSaving}
-          />
-        ))}
+      {/* Loading state when AI is generating */}
+      {isGenerating && todos.length === 0 ? (
+        <div className="space-y-1">
+          {/* Skeleton loading items */}
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div
+              key={i}
+              className="flex items-center gap-3 px-1 py-2 rounded-md animate-pulse"
+            >
+              <div className="size-4 rounded-[4px] border-2 bg-muted/50" />
+              <div className="flex-1 h-4 bg-muted/50 rounded" />
+            </div>
+          ))}
+          <p className="text-sm text-muted-foreground mt-3 italic">
+            🤖 AI is generating your checklist...
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Todo list */}
+          <div className="space-y-1">
+            {todos.map((todo) => (
+              <TodoItem
+                key={todo.id}
+                todo={todo}
+                isEditing={editingId === todo.id}
+                onToggle={() => handleToggleTodo(todo.id)}
+                onTextChange={(text) => handleTextChange(todo.id, text)}
+                onBlur={(text) => handleTextBlur(todo.id, text)}
+                onKeyDown={(e, text) => handleKeyDown(e, todo.id, text)}
+                onStartEdit={() => setEditingId(todo.id)}
+                disabled={isSaving}
+              />
+            ))}
 
-        {/* Empty state / Add new todo */}
-        {todos.length === 0 ? (
-          <div
-            className="flex items-center gap-3 px-1 py-2 rounded-md hover:bg-muted/50 transition-colors cursor-pointer group"
-            onClick={handleAddNewTodo}
-          >
-            <Checkbox disabled />
-            <span className="text-sm text-muted-foreground">
-              Add your first todo
-            </span>
+            {/* Empty state / Add new todo */}
+            {todos.length === 0 ? (
+              <div
+                className="flex items-center gap-3 px-1 py-2 rounded-md hover:bg-muted/50 transition-colors cursor-pointer group"
+                onClick={handleAddNewTodo}
+              >
+                <Checkbox disabled />
+                <span className="text-sm text-muted-foreground">
+                  Add your first todo
+                </span>
+              </div>
+            ) : (
+              <div
+                className="flex items-center gap-3 px-1 py-2 rounded-md hover:bg-muted/50 transition-colors cursor-pointer group"
+                onClick={handleAddNewTodo}
+              >
+                <Checkbox disabled />
+                <span className="text-sm text-muted-foreground">
+                  Add a todo
+                </span>
+              </div>
+            )}
           </div>
-        ) : (
-          <div
-            className="flex items-center gap-3 px-1 py-2 rounded-md hover:bg-muted/50 transition-colors cursor-pointer group"
-            onClick={handleAddNewTodo}
-          >
-            <Checkbox disabled />
-            <span className="text-sm text-muted-foreground">+ Add a todo</span>
-          </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 }

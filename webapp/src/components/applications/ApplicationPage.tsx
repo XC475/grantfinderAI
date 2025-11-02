@@ -60,6 +60,7 @@ export function ApplicationPage({
   const [checklist, setChecklist] = useState<TodoItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isGeneratingChecklist, setIsGeneratingChecklist] = useState(false);
   const router = useRouter();
 
   const fetchApplication = useCallback(async () => {
@@ -119,13 +120,22 @@ export function ApplicationPage({
       );
       if (response.ok) {
         const data = await response.json();
-        setChecklist(data.checklist || []);
+        const fetchedChecklist = data.checklist || [];
+        setChecklist(fetchedChecklist);
+
+        // If checklist is now populated, stop generating state
+        if (fetchedChecklist.length > 0 && isGeneratingChecklist) {
+          setIsGeneratingChecklist(false);
+        }
+
+        return fetchedChecklist;
       }
     } catch (error) {
       console.error("Error fetching checklist:", error);
       // Don't show error toast for checklist as it's not critical
     }
-  }, [applicationId]);
+    return [];
+  }, [applicationId, isGeneratingChecklist]);
 
   const handleUpdateChecklist = async (updatedTodos: TodoItem[]) => {
     try {
@@ -203,11 +213,23 @@ export function ApplicationPage({
       try {
         const app = await fetchApplication();
         if (app) {
-          await Promise.all([
+          const fetchedChecklist = await Promise.all([
             fetchGrant(app.opportunityId),
             fetchDocuments(),
             fetchChecklist(),
-          ]);
+          ]).then((results) => results[2]); // Get checklist result
+
+          // Check if app is new (created less than 2 minutes ago) and checklist is empty
+          const appCreatedAt = new Date(app.createdAt);
+          const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+          const isNewApp = appCreatedAt > twoMinutesAgo;
+
+          if (
+            isNewApp &&
+            (!fetchedChecklist || fetchedChecklist.length === 0)
+          ) {
+            setIsGeneratingChecklist(true);
+          }
         }
       } finally {
         setLoading(false);
@@ -222,6 +244,30 @@ export function ApplicationPage({
     fetchDocuments,
     fetchChecklist,
   ]);
+
+  // Poll for checklist updates while generating
+  useEffect(() => {
+    if (!isGeneratingChecklist) return;
+
+    const pollInterval = setInterval(async () => {
+      console.log("Polling for checklist updates...");
+      await fetchChecklist();
+    }, 3000); // Poll every 3 seconds
+
+    // Stop polling after 2 minutes even if not complete
+    const timeout = setTimeout(
+      () => {
+        setIsGeneratingChecklist(false);
+        clearInterval(pollInterval);
+      },
+      2 * 60 * 1000
+    );
+
+    return () => {
+      clearInterval(pollInterval);
+      clearTimeout(timeout);
+    };
+  }, [isGeneratingChecklist, fetchChecklist]);
 
   if (loading) {
     return (
@@ -273,6 +319,7 @@ export function ApplicationPage({
         applicationId={applicationId}
         initialTodos={checklist}
         onUpdate={handleUpdateChecklist}
+        isGenerating={isGeneratingChecklist}
       />
 
       {/* Documents */}
