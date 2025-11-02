@@ -44,12 +44,14 @@ export function DynamicBreadcrumb({
     // Build breadcrumb items
     const items = [];
 
-    // Always start with Dashboard
-    items.push({
-      label: "Dashboard",
-      href: `/private/${organizationSlug}/dashboard`,
-      isLast: false,
-    });
+    // Add Dashboard as first item (except for applications)
+    if (segments[0] !== "applications") {
+      items.push({
+        label: "Dashboard",
+        href: `/private/${organizationSlug}/dashboard`,
+        isLast: false,
+      });
+    }
 
     // Handle different pages
     if (segments[0] === "chat") {

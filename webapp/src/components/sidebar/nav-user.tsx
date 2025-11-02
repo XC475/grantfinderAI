@@ -1,7 +1,8 @@
 "use client";
 
-import { ChevronsUpDown, LogOut, Sparkles, Settings } from "lucide-react";
+import { ChevronsUpDown, LogOut, Sparkles, Settings, Moon } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -19,6 +20,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Switch } from "@/components/ui/switch";
 import { logout } from "@/app/login/actions";
 
 export function NavUser({
@@ -34,6 +36,7 @@ export function NavUser({
   const isCollapsed = state === "collapsed";
   const router = useRouter();
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
 
   // Extract workspace slug from pathname
   const workspaceSlug = pathname.match(/^\/private\/([^\/]+)/)?.[1];
@@ -127,6 +130,23 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                  setTheme(theme === "dark" ? "light" : "dark");
+                }}
+              >
+                <Moon />
+                <span>Dark mode</span>
+                <Switch
+                  checked={theme === "dark"}
+                  onCheckedChange={(checked) =>
+                    setTheme(checked ? "dark" : "light")
+                  }
+                  className="ml-auto"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
                   workspaceSlug &&
