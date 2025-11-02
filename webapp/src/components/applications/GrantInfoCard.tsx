@@ -3,7 +3,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Calendar, DollarSign, Building } from "lucide-react";
+import {
+  ExternalLink,
+  Calendar,
+  DollarSign,
+  Building,
+  Paperclip,
+} from "lucide-react";
 import Link from "next/link";
 
 interface GrantInfoCardProps {
@@ -18,6 +24,7 @@ interface GrantInfoCardProps {
     award_max?: number;
     agency?: string;
     url?: string;
+    attachments?: any;
   };
   organizationSlug: string;
 }
@@ -72,12 +79,14 @@ export function GrantInfoCard({ grant, organizationSlug }: GrantInfoCardProps) {
               )}
             </div>
           </div>
-          <Button asChild variant="outline" size="sm">
-            <Link href={`/private/${organizationSlug}/grants/${grant.id}`}>
-              <ExternalLink className="h-4 w-4 mr-1" />
-              View Grant
-            </Link>
-          </Button>
+          {grant.status !== "Not specified" && (
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/private/${organizationSlug}/grants/${grant.id}`}>
+                <ExternalLink className="h-4 w-4 mr-1" />
+                View Grant
+              </Link>
+            </Button>
+          )}
         </div>
       </CardHeader>
       <CardContent>
@@ -121,16 +130,47 @@ export function GrantInfoCard({ grant, organizationSlug }: GrantInfoCardProps) {
             </div>
           </div>
 
-          {grant.url && (
-            <div className="pt-2">
-              <Button asChild variant="outline" size="sm">
-                <a href={grant.url} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="h-4 w-4 mr-1" />
-                  View Full Details
-                </a>
-              </Button>
-            </div>
-          )}
+          {grant.attachments &&
+            Array.isArray(grant.attachments) &&
+            grant.attachments.length > 0 && (
+              <div className="pt-2 border-t">
+                <div className="flex items-center gap-2 mb-3 mt-2">
+                  <Paperclip className="h-4 w-4 text-muted-foreground" />
+                  <div className="font-medium text-sm">Attachments</div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {grant.attachments.map((attachment: any, index: number) =>
+                    attachment.url ? (
+                      <a
+                        key={index}
+                        href={attachment.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-md hover:bg-muted transition-colors cursor-pointer"
+                      >
+                        <span className="text-sm">
+                          {attachment.title ||
+                            attachment.name ||
+                            `Attachment ${index + 1}`}
+                        </span>
+                        <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                      </a>
+                    ) : (
+                      <div
+                        key={index}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-md"
+                      >
+                        <span className="text-sm">
+                          {attachment.title ||
+                            attachment.name ||
+                            `Attachment ${index + 1}`}
+                        </span>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
         </div>
       </CardContent>
     </Card>

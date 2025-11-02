@@ -31,6 +31,7 @@ interface Grant {
   award_max?: number;
   agency?: string;
   url?: string;
+  attachments?: any;
 }
 
 interface Document {
@@ -84,14 +85,10 @@ export function ApplicationPage({
 
   const fetchGrant = async (opportunityId: number) => {
     try {
-      const response = await fetch(
-        `/api/grants/search?limit=1&q=${opportunityId}`
-      );
+      const response = await fetch(`/api/grants/${opportunityId}`);
       if (response.ok) {
-        const data = await response.json();
-        if (data.data && data.data.length > 0) {
-          setGrant(data.data[0]);
-        }
+        const grantData = await response.json();
+        setGrant(grantData);
       }
     } catch (error) {
       console.error("Error fetching grant:", error);
@@ -197,23 +194,27 @@ export function ApplicationPage({
   }
 
   return (
-    <div className="container max-w-6xl py-8 space-y-8">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">
-            {application.title || `Application #${application.opportunityId}`}
-          </h1>
-          <p className="text-muted-foreground">
-            Manage your application documents and grant information
-          </p>
-        </div>
-      </div>
-
+    <div className="container max-w-6xl space-y-8 p-4">
       {/* Grant Information */}
-      {grant && (
-        <GrantInfoCard grant={grant} organizationSlug={organizationSlug} />
-      )}
+      <GrantInfoCard
+        grant={
+          grant || {
+            id: application.opportunityId,
+            title:
+              application.title || `Application #${application.opportunityId}`,
+            status: "Not specified",
+            description: undefined,
+            close_date: undefined,
+            total_funding_amount: undefined,
+            award_min: undefined,
+            award_max: undefined,
+            agency: undefined,
+            url: undefined,
+            attachments: undefined,
+          }
+        }
+        organizationSlug={organizationSlug}
+      />
 
       {/* Documents */}
       <DocumentList

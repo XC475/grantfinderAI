@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, FileText, ExternalLink } from "lucide-react";
+import { Loader2, FileText } from "lucide-react";
 import { toast } from "sonner";
 
 interface Application {
@@ -127,88 +127,61 @@ export default function ApplicationsPage({
   }
 
   return (
-    <div className="container max-w-6xl py-8 p-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>Applications</CardTitle>
-          <CardDescription>
-            {applications.length}{" "}
-            {applications.length === 1 ? "application" : "applications"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-md border">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b bg-muted/50">
-                  <th className="p-4 text-left font-medium">Grant</th>
-                  <th className="p-4 text-left font-medium">Status</th>
-                  <th className="p-4 text-left font-medium">Last Edited</th>
-                  <th className="p-4 text-left font-medium">Created</th>
-                  <th className="p-4 text-right font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {applications.map((application) => (
-                  <tr
-                    key={application.id}
-                    className="border-b hover:bg-muted/50 transition-colors"
-                  >
-                    <td className="p-4">
-                      <div>
-                        <div className="font-medium">
-                          {application.title ||
-                            `Grant #${application.opportunityId}`}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          Opportunity ID: {application.opportunityId}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <Badge className={getStatusColor(application.status)}>
-                        {formatStatus(application.status)}
-                      </Badge>
-                    </td>
-                    <td className="p-4 text-sm text-muted-foreground">
-                      {new Date(application.lastEditedAt).toLocaleDateString()}
-                    </td>
-                    <td className="p-4 text-sm text-muted-foreground">
-                      {new Date(application.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="p-4 text-right space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          router.push(
-                            `/private/${slug}/grants/${application.opportunityId}`
-                          )
-                        }
-                      >
-                        <ExternalLink className="h-4 w-4 mr-1" />
-                        View Grant
-                      </Button>
-                      <Button
-                        variant="default"
-                        size="sm"
-                        onClick={() =>
-                          router.push(
-                            `/private/${slug}/applications/${application.id}`
-                          )
-                        }
-                      >
-                        <FileText className="h-4 w-4 mr-1" />
-                        Application Page
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="container max-w-6xl py-8 p-4 space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold mb-2">Applications</h1>
+        <p className="text-muted-foreground">
+          {applications.length}{" "}
+          {applications.length === 1 ? "application" : "applications"}
+        </p>
+      </div>
+
+      <div className="rounded-md border">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b bg-muted/50">
+              <th className="p-4 text-left font-medium">Name</th>
+              <th className="p-4 text-left font-medium">Status</th>
+              <th className="p-4 text-left font-medium">Last Edited</th>
+              <th className="p-4 text-left font-medium">Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            {applications.map((application) => (
+              <tr
+                key={application.id}
+                className="border-b hover:bg-muted/50 transition-colors cursor-pointer"
+                onClick={() =>
+                  router.push(`/private/${slug}/applications/${application.id}`)
+                }
+              >
+                <td className="p-4">
+                  <div>
+                    <div className="font-medium hover:underline">
+                      {application.title ||
+                        `Grant #${application.opportunityId}`}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Opportunity ID: {application.opportunityId}
+                    </div>
+                  </div>
+                </td>
+                <td className="p-4">
+                  <Badge className={getStatusColor(application.status)}>
+                    {formatStatus(application.status)}
+                  </Badge>
+                </td>
+                <td className="p-4 text-sm text-muted-foreground">
+                  {new Date(application.lastEditedAt).toLocaleDateString()}
+                </td>
+                <td className="p-4 text-sm text-muted-foreground">
+                  {new Date(application.createdAt).toLocaleDateString()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
