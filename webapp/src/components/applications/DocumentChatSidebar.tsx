@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Plus, Clock, MoreHorizontal, Settings, X } from "lucide-react";
+import { Plus, Clock, MoreHorizontal, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DocumentSidebarChat } from "./DocumentSidebarChat";
 import { Message } from "@/components/ui/chat-message";
@@ -186,18 +186,6 @@ export function DocumentChatSidebar({
 
   return (
     <div className="flex flex-col h-full bg-background border-l">
-      {/* Close button - top right */}
-      <div className="absolute top-4 right-4 z-10">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-7"
-          onClick={onToggle}
-        >
-          <X className="h-4 w-4" />
-          <span className="sr-only">Close Sidebar</span>
-        </Button>
-      </div>
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
         <h2 className="text-lg font-semibold">Assistant</h2>

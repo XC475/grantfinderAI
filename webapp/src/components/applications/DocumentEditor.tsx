@@ -84,18 +84,6 @@ export function DocumentEditor({
     <div className="h-full bg-background relative">
       {/* Floating action buttons - top right */}
       <div className="fixed top-20 right-6 z-40 flex items-center gap-2">
-        {/* Toggle sidebar button (only when closed) */}
-        {!isChatOpen && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsChatOpen(true)}
-            className="shadow-sm bg-background/95 backdrop-blur-sm"
-          >
-            <PanelLeft className="h-4 w-4 mr-2" />
-            Assistant
-          </Button>
-        )}
         {hasUnsavedChanges && (
           <span className="text-sm text-muted-foreground whitespace-nowrap bg-background/95 backdrop-blur-sm px-3 py-1.5 rounded-md border shadow-sm">
             • Unsaved
@@ -117,6 +105,27 @@ export function DocumentEditor({
             {isSaving ? "Saving..." : "Save"}
           </Button>
         )}
+      </div>
+
+      {/* Toggle sidebar button - always visible on the left side of sidebar */}
+      <div
+        className="fixed top-22 right-0 -translate-y-1/2 z-40"
+        style={{ right: isChatOpen ? "calc(40% - 100px)" : "18px" }}
+      >
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsChatOpen(!isChatOpen)}
+          className="size-7"
+        >
+          <PanelLeft
+            className={cn(
+              "h-4 w-4 transition-transform",
+              isChatOpen && "rotate-180"
+            )}
+          />
+          <span className="sr-only">Toggle Assistant Sidebar</span>
+        </Button>
       </div>
 
       {/* Resizable layout with editor and sidebar */}
