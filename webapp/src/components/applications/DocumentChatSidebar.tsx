@@ -195,40 +195,27 @@ export function DocumentChatSidebar({
 
   return (
     <>
-      {/* Floating Trigger - shows at top right when closed */}
-      {!isOpen && (
+      <div className="relative mt-[-40px]">
+        {/* Toggle button - always positioned relative to sidebar */}
         <Button
           variant="ghost"
           size="icon"
-          className="fixed top-[18px] right-4 z-50 size-7"
+          className="absolute right-4 z-50 size-7"
           onClick={onToggle}
         >
           <PanelLeft className="h-4 w-4" />
           <span className="sr-only">Toggle Sidebar</span>
         </Button>
-      )}
+      </div>
 
       <div
         className={cn(
-          "relative mt-[-60px] flex flex-col h-full border-l bg-background transition-all duration-300",
-          isOpen ? "w-[40%] min-w-[320px]" : "w-0"
+          "relative mt-[-60px] flex flex-col h-[calc(100vh-20px)] max-h-full border-l bg-background transition-all duration-300 overflow-y-hidden",
+          isOpen ? "w-[40%] min-w-[320px]" : "w-0 overflow-hidden"
         )}
       >
-        {/* Sidebar Trigger - positioned outside sidebar at header level when open */}
-        {isOpen && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-[18px] left-[-2rem] z-50 size-7"
-            onClick={onToggle}
-          >
-            <PanelLeft className="h-4 w-4" />
-            <span className="sr-only">Toggle Sidebar</span>
-          </Button>
-        )}
-
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
           <h2 className="text-lg font-semibold">Assistant</h2>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -244,9 +231,9 @@ export function DocumentChatSidebar({
         </div>
 
         {/* Main content area */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {isEmpty ? (
-            <div className="flex-1 flex flex-col justify-between p-4 overflow-y-auto">
+        <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+          {isEmpty && (
+            <div className="flex-shrink-0 p-4 overflow-y-auto">
               {/* Suggested actions when empty */}
               <div className="space-y-4">
                 <div>
@@ -273,43 +260,27 @@ export function DocumentChatSidebar({
                   </div>
                 </div>
               </div>
-
-              {/* Input at bottom when empty */}
-              <div className="pt-4 min-w-0">
-                <DocumentSidebarChat
-                  className="h-auto min-w-0"
-                  messages={messages}
-                  handleSubmit={handleSubmit}
-                  input={input}
-                  handleInputChange={handleInputChange}
-                  isGenerating={isLoading}
-                  stop={stop}
-                  setMessages={setMessages}
-                  isEmpty={isEmpty}
-                  placeholder="How can I help you with this document?"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="flex-1 flex flex-col min-w-0">
-              <DocumentSidebarChat
-                className="flex-1 min-w-0"
-                messages={messages}
-                handleSubmit={handleSubmit}
-                input={input}
-                handleInputChange={handleInputChange}
-                isGenerating={isLoading}
-                stop={stop}
-                setMessages={setMessages}
-                isEmpty={isEmpty}
-                placeholder="How can I help you with this document?"
-              />
             </div>
           )}
+
+          <div className="flex-1 flex flex-col min-w-0 min-h-0">
+            <DocumentSidebarChat
+              className="flex-1 min-w-0"
+              messages={messages}
+              handleSubmit={handleSubmit}
+              input={input}
+              handleInputChange={handleInputChange}
+              isGenerating={isLoading}
+              stop={stop}
+              setMessages={setMessages}
+              isEmpty={isEmpty}
+              placeholder="How can I help you with this document?"
+            />
+          </div>
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t text-center">
+        <div className="p-4 border-t text-center flex-shrink-0">
           <p className="text-xs text-muted-foreground mb-2">
             GrantWare can make mistakes. Please check responses.
           </p>

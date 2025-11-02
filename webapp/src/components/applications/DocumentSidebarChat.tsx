@@ -154,30 +154,33 @@ export function DocumentSidebarChat({
 
   return (
     <ChatContainer className={className}>
-      {messages.length > 0 ? (
-        <ChatMessages messages={messages}>
-          <SidebarMessageList
-            messages={messages}
-            isTyping={isTyping}
-            messageOptions={messageOptions}
-          />
-        </ChatMessages>
-      ) : null}
+      <div className="flex-1 overflow-y-auto min-h-0">
+        {messages.length > 0 ? (
+          <ChatMessages messages={messages}>
+            <SidebarMessageList
+              messages={messages}
+              isTyping={isTyping}
+              messageOptions={messageOptions}
+            />
+          </ChatMessages>
+        ) : null}
+      </div>
 
-      <ChatForm
-        className="mt-auto"
-        isPending={isGenerating || isTyping}
-        handleSubmit={handleSubmit}
-      >
-        <SidebarMessageInput
-          value={input}
-          onChange={handleInputChange}
-          stop={handleStop}
-          isGenerating={isGenerating}
-          isEmpty={isEmpty}
-          placeholder={placeholder}
-        />
-      </ChatForm>
+      <div className="flex-shrink-0">
+        <ChatForm
+          isPending={isGenerating || isTyping}
+          handleSubmit={handleSubmit}
+        >
+          <SidebarMessageInput
+            value={input}
+            onChange={handleInputChange}
+            stop={handleStop}
+            isGenerating={isGenerating}
+            isEmpty={isEmpty}
+            placeholder={placeholder}
+          />
+        </ChatForm>
+      </div>
     </ChatContainer>
   );
 }
@@ -198,28 +201,26 @@ export function ChatMessages({
   } = useAutoScroll([messages]);
 
   return (
-    <div
-      className="grid grid-cols-1 overflow-y-auto pb-4 px-3"
-      ref={containerRef}
-      onScroll={handleScroll}
-      onTouchStart={handleTouchStart}
-    >
-      <div className="max-w-full w-full [grid-column:1/1] [grid-row:1/1]">
+    <div className="relative h-full">
+      <div
+        className="h-full overflow-y-auto pb-4 px-3"
+        ref={containerRef}
+        onScroll={handleScroll}
+        onTouchStart={handleTouchStart}
+      >
         {children}
       </div>
 
       {!shouldAutoScroll && (
-        <div className="pointer-events-none flex flex-1 items-end justify-center [grid-column:1/1] [grid-row:1/1]">
-          <div className="sticky bottom-0 left-0 flex w-full justify-center">
-            <Button
-              onClick={() => scrollToBottom("smooth")}
-              className="pointer-events-auto h-8 w-8 rounded-full bg-background border border-border shadow-md hover:shadow-lg hover:bg-accent ease-in-out animate-in fade-in-0 slide-in-from-bottom-1"
-              size="icon"
-              variant="ghost"
-            >
-              <ArrowDown className="h-4 w-4" />
-            </Button>
-          </div>
+        <div className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none">
+          <Button
+            onClick={() => scrollToBottom("smooth")}
+            className="pointer-events-auto h-8 w-8 rounded-full bg-background border border-border shadow-md hover:shadow-lg hover:bg-accent ease-in-out animate-in fade-in-0 slide-in-from-bottom-1"
+            size="icon"
+            variant="ghost"
+          >
+            <ArrowDown className="h-4 w-4" />
+          </Button>
         </div>
       )}
     </div>
@@ -233,7 +234,7 @@ export const ChatContainer = forwardRef<
   return (
     <div
       ref={ref}
-      className={cn("grid max-h-full w-full grid-rows-[1fr_auto]", className)}
+      className={cn("flex flex-col h-full w-full overflow-hidden", className)}
       {...props}
     />
   );
@@ -342,7 +343,7 @@ function SidebarMessageInput({
   });
 
   return (
-    <div className="w-full px-3">
+    <div className="w-full px-3 py-3">
       <div className="relative flex w-full">
         <div className="relative flex w-full items-center">
           <div className="relative w-full">
@@ -352,7 +353,7 @@ function SidebarMessageInput({
               ref={textAreaRef}
               onKeyDown={onKeyDown}
               className={cn(
-                "mb-2 z-10 w-full grow resize-none rounded-xl border border-input bg-background text-sm ring-offset-background transition-[border] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+                "z-10 w-full grow resize-none rounded-xl border border-input bg-background text-sm ring-offset-background transition-[border] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
                 isEmpty ? "p-3 pr-12" : "p-3 pr-12",
                 className
               )}
