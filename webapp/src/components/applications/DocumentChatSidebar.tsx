@@ -74,7 +74,7 @@ export function DocumentChatSidebar({
           throw new Error(`API responded with status: ${response.status}`);
         }
 
-        // Handle streaming response
+        // Handle streaming responses
         const reader = response.body?.getReader();
         if (!reader) {
           throw new Error("No response body");
