@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { GrantInfoCard } from "./GrantInfoCard";
 import { DocumentList } from "./DocumentList";
+import { TodoChecklist, TodoItem } from "./TodoChecklist";
 
 interface Application {
   id: string;
@@ -56,6 +57,7 @@ export function ApplicationPage({
   const [application, setApplication] = useState<Application | null>(null);
   const [grant, setGrant] = useState<Grant | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [checklist, setChecklist] = useState<TodoItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
@@ -110,6 +112,46 @@ export function ApplicationPage({
     }
   }, [applicationId]);
 
+  const fetchChecklist = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `/api/applications/${applicationId}/checklist`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setChecklist(data.checklist || []);
+      }
+    } catch (error) {
+      console.error("Error fetching checklist:", error);
+      // Don't show error toast for checklist as it's not critical
+    }
+  }, [applicationId]);
+
+  const handleUpdateChecklist = async (updatedTodos: TodoItem[]) => {
+    try {
+      const response = await fetch(
+        `/api/applications/${applicationId}/checklist`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ checklist: updatedTodos }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update checklist");
+      }
+
+      const data = await response.json();
+      setChecklist(data.checklist || []);
+    } catch (error) {
+      console.error("Error updating checklist:", error);
+      throw error; // Re-throw to let TodoChecklist handle the error
+    }
+  };
+
   const handleEditDocument = (documentId: string) => {
     router.push(
       `/private/${organizationSlug}/applications/${applicationId}/documents/${documentId}`
@@ -161,7 +203,11 @@ export function ApplicationPage({
       try {
         const app = await fetchApplication();
         if (app) {
-          await Promise.all([fetchGrant(app.opportunityId), fetchDocuments()]);
+          await Promise.all([
+            fetchGrant(app.opportunityId),
+            fetchDocuments(),
+            fetchChecklist(),
+          ]);
         }
       } finally {
         setLoading(false);
@@ -169,7 +215,13 @@ export function ApplicationPage({
     };
 
     loadData();
-  }, [applicationId, organizationSlug, fetchApplication, fetchDocuments]);
+  }, [
+    applicationId,
+    organizationSlug,
+    fetchApplication,
+    fetchDocuments,
+    fetchChecklist,
+  ]);
 
   if (loading) {
     return (
@@ -214,6 +266,13 @@ export function ApplicationPage({
           }
         }
         organizationSlug={organizationSlug}
+      />
+
+      {/* Checklist */}
+      <TodoChecklist
+        applicationId={applicationId}
+        initialTodos={checklist}
+        onUpdate={handleUpdateChecklist}
       />
 
       {/* Documents */}

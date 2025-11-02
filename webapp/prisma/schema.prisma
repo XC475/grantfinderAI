@@ -162,6 +162,7 @@ model Application {
   title                 String?
   notes                 String?
   documents             Json?
+  checklist             Json?
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
   submittedAt           DateTime?

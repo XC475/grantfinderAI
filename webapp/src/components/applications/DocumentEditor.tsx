@@ -3,9 +3,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Save, Loader2 } from "lucide-react";
+import { Save, Loader2, PanelLeft } from "lucide-react";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { DocumentChatSidebar } from "./DocumentChatSidebar";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
 import { cn } from "@/lib/utils";
 import "./editor-overrides.css";
 
@@ -76,9 +81,21 @@ export function DocumentEditor({
   };
 
   return (
-    <div className="flex h-full bg-background relative">
+    <div className="h-full bg-background relative">
       {/* Floating action buttons - top right */}
       <div className="fixed top-20 right-6 z-40 flex items-center gap-2">
+        {/* Toggle sidebar button (only when closed) */}
+        {!isChatOpen && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsChatOpen(true)}
+            className="shadow-sm bg-background/95 backdrop-blur-sm"
+          >
+            <PanelLeft className="h-4 w-4 mr-2" />
+            Assistant
+          </Button>
+        )}
         {hasUnsavedChanges && (
           <span className="text-sm text-muted-foreground whitespace-nowrap bg-background/95 backdrop-blur-sm px-3 py-1.5 rounded-md border shadow-sm">
             • Unsaved
@@ -102,34 +119,39 @@ export function DocumentEditor({
         )}
       </div>
 
-      {/* Main editor area */}
-      <div
-        className={cn(
-          "flex-1 flex flex-col transition-all",
-          isChatOpen && "mr-0"
-        )}
-      >
-        {/* Editor */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="container max-w-4xl mx-auto px-8 pb-8">
-            <div className="prose prose-lg max-w-none">
-              <SimpleEditor
-                initialContent={content}
-                onContentChange={handleContentChange}
-              />
+      {/* Resizable layout with editor and sidebar */}
+      <ResizablePanelGroup direction="horizontal" className="h-full">
+        {/* Main editor panel */}
+        <ResizablePanel defaultSize={isChatOpen ? 60 : 100} minSize={30}>
+          <div className="h-full flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-y-auto">
+              <div className="container max-w-4xl mx-auto px-8 pb-8">
+                <div className="prose prose-lg max-w-none">
+                  <SimpleEditor
+                    initialContent={content}
+                    onContentChange={handleContentChange}
+                  />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </ResizablePanel>
 
-      {/* Chat sidebar */}
-      <DocumentChatSidebar
-        documentId={document.id}
-        documentTitle={title}
-        documentContent={content}
-        isOpen={isChatOpen}
-        onToggle={() => setIsChatOpen(!isChatOpen)}
-      />
+        {/* Resizable handle (only shown when sidebar is open) */}
+        {isChatOpen && <ResizableHandle withHandle />}
+
+        {/* Chat sidebar panel */}
+        {isChatOpen && (
+          <ResizablePanel defaultSize={40} minSize={25} maxSize={60}>
+            <DocumentChatSidebar
+              documentId={document.id}
+              documentTitle={title}
+              documentContent={content}
+              onToggle={() => setIsChatOpen(!isChatOpen)}
+            />
+          </ResizablePanel>
+        )}
+      </ResizablePanelGroup>
     </div>
   );
 }

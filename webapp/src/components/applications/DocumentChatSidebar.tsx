@@ -1,14 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import {
-  X,
-  Plus,
-  Clock,
-  MoreHorizontal,
-  Settings,
-  PanelLeft,
-} from "lucide-react";
+import { Plus, Clock, MoreHorizontal, Settings, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DocumentSidebarChat } from "./DocumentSidebarChat";
 import { Message } from "@/components/ui/chat-message";
@@ -18,7 +11,6 @@ interface DocumentChatSidebarProps {
   documentId: string;
   documentTitle: string;
   documentContent: string;
-  isOpen: boolean;
   onToggle: () => void;
 }
 
@@ -26,7 +18,6 @@ export function DocumentChatSidebar({
   documentId,
   documentTitle,
   documentContent,
-  isOpen,
   onToggle,
 }: DocumentChatSidebarProps) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -194,102 +185,92 @@ export function DocumentChatSidebar({
   ];
 
   return (
-    <>
-      <div className="relative mt-[-40px]">
-        {/* Toggle button - always positioned relative to sidebar */}
+    <div className="flex flex-col h-full bg-background border-l">
+      {/* Close button - top right */}
+      <div className="absolute top-4 right-4 z-10">
         <Button
           variant="ghost"
           size="icon"
-          className="absolute right-4 z-50 size-7"
+          className="size-7"
           onClick={onToggle}
         >
-          <PanelLeft className="h-4 w-4" />
-          <span className="sr-only">Toggle Sidebar</span>
+          <X className="h-4 w-4" />
+          <span className="sr-only">Close Sidebar</span>
         </Button>
       </div>
-
-      <div
-        className={cn(
-          "relative mt-[-60px] flex flex-col h-screen border-l bg-background transition-all duration-300 overflow-y-hidden",
-          isOpen ? "w-[40%] min-w-[320px]" : "w-0 overflow-hidden"
-        )}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
-          <h2 className="text-lg font-semibold">Assistant</h2>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <Plus className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <Clock className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-
-        {/* Main content area */}
-        <div className="flex-1 flex flex-col overflow-hidden min-h-0 p-1 pt-2">
-          {isEmpty && (
-            <div className="flex-shrink-0 p-4 overflow-y-auto">
-              {/* Suggested actions when empty */}
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-sm font-medium mb-2">
-                    Suggested actions
-                  </h3>
-                  <div className="space-y-2">
-                    {suggestedActions.map((action, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleSuggestedAction(action)}
-                        className="w-full text-left text-sm p-3 rounded-md border hover:bg-muted/50 transition-colors"
-                      >
-                        {action}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Sources section (placeholder) */}
-                <div className="pt-4 border-t">
-                  <div className="flex items-center gap-2 p-3 rounded-md border">
-                    <span className="text-sm font-medium">📄 Sources</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="flex-1 flex flex-col min-w-0 min-h-0">
-            <DocumentSidebarChat
-              className="flex-1 min-w-0"
-              messages={messages}
-              handleSubmit={handleSubmit}
-              input={input}
-              handleInputChange={handleInputChange}
-              isGenerating={isLoading}
-              stop={stop}
-              setMessages={setMessages}
-              isEmpty={isEmpty}
-              placeholder="How can I help you with this document?"
-            />
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="p-4 border-t text-center flex-shrink-0">
-          <p className="text-xs text-muted-foreground mb-2">
-            GrantWare can make mistakes. Please check responses.
-          </p>
-          <Button variant="ghost" size="sm" className="h-8">
-            <Settings className="h-3 w-3 mr-1" />
-            Settings
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
+        <h2 className="text-lg font-semibold">Assistant</h2>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <Plus className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <Clock className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <MoreHorizontal className="h-4 w-4" />
           </Button>
         </div>
       </div>
-    </>
+
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col overflow-hidden min-h-0 p-1 pt-2">
+        {isEmpty && (
+          <div className="flex-shrink-0 p-4 overflow-y-auto">
+            {/* Suggested actions when empty */}
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-sm font-medium mb-2">Suggested actions</h3>
+                <div className="space-y-2">
+                  {suggestedActions.map((action, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleSuggestedAction(action)}
+                      className="w-full text-left text-sm p-3 rounded-md border hover:bg-muted/50 transition-colors"
+                    >
+                      {action}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sources section (placeholder) */}
+              <div className="pt-4 border-t">
+                <div className="flex items-center gap-2 p-3 rounded-md border">
+                  <span className="text-sm font-medium">📄 Sources</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="flex-1 flex flex-col min-w-0 min-h-0">
+          <DocumentSidebarChat
+            className="flex-1 min-w-0"
+            messages={messages}
+            handleSubmit={handleSubmit}
+            input={input}
+            handleInputChange={handleInputChange}
+            isGenerating={isLoading}
+            stop={stop}
+            setMessages={setMessages}
+            isEmpty={isEmpty}
+            placeholder="How can I help you with this document?"
+          />
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="p-4 border-t text-center flex-shrink-0">
+        <p className="text-xs text-muted-foreground mb-2">
+          GrantWare can make mistakes. Please check responses.
+        </p>
+        <Button variant="ghost" size="sm" className="h-8">
+          <Settings className="h-3 w-3 mr-1" />
+          Settings
+        </Button>
+      </div>
+    </div>
   );
 }
