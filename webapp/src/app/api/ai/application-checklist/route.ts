@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -133,7 +134,9 @@ Agency: ${grantInfo.agency || "N/A"}`;
     await prisma.application.update({
       where: { id: applicationId },
       data: {
-        checklist: checklist,
+        checklist: JSON.parse(
+          JSON.stringify(checklist)
+        ) as Prisma.InputJsonValue,
         updatedAt: new Date(),
       },
     });

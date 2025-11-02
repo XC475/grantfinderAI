@@ -117,8 +117,8 @@ export async function POST(request: NextRequest) {
         // Extract attachment URLs if they exist
         if (grantInfo.attachments && Array.isArray(grantInfo.attachments)) {
           const attachmentUrls = grantInfo.attachments
-            .filter((att: any) => att.url)
-            .map((att: any) => att.url);
+            .filter((att: { url?: string }) => att.url)
+            .map((att: { url: string }) => att.url);
 
           if (attachmentUrls.length > 0) {
             console.log(
@@ -141,12 +141,15 @@ export async function POST(request: NextRequest) {
             if (scrapeResponse.ok) {
               const scrapeData = await scrapeResponse.json();
               const successfulScrapes = scrapeData.results.filter(
-                (r: any) => r.success
+                (r: { success?: boolean }) => r.success
               );
 
               if (successfulScrapes.length > 0) {
                 attachmentsMarkdown = successfulScrapes
-                  .map((r: any) => `\n\n--- ${r.url} ---\n${r.markdown}`)
+                  .map(
+                    (r: { url: string; markdown: string }) =>
+                      `\n\n--- ${r.url} ---\n${r.markdown}`
+                  )
                   .join("\n");
 
                 // Store attachments markdown in database

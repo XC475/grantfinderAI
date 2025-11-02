@@ -24,7 +24,7 @@ interface GrantInfoCardProps {
     award_max?: number;
     agency?: string;
     url?: string;
-    attachments?: any;
+    attachments?: Array<{ url?: string; title?: string; name?: string }>;
   };
   organizationSlug: string;
 }
@@ -139,34 +139,42 @@ export function GrantInfoCard({ grant, organizationSlug }: GrantInfoCardProps) {
                   <div className="font-medium text-sm">Attachments</div>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {grant.attachments.map((attachment: any, index: number) =>
-                    attachment.url ? (
-                      <a
-                        key={index}
-                        href={attachment.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-md hover:bg-muted transition-colors cursor-pointer"
-                      >
-                        <span className="text-sm">
-                          {attachment.title ||
-                            attachment.name ||
-                            `Attachment ${index + 1}`}
-                        </span>
-                        <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                      </a>
-                    ) : (
-                      <div
-                        key={index}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-md"
-                      >
-                        <span className="text-sm">
-                          {attachment.title ||
-                            attachment.name ||
-                            `Attachment ${index + 1}`}
-                        </span>
-                      </div>
-                    )
+                  {grant.attachments.map(
+                    (
+                      attachment: {
+                        url?: string;
+                        title?: string;
+                        name?: string;
+                      },
+                      index: number
+                    ) =>
+                      attachment.url ? (
+                        <a
+                          key={index}
+                          href={attachment.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-md hover:bg-muted transition-colors cursor-pointer"
+                        >
+                          <span className="text-sm">
+                            {attachment.title ||
+                              attachment.name ||
+                              `Attachment ${index + 1}`}
+                          </span>
+                          <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                        </a>
+                      ) : (
+                        <div
+                          key={index}
+                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-md"
+                        >
+                          <span className="text-sm">
+                            {attachment.title ||
+                              attachment.name ||
+                              `Attachment ${index + 1}`}
+                          </span>
+                        </div>
+                      )
                   )}
                 </div>
               </div>

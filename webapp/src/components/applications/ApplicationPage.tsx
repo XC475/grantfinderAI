@@ -32,7 +32,7 @@ interface Grant {
   award_max?: number;
   agency?: string;
   url?: string;
-  attachments?: any;
+  attachments?: Array<{ url?: string; title?: string; name?: string }>;
 }
 
 interface Document {
