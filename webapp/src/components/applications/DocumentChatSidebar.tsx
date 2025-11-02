@@ -210,7 +210,7 @@ export function DocumentChatSidebar({
 
       <div
         className={cn(
-          "relative mt-[-60px] flex flex-col h-[calc(100vh-20px)] max-h-full border-l bg-background transition-all duration-300 overflow-y-hidden",
+          "relative mt-[-60px] flex flex-col h-screen border-l bg-background transition-all duration-300 overflow-y-hidden",
           isOpen ? "w-[40%] min-w-[320px]" : "w-0 overflow-hidden"
         )}
       >
@@ -231,7 +231,7 @@ export function DocumentChatSidebar({
         </div>
 
         {/* Main content area */}
-        <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+        <div className="flex-1 flex flex-col overflow-hidden min-h-0 p-1 pt-2">
           {isEmpty && (
             <div className="flex-shrink-0 p-4 overflow-y-auto">
               {/* Suggested actions when empty */}
