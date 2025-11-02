@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { GrantInfoCard } from "./GrantInfoCard";
 import { DocumentList } from "./DocumentList";
+import { TodoChecklist, TodoItem } from "./TodoChecklist";
 
 interface Application {
   id: string;
@@ -31,6 +32,7 @@ interface Grant {
   award_max?: number;
   agency?: string;
   url?: string;
+  attachments?: Array<{ url?: string; title?: string; name?: string }>;
 }
 
 interface Document {
@@ -55,8 +57,10 @@ export function ApplicationPage({
   const [application, setApplication] = useState<Application | null>(null);
   const [grant, setGrant] = useState<Grant | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [checklist, setChecklist] = useState<TodoItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isGeneratingChecklist, setIsGeneratingChecklist] = useState(false);
   const router = useRouter();
 
   const fetchApplication = useCallback(async () => {
@@ -84,14 +88,10 @@ export function ApplicationPage({
 
   const fetchGrant = async (opportunityId: number) => {
     try {
-      const response = await fetch(
-        `/api/grants/search?limit=1&q=${opportunityId}`
-      );
+      const response = await fetch(`/api/grants/${opportunityId}`);
       if (response.ok) {
-        const data = await response.json();
-        if (data.data && data.data.length > 0) {
-          setGrant(data.data[0]);
-        }
+        const grantData = await response.json();
+        setGrant(grantData);
       }
     } catch (error) {
       console.error("Error fetching grant:", error);
@@ -112,6 +112,55 @@ export function ApplicationPage({
       toast.error("Failed to load documents");
     }
   }, [applicationId]);
+
+  const fetchChecklist = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `/api/applications/${applicationId}/checklist`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        const fetchedChecklist = data.checklist || [];
+        setChecklist(fetchedChecklist);
+
+        // If checklist is now populated, stop generating state
+        if (fetchedChecklist.length > 0 && isGeneratingChecklist) {
+          setIsGeneratingChecklist(false);
+        }
+
+        return fetchedChecklist;
+      }
+    } catch (error) {
+      console.error("Error fetching checklist:", error);
+      // Don't show error toast for checklist as it's not critical
+    }
+    return [];
+  }, [applicationId, isGeneratingChecklist]);
+
+  const handleUpdateChecklist = async (updatedTodos: TodoItem[]) => {
+    try {
+      const response = await fetch(
+        `/api/applications/${applicationId}/checklist`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ checklist: updatedTodos }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update checklist");
+      }
+
+      const data = await response.json();
+      setChecklist(data.checklist || []);
+    } catch (error) {
+      console.error("Error updating checklist:", error);
+      throw error; // Re-throw to let TodoChecklist handle the error
+    }
+  };
 
   const handleEditDocument = (documentId: string) => {
     router.push(
@@ -164,7 +213,23 @@ export function ApplicationPage({
       try {
         const app = await fetchApplication();
         if (app) {
-          await Promise.all([fetchGrant(app.opportunityId), fetchDocuments()]);
+          const fetchedChecklist = await Promise.all([
+            fetchGrant(app.opportunityId),
+            fetchDocuments(),
+            fetchChecklist(),
+          ]).then((results) => results[2]); // Get checklist result
+
+          // Check if app is new (created less than 2 minutes ago) and checklist is empty
+          const appCreatedAt = new Date(app.createdAt);
+          const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+          const isNewApp = appCreatedAt > twoMinutesAgo;
+
+          if (
+            isNewApp &&
+            (!fetchedChecklist || fetchedChecklist.length === 0)
+          ) {
+            setIsGeneratingChecklist(true);
+          }
         }
       } finally {
         setLoading(false);
@@ -172,7 +237,37 @@ export function ApplicationPage({
     };
 
     loadData();
-  }, [applicationId, organizationSlug, fetchApplication, fetchDocuments]);
+  }, [
+    applicationId,
+    organizationSlug,
+    fetchApplication,
+    fetchDocuments,
+    fetchChecklist,
+  ]);
+
+  // Poll for checklist updates while generating
+  useEffect(() => {
+    if (!isGeneratingChecklist) return;
+
+    const pollInterval = setInterval(async () => {
+      console.log("Polling for checklist updates...");
+      await fetchChecklist();
+    }, 3000); // Poll every 3 seconds
+
+    // Stop polling after 2 minutes even if not complete
+    const timeout = setTimeout(
+      () => {
+        setIsGeneratingChecklist(false);
+        clearInterval(pollInterval);
+      },
+      2 * 60 * 1000
+    );
+
+    return () => {
+      clearInterval(pollInterval);
+      clearTimeout(timeout);
+    };
+  }, [isGeneratingChecklist, fetchChecklist]);
 
   if (loading) {
     return (
@@ -197,23 +292,35 @@ export function ApplicationPage({
   }
 
   return (
-    <div className="container max-w-6xl py-8 space-y-8">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">
-            {application.title || `Application #${application.opportunityId}`}
-          </h1>
-          <p className="text-muted-foreground">
-            Manage your application documents and grant information
-          </p>
-        </div>
-      </div>
-
+    <div className="container max-w-6xl space-y-8 p-4">
       {/* Grant Information */}
-      {grant && (
-        <GrantInfoCard grant={grant} organizationSlug={organizationSlug} />
-      )}
+      <GrantInfoCard
+        grant={
+          grant || {
+            id: application.opportunityId,
+            title:
+              application.title || `Application #${application.opportunityId}`,
+            status: "Not specified",
+            description: undefined,
+            close_date: undefined,
+            total_funding_amount: undefined,
+            award_min: undefined,
+            award_max: undefined,
+            agency: undefined,
+            url: undefined,
+            attachments: undefined,
+          }
+        }
+        organizationSlug={organizationSlug}
+      />
+
+      {/* Checklist */}
+      <TodoChecklist
+        applicationId={applicationId}
+        initialTodos={checklist}
+        onUpdate={handleUpdateChecklist}
+        isGenerating={isGeneratingChecklist}
+      />
 
       {/* Documents */}
       <DocumentList

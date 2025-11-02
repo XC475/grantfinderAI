@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { supabaseServer } from "@/lib/supabaseServer";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma";
 
@@ -89,6 +90,112 @@ export async function POST(request: NextRequest) {
         update: {},
       });
     }
+
+    // Trigger async background process for checklist generation
+    // Don't wait for this to complete - let it run in background
+    (async () => {
+      try {
+        console.log(
+          `🚀 Starting async checklist generation for application ${application.id}`
+        );
+
+        // Fetch the grant/opportunity details
+        const opportunity = await supabaseServer
+          .from("opportunities")
+          .select("*")
+          .eq("id", opportunityId)
+          .single();
+
+        if (!opportunity.data) {
+          console.error("❌ Opportunity not found for checklist generation");
+          return;
+        }
+
+        const grantInfo = opportunity.data;
+        let attachmentsMarkdown = "";
+
+        // Extract attachment URLs if they exist
+        if (grantInfo.attachments && Array.isArray(grantInfo.attachments)) {
+          const attachmentUrls = grantInfo.attachments
+            .filter((att: { url?: string }) => att.url)
+            .map((att: { url: string }) => att.url);
+
+          if (attachmentUrls.length > 0) {
+            console.log(
+              `📎 Found ${attachmentUrls.length} attachments to scrape`
+            );
+
+            // Call Firecrawl to scrape attachments
+            const scrapeResponse = await fetch(
+              `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/api/firecrawl/scrape`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Cookie: request.headers.get("cookie") || "",
+                },
+                body: JSON.stringify({ urls: attachmentUrls }),
+              }
+            );
+
+            if (scrapeResponse.ok) {
+              const scrapeData = await scrapeResponse.json();
+              const successfulScrapes = scrapeData.results.filter(
+                (r: { success?: boolean }) => r.success
+              );
+
+              if (successfulScrapes.length > 0) {
+                attachmentsMarkdown = successfulScrapes
+                  .map(
+                    (r: { url: string; markdown: string }) =>
+                      `\n\n--- ${r.url} ---\n${r.markdown}`
+                  )
+                  .join("\n");
+
+                // Store attachments markdown in database
+                await prisma.application.update({
+                  where: { id: application.id },
+                  data: { attachments_markdown: attachmentsMarkdown },
+                });
+
+                console.log(
+                  `✅ Scraped and stored ${successfulScrapes.length} attachments`
+                );
+              }
+            }
+          }
+        }
+
+        // Generate AI checklist
+        const checklistResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/api/ai/application-checklist`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Cookie: request.headers.get("cookie") || "",
+            },
+            body: JSON.stringify({
+              applicationId: application.id,
+              grantInfo,
+              attachmentsMarkdown,
+            }),
+          }
+        );
+
+        if (checklistResponse.ok) {
+          console.log(
+            `✅ Checklist generated successfully for application ${application.id}`
+          );
+        } else {
+          console.error(
+            `❌ Failed to generate checklist: ${checklistResponse.status}`
+          );
+        }
+      } catch (error) {
+        console.error("❌ Error in background checklist generation:", error);
+      }
+    })();
 
     return NextResponse.json({ application, alsoBookmarked: alsoBookmark });
   } catch (error) {

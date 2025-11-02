@@ -162,6 +162,8 @@ model Application {
   title                 String?
   notes                 String?
   documents             Json?
+  checklist             Json?
+  attachments_markdown  String?
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
   submittedAt           DateTime?

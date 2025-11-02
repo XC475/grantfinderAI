@@ -236,6 +236,8 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   title: 'title',
   notes: 'notes',
   documents: 'documents',
+  checklist: 'checklist',
+  attachments_markdown: 'attachments_markdown',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   submittedAt: 'submittedAt',

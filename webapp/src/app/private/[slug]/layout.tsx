@@ -2,7 +2,6 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { DynamicBreadcrumb } from "@/components/sidebar/dynamic-breadcrumb";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
@@ -58,6 +57,9 @@ export default async function OrganizationLayout({
   // Don't show sidebar on onboarding page
   const isOnboardingPage = pathname.includes("/onboarding");
 
+  // Check if we're on a document editor page
+  const isDocumentPage = pathname.includes("/documents/");
+
   if (isOnboardingPage) {
     return <>{children}</>;
   }
@@ -71,11 +73,16 @@ export default async function OrganizationLayout({
             <Separator orientation="vertical" className="mr-2 h-4" />
             <DynamicBreadcrumb organizationSlug={slug} />
           </div>
-          <div className="ml-auto px-4">
-            <ThemeToggle />
-          </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
+        <div
+          className={
+            isDocumentPage
+              ? "flex flex-1 flex-col"
+              : "flex flex-1 flex-col gap-4 p-4 pt-0"
+          }
+        >
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

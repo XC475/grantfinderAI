@@ -36,6 +36,7 @@ interface ChatPropsBase {
   setMessages?: (messages: Message[]) => void;
   transcribeAudio?: (blob: Blob) => Promise<string>;
   isEmpty?: boolean;
+  placeholder?: string;
 }
 
 interface ChatPropsWithoutSuggestions extends ChatPropsBase {
@@ -64,6 +65,7 @@ export function Chat({
   setMessages,
   transcribeAudio,
   isEmpty: isEmptyProp,
+  placeholder,
 }: ChatProps) {
   const lastMessage = messages.at(-1);
   const isEmpty = isEmptyProp ?? messages.length === 0;
@@ -229,6 +231,7 @@ export function Chat({
             isGenerating={isGenerating}
             transcribeAudio={transcribeAudio}
             isEmpty={isEmpty}
+            placeholder={placeholder}
           />
         )}
       </ChatForm>

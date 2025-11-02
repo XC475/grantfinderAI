@@ -3,9 +3,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Save, Loader2 } from "lucide-react";
+import { Save, Loader2, PanelLeft } from "lucide-react";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
+import { DocumentChatSidebar } from "./DocumentChatSidebar";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
+import { cn } from "@/lib/utils";
 import "./editor-overrides.css";
 
 interface Document {
@@ -36,6 +42,7 @@ export function DocumentEditor({
   const [title, setTitle] = useState(document.title);
   const [content, setContent] = useState(document.content || "");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(true);
 
   // Auto-save every 30 seconds
   useEffect(() => {
@@ -74,56 +81,86 @@ export function DocumentEditor({
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-background border-b">
-        <div className="container max-w-6xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Input
-                  value={title}
-                  onChange={(e) => handleTitleChange(e.target.value)}
-                  className="text-lg font-semibold border-none shadow-none px-0"
-                  placeholder="Document title..."
-                />
-                {hasUnsavedChanges && (
-                  <span className="text-sm text-muted-foreground">
-                    • Unsaved
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {hasUnsavedChanges && (
-                <Button
-                  variant="outline"
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="h-8"
-                >
-                  {isSaving ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <Save className="h-4 w-4 mr-2" />
-                  )}
-                  {isSaving ? "Saving..." : "Save"}
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
+    <div className="h-full bg-background relative">
+      {/* Floating action buttons - top right */}
+      <div className="fixed top-20 right-6 z-40 flex items-center gap-2">
+        {hasUnsavedChanges && (
+          <span className="text-sm text-muted-foreground whitespace-nowrap bg-background/95 backdrop-blur-sm px-3 py-1.5 rounded-md border shadow-sm">
+            • Unsaved
+          </span>
+        )}
+        {hasUnsavedChanges && (
+          <Button
+            variant="outline"
+            onClick={handleSave}
+            disabled={isSaving}
+            size="sm"
+            className="shadow-sm bg-background/95 backdrop-blur-sm"
+          >
+            {isSaving ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4 mr-2" />
+            )}
+            {isSaving ? "Saving..." : "Save"}
+          </Button>
+        )}
       </div>
 
-      {/* Editor */}
-      <div className="container max-w-6xl mx-auto px-4 py-8">
-        <div className="prose max-w-none">
-          <SimpleEditor
-            initialContent={content}
-            onContentChange={handleContentChange}
+      {/* Toggle sidebar button - always visible on the left side of sidebar */}
+      <div
+        className="fixed top-22 right-0 -translate-y-1/2 z-40"
+        style={{ right: isChatOpen ? "calc(40% - 100px)" : "18px" }}
+      >
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsChatOpen(!isChatOpen)}
+          className="size-7"
+        >
+          <PanelLeft
+            className={cn(
+              "h-4 w-4 transition-transform",
+              isChatOpen && "rotate-180"
+            )}
           />
-        </div>
+          <span className="sr-only">Toggle Assistant Sidebar</span>
+        </Button>
       </div>
+
+      {/* Resizable layout with editor and sidebar */}
+      <ResizablePanelGroup direction="horizontal" className="h-full">
+        {/* Main editor panel */}
+        <ResizablePanel defaultSize={isChatOpen ? 60 : 100} minSize={30}>
+          <div className="h-full flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-y-auto">
+              <div className="container max-w-4xl mx-auto px-8 pb-8">
+                <div className="prose prose-lg max-w-none">
+                  <SimpleEditor
+                    initialContent={content}
+                    onContentChange={handleContentChange}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </ResizablePanel>
+
+        {/* Resizable handle (only shown when sidebar is open) */}
+        {isChatOpen && <ResizableHandle withHandle />}
+
+        {/* Chat sidebar panel */}
+        {isChatOpen && (
+          <ResizablePanel defaultSize={40} minSize={25} maxSize={60}>
+            <DocumentChatSidebar
+              documentId={document.id}
+              documentTitle={title}
+              documentContent={content}
+              onToggle={() => setIsChatOpen(!isChatOpen)}
+            />
+          </ResizablePanel>
+        )}
+      </ResizablePanelGroup>
     </div>
   );
 }
