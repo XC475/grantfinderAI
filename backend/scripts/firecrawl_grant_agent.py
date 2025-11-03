@@ -67,12 +67,12 @@ class FirecrawlGrantAgent:
                 },
                 "agency": {
                     "type": "string",
-                    "description": "Full name of the awarding agency or organization issuing the grant. Look for agency logos, headers, or 'Funding Agency' fields.",
+                    "description": "Full name of the awarding agency or organization issuing the grant.",
                 },
                 "status": {
                     "type": "string",
                     "enum": ["posted", "forecasted", "closed", "archived"],
-                    "description": "Current lifecycle status of the opportunity. Use one of the enum values: 'posted' (accepting applications), 'forecasted' (in planning), 'closed' (deadline passed), or 'archived' (cancelled/withdrawn).",
+                    "description": "Current lifecycle status of the opportunity. Use one of the enum values: 'posted' (posted, open, or accepting applications), 'forecasted' (in planning, not yet posted), 'closed' (deadline, close date, or due date has already passed), or 'archived' (only when specifically marked as such).",
                 },
                 "category": {
                     "type": "array",
@@ -132,6 +132,18 @@ class FirecrawlGrantAgent:
                     "type": "string",
                     "description": "Application deadline date in YYYY-MM-DD format. Look for 'Application Due Date', 'Deadline', 'Close Date', or 'Submission Deadline'.",
                 },
+                "archive_date": {
+                    "type": "string",
+                    "description": "Date the opportunity was archived or cancelled in YYYY-MM-DD format. Look for 'Archive Date', 'Cancellation Date', or similar fields.",
+                },
+                "last_updated": {
+                    "type": "string",
+                    "description": "Date the opportunity was last updated in YYYY-MM-DD format. Look for 'Last Updated', 'Modified Date', or similar fields.",
+                },
+                "rfp_url": {
+                    "type": "string",
+                    "description": "DIRECT URL to the official RFP/solicitation document for THIS SPECIFIC GRANT ONLY. MUST meet ALL criteria: 1) URL ends with .pdf/.doc/.docx/.rtf, 2) Link text contains RFP-related terms ('RFP', 'Request for Proposal', 'Solicitation', 'NOFO', 'Funding Opportunity Announcement', 'Full Announcement'), 3) Document appears to be the formal grant solicitation (not general guidelines/applications), 4) Link is specifically associated with this grant opportunity (contains grant ID, title keywords, or fiscal year). REJECT: generic application forms, general program guidelines, unrelated documents, current page URL, grants management sites. Set to null if no qualifying RFP document found.",
+                },
                 "attachments": {
                     "type": "array",
                     "items": {
@@ -139,7 +151,7 @@ class FirecrawlGrantAgent:
                         "properties": {
                             "name": {
                                 "type": "string",
-                                "description": "Display name or filename of the attachment (if available).",
+                                "description": "Display name or filename of the attachment.",
                             },
                             "url": {
                                 "type": "string",
@@ -148,11 +160,11 @@ class FirecrawlGrantAgent:
                         },
                         "required": ["name", "url"],
                     },
-                    "description": "List of attachment objects found on the page. Each object contains a name and a url for application forms, guidelines, RFPs, and supporting documents.",
+                    "description": "List of attachment objects/links found ONLY ON the given url page. Each object contains a name and a url for application forms, guidelines, RFPs, and supporting documents. Look for links labeled 'Download', 'Attachment', 'RFP', 'Guidelines', or similar.  Example: [{'name': 'Application Guidelines', 'url': 'https://example.com/guidelines.pdf'}, {'name': 'Eligibility Document', 'url': 'https://example.com/eligibility.docx'}]",
                 },
                 "description": {
                     "type": "string",
-                    "description": "Full description text describing the grant's purpose, scope, activities, and deliverables. Extract the main body content with minimal cleaning.",
+                    "description": "Full description text describing the grant's purpose, scope, activities, and deliverables.",
                 },
                 "eligibility": {
                     "type": "string",
@@ -172,7 +184,8 @@ class FirecrawlGrantAgent:
                 },
                 "funding_type": {
                     "type": "string",
-                    "description": "Type of funding source: 'federal', 'state', 'local', or 'private'. Determine from the issuing agency or explicit funding source statements.",
+                    "enum": ["federal", "state", "local", "private"],
+                    "description": "Type of funding source: choose one of the enum values based on the issuing agency or explicit funding source statements.",
                 },
                 "contact_email": {
                     "type": "string",
@@ -180,7 +193,7 @@ class FirecrawlGrantAgent:
                 },
                 "contact_phone": {
                     "type": "string",
-                    "description": "Primary contact phone number. Normalize to (AAA) BBB-CCCC format if possible.",
+                    "description": "Primary contact phone number. Normalize to (AAA) BBB-CCCC format if possible, if no phone number specified, set to null.",
                 },
                 "source_grant_id": {
                     "type": "string",
@@ -188,7 +201,7 @@ class FirecrawlGrantAgent:
                 },
                 "funding_instrument": {
                     "type": "string",
-                    "description": "Type of funding mechanism such as 'Grant', 'Cooperative Agreement', 'Contract', 'Fellowship', etc.",
+                    "description": "Type of funding mechanism such as 'grant', 'cooperative agreement', 'contract', 'fellowship', etc.",
                 },
                 "description_summary": {
                     "type": "string",
@@ -206,6 +219,11 @@ class FirecrawlGrantAgent:
                     "type": "number",
                     "description": "Relevance score (0-100) indicating how relevant this grant is to K-12 school districts.",
                 },
+                "extra": {
+                    "type": "object",
+                    "description": "Other useful fields for display; keys are headings, values are strings.",
+                    "additionalProperties": {"type": "string"},
+                },
             },
             "required": ["title", "agency", "status", "category", "description"],
         }
@@ -221,9 +239,15 @@ class FirecrawlGrantAgent:
             - Set cost_sharing=true ONLY if explicitly stated as required
             - Look for multiple IDs and prefer "Funding Opportunity Number" or "Solicitation Number"
             - Extract complete contact information from any contact sections
-            - Include ALL attachments (applications, guidelines, RFPs, supporting docs)
-            - Create concise 20-60 word summary that captures purpose and scope
+            - Include ALL attachments (applications, guidelines, supporting docs) in the attachments list
             - Use null for any fields that cannot be determined from the page
+            - If there are multiple deadlines, use the latest deadline in close_date and disclose other deadlines in the eligibility_summary field
+
+            - Use this rubric for relevance_score:
+                - 80-100: Clearly K-12/LEA focused or direct school district funding
+                - 50-79: Education-related but mixed audiences (e.g., community orgs + schools)
+                - 20-49: Tangential to K-12 (e.g., broader public health where schools are eligible)
+                - 0-19: Not relevant to K-12/school districts
 
             Focus on accuracy and completeness - this data feeds into a grant database."""
 

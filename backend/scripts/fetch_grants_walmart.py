@@ -1,8 +1,9 @@
-"""Script to fetch and process grant opportunities from the Massachusetts Department of Elementary and Secondary Education website."""
+"""Script to fetch and process grant opportunities from the Walmart Foundation website.
+Updated to support Firecrawl agent.
+"""
 
 import os
 from dotenv import load_dotenv
-from scraping_agent import OpportunityExtractionAgent
 from bs4 import BeautifulSoup
 import requests
 from urllib.parse import urljoin
@@ -19,8 +20,8 @@ flask_app = server.create_app()
 load_dotenv()
 
 
-def main():
-    # Fetch the main grants listing page
+def fetch_walmart_urls():
+    """Fetch all grant URLs from the Walmart Foundation grants page."""
     url = "https://www.walmart.org/how-we-give/open-applications"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
@@ -28,9 +29,9 @@ def main():
     # Parse the grants div
     div = soup.find("div", id="container-fa5aae5a7b")
     urls = []
-    post_dates = []
+
     if div is None:
-        print("No div found; no URLs or row texts extracted.")
+        print("No div found; no URLs extracted.")
     else:
         seen = set()
         # Extract unique links from the div
@@ -44,33 +45,16 @@ def main():
                 urls.append(abs_href)
 
         print(f"Found {len(urls)} unique URLs in the div.")
-        print(f"Extracted {len(post_dates)} post dates from div rows.")
 
-    apikey = os.getenv("OPENROUTER_API_KEY")
-    agent = OpportunityExtractionAgent(api_key=apikey)
+    return urls
 
-    # Fetch HTML for each URL (preserve order)
-    html_data_list = []
-    for url in urls:
-        try:
-            full_html = agent._fetch_html(url, timeout=30)
-            soup = BeautifulSoup(full_html, "html.parser")
 
-            # Find all matching divs and join their inner HTMLs into one entry
-            divs = soup.select(
-                "div.richtext.aem-GridColumn.aem-GridColumn--default--12"
-            )
-            if divs:
-                inner_html = "\n".join(d.decode_contents() for d in divs)
-                html_data_list.append({"url": url, "html": inner_html})
-            else:
-                print(f"No div.richtext... found on {url}; appending empty html.")
-                html_data_list.append({"url": url, "html": ""})
+def main():
+    """Use the Firecrawl agent for efficient grant extraction."""
+    print("🔥 Using Firecrawl Agent for Walmart Foundation")
+    print("=" * 50)
 
-        except Exception as e:
-            print(f"Failed to fetch {url}: {e}")
-            # keep placeholder to preserve ordering for batch call
-            html_data_list.append({"url": url, "html": ""})
+    urls = fetch_walmart_urls()
 
     opportunity_template = {
         "source": "walmart.org",
@@ -84,13 +68,13 @@ def main():
 
     with flask_app.app_context():
         session = db.session
-        batch_smart_scrape = batch_smart_scrape_pipeline(
-            html_data_list=html_data_list,
+        batch_result = batch_smart_scrape_pipeline(
+            html_data_list=urls,
             opportunity_template=opportunity_template,
             db_session=session,
-            post_dates=post_dates,
+            use_firecrawl=True,
         )
-        print(batch_smart_scrape)
+        print(f"Firecrawl Agent Results: {batch_result['stats']}")
 
 
 if __name__ == "__main__":

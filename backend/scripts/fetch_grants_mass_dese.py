@@ -1,8 +1,9 @@
-"""Script to fetch and process grant opportunities from the Massachusetts Department of Elementary and Secondary Education website."""
+"""Script to fetch and process grant opportunities from the Massachusetts Department of Elementary and Secondary Education website.
+Updated to support both original scraping agent and new Firecrawl agent.
+"""
 
 import os
 from dotenv import load_dotenv
-from scraping_agent import OpportunityExtractionAgent
 from bs4 import BeautifulSoup
 import requests
 from urllib.parse import urljoin
@@ -19,8 +20,8 @@ flask_app = server.create_app()
 load_dotenv()
 
 
-def main():
-    # Fetch the main grants listing page
+def fetch_mass_dese_urls():
+    """Fetch all grant URLs and post dates from the Mass DESE grants page."""
     url = "https://www.doe.mass.edu/grants/current.html"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
@@ -31,6 +32,7 @@ def main():
     )
     urls = []
     post_dates = []
+
     if table is None:
         print("No table found; no URLs or row texts extracted.")
     else:
@@ -54,29 +56,15 @@ def main():
         print(f"Found {len(urls)} unique URLs in the table.")
         print(f"Extracted {len(post_dates)} post dates from table rows.")
 
-    apikey = os.getenv("OPENROUTER_API_KEY")
-    agent = OpportunityExtractionAgent(api_key=apikey)
+    return urls, post_dates
 
-    # Fetch HTML for each URL (preserve order)
-    html_data_list = []
-    for url in urls:
-        try:
-            full_html = agent._fetch_html(url, timeout=30)
-            soup = BeautifulSoup(full_html, "html.parser")
 
-            # If there can be multiple matching divs, join their inner HTMLs; otherwise use the first
-            div = soup.find("div", class_="col-md-9")
-            if div:
-                inner_html = div.decode_contents()
-                html_data_list.append({"url": url, "html": inner_html})
-            else:
-                print(f"No div.col-md-9 found on {url}; appending empty html.")
-                html_data_list.append({"url": url, "html": ""})
+def main_with_firecrawl_agent():
+    """Use the new Firecrawl agent (more efficient, no HTML fetching needed)."""
+    print("🔥 Using Firecrawl Agent")
+    print("=" * 50)
 
-        except Exception as e:
-            print(f"Failed to fetch {url}: {e}")
-            # keep placeholder to preserve ordering for batch call
-            html_data_list.append({"url": url, "html": ""})
+    urls, post_dates = fetch_mass_dese_urls()
 
     opportunity_template = {
         "source": "doe.mass.edu",
@@ -90,13 +78,19 @@ def main():
 
     with flask_app.app_context():
         session = db.session
-        batch_smart_scrape = batch_smart_scrape_pipeline(
-            html_data_list=html_data_list,
+        batch_result = batch_smart_scrape_pipeline(
+            html_data_list=urls,  # Pass URLs directly
             opportunity_template=opportunity_template,
             db_session=session,
             post_dates=post_dates,
+            use_firecrawl=True,  # Use Firecrawl agent
         )
-        print(batch_smart_scrape)
+        print(f"Firecrawl Agent Results: {batch_result['stats']}")
+
+
+def main():
+    """Main function - choose which agent to use."""
+    main_with_firecrawl_agent()
 
 
 if __name__ == "__main__":
