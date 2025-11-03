@@ -43,7 +43,7 @@ fi
 
 # Run the update_expired_grants_status.py script
 echo "Running update_expired_grants_status.py..."
-python scripts/update_expired_grants_status.py --live
+python scripts/update_expired_grants_status.py 
 if [ $? -ne 0 ]; then
   echo "Error: update_expired_grants_status.py failed."
   STATUS=1

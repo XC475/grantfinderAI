@@ -170,10 +170,9 @@ def main():
 
     parser = argparse.ArgumentParser(description="Update expired grant statuses")
     parser.add_argument(
-        "--live", action="store_true", help="Perform live updates (default is dry run)"
-    )
-    parser.add_argument(
-        "--force", action="store_true", help="Skip confirmation prompt for live updates"
+        "--dry-run",
+        action="store_true",
+        help="Only show what would be updated without making changes",
     )
 
     args = parser.parse_args()
@@ -182,31 +181,14 @@ def main():
     flask_app = server.create_app()
 
     with flask_app.app_context():
-        if args.live:
-            if not args.force:
-                print("⚠️  You are about to perform LIVE updates to the database.")
-                print("This will modify grant statuses for expired opportunities.")
-                confirm = (
-                    input("Are you sure you want to continue? (yes/no): ")
-                    .lower()
-                    .strip()
-                )
-
-                if confirm not in ["yes", "y"]:
-                    print("❌ Update cancelled by user")
-                    return
-
-            print("🚀 Running LIVE update...")
-            stats = update_expired_grants(dry_run=False)
-        else:
-            print("🔍 Running DRY RUN (use --live for actual updates)...")
+        if args.dry_run:
+            print("🔍 Running DRY RUN (no changes will be made)...")
             stats = update_expired_grants(dry_run=True)
+        else:
+            print("� Running LIVE update...")
+            stats = update_expired_grants(dry_run=False)
 
-        print_summary(stats, dry_run=not args.live)
-
-        if not args.live and stats["expired_found"] > 0:
-            print("\n💡 To apply these changes, run:")
-            print(f"   python {os.path.basename(__file__)} --live")
+        print_summary(stats, dry_run=args.dry_run)
 
 
 if __name__ == "__main__":
