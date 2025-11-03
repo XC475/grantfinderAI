@@ -858,7 +858,7 @@ def batch_firecrawl_scrape_pipeline(
                 opportunity_template=item_template,
                 db_session=db_session,
                 force_update=force_update,
-                commit=False,
+                commit=True,
             )
 
             stats[result["action"]] += 1
