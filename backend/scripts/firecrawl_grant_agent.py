@@ -72,7 +72,7 @@ class FirecrawlGrantAgent:
                 "status": {
                     "type": "string",
                     "enum": ["posted", "forecasted", "closed", "archived"],
-                    "description": "Current lifecycle status of the opportunity. Use one of the enum values: 'posted' (accepting applications), 'forecasted' (in planning), 'closed' (deadline passed), or 'archived' (cancelled/withdrawn).",
+                    "description": "Current lifecycle status of the opportunity. Use one of the enum values: 'posted' (posted, open, or accepting applications), 'forecasted' (in planning, not yet posted), 'closed' (deadline, close date, or due date has already passed), or 'archived' (only when specifically marked as such).",
                 },
                 "category": {
                     "type": "array",
@@ -160,7 +160,7 @@ class FirecrawlGrantAgent:
                         },
                         "required": ["name", "url"],
                     },
-                    "description": "List of attachment objects/links found on the page. Each object contains a name and a url for application forms, guidelines, RFPs, and supporting documents. Look for links labeled 'Download', 'Attachment', 'RFP', 'Guidelines', or similar.  Example: [{'name': 'Application Guidelines', 'url': 'https://example.com/guidelines.pdf'}, {'name': 'Eligibility Document', 'url': 'https://example.com/eligibility.docx'}]",
+                    "description": "List of attachment objects/links found ONLY ON the given url page. Each object contains a name and a url for application forms, guidelines, RFPs, and supporting documents. Look for links labeled 'Download', 'Attachment', 'RFP', 'Guidelines', or similar.  Example: [{'name': 'Application Guidelines', 'url': 'https://example.com/guidelines.pdf'}, {'name': 'Eligibility Document', 'url': 'https://example.com/eligibility.docx'}]",
                 },
                 "description": {
                     "type": "string",
