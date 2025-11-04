@@ -107,27 +107,6 @@ export function DocumentEditor({
         )}
       </div>
 
-      {/* Toggle sidebar button - always visible on the left side of sidebar */}
-      <div
-        className="fixed top-22 right-0 -translate-y-1/2 z-40"
-        style={{ right: isChatOpen ? "calc(40% - 100px)" : "18px" }}
-      >
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsChatOpen(!isChatOpen)}
-          className="size-7"
-        >
-          <PanelLeft
-            className={cn(
-              "h-4 w-4 transition-transform",
-              isChatOpen && "rotate-180"
-            )}
-          />
-          <span className="sr-only">Toggle Assistant Sidebar</span>
-        </Button>
-      </div>
-
       {/* Resizable layout with editor and sidebar */}
       <ResizablePanelGroup direction="horizontal" className="h-full">
         {/* Main editor panel */}
@@ -152,13 +131,42 @@ export function DocumentEditor({
         {/* Chat sidebar panel */}
         {isChatOpen && (
           <ResizablePanel defaultSize={40} minSize={25} maxSize={60}>
-            <DocumentChatSidebar
-              documentId={document.id}
-              documentTitle={title}
-              documentContent={content}
-              onToggle={() => setIsChatOpen(!isChatOpen)}
-            />
+            <div className="relative h-full">
+              {/* Toggle sidebar button - sticky to left edge of sidebar */}
+              <div className="absolute top-2 ml-2 mt-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsChatOpen(!isChatOpen)}
+                  className="size-7 bg-background/95"
+                >
+                  <PanelLeft className="h-4 w-4 transition-transform rotate-180" />
+                  <span className="sr-only">Toggle Assistant Sidebar</span>
+                </Button>
+              </div>
+              <DocumentChatSidebar
+                documentId={document.id}
+                documentTitle={title}
+                documentContent={content}
+                onToggle={() => setIsChatOpen(!isChatOpen)}
+              />
+            </div>
           </ResizablePanel>
+        )}
+
+        {/* Toggle button when sidebar is closed */}
+        {!isChatOpen && (
+          <div className="fixed top-20 right-4 z-40">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsChatOpen(!isChatOpen)}
+              className="size-7 bg-background/95 backdrop-blur-sm border shadow-sm"
+            >
+              <PanelLeft className="h-4 w-4 transition-transform" />
+              <span className="sr-only">Toggle Assistant Sidebar</span>
+            </Button>
+          </div>
         )}
       </ResizablePanelGroup>
     </div>
