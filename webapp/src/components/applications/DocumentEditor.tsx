@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Save, Loader2, PanelLeft } from "lucide-react";
@@ -52,8 +52,12 @@ export function DocumentEditor({
   currentUser,
   enableCollaboration = true,
 }: DocumentEditorProps) {
-  const [title, setTitle] = useState(document.title);
-  const [content, setContent] = useState(document.content || "");
+  // Use initialDocument to prevent re-initialization on prop changes
+  const initialDocumentRef = useRef(document);
+  const [title, setTitle] = useState(initialDocumentRef.current.title);
+  const [content, setContent] = useState(
+    initialDocumentRef.current.content || ""
+  );
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(true);
   const [authToken, setAuthToken] = useState<string | null>(null);
@@ -112,9 +116,21 @@ export function DocumentEditor({
     }
   }, [content, hasUnsavedChanges, onSave]);
 
-  // Auto-save every 30 seconds
+  // Auto-save logic:
+  // - In collaboration mode with multiple users: DON'T save (real-time only)
+  // - When activeUsers <= 1: Auto-save every 30 seconds
   useEffect(() => {
     if (!hasUnsavedChanges || !content) return;
+
+    const isActivelyCollaborating =
+      enableCollaboration && activeUsers.length > 1;
+
+    if (isActivelyCollaborating) {
+      console.log(
+        `🤝 [DocumentEditor] ${activeUsers.length} users actively collaborating - skipping auto-save`
+      );
+      return; // Don't auto-save during active collaboration
+    }
 
     console.log("⏱️  [DocumentEditor] Auto-save timer started");
     const autoSaveInterval = setInterval(() => {
@@ -128,15 +144,64 @@ export function DocumentEditor({
       console.log("⏱️  [DocumentEditor] Auto-save timer cleared");
       clearInterval(autoSaveInterval);
     };
-  }, [hasUnsavedChanges, content, handleSave]);
+  }, [
+    hasUnsavedChanges,
+    content,
+    handleSave,
+    enableCollaboration,
+    activeUsers.length,
+  ]);
+
+  // Save when a user leaves (activeUsers decreases)
+  const prevActiveUsersCount = useRef(activeUsers.length);
+  useEffect(() => {
+    const currentCount = activeUsers.length;
+    const prevCount = prevActiveUsersCount.current;
+
+    // If users decreased (someone left) and we have unsaved changes, save to DB
+    if (currentCount < prevCount && hasUnsavedChanges && content) {
+      console.log(
+        `👋 [DocumentEditor] User left (${prevCount} → ${currentCount}), saving to database...`
+      );
+      handleSave();
+    }
+
+    prevActiveUsersCount.current = currentCount;
+  }, [activeUsers.length, hasUnsavedChanges, content, handleSave]);
+
+  // Save when current user closes the window/tab
+  // Note: When a user closes the tab, the WebSocket disconnects and activeUsers
+  // will decrease, triggering the save above. This provides a backup save attempt.
+  useEffect(() => {
+    if (!enableCollaboration) return;
+
+    const handleBeforeUnload = () => {
+      if (hasUnsavedChanges && content) {
+        console.log("👋 [DocumentEditor] User leaving tab/window...");
+        // Try to save synchronously (browsers may block this)
+        // The WebSocket disconnect will also trigger a save via activeUsers decrease
+        try {
+          handleSave();
+        } catch (error) {
+          console.error("Failed to save on beforeunload:", error);
+        }
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [enableCollaboration, hasUnsavedChanges, content, handleSave]);
 
   const handleContentChange = (newContent: string) => {
     console.log("📝 [DocumentEditor] handleContentChange called", {
       contentLength: newContent.length,
-      hasUnsavedChanges: newContent !== (document.content || ""),
+      hasUnsavedChanges:
+        newContent !== (initialDocumentRef.current.content || ""),
     });
     setContent(newContent);
-    setHasUnsavedChanges(newContent !== (document.content || ""));
+    setHasUnsavedChanges(
+      newContent !== (initialDocumentRef.current.content || "")
+    );
   };
 
   const handleTitleChange = (newTitle: string) => {

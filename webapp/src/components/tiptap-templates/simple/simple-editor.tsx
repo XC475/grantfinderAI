@@ -330,7 +330,9 @@ export function SimpleEditor({
     );
 
     return { ydoc, provider };
-  }, [documentId, websocketUrl, authToken, userName, initialContent]);
+  }, [documentId, websocketUrl, authToken, userName]);
+  // Note: initialContent is intentionally NOT in dependencies
+  // It should only be used on initial mount, not on every document update
 
   // Setup event listeners for provider
   React.useEffect(() => {
@@ -463,8 +465,10 @@ export function SimpleEditor({
         });
         if (callback) {
           if (isCollaborationEnabled) {
-            // In collaboration mode, debounce content changes to avoid excessive DB writes
-            // Multiple users typing simultaneously shouldn't trigger a save on every keystroke
+            // In collaboration mode:
+            // - Content changes are synced in real-time via Yjs
+            // - Debounce onContentChange to update parent state
+            // - DB saves only happen when users leave (handled by DocumentEditor)
             if (contentChangeTimerRef.current) {
               clearTimeout(contentChangeTimerRef.current);
             }

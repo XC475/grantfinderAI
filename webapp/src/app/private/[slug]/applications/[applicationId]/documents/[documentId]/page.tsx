@@ -101,7 +101,16 @@ export default function DocumentPage({ params }: DocumentPageProps) {
       }
 
       const { document: updatedDocument } = await response.json();
-      setDocument(updatedDocument);
+
+      // IMPORTANT: Don't update document state in collaboration mode
+      // Yjs is the source of truth, and updating would cause editor to recreate
+      // Only update in non-collaboration mode to keep UI in sync
+      // Since enableCollaboration is always true here, we skip the update
+      // setDocument(updatedDocument);
+
+      console.log(
+        "✅ [DocumentPage] Document saved to database, Yjs remains source of truth"
+      );
     } catch (error) {
       console.error("Error saving document:", error);
       throw error;
