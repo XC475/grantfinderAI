@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
         };
 
         // Generate slug from district name
-        let slug = districtData.name
+        const slug = districtData.name
           .toLowerCase()
           .replace(/[^\w-]/g, "-")
           .replace(/-+/g, "-")
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
         );
       } else if (organizationType === "custom" && customOrgData?.name) {
         // Create custom organization
-        let slug = customOrgData.name
+        const slug = customOrgData.name
           .toLowerCase()
           .replace(/[^\w-]/g, "-")
           .replace(/-+/g, "-")

@@ -275,7 +275,17 @@ export default function AdminUsersPage() {
 
     try {
       // Build request body based on mode
-      const requestBody: any = {
+      const requestBody: {
+        email: string;
+        name: string;
+        mode: string;
+        role: string;
+        system_admin: boolean;
+        organizationId?: string;
+        organizationType?: string;
+        districtData?: DistrictData;
+        customOrgData?: typeof customOrgData;
+      } = {
         email: newUser.email,
         name: newUser.name,
         mode,
@@ -402,12 +412,13 @@ export default function AdminUsersPage() {
     try {
       // If system admin is selected, set role to ADMIN and system_admin to true
       const isSystemAdmin = selectedRole === "SYSTEM_ADMIN";
-      const requestBody: any = {
+      const requestBody: {
+        role: string;
+        system_admin: boolean;
+      } = {
         role: isSystemAdmin ? "ADMIN" : selectedRole,
+        system_admin: isSystemAdmin,
       };
-
-      // Always set system_admin flag (true for system admin, false for others)
-      requestBody.system_admin = isSystemAdmin;
 
       const response = await fetch(`/api/admin/users/${selectedUserId}`, {
         method: "PATCH",

@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ToastHandler } from "@/components/toast-handler";
 import { Providers } from "@/components/providers";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +32,9 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          <ToastHandler />
+          <Suspense fallback={null}>
+            <ToastHandler />
+          </Suspense>
           {children}
           <Toaster />
         </Providers>
