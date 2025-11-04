@@ -17,7 +17,7 @@ export async function GET() {
   try {
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
-      select: { organizationId: true },
+      select: { organizationId: true, role: true },
     });
 
     if (!dbUser) {
@@ -36,7 +36,10 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ members });
+    return NextResponse.json({
+      members,
+      currentUserRole: dbUser.role,
+    });
   } catch (error) {
     console.error("Error fetching organization members:", error);
     return NextResponse.json(

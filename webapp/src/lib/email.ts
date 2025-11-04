@@ -41,6 +41,7 @@ export async function sendWelcomeEmail({
       to: [to],
       subject: "Welcome to GrantFinder AI - Your Account is Ready",
       html: generateWelcomeEmailHTML({
+        to,
         name,
         loginUrl,
         temporaryPassword,
@@ -68,11 +69,12 @@ export async function sendWelcomeEmail({
  * Generate HTML for welcome email
  */
 function generateWelcomeEmailHTML({
+  to,
   name,
   loginUrl,
   temporaryPassword,
   organizationUrl,
-}: Omit<WelcomeEmailParams, "to">): string {
+}: WelcomeEmailParams): string {
   return `
 <!DOCTYPE html>
 <html>
@@ -177,9 +179,7 @@ function generateWelcomeEmailHTML({
 
       <div class="credentials">
         <div class="credentials-label">📧 Email / Username</div>
-        <div class="credentials-value">${name
-          .split(" ")[0]
-          .toLowerCase()}@example.com</div>
+        <div class="credentials-value">${to}</div>
         
         <div class="credentials-label" style="margin-top: 15px;">🔑 Temporary Password</div>
         <div class="credentials-value">${temporaryPassword}</div>

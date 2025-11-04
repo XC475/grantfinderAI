@@ -38,13 +38,14 @@ export async function POST(request: NextRequest) {
       mode, // 'add_to_existing' or 'create_new'
       organizationId, // Required for 'add_to_existing'
       role = "MEMBER", // User's role in organization
+      system_admin = false, // System admin flag
       organizationType, // 'school_district' or 'custom' for 'create_new'
       districtData, // For school district orgs
       customOrgData, // For custom orgs
     } = body;
 
     console.log(
-      `[Admin] Creating user with email: ${email}, mode: ${mode}, role: ${role}`
+      `[Admin] Creating user with email: ${email}, mode: ${mode}, role: ${role}, system_admin: ${system_admin}`
     );
 
     // Validate input
@@ -242,7 +243,7 @@ export async function POST(request: NextRequest) {
 
     // Verify user was created by trigger
     console.log(`[Admin] Verifying user creation in app.users...`);
-    const newUser = await prisma.user.findUnique({
+    let newUser = await prisma.user.findUnique({
       where: { id: userId },
       include: { organization: true },
     });
@@ -256,6 +257,16 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`[Admin] User record found in database`);
+
+    // Update system_admin field if needed
+    if (system_admin && newUser) {
+      console.log(`[Admin] Setting system_admin flag to true...`);
+      newUser = await prisma.user.update({
+        where: { id: userId },
+        data: { system_admin: true },
+        include: { organization: true },
+      });
+    }
 
     if (!newUser.organization) {
       console.error(

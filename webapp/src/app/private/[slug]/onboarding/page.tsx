@@ -21,6 +21,7 @@ import {
   CheckCircle2,
   ArrowRight,
   ArrowLeft,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -138,7 +139,7 @@ export default function OnboardingPage() {
           body: JSON.stringify(formData),
         });
       }
-      
+
       // Update user's onboarding status
       const response = await fetch(`/api/user`, {
         method: "PATCH",
@@ -183,11 +184,9 @@ export default function OnboardingPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
+      <div className="flex flex-col items-center justify-center min-h-screen gap-3">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-sm text-muted-foreground">Loading onboarding...</p>
       </div>
     );
   }
@@ -525,8 +524,17 @@ export default function OnboardingPage() {
                     onClick={handleSaveAndContinue}
                     disabled={saving || !formData.name}
                   >
-                    {saving ? "Saving..." : "Save & Continue"}
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    {saving ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        Save & Continue
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </>
+                    )}
                   </Button>
                 </div>
               </div>
@@ -623,8 +631,17 @@ export default function OnboardingPage() {
                   size="lg"
                   className="px-8"
                 >
-                  {saving ? "Loading..." : "Start Exploring"}
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  {saving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Loading...
+                    </>
+                  ) : (
+                    <>
+                      Start Exploring
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
                 </Button>
               </div>
             </CardContent>

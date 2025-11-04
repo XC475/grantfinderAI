@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Shield, Search } from "lucide-react";
+import { Loader2, Plus, Trash2, Search, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface User {
@@ -90,6 +90,11 @@ export default function AdminUsersPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [creating, setCreating] = useState(false);
 
+  // Role selection dialog
+  const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
+  const [selectedRole, setSelectedRole] = useState<string>("MEMBER");
+
   // Mode selection: 'add_to_existing' or 'create_new'
   const [mode, setMode] = useState<"add_to_existing" | "create_new">(
     "add_to_existing"
@@ -130,6 +135,7 @@ export default function AdminUsersPage() {
     name: "",
     password: "",
     role: "MEMBER",
+    systemAdmin: false,
     districtData: null as DistrictData | null,
   });
 
@@ -276,6 +282,7 @@ export default function AdminUsersPage() {
         password: newUser.password,
         mode,
         role: newUser.role,
+        system_admin: newUser.systemAdmin,
       };
 
       if (mode === "add_to_existing") {
@@ -324,6 +331,7 @@ export default function AdminUsersPage() {
         name: "",
         password: "",
         role: "MEMBER",
+        systemAdmin: false,
         districtData: null,
       });
       setSelectedOrganization("");
@@ -382,60 +390,32 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleToggleSystemAdmin = async (
+  const handleToggleRole = (
     userId: string,
-    currentSystemAdmin: boolean
+    currentRole: string,
+    isSystemAdmin: boolean
   ) => {
-    const newSystemAdmin = !currentSystemAdmin;
-
-    if (
-      !confirm(`${newSystemAdmin ? "Grant" : "Remove"} system admin access?`)
-    ) {
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ system_admin: newSystemAdmin }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to update system admin status");
-      }
-
-      toast.success("System admin status updated successfully");
-      fetchUsers();
-    } catch (error) {
-      console.error("Error updating system admin:", error);
-      toast.error(
-        (error instanceof Error ? error.message : String(error)) ||
-          "Failed to update system admin status"
-      );
-    }
+    setSelectedUserId(userId);
+    // If user is a system admin, set role to SYSTEM_ADMIN, otherwise use their org role
+    setSelectedRole(isSystemAdmin ? "SYSTEM_ADMIN" : currentRole);
+    setIsRoleDialogOpen(true);
   };
 
-  const handleToggleRole = async (userId: string, currentRole: string) => {
-    // Cycle through roles: MEMBER -> ADMIN -> OWNER -> MEMBER
-    const roleOrder: string[] = ["MEMBER", "ADMIN", "OWNER"];
-    const currentIndex = roleOrder.indexOf(currentRole);
-    const newRole = roleOrder[(currentIndex + 1) % roleOrder.length];
-
-    if (
-      !confirm(
-        `Change user role from ${currentRole} to ${newRole}? ${newRole === "OWNER" ? "Note: Only one owner is allowed per organization." : ""}`
-      )
-    ) {
-      return;
-    }
-
+  const handleConfirmRole = async () => {
     try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
+      // If system admin is selected, set role to ADMIN and system_admin to true
+      const isSystemAdmin = selectedRole === "SYSTEM_ADMIN";
+      const requestBody: any = {
+        role: isSystemAdmin ? "ADMIN" : selectedRole,
+      };
+
+      // Always set system_admin flag (true for system admin, false for others)
+      requestBody.system_admin = isSystemAdmin;
+
+      const response = await fetch(`/api/admin/users/${selectedUserId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role: newRole }),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
@@ -444,7 +424,12 @@ export default function AdminUsersPage() {
         throw new Error(data.error || "Failed to update user role");
       }
 
-      toast.success("User role updated successfully");
+      toast.success(
+        isSystemAdmin
+          ? "User granted System Admin access"
+          : "User role updated successfully"
+      );
+      setIsRoleDialogOpen(false);
       fetchUsers();
     } catch (error) {
       console.error("Error updating user role:", error);
@@ -884,9 +869,17 @@ export default function AdminUsersPage() {
                         <Label htmlFor="role">Organization Role *</Label>
                         <Select
                           value={newUser.role}
-                          onValueChange={(value) =>
-                            setNewUser({ ...newUser, role: value })
-                          }
+                          onValueChange={(value) => {
+                            setNewUser({ ...newUser, role: value });
+                            // Reset systemAdmin when changing role
+                            if (value !== "ADMIN") {
+                              setNewUser((prev) => ({
+                                ...prev,
+                                role: value,
+                                systemAdmin: false,
+                              }));
+                            }
+                          }}
                         >
                           <SelectTrigger>
                             <SelectValue />
@@ -901,6 +894,63 @@ export default function AdminUsersPage() {
                           Note: Only one owner allowed per organization
                         </p>
                       </div>
+
+                      {/* Admin Type Selection */}
+                      {newUser.role === "ADMIN" && (
+                        <div className="space-y-2 p-3 border rounded-md bg-muted/50">
+                          <Label>Admin Type *</Label>
+                          <div className="space-y-2">
+                            <div className="flex items-start space-x-3">
+                              <input
+                                type="radio"
+                                id="org-admin"
+                                name="admin-type"
+                                checked={!newUser.systemAdmin}
+                                onChange={() =>
+                                  setNewUser({ ...newUser, systemAdmin: false })
+                                }
+                                className="mt-1"
+                              />
+                              <div className="flex-1">
+                                <label
+                                  htmlFor="org-admin"
+                                  className="font-medium cursor-pointer"
+                                >
+                                  Organization Admin
+                                </label>
+                                <p className="text-xs text-muted-foreground">
+                                  Can manage users and settings within their
+                                  organization only
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-start space-x-3">
+                              <input
+                                type="radio"
+                                id="system-admin"
+                                name="admin-type"
+                                checked={newUser.systemAdmin}
+                                onChange={() =>
+                                  setNewUser({ ...newUser, systemAdmin: true })
+                                }
+                                className="mt-1"
+                              />
+                              <div className="flex-1">
+                                <label
+                                  htmlFor="system-admin"
+                                  className="font-medium cursor-pointer"
+                                >
+                                  System Admin
+                                </label>
+                                <p className="text-xs text-muted-foreground">
+                                  Full platform access - can manage all users
+                                  and organizations
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -949,7 +999,13 @@ export default function AdminUsersPage() {
                           </span>
                         )}
                         <button
-                          onClick={() => handleToggleRole(user.id, user.role)}
+                          onClick={() =>
+                            handleToggleRole(
+                              user.id,
+                              user.role,
+                              user.system_admin
+                            )
+                          }
                           className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full transition-colors hover:opacity-80 ${
                             user.role === "OWNER"
                               ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
@@ -986,18 +1042,6 @@ export default function AdminUsersPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() =>
-                          handleToggleSystemAdmin(user.id, user.system_admin)
-                        }
-                        title={`${user.system_admin ? "Remove" : "Grant"} system admin`}
-                      >
-                        <Shield
-                          className={`h-4 w-4 ${user.system_admin ? "text-red-600" : ""}`}
-                        />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
                         onClick={() => handleDeleteUser(user.id, user.email)}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
@@ -1010,6 +1054,154 @@ export default function AdminUsersPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Role Selection Dialog */}
+      <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change User Role</DialogTitle>
+            <DialogDescription>
+              Select the organization role for this user
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-3">
+              <div
+                className="flex items-start space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => setSelectedRole("MEMBER")}
+              >
+                <input
+                  type="radio"
+                  id="role-member"
+                  name="role-selection"
+                  checked={selectedRole === "MEMBER"}
+                  onChange={() => setSelectedRole("MEMBER")}
+                  className="mt-1"
+                />
+                <div className="flex-1">
+                  <label
+                    htmlFor="role-member"
+                    className="font-medium cursor-pointer"
+                  >
+                    Member
+                  </label>
+                  <p className="text-sm text-muted-foreground">
+                    Standard user with basic access to organization resources
+                  </p>
+                </div>
+              </div>
+              <div
+                className="flex items-start space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => setSelectedRole("ADMIN")}
+              >
+                <input
+                  type="radio"
+                  id="role-admin"
+                  name="role-selection"
+                  checked={selectedRole === "ADMIN"}
+                  onChange={() => setSelectedRole("ADMIN")}
+                  className="mt-1"
+                />
+                <div className="flex-1">
+                  <label
+                    htmlFor="role-admin"
+                    className="font-medium cursor-pointer"
+                  >
+                    Admin
+                  </label>
+                  <p className="text-sm text-muted-foreground">
+                    Can manage users and settings within their organization
+                  </p>
+                </div>
+              </div>
+              <div
+                className="flex items-start space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => setSelectedRole("OWNER")}
+              >
+                <input
+                  type="radio"
+                  id="role-owner"
+                  name="role-selection"
+                  checked={selectedRole === "OWNER"}
+                  onChange={() => setSelectedRole("OWNER")}
+                  className="mt-1"
+                />
+                <div className="flex-1">
+                  <label
+                    htmlFor="role-owner"
+                    className="font-medium cursor-pointer"
+                  >
+                    Owner
+                  </label>
+                  <p className="text-sm text-muted-foreground">
+                    Full control over the organization (only one per
+                    organization)
+                  </p>
+                </div>
+              </div>
+
+              {/* Separator */}
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-destructive/30"></div>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-destructive font-semibold">
+                    Danger Zone
+                  </span>
+                </div>
+              </div>
+
+              {/* System Admin Option with Warning */}
+              <div
+                className="flex items-start space-x-3 p-3 border-2 border-destructive/50 rounded-lg cursor-pointer hover:bg-destructive/5 transition-colors bg-destructive/5"
+                onClick={() => setSelectedRole("SYSTEM_ADMIN")}
+              >
+                <input
+                  type="radio"
+                  id="role-system-admin"
+                  name="role-selection"
+                  checked={selectedRole === "SYSTEM_ADMIN"}
+                  onChange={() => setSelectedRole("SYSTEM_ADMIN")}
+                  className="mt-1"
+                />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <label
+                      htmlFor="role-system-admin"
+                      className="font-medium cursor-pointer text-destructive"
+                    >
+                      System Admin
+                    </label>
+                    <AlertTriangle className="h-4 w-4 text-destructive" />
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Full platform access - can manage ALL users and
+                    organizations across the entire system
+                  </p>
+                  <div className="mt-2 p-2 bg-destructive/10 rounded text-xs text-destructive font-medium flex items-start gap-2">
+                    <AlertTriangle className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                    <span>
+                      Warning: This grants unrestricted access to all platform
+                      data and settings. Use with extreme caution.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsRoleDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmRole}>Confirm</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

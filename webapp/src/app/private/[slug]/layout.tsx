@@ -23,39 +23,35 @@ export default async function OrganizationLayout({
   const headersList = await headers();
   const pathname = headersList.get("x-pathname") || "";
 
-  // Check if user needs to complete onboarding
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Check if we're on the onboarding page first (before any DB queries)
+  const isOnboardingPage = pathname.includes("/onboarding");
 
-  if (user) {
-    const dbUser = await prisma.user.findUnique({
-      where: { id: user.id },
-      select: {
-        onboardingCompleted: true,
-        organization: {
-          select: {
-            slug: true,
+  // Check if user needs to complete onboarding (only if not already on onboarding page)
+  if (!isOnboardingPage) {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      const dbUser = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: {
+          onboardingCompleted: true,
+          organization: {
+            select: {
+              slug: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    // Redirect to onboarding if not completed, but not if already on onboarding page
-    const isOnboardingPage = pathname.includes("/onboarding");
-
-    if (
-      dbUser &&
-      !dbUser.onboardingCompleted &&
-      !isOnboardingPage
-    ) {
-      redirect(`/private/${dbUser.organization.slug}/onboarding`);
+      // Redirect to onboarding if not completed
+      if (dbUser && !dbUser.onboardingCompleted) {
+        redirect(`/private/${dbUser.organization.slug}/onboarding`);
+      }
     }
   }
-
-  // Don't show sidebar on onboarding page
-  const isOnboardingPage = pathname.includes("/onboarding");
 
   // Check if we're on a document editor page
   const isDocumentPage = pathname.includes("/documents/");
