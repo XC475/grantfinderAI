@@ -133,7 +133,6 @@ export default function AdminUsersPage() {
   const [newUser, setNewUser] = useState({
     email: "",
     name: "",
-    password: "",
     role: "MEMBER",
     systemAdmin: false,
     districtData: null as DistrictData | null,
@@ -279,7 +278,6 @@ export default function AdminUsersPage() {
       const requestBody: any = {
         email: newUser.email,
         name: newUser.name,
-        password: newUser.password,
         mode,
         role: newUser.role,
         system_admin: newUser.systemAdmin,
@@ -329,7 +327,6 @@ export default function AdminUsersPage() {
       setNewUser({
         email: "",
         name: "",
-        password: "",
         role: "MEMBER",
         systemAdmin: false,
         districtData: null,
@@ -849,20 +846,6 @@ export default function AdminUsersPage() {
                           }
                           required
                           placeholder="john.doe@example.com"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="password">Password *</Label>
-                        <Input
-                          id="password"
-                          type="password"
-                          value={newUser.password}
-                          onChange={(e) =>
-                            setNewUser({ ...newUser, password: e.target.value })
-                          }
-                          required
-                          minLength={6}
-                          placeholder="Minimum 6 characters"
                         />
                       </div>
                       <div className="space-y-2">

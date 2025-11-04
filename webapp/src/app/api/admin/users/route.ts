@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 import { sendWelcomeEmail } from "@/lib/email";
+import crypto from "crypto";
 
 // POST /api/admin/users - Admin creates a new user
 export async function POST(request: NextRequest) {
@@ -49,12 +50,16 @@ export async function POST(request: NextRequest) {
     );
 
     // Validate input
-    if (!email || !name || !password) {
+    if (!email || !name) {
       return NextResponse.json(
-        { error: "Email, name, and password are required" },
+        { error: "Email and name are required" },
         { status: 400 }
       );
     }
+
+    // Generate secure random password if not provided
+    const generatedPassword =
+      password || crypto.randomBytes(16).toString("base64url");
 
     if (!mode || (mode !== "add_to_existing" && mode !== "create_new")) {
       return NextResponse.json(
@@ -213,7 +218,7 @@ export async function POST(request: NextRequest) {
     const { data: authData, error: authError } =
       await supabase.auth.admin.createUser({
         email,
-        password,
+        password: generatedPassword,
         email_confirm: true, // Auto-confirm email
         user_metadata: {
           name,
@@ -304,7 +309,7 @@ export async function POST(request: NextRequest) {
       to: email,
       name: name,
       loginUrl: `${siteUrl}/login`,
-      temporaryPassword: password,
+      temporaryPassword: generatedPassword,
       organizationUrl: `${siteUrl}/private/${organizationSlug}/dashboard`,
     });
 
