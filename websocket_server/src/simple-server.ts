@@ -80,8 +80,45 @@ function getDoc(docName: string): WSSharedDoc {
   return doc;
 }
 
-// Create HTTP server
+// Create HTTP server with health check endpoints
 const server = http.createServer((req, res) => {
+  const url = new URL(req.url || "/", `http://${req.headers.host}`);
+
+  // Health check endpoint for Railway
+  if (url.pathname === "/health") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        status: "healthy",
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+        service: "grantware-websocket-server",
+        version: "1.0.0",
+        environment: process.env.NODE_ENV || "development",
+      })
+    );
+    return;
+  }
+
+  // Status endpoint with connection info
+  if (url.pathname === "/status") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        status: "running",
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+        documents: docs.size,
+        connections: Array.from(docs.values()).reduce(
+          (total, doc) => total + doc.connections.size,
+          0
+        ),
+      })
+    );
+    return;
+  }
+
+  // Default response
   res.writeHead(200, { "Content-Type": "text/plain" });
   res.end("Yjs WebSocket Server\n");
 });

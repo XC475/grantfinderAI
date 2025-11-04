@@ -7,9 +7,13 @@
     "dev": "tsx watch src/simple-server.ts",
     "dev:hocuspocus": "tsx watch src/server.ts",
     "build": "tsc --build",
+    "build:prod": "npm run clean && tsc --build",
     "start": "node dist/simple-server.js",
+    "start:prod": "NODE_ENV=production node dist/simple-server.js",
     "start:hocuspocus": "node dist/server.js",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "health": "curl http://localhost:4000/health || echo 'Health check failed'",
+    "logs": "tail -f logs/websocket-server.log"
   },
   "keywords": [
     "websocket",

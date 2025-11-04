@@ -1,0 +1,47 @@
+# Railway Ignore File
+# Files and directories to exclude from Railway deployment
+
+# Development files
+.env.example
+env.example
+*.local
+
+# Git
+.git/
+.gitignore
+
+# Build artifacts (we build on Railway)
+dist/
+
+# Dependencies (installed on Railway)
+node_modules/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Documentation (not needed in runtime)
+*.md
+docs/
+
+# Scripts (not needed in runtime)
+scripts/
+
+# Test files
+*.test.ts
+*.spec.ts
+__tests__/
+
+# TypeScript build info
+*.tsbuildinfo
+
