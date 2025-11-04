@@ -168,6 +168,8 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   name: 'name',
   role: 'role',
+  onboardingCompleted: 'onboardingCompleted',
+  hasTemporaryPassword: 'hasTemporaryPassword',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   avatarUrl: 'avatarUrl',
@@ -205,7 +207,6 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   numberOfSchools: 'numberOfSchools',
   stateLeaId: 'stateLeaId',
   urbanCentricLocale: 'urbanCentricLocale',
-  onboardingCompleted: 'onboardingCompleted',
   logoUrl: 'logoUrl'
 };
 

@@ -4837,6 +4837,8 @@ export namespace Prisma {
     email: string | null
     name: string | null
     role: $Enums.OrganizationRole | null
+    onboardingCompleted: boolean | null
+    hasTemporaryPassword: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
     avatarUrl: string | null
@@ -4850,6 +4852,8 @@ export namespace Prisma {
     email: string | null
     name: string | null
     role: $Enums.OrganizationRole | null
+    onboardingCompleted: boolean | null
+    hasTemporaryPassword: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
     avatarUrl: string | null
@@ -4863,6 +4867,8 @@ export namespace Prisma {
     email: number
     name: number
     role: number
+    onboardingCompleted: number
+    hasTemporaryPassword: number
     createdAt: number
     updatedAt: number
     avatarUrl: number
@@ -4878,6 +4884,8 @@ export namespace Prisma {
     email?: true
     name?: true
     role?: true
+    onboardingCompleted?: true
+    hasTemporaryPassword?: true
     createdAt?: true
     updatedAt?: true
     avatarUrl?: true
@@ -4891,6 +4899,8 @@ export namespace Prisma {
     email?: true
     name?: true
     role?: true
+    onboardingCompleted?: true
+    hasTemporaryPassword?: true
     createdAt?: true
     updatedAt?: true
     avatarUrl?: true
@@ -4904,6 +4914,8 @@ export namespace Prisma {
     email?: true
     name?: true
     role?: true
+    onboardingCompleted?: true
+    hasTemporaryPassword?: true
     createdAt?: true
     updatedAt?: true
     avatarUrl?: true
@@ -4990,6 +5002,8 @@ export namespace Prisma {
     email: string
     name: string | null
     role: $Enums.OrganizationRole
+    onboardingCompleted: boolean
+    hasTemporaryPassword: boolean
     createdAt: Date
     updatedAt: Date
     avatarUrl: string | null
@@ -5020,6 +5034,8 @@ export namespace Prisma {
     email?: boolean
     name?: boolean
     role?: boolean
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     avatarUrl?: boolean
@@ -5037,6 +5053,8 @@ export namespace Prisma {
     email?: boolean
     name?: boolean
     role?: boolean
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     avatarUrl?: boolean
@@ -5051,6 +5069,8 @@ export namespace Prisma {
     email?: boolean
     name?: boolean
     role?: boolean
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     avatarUrl?: boolean
@@ -5065,6 +5085,8 @@ export namespace Prisma {
     email?: boolean
     name?: boolean
     role?: boolean
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     avatarUrl?: boolean
@@ -5073,7 +5095,7 @@ export namespace Prisma {
     system_admin?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "role" | "createdAt" | "updatedAt" | "avatarUrl" | "lastActiveAt" | "organizationId" | "system_admin", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "role" | "onboardingCompleted" | "hasTemporaryPassword" | "createdAt" | "updatedAt" | "avatarUrl" | "lastActiveAt" | "organizationId" | "system_admin", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | User$aiChatsArgs<ExtArgs>
     grantBookmarks?: boolean | User$grantBookmarksArgs<ExtArgs>
@@ -5099,6 +5121,8 @@ export namespace Prisma {
       email: string
       name: string | null
       role: $Enums.OrganizationRole
+      onboardingCompleted: boolean
+      hasTemporaryPassword: boolean
       createdAt: Date
       updatedAt: Date
       avatarUrl: string | null
@@ -5535,6 +5559,8 @@ export namespace Prisma {
     readonly email: FieldRef<"User", 'String'>
     readonly name: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'OrganizationRole'>
+    readonly onboardingCompleted: FieldRef<"User", 'Boolean'>
+    readonly hasTemporaryPassword: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
     readonly avatarUrl: FieldRef<"User", 'String'>
@@ -6068,7 +6094,6 @@ export namespace Prisma {
     numberOfSchools: number | null
     stateLeaId: string | null
     urbanCentricLocale: number | null
-    onboardingCompleted: boolean | null
     logoUrl: string | null
   }
 
@@ -6101,7 +6126,6 @@ export namespace Prisma {
     numberOfSchools: number | null
     stateLeaId: string | null
     urbanCentricLocale: number | null
-    onboardingCompleted: boolean | null
     logoUrl: string | null
   }
 
@@ -6134,7 +6158,6 @@ export namespace Prisma {
     numberOfSchools: number
     stateLeaId: number
     urbanCentricLocale: number
-    onboardingCompleted: number
     logoUrl: number
     _all: number
   }
@@ -6193,7 +6216,6 @@ export namespace Prisma {
     numberOfSchools?: true
     stateLeaId?: true
     urbanCentricLocale?: true
-    onboardingCompleted?: true
     logoUrl?: true
   }
 
@@ -6226,7 +6248,6 @@ export namespace Prisma {
     numberOfSchools?: true
     stateLeaId?: true
     urbanCentricLocale?: true
-    onboardingCompleted?: true
     logoUrl?: true
   }
 
@@ -6259,7 +6280,6 @@ export namespace Prisma {
     numberOfSchools?: true
     stateLeaId?: true
     urbanCentricLocale?: true
-    onboardingCompleted?: true
     logoUrl?: true
     _all?: true
   }
@@ -6379,7 +6399,6 @@ export namespace Prisma {
     numberOfSchools: number | null
     stateLeaId: string | null
     urbanCentricLocale: number | null
-    onboardingCompleted: boolean
     logoUrl: string | null
     _count: OrganizationCountAggregateOutputType | null
     _avg: OrganizationAvgAggregateOutputType | null
@@ -6431,7 +6450,6 @@ export namespace Prisma {
     numberOfSchools?: boolean
     stateLeaId?: boolean
     urbanCentricLocale?: boolean
-    onboardingCompleted?: boolean
     logoUrl?: boolean
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
@@ -6471,7 +6489,6 @@ export namespace Prisma {
     numberOfSchools?: boolean
     stateLeaId?: boolean
     urbanCentricLocale?: boolean
-    onboardingCompleted?: boolean
     logoUrl?: boolean
   }, ExtArgs["result"]["organization"]>
 
@@ -6504,7 +6521,6 @@ export namespace Prisma {
     numberOfSchools?: boolean
     stateLeaId?: boolean
     urbanCentricLocale?: boolean
-    onboardingCompleted?: boolean
     logoUrl?: boolean
   }, ExtArgs["result"]["organization"]>
 
@@ -6537,11 +6553,10 @@ export namespace Prisma {
     numberOfSchools?: boolean
     stateLeaId?: boolean
     urbanCentricLocale?: boolean
-    onboardingCompleted?: boolean
     logoUrl?: boolean
   }
 
-  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "slug" | "address" | "annualOperatingBudget" | "city" | "email" | "fiscalYearEnd" | "missionStatement" | "organizationLeaderName" | "phone" | "state" | "website" | "zipCode" | "strategicPlan" | "countyName" | "districtDataYear" | "enrollment" | "highestGrade" | "latitude" | "leaId" | "longitude" | "lowestGrade" | "numberOfSchools" | "stateLeaId" | "urbanCentricLocale" | "onboardingCompleted" | "logoUrl", ExtArgs["result"]["organization"]>
+  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "slug" | "address" | "annualOperatingBudget" | "city" | "email" | "fiscalYearEnd" | "missionStatement" | "organizationLeaderName" | "phone" | "state" | "website" | "zipCode" | "strategicPlan" | "countyName" | "districtDataYear" | "enrollment" | "highestGrade" | "latitude" | "leaId" | "longitude" | "lowestGrade" | "numberOfSchools" | "stateLeaId" | "urbanCentricLocale" | "logoUrl", ExtArgs["result"]["organization"]>
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
@@ -6593,7 +6608,6 @@ export namespace Prisma {
       numberOfSchools: number | null
       stateLeaId: string | null
       urbanCentricLocale: number | null
-      onboardingCompleted: boolean
       logoUrl: string | null
     }, ExtArgs["result"]["organization"]>
     composites: {}
@@ -7052,7 +7066,6 @@ export namespace Prisma {
     readonly numberOfSchools: FieldRef<"Organization", 'Int'>
     readonly stateLeaId: FieldRef<"Organization", 'String'>
     readonly urbanCentricLocale: FieldRef<"Organization", 'Int'>
-    readonly onboardingCompleted: FieldRef<"Organization", 'Boolean'>
     readonly logoUrl: FieldRef<"Organization", 'String'>
   }
     
@@ -17826,6 +17839,8 @@ export namespace Prisma {
     email: 'email',
     name: 'name',
     role: 'role',
+    onboardingCompleted: 'onboardingCompleted',
+    hasTemporaryPassword: 'hasTemporaryPassword',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     avatarUrl: 'avatarUrl',
@@ -17866,7 +17881,6 @@ export namespace Prisma {
     numberOfSchools: 'numberOfSchools',
     stateLeaId: 'stateLeaId',
     urbanCentricLocale: 'urbanCentricLocale',
-    onboardingCompleted: 'onboardingCompleted',
     logoUrl: 'logoUrl'
   };
 
@@ -18544,6 +18558,8 @@ export namespace Prisma {
     email?: StringFilter<"User"> | string
     name?: StringNullableFilter<"User"> | string | null
     role?: EnumOrganizationRoleFilter<"User"> | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFilter<"User"> | boolean
+    hasTemporaryPassword?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     avatarUrl?: StringNullableFilter<"User"> | string | null
@@ -18560,6 +18576,8 @@ export namespace Prisma {
     email?: SortOrder
     name?: SortOrderInput | SortOrder
     role?: SortOrder
+    onboardingCompleted?: SortOrder
+    hasTemporaryPassword?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avatarUrl?: SortOrderInput | SortOrder
@@ -18579,6 +18597,8 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     name?: StringNullableFilter<"User"> | string | null
     role?: EnumOrganizationRoleFilter<"User"> | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFilter<"User"> | boolean
+    hasTemporaryPassword?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     avatarUrl?: StringNullableFilter<"User"> | string | null
@@ -18595,6 +18615,8 @@ export namespace Prisma {
     email?: SortOrder
     name?: SortOrderInput | SortOrder
     role?: SortOrder
+    onboardingCompleted?: SortOrder
+    hasTemporaryPassword?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avatarUrl?: SortOrderInput | SortOrder
@@ -18614,6 +18636,8 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"User"> | string
     name?: StringNullableWithAggregatesFilter<"User"> | string | null
     role?: EnumOrganizationRoleWithAggregatesFilter<"User"> | $Enums.OrganizationRole
+    onboardingCompleted?: BoolWithAggregatesFilter<"User"> | boolean
+    hasTemporaryPassword?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     avatarUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
@@ -18654,7 +18678,6 @@ export namespace Prisma {
     numberOfSchools?: IntNullableFilter<"Organization"> | number | null
     stateLeaId?: StringNullableFilter<"Organization"> | string | null
     urbanCentricLocale?: IntNullableFilter<"Organization"> | number | null
-    onboardingCompleted?: BoolFilter<"Organization"> | boolean
     logoUrl?: StringNullableFilter<"Organization"> | string | null
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
@@ -18693,7 +18716,6 @@ export namespace Prisma {
     numberOfSchools?: SortOrderInput | SortOrder
     stateLeaId?: SortOrderInput | SortOrder
     urbanCentricLocale?: SortOrderInput | SortOrder
-    onboardingCompleted?: SortOrder
     logoUrl?: SortOrderInput | SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     applications?: ApplicationOrderByRelationAggregateInput
@@ -18735,7 +18757,6 @@ export namespace Prisma {
     numberOfSchools?: IntNullableFilter<"Organization"> | number | null
     stateLeaId?: StringNullableFilter<"Organization"> | string | null
     urbanCentricLocale?: IntNullableFilter<"Organization"> | number | null
-    onboardingCompleted?: BoolFilter<"Organization"> | boolean
     logoUrl?: StringNullableFilter<"Organization"> | string | null
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
@@ -18774,7 +18795,6 @@ export namespace Prisma {
     numberOfSchools?: SortOrderInput | SortOrder
     stateLeaId?: SortOrderInput | SortOrder
     urbanCentricLocale?: SortOrderInput | SortOrder
-    onboardingCompleted?: SortOrder
     logoUrl?: SortOrderInput | SortOrder
     _count?: OrganizationCountOrderByAggregateInput
     _avg?: OrganizationAvgOrderByAggregateInput
@@ -18815,7 +18835,6 @@ export namespace Prisma {
     numberOfSchools?: IntNullableWithAggregatesFilter<"Organization"> | number | null
     stateLeaId?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     urbanCentricLocale?: IntNullableWithAggregatesFilter<"Organization"> | number | null
-    onboardingCompleted?: BoolWithAggregatesFilter<"Organization"> | boolean
     logoUrl?: StringNullableWithAggregatesFilter<"Organization"> | string | null
   }
 
@@ -19783,6 +19802,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -19798,6 +19819,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -19813,6 +19836,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19828,6 +19853,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19843,6 +19870,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -19856,6 +19885,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19868,6 +19899,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19905,7 +19938,6 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
-    onboardingCompleted?: boolean
     logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
@@ -19944,7 +19976,6 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
-    onboardingCompleted?: boolean
     logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19983,7 +20014,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
@@ -20022,7 +20052,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20061,7 +20090,6 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
-    onboardingCompleted?: boolean
     logoUrl?: string | null
   }
 
@@ -20094,7 +20122,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -20127,7 +20154,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -21245,6 +21271,11 @@ export namespace Prisma {
     not?: NestedEnumOrganizationRoleFilter<$PrismaModel> | $Enums.OrganizationRole
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -21254,11 +21285,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type AiChatListRelationFilter = {
@@ -21291,6 +21317,8 @@ export namespace Prisma {
     email?: SortOrder
     name?: SortOrder
     role?: SortOrder
+    onboardingCompleted?: SortOrder
+    hasTemporaryPassword?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avatarUrl?: SortOrder
@@ -21304,6 +21332,8 @@ export namespace Prisma {
     email?: SortOrder
     name?: SortOrder
     role?: SortOrder
+    onboardingCompleted?: SortOrder
+    hasTemporaryPassword?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avatarUrl?: SortOrder
@@ -21317,6 +21347,8 @@ export namespace Prisma {
     email?: SortOrder
     name?: SortOrder
     role?: SortOrder
+    onboardingCompleted?: SortOrder
+    hasTemporaryPassword?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avatarUrl?: SortOrder
@@ -21350,6 +21382,14 @@ export namespace Prisma {
     _max?: NestedEnumOrganizationRoleFilter<$PrismaModel>
   }
 
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -21362,14 +21402,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type DecimalNullableFilter<$PrismaModel = never> = {
@@ -21463,7 +21495,6 @@ export namespace Prisma {
     numberOfSchools?: SortOrder
     stateLeaId?: SortOrder
     urbanCentricLocale?: SortOrder
-    onboardingCompleted?: SortOrder
     logoUrl?: SortOrder
   }
 
@@ -21508,7 +21539,6 @@ export namespace Prisma {
     numberOfSchools?: SortOrder
     stateLeaId?: SortOrder
     urbanCentricLocale?: SortOrder
-    onboardingCompleted?: SortOrder
     logoUrl?: SortOrder
   }
 
@@ -21541,7 +21571,6 @@ export namespace Prisma {
     numberOfSchools?: SortOrder
     stateLeaId?: SortOrder
     urbanCentricLocale?: SortOrder
-    onboardingCompleted?: SortOrder
     logoUrl?: SortOrder
   }
 
@@ -22235,12 +22264,12 @@ export namespace Prisma {
     set?: $Enums.OrganizationRole
   }
 
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
-  }
-
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
+  }
+
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
   }
 
   export type AiChatUpdateManyWithoutUserNestedInput = {
@@ -23141,6 +23170,11 @@ export namespace Prisma {
     not?: NestedEnumOrganizationRoleFilter<$PrismaModel> | $Enums.OrganizationRole
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -23150,11 +23184,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedUuidWithAggregatesFilter<$PrismaModel = never> = {
@@ -23181,6 +23210,14 @@ export namespace Prisma {
     _max?: NestedEnumOrganizationRoleFilter<$PrismaModel>
   }
 
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -23193,14 +23230,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedDecimalNullableFilter<$PrismaModel = never> = {
@@ -23481,7 +23510,6 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
-    onboardingCompleted?: boolean
     logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
@@ -23519,7 +23547,6 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
-    onboardingCompleted?: boolean
     logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -23631,7 +23658,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
@@ -23669,7 +23695,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -23853,6 +23878,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -23867,6 +23894,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -24041,6 +24070,8 @@ export namespace Prisma {
     email?: StringFilter<"User"> | string
     name?: StringNullableFilter<"User"> | string | null
     role?: EnumOrganizationRoleFilter<"User"> | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFilter<"User"> | boolean
+    hasTemporaryPassword?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     avatarUrl?: StringNullableFilter<"User"> | string | null
@@ -24078,7 +24109,6 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
-    onboardingCompleted?: boolean
     logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
@@ -24116,7 +24146,6 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
-    onboardingCompleted?: boolean
     logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24135,6 +24164,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -24149,6 +24180,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -24203,7 +24236,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
@@ -24241,7 +24273,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24266,6 +24297,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24280,6 +24313,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24318,7 +24353,6 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
-    onboardingCompleted?: boolean
     logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
@@ -24356,7 +24390,6 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
-    onboardingCompleted?: boolean
     logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24410,7 +24443,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
@@ -24448,7 +24480,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24550,7 +24581,6 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
-    onboardingCompleted?: boolean
     logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -24588,7 +24618,6 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
-    onboardingCompleted?: boolean
     logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24689,7 +24718,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -24727,7 +24755,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24834,7 +24861,6 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
-    onboardingCompleted?: boolean
     logoUrl?: string | null
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -24872,7 +24898,6 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
-    onboardingCompleted?: boolean
     logoUrl?: string | null
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24891,6 +24916,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -24905,6 +24932,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -25036,7 +25065,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -25074,7 +25102,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25099,6 +25126,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25113,6 +25142,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25211,7 +25242,6 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
-    onboardingCompleted?: boolean
     logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
@@ -25249,7 +25279,6 @@ export namespace Prisma {
     numberOfSchools?: number | null
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
-    onboardingCompleted?: boolean
     logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25303,7 +25332,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
@@ -25341,7 +25369,6 @@ export namespace Prisma {
     numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25779,6 +25806,8 @@ export namespace Prisma {
     email: string
     name?: string | null
     role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -25968,6 +25997,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25982,6 +26013,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25996,6 +26029,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null

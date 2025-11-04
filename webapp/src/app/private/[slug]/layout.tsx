@@ -30,12 +30,12 @@ export default async function OrganizationLayout({
   } = await supabase.auth.getUser();
 
   if (user) {
-    const userWithOrg = await prisma.user.findUnique({
+    const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
-      include: {
+      select: {
+        onboardingCompleted: true,
         organization: {
           select: {
-            onboardingCompleted: true,
             slug: true,
           },
         },
@@ -46,11 +46,11 @@ export default async function OrganizationLayout({
     const isOnboardingPage = pathname.includes("/onboarding");
 
     if (
-      userWithOrg?.organization &&
-      !userWithOrg.organization.onboardingCompleted &&
+      dbUser &&
+      !dbUser.onboardingCompleted &&
       !isOnboardingPage
     ) {
-      redirect(`/private/${userWithOrg.organization.slug}/onboarding`);
+      redirect(`/private/${dbUser.organization.slug}/onboarding`);
     }
   }
 

@@ -130,11 +130,20 @@ export default function OnboardingPage() {
   const handleCompleteOnboarding = async () => {
     setSaving(true);
     try {
-      // Save any remaining changes
-      const response = await fetch(`/api/organizations/${organization?.id}`, {
+      // Save organization changes first (if any)
+      if (Object.keys(formData).length > 0) {
+        await fetch(`/api/organizations/${organization?.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+      }
+      
+      // Update user's onboarding status
+      const response = await fetch(`/api/user`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, onboarding_completed: true }),
+        body: JSON.stringify({ onboardingCompleted: true }),
       });
 
       if (!response.ok) throw new Error("Failed to complete onboarding");
@@ -153,10 +162,10 @@ export default function OnboardingPage() {
   const handleSkip = async () => {
     setSaving(true);
     try {
-      const response = await fetch(`/api/organizations/${organization?.id}`, {
+      const response = await fetch(`/api/user`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ onboarding_completed: true }),
+        body: JSON.stringify({ onboardingCompleted: true }),
       });
 
       if (!response.ok) throw new Error("Failed to skip onboarding");

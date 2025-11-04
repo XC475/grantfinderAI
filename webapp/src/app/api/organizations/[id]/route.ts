@@ -70,10 +70,6 @@ export async function PATCH(
         city: body.city,
         state: body.state,
         zipCode: body.zipCode,
-        onboardingCompleted:
-          body.onboarding_completed !== undefined
-            ? body.onboarding_completed
-            : undefined,
       },
       select: {
         id: true,
@@ -92,7 +88,6 @@ export async function PATCH(
         city: true,
         state: true,
         zipCode: true,
-        onboardingCompleted: true,
         createdAt: true,
         updatedAt: true,
       },

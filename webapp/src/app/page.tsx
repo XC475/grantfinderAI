@@ -1,10 +1,20 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { getUserOrganization } from "@/lib/organization";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { LoginForm } from "@/components/auth/LoginForm";
 
-export default async function Home() {
+interface HomePageProps {
+  searchParams: Promise<{ message?: string }>;
+}
+
+export default async function Home({ searchParams }: HomePageProps) {
   const supabase = await createClient();
 
   // Check if user is already logged in
@@ -29,30 +39,39 @@ export default async function Home() {
         throw error;
       }
       console.error("Error fetching organization:", error);
-      // Fallback if organization not found
-      redirect("/login");
     }
   }
 
-  // Landing page for non-authenticated users
+  const { message } = await searchParams;
+
+  // Login page as root
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="text-center space-y-6 p-8">
-        <h1 className="text-5xl font-bold text-gray-900">
-          Welcome to GrantFinder
-        </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Discover and manage grant opportunities with AI-powered assistance
-        </p>
-        <div className="flex gap-4 justify-center mt-8">
-          <Button asChild size="lg">
-            <Link href="/login">Sign In</Link>
-          </Button>
-          <Button asChild variant="outline" size="lg">
-            <Link href="/register">Create Account</Link>
-          </Button>
-        </div>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">
+            Welcome back
+          </CardTitle>
+          <CardDescription className="text-center">
+            Enter your credentials to access your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {message && (
+            <div className="p-3 bg-green-100 border border-green-400 text-green-700 rounded-md text-sm">
+              {message}
+            </div>
+          )}
+
+          <LoginForm />
+
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              Contact your administrator for account access
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

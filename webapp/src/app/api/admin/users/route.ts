@@ -218,6 +218,7 @@ export async function POST(request: NextRequest) {
           name,
           organizationId: targetOrganizationId,
           role: role,
+          hasTemporaryPassword: true,
         },
       });
 

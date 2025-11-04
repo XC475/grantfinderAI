@@ -48,8 +48,8 @@ begin
     on conflict (id) do nothing;
   end if;
   
-  -- Create user with role
-  insert into app.users (id, email, name, role, "organizationId", system_admin, "createdAt", "updatedAt")
+  -- Create user with role, onboarding status, and temporary password flag
+  insert into app.users (id, email, name, role, "organizationId", system_admin, "onboardingCompleted", "hasTemporaryPassword", "createdAt", "updatedAt")
   values (
     new.id,
     new.email,
@@ -57,6 +57,8 @@ begin
     v_role::app."OrganizationRole",
     v_organization_id,
     false,
+    false,
+    coalesce((new.raw_user_meta_data->>'hasTemporaryPassword')::boolean, false),
     now(),
     now()
   )

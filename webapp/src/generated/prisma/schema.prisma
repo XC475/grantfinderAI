@@ -63,19 +63,21 @@ model opportunities {
 
 /// ///// APP SCHEMA ////////
 model User {
-  id             String           @id @db.Uuid
-  email          String           @unique
-  name           String?
-  role           OrganizationRole @default(MEMBER)
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  avatarUrl      String?
-  lastActiveAt   DateTime         @default(now())
-  organizationId String
-  system_admin   Boolean          @default(false)
-  aiChats        AiChat[]
-  grantBookmarks GrantBookmark[]
-  organization   Organization     @relation("UserOrganization", fields: [organizationId], references: [id], onDelete: Cascade)
+  id                   String           @id @db.Uuid
+  email                String           @unique
+  name                 String?
+  role                 OrganizationRole @default(MEMBER)
+  onboardingCompleted  Boolean          @default(false)
+  hasTemporaryPassword Boolean          @default(false)
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  avatarUrl            String?
+  lastActiveAt         DateTime         @default(now())
+  organizationId       String
+  system_admin         Boolean          @default(false)
+  aiChats              AiChat[]
+  grantBookmarks       GrantBookmark[]
+  organization         Organization     @relation("UserOrganization", fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId, role])
   @@map("users")
@@ -111,7 +113,6 @@ model Organization {
   numberOfSchools        Int?
   stateLeaId             String?
   urbanCentricLocale     Int?
-  onboardingCompleted    Boolean                    @default(false)
   logoUrl                String?
   aiChats                AiChat[]
   applications           Application[]
