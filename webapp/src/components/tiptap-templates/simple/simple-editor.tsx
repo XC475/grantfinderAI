@@ -16,9 +16,9 @@ import { Selection } from "@tiptap/extensions";
 
 // --- Collaboration Extensions ---
 import { Collaboration } from "@tiptap/extension-collaboration";
-import { CollaborationCursor } from "@tiptap/extension-collaboration-cursor";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
+import { CustomCollaborationCursor } from "@/components/tiptap-node/collaboration-cursor-node/custom-collaboration-cursor";
 
 // --- UI Primitives ---
 import { Button } from "@/components/tiptap-ui-primitive/button";
@@ -328,6 +328,12 @@ export function SimpleEditor({
     // y-websocket doesn't expose it by default, so we add it manually
     (provider as any).doc = ydoc;
 
+    // Verify provider.doc is set correctly
+    console.log("🔍 [SimpleEditor] Provider.doc set:", {
+      hasDoc: !!(provider as any).doc,
+      hasAwareness: !!provider.awareness,
+    });
+
     // Set local user awareness immediately (before editor is created)
     if (collaborationConfig?.user) {
       console.log(
@@ -436,6 +442,9 @@ export function SimpleEditor({
       extensions: [
         StarterKit.configure({
           horizontalRule: false,
+          // Disable history when using Collaboration
+          // Collaboration extension provides its own history
+          ...(ydoc ? { history: false } : {}),
         }),
         HorizontalRule,
         TextAlign.configure({ types: ["heading", "paragraph"] }),
@@ -460,15 +469,19 @@ export function SimpleEditor({
               Collaboration.configure({
                 document: ydoc,
               }),
-              // TODO: Re-enable CollaborationCursor once basic sync is working
-              // For now, we track users via awareness but don't show cursors
-              // CollaborationCursor.configure({
-              //   provider: provider,
-              //   user: collaborationConfig?.user || {
-              //     name: "Anonymous",
-              //     color: "#000000",
-              //   },
-              // }),
+              // Custom collaboration cursor that works with y-websocket
+              CustomCollaborationCursor.configure({
+                awareness: provider.awareness,
+                user: collaborationConfig?.user
+                  ? {
+                      name: collaborationConfig.user.name,
+                      color: collaborationConfig.user.color,
+                    }
+                  : {
+                      name: "Anonymous",
+                      color: "#808080",
+                    },
+              }),
             ]
           : []),
       ],
