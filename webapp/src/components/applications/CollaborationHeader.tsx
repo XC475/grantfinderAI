@@ -127,7 +127,7 @@ export function CollaborationHeader({
 
               {/* Remaining users count */}
               {remainingCount > 0 && (
-                <Tooltip>
+                <Tooltip key="remaining-users">
                   <TooltipTrigger asChild>
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted border-2 border-background text-xs font-medium text-muted-foreground">
                       +{remainingCount}

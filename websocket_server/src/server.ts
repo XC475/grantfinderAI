@@ -4,9 +4,8 @@ import express from "express";
 import { createServer } from "http";
 import { WebSocketServer } from "ws";
 import dotenv from "dotenv";
-// Temporarily disabled for testing
-// import { AuthExtension } from "./extensions/auth-extension";
-// import { DatabaseExtension } from "./extensions/database-extension";
+import { AuthExtension } from "./extensions/auth-extension";
+import { DatabaseExtension } from "./extensions/database-extension";
 
 // Load environment variables
 dotenv.config();
@@ -46,11 +45,11 @@ const hocuspocusServer = Server.configure({
   quiet: false,
 
   extensions: [
-    // Authentication extension - TEMPORARILY DISABLED FOR TESTING
-    // new AuthExtension(),
+    // Authentication extension - verifies JWT and document access
+    new AuthExtension(),
 
-    // Database extension - TEMPORARILY DISABLED FOR TESTING
-    // new DatabaseExtension(),
+    // Database extension - loads/saves documents from PostgreSQL
+    new DatabaseExtension(),
 
     // Logger extension - detailed logging
     new Logger({
@@ -69,15 +68,13 @@ const hocuspocusServer = Server.configure({
       `
 🔌 [Connect] New connection
    Document: "${documentName}"
-   Document Length: ${documentName?.length || 0}
-   Request Parameters:`,
-      requestParameters
+   User: ${userContext?.name || "Anonymous"} (${
+        userContext?.email || "No Auth"
+      })
+   Organization: ${data.context?.organizationId || "Unknown"}
+   Status: ✅ Authenticated
+    `
     );
-    console.log(`   User: ${userContext?.name || "Anonymous"} (${
-      userContext?.email || "No Auth"
-    })
-   Authentication: DISABLED FOR TESTING
-    `);
   },
 
   async onDisconnect(data) {
@@ -89,12 +86,6 @@ const hocuspocusServer = Server.configure({
    Document: ${documentName}
    User: ${userContext?.name || "Unknown"}
     `);
-  },
-
-  async onRequest(data) {
-    const { request, response } = data;
-    console.log(`📨 [Request] ${request.method} ${request.url}`);
-    console.log(`📨 [Request] Headers:`, request.headers);
   },
 });
 

@@ -16,8 +16,7 @@ import { Selection } from "@tiptap/extensions";
 
 // --- Collaboration Extensions ---
 import { Collaboration } from "@tiptap/extension-collaboration";
-// Temporarily disabled - has issues with provider.doc
-// import { CollaborationCursor } from "@tiptap/extension-collaboration-cursor";
+import { CollaborationCursor } from "@tiptap/extension-collaboration-cursor";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 
@@ -317,22 +316,39 @@ export function SimpleEditor({
       }
     }
 
-    // Create WebSocket provider - much simpler now!
+    // Create WebSocket provider with authentication
     const provider = new WebsocketProvider(websocketUrl, roomName, ydoc, {
-      // Simple server uses "room" parameter
-      params: { room: roomName },
+      // Pass authentication token as URL parameter
+      params: { token: authToken },
       // Don't connect immediately - connect after editor is set up
       connect: false,
     });
+
+    // IMPORTANT: CollaborationCursor expects provider.doc to exist
+    // y-websocket doesn't expose it by default, so we add it manually
+    (provider as any).doc = ydoc;
+
+    // Set local user awareness immediately (before editor is created)
+    if (collaborationConfig?.user) {
+      console.log(
+        "👤 [SimpleEditor] Setting initial user awareness:",
+        collaborationConfig.user
+      );
+      provider.awareness.setLocalStateField("user", {
+        name: collaborationConfig.user.name,
+        color: collaborationConfig.user.color,
+        avatar: collaborationConfig.user.avatar,
+      });
+    }
 
     console.log(
       "✅ [SimpleEditor] WebSocket provider created, ready to connect"
     );
 
     return { ydoc, provider };
-  }, [documentId, websocketUrl, authToken, userName]);
-  // Note: initialContent is intentionally NOT in dependencies
-  // It should only be used on initial mount, not on every document update
+  }, [documentId, websocketUrl, authToken, userName, userColor]);
+  // Note: initialContent and collaborationConfig?.user object are intentionally NOT in dependencies
+  // They should only be used on initial mount, not on every document update
 
   // Setup event listeners for provider
   React.useEffect(() => {
@@ -402,7 +418,7 @@ export function SimpleEditor({
       provider.destroy();
       ydoc?.destroy();
     };
-  }, [provider, ydoc]);
+  }, [provider, ydoc, collaborationConfig]);
 
   const editor = useEditor(
     {
@@ -444,12 +460,14 @@ export function SimpleEditor({
               Collaboration.configure({
                 document: ydoc,
               }),
-              // TODO: Add CollaborationCursor back after testing
-              // CollaborationCursor has issues with provider.doc being undefined
-              // We'll add it back once basic sync is working
+              // TODO: Re-enable CollaborationCursor once basic sync is working
+              // For now, we track users via awareness but don't show cursors
               // CollaborationCursor.configure({
               //   provider: provider,
-              //   user: collaborationConfig!.user,
+              //   user: collaborationConfig?.user || {
+              //     name: "Anonymous",
+              //     color: "#000000",
+              //   },
               // }),
             ]
           : []),

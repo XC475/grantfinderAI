@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Save, Loader2, PanelLeft } from "lucide-react";
@@ -209,34 +209,51 @@ export function DocumentEditor({
     setHasUnsavedChanges(true);
   };
 
+  // Stable callbacks for collaboration
+  const handleConnectionStatusChange = useCallback((connected: boolean) => {
+    console.log(`🔗 [DocumentEditor] Connection status changed: ${connected}`);
+    setIsConnected(connected);
+  }, []);
+
+  const handleActiveUsersChange = useCallback((users: any[]) => {
+    console.log(`👥 [DocumentEditor] Active users updated:`, users.length);
+    setActiveUsers(users);
+  }, []);
+
   // Prepare collaboration config if enabled and ready
-  const collaborationConfig =
-    enableCollaboration && isCollaborationReady && currentUser && authToken
-      ? {
-          documentId: document.id,
-          user: {
-            id: currentUser.id,
-            name: currentUser.name || currentUser.email,
-            color: generateUserColor(currentUser.id),
-            avatar: currentUser.avatarUrl,
-          },
-          websocketUrl: process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:4000",
-          authToken,
-          onConnectionStatusChange: (connected: boolean) => {
-            console.log(
-              `🔗 [DocumentEditor] Connection status changed: ${connected}`
-            );
-            setIsConnected(connected);
-          },
-          onActiveUsersChange: (users: any[]) => {
-            console.log(
-              `👥 [DocumentEditor] Active users updated:`,
-              users.length
-            );
-            setActiveUsers(users);
-          },
-        }
-      : undefined;
+  // Memoized to prevent infinite re-renders
+  const collaborationConfig = useMemo(() => {
+    if (
+      !enableCollaboration ||
+      !isCollaborationReady ||
+      !currentUser ||
+      !authToken
+    ) {
+      return undefined;
+    }
+
+    return {
+      documentId: document.id,
+      user: {
+        id: currentUser.id,
+        name: currentUser.name || currentUser.email,
+        color: generateUserColor(currentUser.id),
+        avatar: currentUser.avatarUrl,
+      },
+      websocketUrl: process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:4000",
+      authToken,
+      onConnectionStatusChange: handleConnectionStatusChange,
+      onActiveUsersChange: handleActiveUsersChange,
+    };
+  }, [
+    enableCollaboration,
+    isCollaborationReady,
+    currentUser,
+    authToken,
+    document.id,
+    handleConnectionStatusChange,
+    handleActiveUsersChange,
+  ]);
 
   // Debug log
   useEffect(() => {
