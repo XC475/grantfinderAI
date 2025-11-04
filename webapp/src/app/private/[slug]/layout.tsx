@@ -4,11 +4,15 @@ import { Separator } from "@/components/ui/separator";
 import { DynamicBreadcrumb } from "@/components/sidebar/dynamic-breadcrumb";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import { unstable_noStore } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 
 // Note: Authentication and access checks are now handled by middleware.ts
 // This makes the layout lighter and prevents full page reloads on navigation
+
+// Disable caching for this layout to always get fresh onboarding status
+export const dynamic = "force-dynamic";
 
 export default async function OrganizationLayout({
   children,
@@ -24,41 +28,55 @@ export default async function OrganizationLayout({
   const pathname = headersList.get("x-pathname") || "";
 
   // Check if we're on the onboarding page first (before any DB queries)
+  // Use exact path matching - check if pathname ends with /onboarding or /onboarding/
   const isOnboardingPage = pathname.includes("/onboarding");
 
-  // Check if user needs to complete onboarding (only if not already on onboarding page)
-  if (!isOnboardingPage) {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  // Early return for onboarding page to prevent any redirect loops
+  // This MUST happen before any database queries or user checks
+  if (isOnboardingPage) {
+    return <>{children}</>;
+  }
 
-    if (user) {
-      const dbUser = await prisma.user.findUnique({
-        where: { id: user.id },
-        select: {
-          onboardingCompleted: true,
-          organization: {
-            select: {
-              slug: true,
-            },
+  // Check if user needs to complete onboarding (only if not already on onboarding page)
+  // Use unstable_noStore to prevent caching of onboarding status
+  unstable_noStore();
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    // Fetch fresh data without caching
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: {
+        onboardingCompleted: true,
+        organization: {
+          select: {
+            slug: true,
           },
         },
-      });
+      },
+    });
 
-      // Redirect to onboarding if not completed
-      if (dbUser && !dbUser.onboardingCompleted) {
-        redirect(`/private/${dbUser.organization.slug}/onboarding`);
+    // Redirect to onboarding if not completed and we're not already there
+    if (dbUser && !dbUser.onboardingCompleted && dbUser.organization?.slug) {
+      const targetSlug = dbUser.organization.slug;
+      const targetOnboardingPath = `/private/${targetSlug}/onboarding`;
+
+      // Double-check we're not already on the onboarding page
+      if (
+        !pathname.includes("/onboarding") &&
+        pathname !== targetOnboardingPath
+      ) {
+        redirect(targetOnboardingPath);
       }
     }
   }
 
   // Check if we're on a document editor page
   const isDocumentPage = pathname.includes("/documents/");
-
-  if (isOnboardingPage) {
-    return <>{children}</>;
-  }
 
   return (
     <SidebarProvider>

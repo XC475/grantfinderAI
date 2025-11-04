@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,30 @@ export default function SetPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [organizationSlug, setOrganizationSlug] = useState<string | null>(null);
+
+  // Fetch user's organization slug on mount
+  useEffect(() => {
+    const fetchOrganization = async () => {
+      try {
+        const response = await fetch("/api/user");
+        if (response.ok) {
+          const user = await response.json();
+          if (user.organizationId) {
+            // Fetch organization to get slug
+            const orgResponse = await fetch(`/api/organizations`);
+            if (orgResponse.ok) {
+              const org = await orgResponse.json();
+              setOrganizationSlug(org.slug);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching organization:", error);
+      }
+    };
+    fetchOrganization();
+  }, []);
 
   const handleSetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,8 +73,32 @@ export default function SetPasswordPage() {
       }
 
       toast.success("Password set successfully!");
-      router.push("/"); // Will redirect to dashboard via middleware
-      router.refresh();
+
+      // Re-fetch user and organization after password update
+      const userResponse = await fetch("/api/user");
+      if (userResponse.ok) {
+        const user = await userResponse.json();
+        if (user.organizationId) {
+          const orgResponse = await fetch(`/api/organizations`);
+          if (orgResponse.ok) {
+            const org = await orgResponse.json();
+            const slug = org.slug;
+
+            // Check if user needs onboarding - redirect directly there if so
+            // Otherwise redirect to dashboard
+            // Use window.location for hard redirect to avoid client/server navigation conflicts
+            if (!user.onboardingCompleted) {
+              window.location.href = `/private/${slug}/onboarding`;
+            } else {
+              window.location.href = `/private/${slug}/dashboard`;
+            }
+            return;
+          }
+        }
+      }
+
+      // Fallback: redirect to root if we can't get organization
+      window.location.href = "/";
     } catch (error) {
       console.error("Error setting password:", error);
       toast.error(

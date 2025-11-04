@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import prisma from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
 
@@ -101,6 +102,25 @@ export async function PATCH(request: NextRequest) {
         system_admin: true,
       },
     });
+
+    // Revalidate cache for the user's organization pages if onboarding was completed
+    if (onboardingCompleted !== undefined) {
+      const userWithOrg = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: {
+          organization: {
+            select: { slug: true },
+          },
+        },
+      });
+
+      if (userWithOrg?.organization?.slug) {
+        // Revalidate the organization layout to ensure fresh data
+        revalidatePath(`/private/${userWithOrg.organization.slug}`, "layout");
+        revalidatePath(`/private/${userWithOrg.organization.slug}/dashboard`);
+        revalidatePath(`/private/${userWithOrg.organization.slug}/onboarding`);
+      }
+    }
 
     return NextResponse.json(updatedUser);
   } catch (error) {

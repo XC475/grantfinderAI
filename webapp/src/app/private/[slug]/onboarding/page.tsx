@@ -150,8 +150,13 @@ export default function OnboardingPage() {
       if (!response.ok) throw new Error("Failed to complete onboarding");
 
       toast.success("Welcome to Grantware AI! 🎉");
-      router.push(`/private/${slug}/dashboard`);
-      router.refresh();
+
+      // Wait a bit longer to ensure database update and cache invalidation complete
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Use window.location for a hard redirect to ensure layout re-evaluates
+      // This forces a full page reload with fresh data from the server
+      window.location.href = `/private/${slug}/dashboard`;
     } catch (error) {
       console.error("Error completing onboarding:", error);
       toast.error("Failed to complete onboarding");
@@ -172,8 +177,13 @@ export default function OnboardingPage() {
       if (!response.ok) throw new Error("Failed to skip onboarding");
 
       toast.success("You can complete your profile anytime in settings");
-      router.push(`/private/${slug}/dashboard`);
-      router.refresh();
+
+      // Wait a bit longer to ensure database update and cache invalidation complete
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Use window.location for a hard redirect to ensure layout re-evaluates
+      // This forces a full page reload with fresh data from the server
+      window.location.href = `/private/${slug}/dashboard`;
     } catch (error) {
       console.error("Error skipping onboarding:", error);
       toast.error("Failed to skip onboarding");
