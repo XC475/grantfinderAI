@@ -12,6 +12,7 @@ env:
   DB_PORT: ${{ secrets.DB_PORT }}
   DB_NAME: ${{ secrets.DB_NAME }}
   OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+  FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
 
 jobs:
   fetch-grants:
