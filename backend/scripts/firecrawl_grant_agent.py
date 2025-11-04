@@ -4,6 +4,7 @@ Firecrawl Grant Extraction Agent - Simplified Version
 Provides clean grant data extraction from URLs using Firecrawl.
 """
 
+from datetime import date
 import os
 import json
 import logging
@@ -56,6 +57,7 @@ class FirecrawlGrantAgent:
             raise ValueError("page_url is required for extraction")
 
         self.logger.info(f"🎯 Extracting comprehensive grant data from: {page_url}")
+        today = date.today()
 
         # Simplified schema that Firecrawl can handle (removing complex nested objects)
         extraction_schema = {
@@ -130,15 +132,11 @@ class FirecrawlGrantAgent:
                 },
                 "close_date": {
                     "type": "string",
-                    "description": "Application deadline date in YYYY-MM-DD format. Look for 'Application Due Date', 'Deadline', 'Close Date', or 'Submission Deadline'.",
+                    "description": f"Application deadline date in YYYY-MM-DD format. Look for 'Application Due Date', 'Deadline', 'Close Date', or 'Submission Deadline'. If multiple deadlines or close dates exist, use the earliest deadline available that hasn't passed todays date: {today.isoformat()}",
                 },
                 "archive_date": {
                     "type": "string",
                     "description": "Date the opportunity was archived or cancelled in YYYY-MM-DD format. Look for 'Archive Date', 'Cancellation Date', or similar fields.",
-                },
-                "last_updated": {
-                    "type": "string",
-                    "description": "Date the opportunity was last updated in YYYY-MM-DD format. Look for 'Last Updated', 'Modified Date', or similar fields.",
                 },
                 "rfp_url": {
                     "type": "string",
@@ -197,7 +195,7 @@ class FirecrawlGrantAgent:
                 },
                 "source_grant_id": {
                     "type": "string",
-                    "description": "Official grant identifier from the source system. Look for 'Opportunity Number', 'CFDA/Assistance Listing', 'RFP ID', 'Solicitation Number', 'Grant ID', or 'Funding Opportunity Number (FON)'.",
+                    "description": "Official grant identifier from the source system. Look for 'Opportunity Number', 'CFDA/Assistance Listing', 'RFP ID', 'Solicitation Number', 'Grant ID', or 'Funding Opportunity Number (FON)', if not found set to null",
                 },
                 "funding_instrument": {
                     "type": "string",
@@ -219,17 +217,20 @@ class FirecrawlGrantAgent:
                     "type": "number",
                     "description": "Relevance score (0-100) indicating how relevant this grant is to K-12 school districts.",
                 },
-                "extra": {
-                    "type": "object",
-                    "description": "Other useful fields for display; keys are headings, values are strings.",
-                    "additionalProperties": {"type": "string"},
+                "is_recurring": {
+                    "type": "boolean",
+                    "description": "True if the grant opportunity is recurring or has multiple deadlines or close dates, false if it is a one-time opportunity.",
+                },
+                "application_instructions": {
+                    "type": "string",
+                    "description": "Detailed instructions for the application process, including submission guidelines, required documents, and deadlines.",
                 },
             },
             "required": ["title", "agency", "status", "category", "description"],
         }
 
         # Enhanced extraction prompt with specific field guidance
-        extraction_prompt = """Extract comprehensive grant opportunity data from this education funding page:
+        extraction_prompt = f"""Extract comprehensive grant opportunity data from this education funding page:
 
             CRITICAL EXTRACTION RULES:
             - Extract ALL available information - do not leave fields empty if data exists
@@ -241,7 +242,8 @@ class FirecrawlGrantAgent:
             - Extract complete contact information from any contact sections
             - Include ALL attachments (applications, guidelines, supporting docs) in the attachments list
             - Use null for any fields that cannot be determined from the page
-            - If there are multiple deadlines, use the latest deadline in close_date and disclose other deadlines in the eligibility_summary field
+            - If there are multiple deadlines, use the earliest deadline in close_date which hasn't passed todays date: {today.isoformat()} and set is_recurring=true
+            - If the opportunity has a rolling deadline, set is_recurring=true and set close_date=null
 
             - Use this rubric for relevance_score:
                 - 80-100: Clearly K-12/LEA focused or direct school district funding
@@ -257,7 +259,6 @@ class FirecrawlGrantAgent:
                 urls=[page_url],
                 schema=extraction_schema,
                 prompt=extraction_prompt,
-                enable_web_search=True,
             )
 
             # Process the extraction result
