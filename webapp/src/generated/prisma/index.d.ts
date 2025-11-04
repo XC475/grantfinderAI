@@ -73,6 +73,11 @@ export type documents = $Result.DefaultSelection<Prisma.$documentsPayload>
  * 
  */
 export type application_documents = $Result.DefaultSelection<Prisma.$application_documentsPayload>
+/**
+ * Model k12_education_opportunities
+ * This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+ */
+export type k12_education_opportunities = $Result.DefaultSelection<Prisma.$k12_education_opportunitiesPayload>
 
 /**
  * Enums
@@ -186,6 +191,51 @@ export const opportunity_category_enum: {
 
 export type opportunity_category_enum = (typeof opportunity_category_enum)[keyof typeof opportunity_category_enum]
 
+
+export const k12_education_opportunity_category_enum: {
+  stem_education: 'stem_education',
+  math_and_science_education: 'math_and_science_education',
+  career_and_technical_education: 'career_and_technical_education',
+  special_education: 'special_education',
+  early_childhood_education: 'early_childhood_education',
+  teacher_professional_development: 'teacher_professional_development',
+  leadership_and_administration_development: 'leadership_and_administration_development',
+  social_emotional_learning: 'social_emotional_learning',
+  school_climate_and_culture: 'school_climate_and_culture',
+  bullying_prevention: 'bullying_prevention',
+  school_safety_and_security: 'school_safety_and_security',
+  digital_literacy_and_technology: 'digital_literacy_and_technology',
+  educational_technology_innovation: 'educational_technology_innovation',
+  after_school_programs: 'after_school_programs',
+  arts_and_music_education: 'arts_and_music_education',
+  environmental_education: 'environmental_education',
+  health_and_wellness: 'health_and_wellness',
+  nutrition_and_school_meals: 'nutrition_and_school_meals',
+  student_mental_health: 'student_mental_health',
+  equity_and_inclusion: 'equity_and_inclusion',
+  community_engagement: 'community_engagement',
+  parental_involvement: 'parental_involvement',
+  college_and_career_readiness: 'college_and_career_readiness',
+  civic_and_history_education: 'civic_and_history_education',
+  english_language_learners: 'english_language_learners',
+  financial_literacy: 'financial_literacy',
+  educational_research_and_innovation: 'educational_research_and_innovation',
+  facilities_and_infrastructure: 'facilities_and_infrastructure',
+  data_and_assessment_initiatives: 'data_and_assessment_initiatives',
+  transportation_and_accessibility: 'transportation_and_accessibility',
+  other: 'other'
+};
+
+export type k12_education_opportunity_category_enum = (typeof k12_education_opportunity_category_enum)[keyof typeof k12_education_opportunity_category_enum]
+
+
+export const opportunity_services_enum: {
+  k12_education: 'k12_education',
+  higher_education: 'higher_education'
+};
+
+export type opportunity_services_enum = (typeof opportunity_services_enum)[keyof typeof opportunity_services_enum]
+
 }
 
 export type opportunity_status_enum = $Enums.opportunity_status_enum
@@ -219,6 +269,14 @@ export const funding_type_enum: typeof $Enums.funding_type_enum
 export type opportunity_category_enum = $Enums.opportunity_category_enum
 
 export const opportunity_category_enum: typeof $Enums.opportunity_category_enum
+
+export type k12_education_opportunity_category_enum = $Enums.k12_education_opportunity_category_enum
+
+export const k12_education_opportunity_category_enum: typeof $Enums.k12_education_opportunity_category_enum
+
+export type opportunity_services_enum = $Enums.opportunity_services_enum
+
+export const opportunity_services_enum: typeof $Enums.opportunity_services_enum
 
 /**
  * ##  Prisma Client ʲˢ
@@ -457,6 +515,16 @@ export class PrismaClient<
     * ```
     */
   get application_documents(): Prisma.application_documentsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.k12_education_opportunities`: Exposes CRUD operations for the **k12_education_opportunities** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more K12_education_opportunities
+    * const k12_education_opportunities = await prisma.k12_education_opportunities.findMany()
+    * ```
+    */
+  get k12_education_opportunities(): Prisma.k12_education_opportunitiesDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -908,7 +976,8 @@ export namespace Prisma {
     AiChatMessage: 'AiChatMessage',
     Recommendation: 'Recommendation',
     documents: 'documents',
-    application_documents: 'application_documents'
+    application_documents: 'application_documents',
+    k12_education_opportunities: 'k12_education_opportunities'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -927,7 +996,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "documents" | "application_documents"
+      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "documents" | "application_documents" | "k12_education_opportunities"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1819,6 +1888,80 @@ export namespace Prisma {
           }
         }
       }
+      k12_education_opportunities: {
+        payload: Prisma.$k12_education_opportunitiesPayload<ExtArgs>
+        fields: Prisma.k12_education_opportunitiesFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.k12_education_opportunitiesFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$k12_education_opportunitiesPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.k12_education_opportunitiesFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$k12_education_opportunitiesPayload>
+          }
+          findFirst: {
+            args: Prisma.k12_education_opportunitiesFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$k12_education_opportunitiesPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.k12_education_opportunitiesFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$k12_education_opportunitiesPayload>
+          }
+          findMany: {
+            args: Prisma.k12_education_opportunitiesFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$k12_education_opportunitiesPayload>[]
+          }
+          create: {
+            args: Prisma.k12_education_opportunitiesCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$k12_education_opportunitiesPayload>
+          }
+          createMany: {
+            args: Prisma.k12_education_opportunitiesCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.k12_education_opportunitiesCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$k12_education_opportunitiesPayload>[]
+          }
+          delete: {
+            args: Prisma.k12_education_opportunitiesDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$k12_education_opportunitiesPayload>
+          }
+          update: {
+            args: Prisma.k12_education_opportunitiesUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$k12_education_opportunitiesPayload>
+          }
+          deleteMany: {
+            args: Prisma.k12_education_opportunitiesDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.k12_education_opportunitiesUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.k12_education_opportunitiesUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$k12_education_opportunitiesPayload>[]
+          }
+          upsert: {
+            args: Prisma.k12_education_opportunitiesUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$k12_education_opportunitiesPayload>
+          }
+          aggregate: {
+            args: Prisma.K12_education_opportunitiesAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateK12_education_opportunities>
+          }
+          groupBy: {
+            args: Prisma.k12_education_opportunitiesGroupByArgs<ExtArgs>
+            result: $Utils.Optional<K12_education_opportunitiesGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.k12_education_opportunitiesCountArgs<ExtArgs>
+            result: $Utils.Optional<K12_education_opportunitiesCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1927,6 +2070,7 @@ export namespace Prisma {
     recommendation?: RecommendationOmit
     documents?: documentsOmit
     application_documents?: application_documentsOmit
+    k12_education_opportunities?: k12_education_opportunitiesOmit
   }
 
   /* Types for Logging */
@@ -2003,6 +2147,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type OpportunitiesCountOutputType
+   */
+
+  export type OpportunitiesCountOutputType = {
+    k12_education_opportunities: number
+  }
+
+  export type OpportunitiesCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    k12_education_opportunities?: boolean | OpportunitiesCountOutputTypeCountK12_education_opportunitiesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * OpportunitiesCountOutputType without action
+   */
+  export type OpportunitiesCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OpportunitiesCountOutputType
+     */
+    select?: OpportunitiesCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * OpportunitiesCountOutputType without action
+   */
+  export type OpportunitiesCountOutputTypeCountK12_education_opportunitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: k12_education_opportunitiesWhereInput
+  }
+
+
+  /**
    * Count Type UserCountOutputType
    */
 
@@ -2052,6 +2227,7 @@ export namespace Prisma {
     grantBookmarks: number
     eligibilityAnalyses: number
     recommendations: number
+    users: number
   }
 
   export type OrganizationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2060,6 +2236,7 @@ export namespace Prisma {
     grantBookmarks?: boolean | OrganizationCountOutputTypeCountGrantBookmarksArgs
     eligibilityAnalyses?: boolean | OrganizationCountOutputTypeCountEligibilityAnalysesArgs
     recommendations?: boolean | OrganizationCountOutputTypeCountRecommendationsArgs
+    users?: boolean | OrganizationCountOutputTypeCountUsersArgs
   }
 
   // Custom InputTypes
@@ -2106,6 +2283,13 @@ export namespace Prisma {
    */
   export type OrganizationCountOutputTypeCountRecommendationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RecommendationWhereInput
+  }
+
+  /**
+   * OrganizationCountOutputType without action
+   */
+  export type OrganizationCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
   }
 
 
@@ -3188,6 +3372,8 @@ export namespace Prisma {
     content_hash: string | null
     funding_type: $Enums.funding_type_enum | null
     rfp_url: string | null
+    is_recurring: boolean | null
+    application_instructions: string | null
   }
 
   export type OpportunitiesMaxAggregateOutputType = {
@@ -3221,6 +3407,8 @@ export namespace Prisma {
     content_hash: string | null
     funding_type: $Enums.funding_type_enum | null
     rfp_url: string | null
+    is_recurring: boolean | null
+    application_instructions: string | null
   }
 
   export type OpportunitiesCountAggregateOutputType = {
@@ -3257,6 +3445,9 @@ export namespace Prisma {
     funding_type: number
     category: number
     rfp_url: number
+    services: number
+    is_recurring: number
+    application_instructions: number
     _all: number
   }
 
@@ -3310,6 +3501,8 @@ export namespace Prisma {
     content_hash?: true
     funding_type?: true
     rfp_url?: true
+    is_recurring?: true
+    application_instructions?: true
   }
 
   export type OpportunitiesMaxAggregateInputType = {
@@ -3343,6 +3536,8 @@ export namespace Prisma {
     content_hash?: true
     funding_type?: true
     rfp_url?: true
+    is_recurring?: true
+    application_instructions?: true
   }
 
   export type OpportunitiesCountAggregateInputType = {
@@ -3379,6 +3574,9 @@ export namespace Prisma {
     funding_type?: true
     category?: true
     rfp_url?: true
+    services?: true
+    is_recurring?: true
+    application_instructions?: true
     _all?: true
   }
 
@@ -3502,6 +3700,9 @@ export namespace Prisma {
     funding_type: $Enums.funding_type_enum | null
     category: $Enums.opportunity_category_enum[]
     rfp_url: string | null
+    services: $Enums.opportunity_services_enum[]
+    is_recurring: boolean | null
+    application_instructions: string | null
     _count: OpportunitiesCountAggregateOutputType | null
     _avg: OpportunitiesAvgAggregateOutputType | null
     _sum: OpportunitiesSumAggregateOutputType | null
@@ -3557,6 +3758,11 @@ export namespace Prisma {
     funding_type?: boolean
     category?: boolean
     rfp_url?: boolean
+    services?: boolean
+    is_recurring?: boolean
+    application_instructions?: boolean
+    k12_education_opportunities?: boolean | opportunities$k12_education_opportunitiesArgs<ExtArgs>
+    _count?: boolean | OpportunitiesCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["opportunities"]>
 
   export type opportunitiesSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3593,6 +3799,9 @@ export namespace Prisma {
     funding_type?: boolean
     category?: boolean
     rfp_url?: boolean
+    services?: boolean
+    is_recurring?: boolean
+    application_instructions?: boolean
   }, ExtArgs["result"]["opportunities"]>
 
   export type opportunitiesSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3629,6 +3838,9 @@ export namespace Prisma {
     funding_type?: boolean
     category?: boolean
     rfp_url?: boolean
+    services?: boolean
+    is_recurring?: boolean
+    application_instructions?: boolean
   }, ExtArgs["result"]["opportunities"]>
 
   export type opportunitiesSelectScalar = {
@@ -3665,13 +3877,24 @@ export namespace Prisma {
     funding_type?: boolean
     category?: boolean
     rfp_url?: boolean
+    services?: boolean
+    is_recurring?: boolean
+    application_instructions?: boolean
   }
 
-  export type opportunitiesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "source" | "state_code" | "source_grant_id" | "status" | "title" | "description" | "description_summary" | "agency" | "funding_instrument" | "fiscal_year" | "post_date" | "close_date" | "archive_date" | "cost_sharing" | "award_max" | "award_min" | "total_funding_amount" | "eligibility" | "eligibility_summary" | "last_updated" | "contact_name" | "contact_email" | "contact_phone" | "url" | "attachments" | "extra" | "relevance_score" | "raw_text" | "content_hash" | "funding_type" | "category" | "rfp_url", ExtArgs["result"]["opportunities"]>
+  export type opportunitiesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "source" | "state_code" | "source_grant_id" | "status" | "title" | "description" | "description_summary" | "agency" | "funding_instrument" | "fiscal_year" | "post_date" | "close_date" | "archive_date" | "cost_sharing" | "award_max" | "award_min" | "total_funding_amount" | "eligibility" | "eligibility_summary" | "last_updated" | "contact_name" | "contact_email" | "contact_phone" | "url" | "attachments" | "extra" | "relevance_score" | "raw_text" | "content_hash" | "funding_type" | "category" | "rfp_url" | "services" | "is_recurring" | "application_instructions", ExtArgs["result"]["opportunities"]>
+  export type opportunitiesInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    k12_education_opportunities?: boolean | opportunities$k12_education_opportunitiesArgs<ExtArgs>
+    _count?: boolean | OpportunitiesCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type opportunitiesIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type opportunitiesIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $opportunitiesPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "opportunities"
-    objects: {}
+    objects: {
+      k12_education_opportunities: Prisma.$k12_education_opportunitiesPayload<ExtArgs>[]
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       source: string
@@ -3706,6 +3929,9 @@ export namespace Prisma {
       funding_type: $Enums.funding_type_enum | null
       category: $Enums.opportunity_category_enum[]
       rfp_url: string | null
+      services: $Enums.opportunity_services_enum[]
+      is_recurring: boolean | null
+      application_instructions: string | null
     }, ExtArgs["result"]["opportunities"]>
     composites: {}
   }
@@ -4100,6 +4326,7 @@ export namespace Prisma {
    */
   export interface Prisma__opportunitiesClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    k12_education_opportunities<T extends opportunities$k12_education_opportunitiesArgs<ExtArgs> = {}>(args?: Subset<T, opportunities$k12_education_opportunitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$k12_education_opportunitiesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4162,6 +4389,9 @@ export namespace Prisma {
     readonly funding_type: FieldRef<"opportunities", 'funding_type_enum'>
     readonly category: FieldRef<"opportunities", 'opportunity_category_enum[]'>
     readonly rfp_url: FieldRef<"opportunities", 'String'>
+    readonly services: FieldRef<"opportunities", 'opportunity_services_enum[]'>
+    readonly is_recurring: FieldRef<"opportunities", 'Boolean'>
+    readonly application_instructions: FieldRef<"opportunities", 'String'>
   }
     
 
@@ -4178,6 +4408,10 @@ export namespace Prisma {
      * Omit specific fields from the opportunities
      */
     omit?: opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: opportunitiesInclude<ExtArgs> | null
     /**
      * Filter, which opportunities to fetch.
      */
@@ -4197,6 +4431,10 @@ export namespace Prisma {
      */
     omit?: opportunitiesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: opportunitiesInclude<ExtArgs> | null
+    /**
      * Filter, which opportunities to fetch.
      */
     where: opportunitiesWhereUniqueInput
@@ -4214,6 +4452,10 @@ export namespace Prisma {
      * Omit specific fields from the opportunities
      */
     omit?: opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: opportunitiesInclude<ExtArgs> | null
     /**
      * Filter, which opportunities to fetch.
      */
@@ -4263,6 +4505,10 @@ export namespace Prisma {
      */
     omit?: opportunitiesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: opportunitiesInclude<ExtArgs> | null
+    /**
      * Filter, which opportunities to fetch.
      */
     where?: opportunitiesWhereInput
@@ -4311,6 +4557,10 @@ export namespace Prisma {
      */
     omit?: opportunitiesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: opportunitiesInclude<ExtArgs> | null
+    /**
      * Filter, which opportunities to fetch.
      */
     where?: opportunitiesWhereInput
@@ -4353,6 +4603,10 @@ export namespace Prisma {
      * Omit specific fields from the opportunities
      */
     omit?: opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: opportunitiesInclude<ExtArgs> | null
     /**
      * The data needed to create a opportunities.
      */
@@ -4401,6 +4655,10 @@ export namespace Prisma {
      * Omit specific fields from the opportunities
      */
     omit?: opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: opportunitiesInclude<ExtArgs> | null
     /**
      * The data needed to update a opportunities.
      */
@@ -4468,6 +4726,10 @@ export namespace Prisma {
      */
     omit?: opportunitiesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: opportunitiesInclude<ExtArgs> | null
+    /**
      * The filter to search for the opportunities to update in case it exists.
      */
     where: opportunitiesWhereUniqueInput
@@ -4494,6 +4756,10 @@ export namespace Prisma {
      */
     omit?: opportunitiesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: opportunitiesInclude<ExtArgs> | null
+    /**
      * Filter which opportunities to delete.
      */
     where: opportunitiesWhereUniqueInput
@@ -4514,6 +4780,30 @@ export namespace Prisma {
   }
 
   /**
+   * opportunities.k12_education_opportunities
+   */
+  export type opportunities$k12_education_opportunitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the k12_education_opportunities
+     */
+    select?: k12_education_opportunitiesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the k12_education_opportunities
+     */
+    omit?: k12_education_opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: k12_education_opportunitiesInclude<ExtArgs> | null
+    where?: k12_education_opportunitiesWhereInput
+    orderBy?: k12_education_opportunitiesOrderByWithRelationInput | k12_education_opportunitiesOrderByWithRelationInput[]
+    cursor?: k12_education_opportunitiesWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: K12_education_opportunitiesScalarFieldEnum | K12_education_opportunitiesScalarFieldEnum[]
+  }
+
+  /**
    * opportunities without action
    */
   export type opportunitiesDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4525,6 +4815,10 @@ export namespace Prisma {
      * Omit specific fields from the opportunities
      */
     omit?: opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: opportunitiesInclude<ExtArgs> | null
   }
 
 
@@ -4542,6 +4836,7 @@ export namespace Prisma {
     id: string | null
     email: string | null
     name: string | null
+    role: $Enums.OrganizationRole | null
     createdAt: Date | null
     updatedAt: Date | null
     avatarUrl: string | null
@@ -4554,6 +4849,7 @@ export namespace Prisma {
     id: string | null
     email: string | null
     name: string | null
+    role: $Enums.OrganizationRole | null
     createdAt: Date | null
     updatedAt: Date | null
     avatarUrl: string | null
@@ -4566,6 +4862,7 @@ export namespace Prisma {
     id: number
     email: number
     name: number
+    role: number
     createdAt: number
     updatedAt: number
     avatarUrl: number
@@ -4580,6 +4877,7 @@ export namespace Prisma {
     id?: true
     email?: true
     name?: true
+    role?: true
     createdAt?: true
     updatedAt?: true
     avatarUrl?: true
@@ -4592,6 +4890,7 @@ export namespace Prisma {
     id?: true
     email?: true
     name?: true
+    role?: true
     createdAt?: true
     updatedAt?: true
     avatarUrl?: true
@@ -4604,6 +4903,7 @@ export namespace Prisma {
     id?: true
     email?: true
     name?: true
+    role?: true
     createdAt?: true
     updatedAt?: true
     avatarUrl?: true
@@ -4689,6 +4989,7 @@ export namespace Prisma {
     id: string
     email: string
     name: string | null
+    role: $Enums.OrganizationRole
     createdAt: Date
     updatedAt: Date
     avatarUrl: string | null
@@ -4718,6 +5019,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     name?: boolean
+    role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     avatarUrl?: boolean
@@ -4734,6 +5036,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     name?: boolean
+    role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     avatarUrl?: boolean
@@ -4747,6 +5050,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     name?: boolean
+    role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     avatarUrl?: boolean
@@ -4760,6 +5064,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     name?: boolean
+    role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     avatarUrl?: boolean
@@ -4768,7 +5073,7 @@ export namespace Prisma {
     system_admin?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "createdAt" | "updatedAt" | "avatarUrl" | "lastActiveAt" | "organizationId" | "system_admin", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "role" | "createdAt" | "updatedAt" | "avatarUrl" | "lastActiveAt" | "organizationId" | "system_admin", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | User$aiChatsArgs<ExtArgs>
     grantBookmarks?: boolean | User$grantBookmarksArgs<ExtArgs>
@@ -4793,6 +5098,7 @@ export namespace Prisma {
       id: string
       email: string
       name: string | null
+      role: $Enums.OrganizationRole
       createdAt: Date
       updatedAt: Date
       avatarUrl: string | null
@@ -5228,6 +5534,7 @@ export namespace Prisma {
     readonly id: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly name: FieldRef<"User", 'String'>
+    readonly role: FieldRef<"User", 'OrganizationRole'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
     readonly avatarUrl: FieldRef<"User", 'String'>
@@ -5738,7 +6045,6 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     slug: string | null
-    role: $Enums.OrganizationRole | null
     address: string | null
     annualOperatingBudget: Decimal | null
     city: string | null
@@ -5772,7 +6078,6 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     slug: string | null
-    role: $Enums.OrganizationRole | null
     address: string | null
     annualOperatingBudget: Decimal | null
     city: string | null
@@ -5806,7 +6111,6 @@ export namespace Prisma {
     createdAt: number
     updatedAt: number
     slug: number
-    role: number
     address: number
     annualOperatingBudget: number
     city: number
@@ -5866,7 +6170,6 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     slug?: true
-    role?: true
     address?: true
     annualOperatingBudget?: true
     city?: true
@@ -5900,7 +6203,6 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     slug?: true
-    role?: true
     address?: true
     annualOperatingBudget?: true
     city?: true
@@ -5934,7 +6236,6 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     slug?: true
-    role?: true
     address?: true
     annualOperatingBudget?: true
     city?: true
@@ -6055,7 +6356,6 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     slug: string
-    role: $Enums.OrganizationRole
     address: string | null
     annualOperatingBudget: Decimal | null
     city: string | null
@@ -6108,7 +6408,6 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     slug?: boolean
-    role?: boolean
     address?: boolean
     annualOperatingBudget?: boolean
     city?: boolean
@@ -6139,7 +6438,7 @@ export namespace Prisma {
     grantBookmarks?: boolean | Organization$grantBookmarksArgs<ExtArgs>
     eligibilityAnalyses?: boolean | Organization$eligibilityAnalysesArgs<ExtArgs>
     recommendations?: boolean | Organization$recommendationsArgs<ExtArgs>
-    user?: boolean | Organization$userArgs<ExtArgs>
+    users?: boolean | Organization$usersArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["organization"]>
 
@@ -6149,7 +6448,6 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     slug?: boolean
-    role?: boolean
     address?: boolean
     annualOperatingBudget?: boolean
     city?: boolean
@@ -6183,7 +6481,6 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     slug?: boolean
-    role?: boolean
     address?: boolean
     annualOperatingBudget?: boolean
     city?: boolean
@@ -6217,7 +6514,6 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     slug?: boolean
-    role?: boolean
     address?: boolean
     annualOperatingBudget?: boolean
     city?: boolean
@@ -6245,14 +6541,14 @@ export namespace Prisma {
     logoUrl?: boolean
   }
 
-  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "slug" | "role" | "address" | "annualOperatingBudget" | "city" | "email" | "fiscalYearEnd" | "missionStatement" | "organizationLeaderName" | "phone" | "state" | "website" | "zipCode" | "strategicPlan" | "countyName" | "districtDataYear" | "enrollment" | "highestGrade" | "latitude" | "leaId" | "longitude" | "lowestGrade" | "numberOfSchools" | "stateLeaId" | "urbanCentricLocale" | "onboardingCompleted" | "logoUrl", ExtArgs["result"]["organization"]>
+  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "slug" | "address" | "annualOperatingBudget" | "city" | "email" | "fiscalYearEnd" | "missionStatement" | "organizationLeaderName" | "phone" | "state" | "website" | "zipCode" | "strategicPlan" | "countyName" | "districtDataYear" | "enrollment" | "highestGrade" | "latitude" | "leaId" | "longitude" | "lowestGrade" | "numberOfSchools" | "stateLeaId" | "urbanCentricLocale" | "onboardingCompleted" | "logoUrl", ExtArgs["result"]["organization"]>
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
     grantBookmarks?: boolean | Organization$grantBookmarksArgs<ExtArgs>
     eligibilityAnalyses?: boolean | Organization$eligibilityAnalysesArgs<ExtArgs>
     recommendations?: boolean | Organization$recommendationsArgs<ExtArgs>
-    user?: boolean | Organization$userArgs<ExtArgs>
+    users?: boolean | Organization$usersArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -6266,7 +6562,7 @@ export namespace Prisma {
       grantBookmarks: Prisma.$GrantBookmarkPayload<ExtArgs>[]
       eligibilityAnalyses: Prisma.$GrantEligibilityAnalysisPayload<ExtArgs>[]
       recommendations: Prisma.$RecommendationPayload<ExtArgs>[]
-      user: Prisma.$UserPayload<ExtArgs> | null
+      users: Prisma.$UserPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6274,7 +6570,6 @@ export namespace Prisma {
       createdAt: Date
       updatedAt: Date
       slug: string
-      role: $Enums.OrganizationRole
       address: string | null
       annualOperatingBudget: Prisma.Decimal | null
       city: string | null
@@ -6699,7 +6994,7 @@ export namespace Prisma {
     grantBookmarks<T extends Organization$grantBookmarksArgs<ExtArgs> = {}>(args?: Subset<T, Organization$grantBookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GrantBookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     eligibilityAnalyses<T extends Organization$eligibilityAnalysesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$eligibilityAnalysesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GrantEligibilityAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     recommendations<T extends Organization$recommendationsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$recommendationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecommendationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    user<T extends Organization$userArgs<ExtArgs> = {}>(args?: Subset<T, Organization$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    users<T extends Organization$usersArgs<ExtArgs> = {}>(args?: Subset<T, Organization$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6734,7 +7029,6 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"Organization", 'DateTime'>
     readonly updatedAt: FieldRef<"Organization", 'DateTime'>
     readonly slug: FieldRef<"Organization", 'String'>
-    readonly role: FieldRef<"Organization", 'OrganizationRole'>
     readonly address: FieldRef<"Organization", 'String'>
     readonly annualOperatingBudget: FieldRef<"Organization", 'Decimal'>
     readonly city: FieldRef<"Organization", 'String'>
@@ -7268,9 +7562,9 @@ export namespace Prisma {
   }
 
   /**
-   * Organization.user
+   * Organization.users
    */
-  export type Organization$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Organization$usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the User
      */
@@ -7284,6 +7578,11 @@ export namespace Prisma {
      */
     include?: UserInclude<ExtArgs> | null
     where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
   }
 
   /**
@@ -9597,12 +9896,12 @@ export namespace Prisma {
     contentHtml: string | null
     title: string | null
     notes: string | null
-    attachments_markdown: string | null
     createdAt: Date | null
     updatedAt: Date | null
     submittedAt: Date | null
     lastEditedAt: Date | null
     organizationId: string | null
+    attachments_markdown: string | null
   }
 
   export type ApplicationMaxAggregateOutputType = {
@@ -9612,12 +9911,12 @@ export namespace Prisma {
     contentHtml: string | null
     title: string | null
     notes: string | null
-    attachments_markdown: string | null
     createdAt: Date | null
     updatedAt: Date | null
     submittedAt: Date | null
     lastEditedAt: Date | null
     organizationId: string | null
+    attachments_markdown: string | null
   }
 
   export type ApplicationCountAggregateOutputType = {
@@ -9629,13 +9928,13 @@ export namespace Prisma {
     title: number
     notes: number
     documents: number
-    checklist: number
-    attachments_markdown: number
     createdAt: number
     updatedAt: number
     submittedAt: number
     lastEditedAt: number
     organizationId: number
+    checklist: number
+    attachments_markdown: number
     _all: number
   }
 
@@ -9655,12 +9954,12 @@ export namespace Prisma {
     contentHtml?: true
     title?: true
     notes?: true
-    attachments_markdown?: true
     createdAt?: true
     updatedAt?: true
     submittedAt?: true
     lastEditedAt?: true
     organizationId?: true
+    attachments_markdown?: true
   }
 
   export type ApplicationMaxAggregateInputType = {
@@ -9670,12 +9969,12 @@ export namespace Prisma {
     contentHtml?: true
     title?: true
     notes?: true
-    attachments_markdown?: true
     createdAt?: true
     updatedAt?: true
     submittedAt?: true
     lastEditedAt?: true
     organizationId?: true
+    attachments_markdown?: true
   }
 
   export type ApplicationCountAggregateInputType = {
@@ -9687,13 +9986,13 @@ export namespace Prisma {
     title?: true
     notes?: true
     documents?: true
-    checklist?: true
-    attachments_markdown?: true
     createdAt?: true
     updatedAt?: true
     submittedAt?: true
     lastEditedAt?: true
     organizationId?: true
+    checklist?: true
+    attachments_markdown?: true
     _all?: true
   }
 
@@ -9792,13 +10091,13 @@ export namespace Prisma {
     title: string | null
     notes: string | null
     documents: JsonValue | null
-    checklist: JsonValue | null
-    attachments_markdown: string | null
     createdAt: Date
     updatedAt: Date
     submittedAt: Date | null
     lastEditedAt: Date
     organizationId: string
+    checklist: JsonValue | null
+    attachments_markdown: string | null
     _count: ApplicationCountAggregateOutputType | null
     _avg: ApplicationAvgAggregateOutputType | null
     _sum: ApplicationSumAggregateOutputType | null
@@ -9829,13 +10128,13 @@ export namespace Prisma {
     title?: boolean
     notes?: boolean
     documents?: boolean
-    checklist?: boolean
-    attachments_markdown?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
+    checklist?: boolean
+    attachments_markdown?: boolean
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     application_documents?: boolean | Application$application_documentsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -9851,13 +10150,13 @@ export namespace Prisma {
     title?: boolean
     notes?: boolean
     documents?: boolean
-    checklist?: boolean
-    attachments_markdown?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
+    checklist?: boolean
+    attachments_markdown?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
 
@@ -9870,13 +10169,13 @@ export namespace Prisma {
     title?: boolean
     notes?: boolean
     documents?: boolean
-    checklist?: boolean
-    attachments_markdown?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
+    checklist?: boolean
+    attachments_markdown?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
 
@@ -9889,16 +10188,16 @@ export namespace Prisma {
     title?: boolean
     notes?: boolean
     documents?: boolean
-    checklist?: boolean
-    attachments_markdown?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
+    checklist?: boolean
+    attachments_markdown?: boolean
   }
 
-  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "content" | "contentHtml" | "title" | "notes" | "documents" | "checklist" | "attachments_markdown" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId", ExtArgs["result"]["application"]>
+  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "content" | "contentHtml" | "title" | "notes" | "documents" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId" | "checklist" | "attachments_markdown", ExtArgs["result"]["application"]>
   export type ApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     application_documents?: boolean | Application$application_documentsArgs<ExtArgs>
@@ -9928,13 +10227,13 @@ export namespace Prisma {
       title: string | null
       notes: string | null
       documents: Prisma.JsonValue | null
-      checklist: Prisma.JsonValue | null
-      attachments_markdown: string | null
       createdAt: Date
       updatedAt: Date
       submittedAt: Date | null
       lastEditedAt: Date
       organizationId: string
+      checklist: Prisma.JsonValue | null
+      attachments_markdown: string | null
     }, ExtArgs["result"]["application"]>
     composites: {}
   }
@@ -10369,13 +10668,13 @@ export namespace Prisma {
     readonly title: FieldRef<"Application", 'String'>
     readonly notes: FieldRef<"Application", 'String'>
     readonly documents: FieldRef<"Application", 'Json'>
-    readonly checklist: FieldRef<"Application", 'Json'>
-    readonly attachments_markdown: FieldRef<"Application", 'String'>
     readonly createdAt: FieldRef<"Application", 'DateTime'>
     readonly updatedAt: FieldRef<"Application", 'DateTime'>
     readonly submittedAt: FieldRef<"Application", 'DateTime'>
     readonly lastEditedAt: FieldRef<"Application", 'DateTime'>
     readonly organizationId: FieldRef<"Application", 'String'>
+    readonly checklist: FieldRef<"Application", 'Json'>
+    readonly attachments_markdown: FieldRef<"Application", 'String'>
   }
     
 
@@ -16351,6 +16650,1115 @@ export namespace Prisma {
 
 
   /**
+   * Model k12_education_opportunities
+   */
+
+  export type AggregateK12_education_opportunities = {
+    _count: K12_education_opportunitiesCountAggregateOutputType | null
+    _avg: K12_education_opportunitiesAvgAggregateOutputType | null
+    _sum: K12_education_opportunitiesSumAggregateOutputType | null
+    _min: K12_education_opportunitiesMinAggregateOutputType | null
+    _max: K12_education_opportunitiesMaxAggregateOutputType | null
+  }
+
+  export type K12_education_opportunitiesAvgAggregateOutputType = {
+    id: number | null
+    opportunity_id: number | null
+    relevance_score: number | null
+  }
+
+  export type K12_education_opportunitiesSumAggregateOutputType = {
+    id: number | null
+    opportunity_id: number | null
+    relevance_score: number | null
+  }
+
+  export type K12_education_opportunitiesMinAggregateOutputType = {
+    id: number | null
+    opportunity_id: number | null
+    description_summary: string | null
+    eligibility_summary: string | null
+    relevance_score: number | null
+  }
+
+  export type K12_education_opportunitiesMaxAggregateOutputType = {
+    id: number | null
+    opportunity_id: number | null
+    description_summary: string | null
+    eligibility_summary: string | null
+    relevance_score: number | null
+  }
+
+  export type K12_education_opportunitiesCountAggregateOutputType = {
+    id: number
+    opportunity_id: number
+    description_summary: number
+    category: number
+    eligibility_summary: number
+    relevance_score: number
+    _all: number
+  }
+
+
+  export type K12_education_opportunitiesAvgAggregateInputType = {
+    id?: true
+    opportunity_id?: true
+    relevance_score?: true
+  }
+
+  export type K12_education_opportunitiesSumAggregateInputType = {
+    id?: true
+    opportunity_id?: true
+    relevance_score?: true
+  }
+
+  export type K12_education_opportunitiesMinAggregateInputType = {
+    id?: true
+    opportunity_id?: true
+    description_summary?: true
+    eligibility_summary?: true
+    relevance_score?: true
+  }
+
+  export type K12_education_opportunitiesMaxAggregateInputType = {
+    id?: true
+    opportunity_id?: true
+    description_summary?: true
+    eligibility_summary?: true
+    relevance_score?: true
+  }
+
+  export type K12_education_opportunitiesCountAggregateInputType = {
+    id?: true
+    opportunity_id?: true
+    description_summary?: true
+    category?: true
+    eligibility_summary?: true
+    relevance_score?: true
+    _all?: true
+  }
+
+  export type K12_education_opportunitiesAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which k12_education_opportunities to aggregate.
+     */
+    where?: k12_education_opportunitiesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of k12_education_opportunities to fetch.
+     */
+    orderBy?: k12_education_opportunitiesOrderByWithRelationInput | k12_education_opportunitiesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: k12_education_opportunitiesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` k12_education_opportunities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` k12_education_opportunities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned k12_education_opportunities
+    **/
+    _count?: true | K12_education_opportunitiesCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: K12_education_opportunitiesAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: K12_education_opportunitiesSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: K12_education_opportunitiesMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: K12_education_opportunitiesMaxAggregateInputType
+  }
+
+  export type GetK12_education_opportunitiesAggregateType<T extends K12_education_opportunitiesAggregateArgs> = {
+        [P in keyof T & keyof AggregateK12_education_opportunities]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateK12_education_opportunities[P]>
+      : GetScalarType<T[P], AggregateK12_education_opportunities[P]>
+  }
+
+
+
+
+  export type k12_education_opportunitiesGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: k12_education_opportunitiesWhereInput
+    orderBy?: k12_education_opportunitiesOrderByWithAggregationInput | k12_education_opportunitiesOrderByWithAggregationInput[]
+    by: K12_education_opportunitiesScalarFieldEnum[] | K12_education_opportunitiesScalarFieldEnum
+    having?: k12_education_opportunitiesScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: K12_education_opportunitiesCountAggregateInputType | true
+    _avg?: K12_education_opportunitiesAvgAggregateInputType
+    _sum?: K12_education_opportunitiesSumAggregateInputType
+    _min?: K12_education_opportunitiesMinAggregateInputType
+    _max?: K12_education_opportunitiesMaxAggregateInputType
+  }
+
+  export type K12_education_opportunitiesGroupByOutputType = {
+    id: number
+    opportunity_id: number
+    description_summary: string | null
+    category: $Enums.k12_education_opportunity_category_enum[]
+    eligibility_summary: string | null
+    relevance_score: number | null
+    _count: K12_education_opportunitiesCountAggregateOutputType | null
+    _avg: K12_education_opportunitiesAvgAggregateOutputType | null
+    _sum: K12_education_opportunitiesSumAggregateOutputType | null
+    _min: K12_education_opportunitiesMinAggregateOutputType | null
+    _max: K12_education_opportunitiesMaxAggregateOutputType | null
+  }
+
+  type GetK12_education_opportunitiesGroupByPayload<T extends k12_education_opportunitiesGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<K12_education_opportunitiesGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof K12_education_opportunitiesGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], K12_education_opportunitiesGroupByOutputType[P]>
+            : GetScalarType<T[P], K12_education_opportunitiesGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type k12_education_opportunitiesSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    opportunity_id?: boolean
+    description_summary?: boolean
+    category?: boolean
+    eligibility_summary?: boolean
+    relevance_score?: boolean
+    opportunities?: boolean | opportunitiesDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["k12_education_opportunities"]>
+
+  export type k12_education_opportunitiesSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    opportunity_id?: boolean
+    description_summary?: boolean
+    category?: boolean
+    eligibility_summary?: boolean
+    relevance_score?: boolean
+    opportunities?: boolean | opportunitiesDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["k12_education_opportunities"]>
+
+  export type k12_education_opportunitiesSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    opportunity_id?: boolean
+    description_summary?: boolean
+    category?: boolean
+    eligibility_summary?: boolean
+    relevance_score?: boolean
+    opportunities?: boolean | opportunitiesDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["k12_education_opportunities"]>
+
+  export type k12_education_opportunitiesSelectScalar = {
+    id?: boolean
+    opportunity_id?: boolean
+    description_summary?: boolean
+    category?: boolean
+    eligibility_summary?: boolean
+    relevance_score?: boolean
+  }
+
+  export type k12_education_opportunitiesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunity_id" | "description_summary" | "category" | "eligibility_summary" | "relevance_score", ExtArgs["result"]["k12_education_opportunities"]>
+  export type k12_education_opportunitiesInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    opportunities?: boolean | opportunitiesDefaultArgs<ExtArgs>
+  }
+  export type k12_education_opportunitiesIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    opportunities?: boolean | opportunitiesDefaultArgs<ExtArgs>
+  }
+  export type k12_education_opportunitiesIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    opportunities?: boolean | opportunitiesDefaultArgs<ExtArgs>
+  }
+
+  export type $k12_education_opportunitiesPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "k12_education_opportunities"
+    objects: {
+      opportunities: Prisma.$opportunitiesPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      opportunity_id: number
+      description_summary: string | null
+      category: $Enums.k12_education_opportunity_category_enum[]
+      eligibility_summary: string | null
+      relevance_score: number | null
+    }, ExtArgs["result"]["k12_education_opportunities"]>
+    composites: {}
+  }
+
+  type k12_education_opportunitiesGetPayload<S extends boolean | null | undefined | k12_education_opportunitiesDefaultArgs> = $Result.GetResult<Prisma.$k12_education_opportunitiesPayload, S>
+
+  type k12_education_opportunitiesCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<k12_education_opportunitiesFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: K12_education_opportunitiesCountAggregateInputType | true
+    }
+
+  export interface k12_education_opportunitiesDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['k12_education_opportunities'], meta: { name: 'k12_education_opportunities' } }
+    /**
+     * Find zero or one K12_education_opportunities that matches the filter.
+     * @param {k12_education_opportunitiesFindUniqueArgs} args - Arguments to find a K12_education_opportunities
+     * @example
+     * // Get one K12_education_opportunities
+     * const k12_education_opportunities = await prisma.k12_education_opportunities.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends k12_education_opportunitiesFindUniqueArgs>(args: SelectSubset<T, k12_education_opportunitiesFindUniqueArgs<ExtArgs>>): Prisma__k12_education_opportunitiesClient<$Result.GetResult<Prisma.$k12_education_opportunitiesPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one K12_education_opportunities that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {k12_education_opportunitiesFindUniqueOrThrowArgs} args - Arguments to find a K12_education_opportunities
+     * @example
+     * // Get one K12_education_opportunities
+     * const k12_education_opportunities = await prisma.k12_education_opportunities.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends k12_education_opportunitiesFindUniqueOrThrowArgs>(args: SelectSubset<T, k12_education_opportunitiesFindUniqueOrThrowArgs<ExtArgs>>): Prisma__k12_education_opportunitiesClient<$Result.GetResult<Prisma.$k12_education_opportunitiesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first K12_education_opportunities that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {k12_education_opportunitiesFindFirstArgs} args - Arguments to find a K12_education_opportunities
+     * @example
+     * // Get one K12_education_opportunities
+     * const k12_education_opportunities = await prisma.k12_education_opportunities.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends k12_education_opportunitiesFindFirstArgs>(args?: SelectSubset<T, k12_education_opportunitiesFindFirstArgs<ExtArgs>>): Prisma__k12_education_opportunitiesClient<$Result.GetResult<Prisma.$k12_education_opportunitiesPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first K12_education_opportunities that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {k12_education_opportunitiesFindFirstOrThrowArgs} args - Arguments to find a K12_education_opportunities
+     * @example
+     * // Get one K12_education_opportunities
+     * const k12_education_opportunities = await prisma.k12_education_opportunities.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends k12_education_opportunitiesFindFirstOrThrowArgs>(args?: SelectSubset<T, k12_education_opportunitiesFindFirstOrThrowArgs<ExtArgs>>): Prisma__k12_education_opportunitiesClient<$Result.GetResult<Prisma.$k12_education_opportunitiesPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more K12_education_opportunities that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {k12_education_opportunitiesFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all K12_education_opportunities
+     * const k12_education_opportunities = await prisma.k12_education_opportunities.findMany()
+     * 
+     * // Get first 10 K12_education_opportunities
+     * const k12_education_opportunities = await prisma.k12_education_opportunities.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const k12_education_opportunitiesWithIdOnly = await prisma.k12_education_opportunities.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends k12_education_opportunitiesFindManyArgs>(args?: SelectSubset<T, k12_education_opportunitiesFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$k12_education_opportunitiesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a K12_education_opportunities.
+     * @param {k12_education_opportunitiesCreateArgs} args - Arguments to create a K12_education_opportunities.
+     * @example
+     * // Create one K12_education_opportunities
+     * const K12_education_opportunities = await prisma.k12_education_opportunities.create({
+     *   data: {
+     *     // ... data to create a K12_education_opportunities
+     *   }
+     * })
+     * 
+     */
+    create<T extends k12_education_opportunitiesCreateArgs>(args: SelectSubset<T, k12_education_opportunitiesCreateArgs<ExtArgs>>): Prisma__k12_education_opportunitiesClient<$Result.GetResult<Prisma.$k12_education_opportunitiesPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many K12_education_opportunities.
+     * @param {k12_education_opportunitiesCreateManyArgs} args - Arguments to create many K12_education_opportunities.
+     * @example
+     * // Create many K12_education_opportunities
+     * const k12_education_opportunities = await prisma.k12_education_opportunities.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends k12_education_opportunitiesCreateManyArgs>(args?: SelectSubset<T, k12_education_opportunitiesCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many K12_education_opportunities and returns the data saved in the database.
+     * @param {k12_education_opportunitiesCreateManyAndReturnArgs} args - Arguments to create many K12_education_opportunities.
+     * @example
+     * // Create many K12_education_opportunities
+     * const k12_education_opportunities = await prisma.k12_education_opportunities.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many K12_education_opportunities and only return the `id`
+     * const k12_education_opportunitiesWithIdOnly = await prisma.k12_education_opportunities.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends k12_education_opportunitiesCreateManyAndReturnArgs>(args?: SelectSubset<T, k12_education_opportunitiesCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$k12_education_opportunitiesPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a K12_education_opportunities.
+     * @param {k12_education_opportunitiesDeleteArgs} args - Arguments to delete one K12_education_opportunities.
+     * @example
+     * // Delete one K12_education_opportunities
+     * const K12_education_opportunities = await prisma.k12_education_opportunities.delete({
+     *   where: {
+     *     // ... filter to delete one K12_education_opportunities
+     *   }
+     * })
+     * 
+     */
+    delete<T extends k12_education_opportunitiesDeleteArgs>(args: SelectSubset<T, k12_education_opportunitiesDeleteArgs<ExtArgs>>): Prisma__k12_education_opportunitiesClient<$Result.GetResult<Prisma.$k12_education_opportunitiesPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one K12_education_opportunities.
+     * @param {k12_education_opportunitiesUpdateArgs} args - Arguments to update one K12_education_opportunities.
+     * @example
+     * // Update one K12_education_opportunities
+     * const k12_education_opportunities = await prisma.k12_education_opportunities.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends k12_education_opportunitiesUpdateArgs>(args: SelectSubset<T, k12_education_opportunitiesUpdateArgs<ExtArgs>>): Prisma__k12_education_opportunitiesClient<$Result.GetResult<Prisma.$k12_education_opportunitiesPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more K12_education_opportunities.
+     * @param {k12_education_opportunitiesDeleteManyArgs} args - Arguments to filter K12_education_opportunities to delete.
+     * @example
+     * // Delete a few K12_education_opportunities
+     * const { count } = await prisma.k12_education_opportunities.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends k12_education_opportunitiesDeleteManyArgs>(args?: SelectSubset<T, k12_education_opportunitiesDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more K12_education_opportunities.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {k12_education_opportunitiesUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many K12_education_opportunities
+     * const k12_education_opportunities = await prisma.k12_education_opportunities.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends k12_education_opportunitiesUpdateManyArgs>(args: SelectSubset<T, k12_education_opportunitiesUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more K12_education_opportunities and returns the data updated in the database.
+     * @param {k12_education_opportunitiesUpdateManyAndReturnArgs} args - Arguments to update many K12_education_opportunities.
+     * @example
+     * // Update many K12_education_opportunities
+     * const k12_education_opportunities = await prisma.k12_education_opportunities.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more K12_education_opportunities and only return the `id`
+     * const k12_education_opportunitiesWithIdOnly = await prisma.k12_education_opportunities.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends k12_education_opportunitiesUpdateManyAndReturnArgs>(args: SelectSubset<T, k12_education_opportunitiesUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$k12_education_opportunitiesPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one K12_education_opportunities.
+     * @param {k12_education_opportunitiesUpsertArgs} args - Arguments to update or create a K12_education_opportunities.
+     * @example
+     * // Update or create a K12_education_opportunities
+     * const k12_education_opportunities = await prisma.k12_education_opportunities.upsert({
+     *   create: {
+     *     // ... data to create a K12_education_opportunities
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the K12_education_opportunities we want to update
+     *   }
+     * })
+     */
+    upsert<T extends k12_education_opportunitiesUpsertArgs>(args: SelectSubset<T, k12_education_opportunitiesUpsertArgs<ExtArgs>>): Prisma__k12_education_opportunitiesClient<$Result.GetResult<Prisma.$k12_education_opportunitiesPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of K12_education_opportunities.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {k12_education_opportunitiesCountArgs} args - Arguments to filter K12_education_opportunities to count.
+     * @example
+     * // Count the number of K12_education_opportunities
+     * const count = await prisma.k12_education_opportunities.count({
+     *   where: {
+     *     // ... the filter for the K12_education_opportunities we want to count
+     *   }
+     * })
+    **/
+    count<T extends k12_education_opportunitiesCountArgs>(
+      args?: Subset<T, k12_education_opportunitiesCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], K12_education_opportunitiesCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a K12_education_opportunities.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {K12_education_opportunitiesAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends K12_education_opportunitiesAggregateArgs>(args: Subset<T, K12_education_opportunitiesAggregateArgs>): Prisma.PrismaPromise<GetK12_education_opportunitiesAggregateType<T>>
+
+    /**
+     * Group by K12_education_opportunities.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {k12_education_opportunitiesGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends k12_education_opportunitiesGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: k12_education_opportunitiesGroupByArgs['orderBy'] }
+        : { orderBy?: k12_education_opportunitiesGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, k12_education_opportunitiesGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetK12_education_opportunitiesGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the k12_education_opportunities model
+   */
+  readonly fields: k12_education_opportunitiesFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for k12_education_opportunities.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__k12_education_opportunitiesClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    opportunities<T extends opportunitiesDefaultArgs<ExtArgs> = {}>(args?: Subset<T, opportunitiesDefaultArgs<ExtArgs>>): Prisma__opportunitiesClient<$Result.GetResult<Prisma.$opportunitiesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the k12_education_opportunities model
+   */
+  interface k12_education_opportunitiesFieldRefs {
+    readonly id: FieldRef<"k12_education_opportunities", 'Int'>
+    readonly opportunity_id: FieldRef<"k12_education_opportunities", 'Int'>
+    readonly description_summary: FieldRef<"k12_education_opportunities", 'String'>
+    readonly category: FieldRef<"k12_education_opportunities", 'k12_education_opportunity_category_enum[]'>
+    readonly eligibility_summary: FieldRef<"k12_education_opportunities", 'String'>
+    readonly relevance_score: FieldRef<"k12_education_opportunities", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * k12_education_opportunities findUnique
+   */
+  export type k12_education_opportunitiesFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the k12_education_opportunities
+     */
+    select?: k12_education_opportunitiesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the k12_education_opportunities
+     */
+    omit?: k12_education_opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: k12_education_opportunitiesInclude<ExtArgs> | null
+    /**
+     * Filter, which k12_education_opportunities to fetch.
+     */
+    where: k12_education_opportunitiesWhereUniqueInput
+  }
+
+  /**
+   * k12_education_opportunities findUniqueOrThrow
+   */
+  export type k12_education_opportunitiesFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the k12_education_opportunities
+     */
+    select?: k12_education_opportunitiesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the k12_education_opportunities
+     */
+    omit?: k12_education_opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: k12_education_opportunitiesInclude<ExtArgs> | null
+    /**
+     * Filter, which k12_education_opportunities to fetch.
+     */
+    where: k12_education_opportunitiesWhereUniqueInput
+  }
+
+  /**
+   * k12_education_opportunities findFirst
+   */
+  export type k12_education_opportunitiesFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the k12_education_opportunities
+     */
+    select?: k12_education_opportunitiesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the k12_education_opportunities
+     */
+    omit?: k12_education_opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: k12_education_opportunitiesInclude<ExtArgs> | null
+    /**
+     * Filter, which k12_education_opportunities to fetch.
+     */
+    where?: k12_education_opportunitiesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of k12_education_opportunities to fetch.
+     */
+    orderBy?: k12_education_opportunitiesOrderByWithRelationInput | k12_education_opportunitiesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for k12_education_opportunities.
+     */
+    cursor?: k12_education_opportunitiesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` k12_education_opportunities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` k12_education_opportunities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of k12_education_opportunities.
+     */
+    distinct?: K12_education_opportunitiesScalarFieldEnum | K12_education_opportunitiesScalarFieldEnum[]
+  }
+
+  /**
+   * k12_education_opportunities findFirstOrThrow
+   */
+  export type k12_education_opportunitiesFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the k12_education_opportunities
+     */
+    select?: k12_education_opportunitiesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the k12_education_opportunities
+     */
+    omit?: k12_education_opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: k12_education_opportunitiesInclude<ExtArgs> | null
+    /**
+     * Filter, which k12_education_opportunities to fetch.
+     */
+    where?: k12_education_opportunitiesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of k12_education_opportunities to fetch.
+     */
+    orderBy?: k12_education_opportunitiesOrderByWithRelationInput | k12_education_opportunitiesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for k12_education_opportunities.
+     */
+    cursor?: k12_education_opportunitiesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` k12_education_opportunities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` k12_education_opportunities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of k12_education_opportunities.
+     */
+    distinct?: K12_education_opportunitiesScalarFieldEnum | K12_education_opportunitiesScalarFieldEnum[]
+  }
+
+  /**
+   * k12_education_opportunities findMany
+   */
+  export type k12_education_opportunitiesFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the k12_education_opportunities
+     */
+    select?: k12_education_opportunitiesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the k12_education_opportunities
+     */
+    omit?: k12_education_opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: k12_education_opportunitiesInclude<ExtArgs> | null
+    /**
+     * Filter, which k12_education_opportunities to fetch.
+     */
+    where?: k12_education_opportunitiesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of k12_education_opportunities to fetch.
+     */
+    orderBy?: k12_education_opportunitiesOrderByWithRelationInput | k12_education_opportunitiesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing k12_education_opportunities.
+     */
+    cursor?: k12_education_opportunitiesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` k12_education_opportunities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` k12_education_opportunities.
+     */
+    skip?: number
+    distinct?: K12_education_opportunitiesScalarFieldEnum | K12_education_opportunitiesScalarFieldEnum[]
+  }
+
+  /**
+   * k12_education_opportunities create
+   */
+  export type k12_education_opportunitiesCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the k12_education_opportunities
+     */
+    select?: k12_education_opportunitiesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the k12_education_opportunities
+     */
+    omit?: k12_education_opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: k12_education_opportunitiesInclude<ExtArgs> | null
+    /**
+     * The data needed to create a k12_education_opportunities.
+     */
+    data: XOR<k12_education_opportunitiesCreateInput, k12_education_opportunitiesUncheckedCreateInput>
+  }
+
+  /**
+   * k12_education_opportunities createMany
+   */
+  export type k12_education_opportunitiesCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many k12_education_opportunities.
+     */
+    data: k12_education_opportunitiesCreateManyInput | k12_education_opportunitiesCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * k12_education_opportunities createManyAndReturn
+   */
+  export type k12_education_opportunitiesCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the k12_education_opportunities
+     */
+    select?: k12_education_opportunitiesSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the k12_education_opportunities
+     */
+    omit?: k12_education_opportunitiesOmit<ExtArgs> | null
+    /**
+     * The data used to create many k12_education_opportunities.
+     */
+    data: k12_education_opportunitiesCreateManyInput | k12_education_opportunitiesCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: k12_education_opportunitiesIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * k12_education_opportunities update
+   */
+  export type k12_education_opportunitiesUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the k12_education_opportunities
+     */
+    select?: k12_education_opportunitiesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the k12_education_opportunities
+     */
+    omit?: k12_education_opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: k12_education_opportunitiesInclude<ExtArgs> | null
+    /**
+     * The data needed to update a k12_education_opportunities.
+     */
+    data: XOR<k12_education_opportunitiesUpdateInput, k12_education_opportunitiesUncheckedUpdateInput>
+    /**
+     * Choose, which k12_education_opportunities to update.
+     */
+    where: k12_education_opportunitiesWhereUniqueInput
+  }
+
+  /**
+   * k12_education_opportunities updateMany
+   */
+  export type k12_education_opportunitiesUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update k12_education_opportunities.
+     */
+    data: XOR<k12_education_opportunitiesUpdateManyMutationInput, k12_education_opportunitiesUncheckedUpdateManyInput>
+    /**
+     * Filter which k12_education_opportunities to update
+     */
+    where?: k12_education_opportunitiesWhereInput
+    /**
+     * Limit how many k12_education_opportunities to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * k12_education_opportunities updateManyAndReturn
+   */
+  export type k12_education_opportunitiesUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the k12_education_opportunities
+     */
+    select?: k12_education_opportunitiesSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the k12_education_opportunities
+     */
+    omit?: k12_education_opportunitiesOmit<ExtArgs> | null
+    /**
+     * The data used to update k12_education_opportunities.
+     */
+    data: XOR<k12_education_opportunitiesUpdateManyMutationInput, k12_education_opportunitiesUncheckedUpdateManyInput>
+    /**
+     * Filter which k12_education_opportunities to update
+     */
+    where?: k12_education_opportunitiesWhereInput
+    /**
+     * Limit how many k12_education_opportunities to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: k12_education_opportunitiesIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * k12_education_opportunities upsert
+   */
+  export type k12_education_opportunitiesUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the k12_education_opportunities
+     */
+    select?: k12_education_opportunitiesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the k12_education_opportunities
+     */
+    omit?: k12_education_opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: k12_education_opportunitiesInclude<ExtArgs> | null
+    /**
+     * The filter to search for the k12_education_opportunities to update in case it exists.
+     */
+    where: k12_education_opportunitiesWhereUniqueInput
+    /**
+     * In case the k12_education_opportunities found by the `where` argument doesn't exist, create a new k12_education_opportunities with this data.
+     */
+    create: XOR<k12_education_opportunitiesCreateInput, k12_education_opportunitiesUncheckedCreateInput>
+    /**
+     * In case the k12_education_opportunities was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<k12_education_opportunitiesUpdateInput, k12_education_opportunitiesUncheckedUpdateInput>
+  }
+
+  /**
+   * k12_education_opportunities delete
+   */
+  export type k12_education_opportunitiesDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the k12_education_opportunities
+     */
+    select?: k12_education_opportunitiesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the k12_education_opportunities
+     */
+    omit?: k12_education_opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: k12_education_opportunitiesInclude<ExtArgs> | null
+    /**
+     * Filter which k12_education_opportunities to delete.
+     */
+    where: k12_education_opportunitiesWhereUniqueInput
+  }
+
+  /**
+   * k12_education_opportunities deleteMany
+   */
+  export type k12_education_opportunitiesDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which k12_education_opportunities to delete
+     */
+    where?: k12_education_opportunitiesWhereInput
+    /**
+     * Limit how many k12_education_opportunities to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * k12_education_opportunities without action
+   */
+  export type k12_education_opportunitiesDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the k12_education_opportunities
+     */
+    select?: k12_education_opportunitiesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the k12_education_opportunities
+     */
+    omit?: k12_education_opportunitiesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: k12_education_opportunitiesInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -16404,7 +17812,10 @@ export namespace Prisma {
     content_hash: 'content_hash',
     funding_type: 'funding_type',
     category: 'category',
-    rfp_url: 'rfp_url'
+    rfp_url: 'rfp_url',
+    services: 'services',
+    is_recurring: 'is_recurring',
+    application_instructions: 'application_instructions'
   };
 
   export type OpportunitiesScalarFieldEnum = (typeof OpportunitiesScalarFieldEnum)[keyof typeof OpportunitiesScalarFieldEnum]
@@ -16414,6 +17825,7 @@ export namespace Prisma {
     id: 'id',
     email: 'email',
     name: 'name',
+    role: 'role',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     avatarUrl: 'avatarUrl',
@@ -16431,7 +17843,6 @@ export namespace Prisma {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     slug: 'slug',
-    role: 'role',
     address: 'address',
     annualOperatingBudget: 'annualOperatingBudget',
     city: 'city',
@@ -16498,13 +17909,13 @@ export namespace Prisma {
     title: 'title',
     notes: 'notes',
     documents: 'documents',
-    checklist: 'checklist',
-    attachments_markdown: 'attachments_markdown',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     submittedAt: 'submittedAt',
     lastEditedAt: 'lastEditedAt',
-    organizationId: 'organizationId'
+    organizationId: 'organizationId',
+    checklist: 'checklist',
+    attachments_markdown: 'attachments_markdown'
   };
 
   export type ApplicationScalarFieldEnum = (typeof ApplicationScalarFieldEnum)[keyof typeof ApplicationScalarFieldEnum]
@@ -16573,6 +17984,18 @@ export namespace Prisma {
   };
 
   export type Application_documentsScalarFieldEnum = (typeof Application_documentsScalarFieldEnum)[keyof typeof Application_documentsScalarFieldEnum]
+
+
+  export const K12_education_opportunitiesScalarFieldEnum: {
+    id: 'id',
+    opportunity_id: 'opportunity_id',
+    description_summary: 'description_summary',
+    category: 'category',
+    eligibility_summary: 'eligibility_summary',
+    relevance_score: 'relevance_score'
+  };
+
+  export type K12_education_opportunitiesScalarFieldEnum = (typeof K12_education_opportunitiesScalarFieldEnum)[keyof typeof K12_education_opportunitiesScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -16727,6 +18150,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'opportunity_services_enum[]'
+   */
+  export type ListEnumopportunity_services_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'opportunity_services_enum[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'opportunity_services_enum'
+   */
+  export type Enumopportunity_services_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'opportunity_services_enum'>
+    
+
+
+  /**
    * Reference to a field of type 'OrganizationRole'
    */
   export type EnumOrganizationRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrganizationRole'>
@@ -16836,6 +18273,20 @@ export namespace Prisma {
    */
   export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
     
+
+
+  /**
+   * Reference to a field of type 'k12_education_opportunity_category_enum[]'
+   */
+  export type ListEnumk12_education_opportunity_category_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'k12_education_opportunity_category_enum[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'k12_education_opportunity_category_enum'
+   */
+  export type Enumk12_education_opportunity_category_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'k12_education_opportunity_category_enum'>
+    
   /**
    * Deep Input Types
    */
@@ -16910,6 +18361,10 @@ export namespace Prisma {
     funding_type?: Enumfunding_type_enumNullableFilter<"opportunities"> | $Enums.funding_type_enum | null
     category?: Enumopportunity_category_enumNullableListFilter<"opportunities">
     rfp_url?: StringNullableFilter<"opportunities"> | string | null
+    services?: Enumopportunity_services_enumNullableListFilter<"opportunities">
+    is_recurring?: BoolNullableFilter<"opportunities"> | boolean | null
+    application_instructions?: StringNullableFilter<"opportunities"> | string | null
+    k12_education_opportunities?: K12_education_opportunitiesListRelationFilter
   }
 
   export type opportunitiesOrderByWithRelationInput = {
@@ -16946,6 +18401,10 @@ export namespace Prisma {
     funding_type?: SortOrderInput | SortOrder
     category?: SortOrder
     rfp_url?: SortOrderInput | SortOrder
+    services?: SortOrder
+    is_recurring?: SortOrderInput | SortOrder
+    application_instructions?: SortOrderInput | SortOrder
+    k12_education_opportunities?: k12_education_opportunitiesOrderByRelationAggregateInput
   }
 
   export type opportunitiesWhereUniqueInput = Prisma.AtLeast<{
@@ -16985,6 +18444,10 @@ export namespace Prisma {
     funding_type?: Enumfunding_type_enumNullableFilter<"opportunities"> | $Enums.funding_type_enum | null
     category?: Enumopportunity_category_enumNullableListFilter<"opportunities">
     rfp_url?: StringNullableFilter<"opportunities"> | string | null
+    services?: Enumopportunity_services_enumNullableListFilter<"opportunities">
+    is_recurring?: BoolNullableFilter<"opportunities"> | boolean | null
+    application_instructions?: StringNullableFilter<"opportunities"> | string | null
+    k12_education_opportunities?: K12_education_opportunitiesListRelationFilter
   }, "id">
 
   export type opportunitiesOrderByWithAggregationInput = {
@@ -17021,6 +18484,9 @@ export namespace Prisma {
     funding_type?: SortOrderInput | SortOrder
     category?: SortOrder
     rfp_url?: SortOrderInput | SortOrder
+    services?: SortOrder
+    is_recurring?: SortOrderInput | SortOrder
+    application_instructions?: SortOrderInput | SortOrder
     _count?: opportunitiesCountOrderByAggregateInput
     _avg?: opportunitiesAvgOrderByAggregateInput
     _max?: opportunitiesMaxOrderByAggregateInput
@@ -17065,6 +18531,9 @@ export namespace Prisma {
     funding_type?: Enumfunding_type_enumNullableWithAggregatesFilter<"opportunities"> | $Enums.funding_type_enum | null
     category?: Enumopportunity_category_enumNullableListFilter<"opportunities">
     rfp_url?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
+    services?: Enumopportunity_services_enumNullableListFilter<"opportunities">
+    is_recurring?: BoolNullableWithAggregatesFilter<"opportunities"> | boolean | null
+    application_instructions?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
   }
 
   export type UserWhereInput = {
@@ -17074,6 +18543,7 @@ export namespace Prisma {
     id?: UuidFilter<"User"> | string
     email?: StringFilter<"User"> | string
     name?: StringNullableFilter<"User"> | string | null
+    role?: EnumOrganizationRoleFilter<"User"> | $Enums.OrganizationRole
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     avatarUrl?: StringNullableFilter<"User"> | string | null
@@ -17089,6 +18559,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrderInput | SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avatarUrl?: SortOrderInput | SortOrder
@@ -17103,25 +18574,27 @@ export namespace Prisma {
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     email?: string
-    organizationId?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     name?: StringNullableFilter<"User"> | string | null
+    role?: EnumOrganizationRoleFilter<"User"> | $Enums.OrganizationRole
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     avatarUrl?: StringNullableFilter<"User"> | string | null
     lastActiveAt?: DateTimeFilter<"User"> | Date | string
+    organizationId?: StringFilter<"User"> | string
     system_admin?: BoolFilter<"User"> | boolean
     aiChats?: AiChatListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
-  }, "id" | "email" | "organizationId">
+  }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrderInput | SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avatarUrl?: SortOrderInput | SortOrder
@@ -17140,6 +18613,7 @@ export namespace Prisma {
     id?: UuidWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
     name?: StringNullableWithAggregatesFilter<"User"> | string | null
+    role?: EnumOrganizationRoleWithAggregatesFilter<"User"> | $Enums.OrganizationRole
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     avatarUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
@@ -17157,7 +18631,6 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
     slug?: StringFilter<"Organization"> | string
-    role?: EnumOrganizationRoleFilter<"Organization"> | $Enums.OrganizationRole
     address?: StringNullableFilter<"Organization"> | string | null
     annualOperatingBudget?: DecimalNullableFilter<"Organization"> | Decimal | DecimalJsLike | number | string | null
     city?: StringNullableFilter<"Organization"> | string | null
@@ -17188,7 +18661,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkListRelationFilter
     eligibilityAnalyses?: GrantEligibilityAnalysisListRelationFilter
     recommendations?: RecommendationListRelationFilter
-    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    users?: UserListRelationFilter
   }
 
   export type OrganizationOrderByWithRelationInput = {
@@ -17197,7 +18670,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     slug?: SortOrder
-    role?: SortOrder
     address?: SortOrderInput | SortOrder
     annualOperatingBudget?: SortOrderInput | SortOrder
     city?: SortOrderInput | SortOrder
@@ -17228,7 +18700,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkOrderByRelationAggregateInput
     eligibilityAnalyses?: GrantEligibilityAnalysisOrderByRelationAggregateInput
     recommendations?: RecommendationOrderByRelationAggregateInput
-    user?: UserOrderByWithRelationInput
+    users?: UserOrderByRelationAggregateInput
   }
 
   export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -17241,7 +18713,6 @@ export namespace Prisma {
     name?: StringFilter<"Organization"> | string
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
-    role?: EnumOrganizationRoleFilter<"Organization"> | $Enums.OrganizationRole
     address?: StringNullableFilter<"Organization"> | string | null
     annualOperatingBudget?: DecimalNullableFilter<"Organization"> | Decimal | DecimalJsLike | number | string | null
     city?: StringNullableFilter<"Organization"> | string | null
@@ -17271,7 +18742,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkListRelationFilter
     eligibilityAnalyses?: GrantEligibilityAnalysisListRelationFilter
     recommendations?: RecommendationListRelationFilter
-    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    users?: UserListRelationFilter
   }, "id" | "slug" | "leaId">
 
   export type OrganizationOrderByWithAggregationInput = {
@@ -17280,7 +18751,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     slug?: SortOrder
-    role?: SortOrder
     address?: SortOrderInput | SortOrder
     annualOperatingBudget?: SortOrderInput | SortOrder
     city?: SortOrderInput | SortOrder
@@ -17322,7 +18792,6 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
     slug?: StringWithAggregatesFilter<"Organization"> | string
-    role?: EnumOrganizationRoleWithAggregatesFilter<"Organization"> | $Enums.OrganizationRole
     address?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     annualOperatingBudget?: DecimalNullableWithAggregatesFilter<"Organization"> | Decimal | DecimalJsLike | number | string | null
     city?: StringNullableWithAggregatesFilter<"Organization"> | string | null
@@ -17506,13 +18975,13 @@ export namespace Prisma {
     title?: StringNullableFilter<"Application"> | string | null
     notes?: StringNullableFilter<"Application"> | string | null
     documents?: JsonNullableFilter<"Application">
-    checklist?: JsonNullableFilter<"Application">
-    attachments_markdown?: StringNullableFilter<"Application"> | string | null
     createdAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
     organizationId?: StringFilter<"Application"> | string
+    checklist?: JsonNullableFilter<"Application">
+    attachments_markdown?: StringNullableFilter<"Application"> | string | null
     aiChats?: AiChatListRelationFilter
     application_documents?: Application_documentsListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
@@ -17527,13 +18996,13 @@ export namespace Prisma {
     title?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
     documents?: SortOrderInput | SortOrder
-    checklist?: SortOrderInput | SortOrder
-    attachments_markdown?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     submittedAt?: SortOrderInput | SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
+    checklist?: SortOrderInput | SortOrder
+    attachments_markdown?: SortOrderInput | SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     application_documents?: application_documentsOrderByRelationAggregateInput
     organization?: OrganizationOrderByWithRelationInput
@@ -17552,13 +19021,13 @@ export namespace Prisma {
     title?: StringNullableFilter<"Application"> | string | null
     notes?: StringNullableFilter<"Application"> | string | null
     documents?: JsonNullableFilter<"Application">
-    checklist?: JsonNullableFilter<"Application">
-    attachments_markdown?: StringNullableFilter<"Application"> | string | null
     createdAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
     organizationId?: StringFilter<"Application"> | string
+    checklist?: JsonNullableFilter<"Application">
+    attachments_markdown?: StringNullableFilter<"Application"> | string | null
     aiChats?: AiChatListRelationFilter
     application_documents?: Application_documentsListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
@@ -17573,13 +19042,13 @@ export namespace Prisma {
     title?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
     documents?: SortOrderInput | SortOrder
-    checklist?: SortOrderInput | SortOrder
-    attachments_markdown?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     submittedAt?: SortOrderInput | SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
+    checklist?: SortOrderInput | SortOrder
+    attachments_markdown?: SortOrderInput | SortOrder
     _count?: ApplicationCountOrderByAggregateInput
     _avg?: ApplicationAvgOrderByAggregateInput
     _max?: ApplicationMaxOrderByAggregateInput
@@ -17599,13 +19068,13 @@ export namespace Prisma {
     title?: StringNullableWithAggregatesFilter<"Application"> | string | null
     notes?: StringNullableWithAggregatesFilter<"Application"> | string | null
     documents?: JsonNullableWithAggregatesFilter<"Application">
-    checklist?: JsonNullableWithAggregatesFilter<"Application">
-    attachments_markdown?: StringNullableWithAggregatesFilter<"Application"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
     submittedAt?: DateTimeNullableWithAggregatesFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
     organizationId?: StringWithAggregatesFilter<"Application"> | string
+    checklist?: JsonNullableWithAggregatesFilter<"Application">
+    attachments_markdown?: StringNullableWithAggregatesFilter<"Application"> | string | null
   }
 
   export type AiChatWhereInput = {
@@ -17945,6 +19414,68 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"application_documents"> | Date | string
   }
 
+  export type k12_education_opportunitiesWhereInput = {
+    AND?: k12_education_opportunitiesWhereInput | k12_education_opportunitiesWhereInput[]
+    OR?: k12_education_opportunitiesWhereInput[]
+    NOT?: k12_education_opportunitiesWhereInput | k12_education_opportunitiesWhereInput[]
+    id?: IntFilter<"k12_education_opportunities"> | number
+    opportunity_id?: IntFilter<"k12_education_opportunities"> | number
+    description_summary?: StringNullableFilter<"k12_education_opportunities"> | string | null
+    category?: Enumk12_education_opportunity_category_enumNullableListFilter<"k12_education_opportunities">
+    eligibility_summary?: StringNullableFilter<"k12_education_opportunities"> | string | null
+    relevance_score?: IntNullableFilter<"k12_education_opportunities"> | number | null
+    opportunities?: XOR<OpportunitiesScalarRelationFilter, opportunitiesWhereInput>
+  }
+
+  export type k12_education_opportunitiesOrderByWithRelationInput = {
+    id?: SortOrder
+    opportunity_id?: SortOrder
+    description_summary?: SortOrderInput | SortOrder
+    category?: SortOrder
+    eligibility_summary?: SortOrderInput | SortOrder
+    relevance_score?: SortOrderInput | SortOrder
+    opportunities?: opportunitiesOrderByWithRelationInput
+  }
+
+  export type k12_education_opportunitiesWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: k12_education_opportunitiesWhereInput | k12_education_opportunitiesWhereInput[]
+    OR?: k12_education_opportunitiesWhereInput[]
+    NOT?: k12_education_opportunitiesWhereInput | k12_education_opportunitiesWhereInput[]
+    opportunity_id?: IntFilter<"k12_education_opportunities"> | number
+    description_summary?: StringNullableFilter<"k12_education_opportunities"> | string | null
+    category?: Enumk12_education_opportunity_category_enumNullableListFilter<"k12_education_opportunities">
+    eligibility_summary?: StringNullableFilter<"k12_education_opportunities"> | string | null
+    relevance_score?: IntNullableFilter<"k12_education_opportunities"> | number | null
+    opportunities?: XOR<OpportunitiesScalarRelationFilter, opportunitiesWhereInput>
+  }, "id">
+
+  export type k12_education_opportunitiesOrderByWithAggregationInput = {
+    id?: SortOrder
+    opportunity_id?: SortOrder
+    description_summary?: SortOrderInput | SortOrder
+    category?: SortOrder
+    eligibility_summary?: SortOrderInput | SortOrder
+    relevance_score?: SortOrderInput | SortOrder
+    _count?: k12_education_opportunitiesCountOrderByAggregateInput
+    _avg?: k12_education_opportunitiesAvgOrderByAggregateInput
+    _max?: k12_education_opportunitiesMaxOrderByAggregateInput
+    _min?: k12_education_opportunitiesMinOrderByAggregateInput
+    _sum?: k12_education_opportunitiesSumOrderByAggregateInput
+  }
+
+  export type k12_education_opportunitiesScalarWhereWithAggregatesInput = {
+    AND?: k12_education_opportunitiesScalarWhereWithAggregatesInput | k12_education_opportunitiesScalarWhereWithAggregatesInput[]
+    OR?: k12_education_opportunitiesScalarWhereWithAggregatesInput[]
+    NOT?: k12_education_opportunitiesScalarWhereWithAggregatesInput | k12_education_opportunitiesScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"k12_education_opportunities"> | number
+    opportunity_id?: IntWithAggregatesFilter<"k12_education_opportunities"> | number
+    description_summary?: StringNullableWithAggregatesFilter<"k12_education_opportunities"> | string | null
+    category?: Enumk12_education_opportunity_category_enumNullableListFilter<"k12_education_opportunities">
+    eligibility_summary?: StringNullableWithAggregatesFilter<"k12_education_opportunities"> | string | null
+    relevance_score?: IntNullableWithAggregatesFilter<"k12_education_opportunities"> | number | null
+  }
+
   export type alembic_versionCreateInput = {
     version_num: string
   }
@@ -18006,6 +19537,10 @@ export namespace Prisma {
     funding_type?: $Enums.funding_type_enum | null
     category?: opportunitiesCreatecategoryInput | $Enums.opportunity_category_enum[]
     rfp_url?: string | null
+    services?: opportunitiesCreateservicesInput | $Enums.opportunity_services_enum[]
+    is_recurring?: boolean | null
+    application_instructions?: string | null
+    k12_education_opportunities?: k12_education_opportunitiesCreateNestedManyWithoutOpportunitiesInput
   }
 
   export type opportunitiesUncheckedCreateInput = {
@@ -18042,6 +19577,10 @@ export namespace Prisma {
     funding_type?: $Enums.funding_type_enum | null
     category?: opportunitiesCreatecategoryInput | $Enums.opportunity_category_enum[]
     rfp_url?: string | null
+    services?: opportunitiesCreateservicesInput | $Enums.opportunity_services_enum[]
+    is_recurring?: boolean | null
+    application_instructions?: string | null
+    k12_education_opportunities?: k12_education_opportunitiesUncheckedCreateNestedManyWithoutOpportunitiesInput
   }
 
   export type opportunitiesUpdateInput = {
@@ -18077,6 +19616,10 @@ export namespace Prisma {
     funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
     category?: opportunitiesUpdatecategoryInput | $Enums.opportunity_category_enum[]
     rfp_url?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: opportunitiesUpdateservicesInput | $Enums.opportunity_services_enum[]
+    is_recurring?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    application_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    k12_education_opportunities?: k12_education_opportunitiesUpdateManyWithoutOpportunitiesNestedInput
   }
 
   export type opportunitiesUncheckedUpdateInput = {
@@ -18113,6 +19656,10 @@ export namespace Prisma {
     funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
     category?: opportunitiesUpdatecategoryInput | $Enums.opportunity_category_enum[]
     rfp_url?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: opportunitiesUpdateservicesInput | $Enums.opportunity_services_enum[]
+    is_recurring?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    application_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    k12_education_opportunities?: k12_education_opportunitiesUncheckedUpdateManyWithoutOpportunitiesNestedInput
   }
 
   export type opportunitiesCreateManyInput = {
@@ -18149,6 +19696,9 @@ export namespace Prisma {
     funding_type?: $Enums.funding_type_enum | null
     category?: opportunitiesCreatecategoryInput | $Enums.opportunity_category_enum[]
     rfp_url?: string | null
+    services?: opportunitiesCreateservicesInput | $Enums.opportunity_services_enum[]
+    is_recurring?: boolean | null
+    application_instructions?: string | null
   }
 
   export type opportunitiesUpdateManyMutationInput = {
@@ -18184,6 +19734,9 @@ export namespace Prisma {
     funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
     category?: opportunitiesUpdatecategoryInput | $Enums.opportunity_category_enum[]
     rfp_url?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: opportunitiesUpdateservicesInput | $Enums.opportunity_services_enum[]
+    is_recurring?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    application_instructions?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type opportunitiesUncheckedUpdateManyInput = {
@@ -18220,12 +19773,16 @@ export namespace Prisma {
     funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
     category?: opportunitiesUpdatecategoryInput | $Enums.opportunity_category_enum[]
     rfp_url?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: opportunitiesUpdateservicesInput | $Enums.opportunity_services_enum[]
+    is_recurring?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    application_instructions?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserCreateInput = {
     id: string
     email: string
     name?: string | null
+    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -18233,13 +19790,14 @@ export namespace Prisma {
     system_admin?: boolean
     aiChats?: AiChatCreateNestedManyWithoutUserInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutUserInput
-    organization: OrganizationCreateNestedOneWithoutUserInput
+    organization: OrganizationCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateInput = {
     id: string
     email: string
     name?: string | null
+    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -18254,6 +19812,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18261,13 +19820,14 @@ export namespace Prisma {
     system_admin?: BoolFieldUpdateOperationsInput | boolean
     aiChats?: AiChatUpdateManyWithoutUserNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutUserNestedInput
-    organization?: OrganizationUpdateOneRequiredWithoutUserNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18282,6 +19842,7 @@ export namespace Prisma {
     id: string
     email: string
     name?: string | null
+    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -18294,6 +19855,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18305,6 +19867,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18319,7 +19882,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     slug: string
-    role?: $Enums.OrganizationRole
     address?: string | null
     annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
@@ -18350,7 +19912,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
-    user?: UserCreateNestedOneWithoutOrganizationInput
+    users?: UserCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateInput = {
@@ -18359,7 +19921,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     slug: string
-    role?: $Enums.OrganizationRole
     address?: string | null
     annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
@@ -18390,7 +19951,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
-    user?: UserUncheckedCreateNestedOneWithoutOrganizationInput
+    users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUpdateInput = {
@@ -18399,7 +19960,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18430,7 +19990,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
-    user?: UserUpdateOneWithoutOrganizationNestedInput
+    users?: UserUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateInput = {
@@ -18439,7 +19999,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18470,7 +20029,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
-    user?: UserUncheckedUpdateOneWithoutOrganizationNestedInput
+    users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationCreateManyInput = {
@@ -18479,7 +20038,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     slug: string
-    role?: $Enums.OrganizationRole
     address?: string | null
     annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
@@ -18513,7 +20071,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18547,7 +20104,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18728,12 +20284,12 @@ export namespace Prisma {
     title?: string | null
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     application_documents?: application_documentsCreateNestedManyWithoutApplicationsInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
@@ -18748,13 +20304,13 @@ export namespace Prisma {
     title?: string | null
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
     application_documents?: application_documentsUncheckedCreateNestedManyWithoutApplicationsInput
   }
@@ -18768,12 +20324,12 @@ export namespace Prisma {
     title?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     application_documents?: application_documentsUpdateManyWithoutApplicationsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
@@ -18788,13 +20344,13 @@ export namespace Prisma {
     title?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
     application_documents?: application_documentsUncheckedUpdateManyWithoutApplicationsNestedInput
   }
@@ -18808,13 +20364,13 @@ export namespace Prisma {
     title?: string | null
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
   }
 
   export type ApplicationUpdateManyMutationInput = {
@@ -18826,12 +20382,12 @@ export namespace Prisma {
     title?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ApplicationUncheckedUpdateManyInput = {
@@ -18843,13 +20399,13 @@ export namespace Prisma {
     title?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AiChatCreateInput = {
@@ -19200,6 +20756,65 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type k12_education_opportunitiesCreateInput = {
+    description_summary?: string | null
+    category?: k12_education_opportunitiesCreatecategoryInput | $Enums.k12_education_opportunity_category_enum[]
+    eligibility_summary?: string | null
+    relevance_score?: number | null
+    opportunities: opportunitiesCreateNestedOneWithoutK12_education_opportunitiesInput
+  }
+
+  export type k12_education_opportunitiesUncheckedCreateInput = {
+    id?: number
+    opportunity_id: number
+    description_summary?: string | null
+    category?: k12_education_opportunitiesCreatecategoryInput | $Enums.k12_education_opportunity_category_enum[]
+    eligibility_summary?: string | null
+    relevance_score?: number | null
+  }
+
+  export type k12_education_opportunitiesUpdateInput = {
+    description_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: k12_education_opportunitiesUpdatecategoryInput | $Enums.k12_education_opportunity_category_enum[]
+    eligibility_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
+    opportunities?: opportunitiesUpdateOneRequiredWithoutK12_education_opportunitiesNestedInput
+  }
+
+  export type k12_education_opportunitiesUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    opportunity_id?: IntFieldUpdateOperationsInput | number
+    description_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: k12_education_opportunitiesUpdatecategoryInput | $Enums.k12_education_opportunity_category_enum[]
+    eligibility_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type k12_education_opportunitiesCreateManyInput = {
+    id?: number
+    opportunity_id: number
+    description_summary?: string | null
+    category?: k12_education_opportunitiesCreatecategoryInput | $Enums.k12_education_opportunity_category_enum[]
+    eligibility_summary?: string | null
+    relevance_score?: number | null
+  }
+
+  export type k12_education_opportunitiesUpdateManyMutationInput = {
+    description_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: k12_education_opportunitiesUpdatecategoryInput | $Enums.k12_education_opportunity_category_enum[]
+    eligibility_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type k12_education_opportunitiesUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    opportunity_id?: IntFieldUpdateOperationsInput | number
+    description_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: k12_education_opportunitiesUpdatecategoryInput | $Enums.k12_education_opportunity_category_enum[]
+    eligibility_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -19343,9 +20958,27 @@ export namespace Prisma {
     isEmpty?: boolean
   }
 
+  export type Enumopportunity_services_enumNullableListFilter<$PrismaModel = never> = {
+    equals?: $Enums.opportunity_services_enum[] | ListEnumopportunity_services_enumFieldRefInput<$PrismaModel> | null
+    has?: $Enums.opportunity_services_enum | Enumopportunity_services_enumFieldRefInput<$PrismaModel> | null
+    hasEvery?: $Enums.opportunity_services_enum[] | ListEnumopportunity_services_enumFieldRefInput<$PrismaModel>
+    hasSome?: $Enums.opportunity_services_enum[] | ListEnumopportunity_services_enumFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type K12_education_opportunitiesListRelationFilter = {
+    every?: k12_education_opportunitiesWhereInput
+    some?: k12_education_opportunitiesWhereInput
+    none?: k12_education_opportunitiesWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
+  }
+
+  export type k12_education_opportunitiesOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type opportunitiesCountOrderByAggregateInput = {
@@ -19382,6 +21015,9 @@ export namespace Prisma {
     funding_type?: SortOrder
     category?: SortOrder
     rfp_url?: SortOrder
+    services?: SortOrder
+    is_recurring?: SortOrder
+    application_instructions?: SortOrder
   }
 
   export type opportunitiesAvgOrderByAggregateInput = {
@@ -19424,6 +21060,8 @@ export namespace Prisma {
     content_hash?: SortOrder
     funding_type?: SortOrder
     rfp_url?: SortOrder
+    is_recurring?: SortOrder
+    application_instructions?: SortOrder
   }
 
   export type opportunitiesMinOrderByAggregateInput = {
@@ -19457,6 +21095,8 @@ export namespace Prisma {
     content_hash?: SortOrder
     funding_type?: SortOrder
     rfp_url?: SortOrder
+    is_recurring?: SortOrder
+    application_instructions?: SortOrder
   }
 
   export type opportunitiesSumOrderByAggregateInput = {
@@ -19598,6 +21238,13 @@ export namespace Prisma {
     not?: NestedUuidFilter<$PrismaModel> | string
   }
 
+  export type EnumOrganizationRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrganizationRoleFilter<$PrismaModel> | $Enums.OrganizationRole
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -19643,6 +21290,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avatarUrl?: SortOrder
@@ -19655,6 +21303,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avatarUrl?: SortOrder
@@ -19667,6 +21316,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avatarUrl?: SortOrder
@@ -19690,6 +21340,16 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
+  export type EnumOrganizationRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrganizationRoleWithAggregatesFilter<$PrismaModel> | $Enums.OrganizationRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOrganizationRoleFilter<$PrismaModel>
+    _max?: NestedEnumOrganizationRoleFilter<$PrismaModel>
+  }
+
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -19710,13 +21370,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type EnumOrganizationRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrganizationRoleFilter<$PrismaModel> | $Enums.OrganizationRole
   }
 
   export type DecimalNullableFilter<$PrismaModel = never> = {
@@ -19759,9 +21412,10 @@ export namespace Prisma {
     none?: RecommendationWhereInput
   }
 
-  export type UserNullableScalarRelationFilter = {
-    is?: UserWhereInput | null
-    isNot?: UserWhereInput | null
+  export type UserListRelationFilter = {
+    every?: UserWhereInput
+    some?: UserWhereInput
+    none?: UserWhereInput
   }
 
   export type ApplicationOrderByRelationAggregateInput = {
@@ -19776,13 +21430,16 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type UserOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type OrganizationCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     slug?: SortOrder
-    role?: SortOrder
     address?: SortOrder
     annualOperatingBudget?: SortOrder
     city?: SortOrder
@@ -19828,7 +21485,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     slug?: SortOrder
-    role?: SortOrder
     address?: SortOrder
     annualOperatingBudget?: SortOrder
     city?: SortOrder
@@ -19862,7 +21518,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     slug?: SortOrder
-    role?: SortOrder
     address?: SortOrder
     annualOperatingBudget?: SortOrder
     city?: SortOrder
@@ -19900,16 +21555,6 @@ export namespace Prisma {
     lowestGrade?: SortOrder
     numberOfSchools?: SortOrder
     urbanCentricLocale?: SortOrder
-  }
-
-  export type EnumOrganizationRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrganizationRoleWithAggregatesFilter<$PrismaModel> | $Enums.OrganizationRole
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumOrganizationRoleFilter<$PrismaModel>
-    _max?: NestedEnumOrganizationRoleFilter<$PrismaModel>
   }
 
   export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -20091,13 +21736,13 @@ export namespace Prisma {
     title?: SortOrder
     notes?: SortOrder
     documents?: SortOrder
-    checklist?: SortOrder
-    attachments_markdown?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     submittedAt?: SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
+    checklist?: SortOrder
+    attachments_markdown?: SortOrder
   }
 
   export type ApplicationAvgOrderByAggregateInput = {
@@ -20111,12 +21756,12 @@ export namespace Prisma {
     contentHtml?: SortOrder
     title?: SortOrder
     notes?: SortOrder
-    attachments_markdown?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     submittedAt?: SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
+    attachments_markdown?: SortOrder
   }
 
   export type ApplicationMinOrderByAggregateInput = {
@@ -20126,12 +21771,12 @@ export namespace Prisma {
     contentHtml?: SortOrder
     title?: SortOrder
     notes?: SortOrder
-    attachments_markdown?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     submittedAt?: SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
+    attachments_markdown?: SortOrder
   }
 
   export type ApplicationSumOrderByAggregateInput = {
@@ -20402,12 +22047,80 @@ export namespace Prisma {
     version?: SortOrder
   }
 
+  export type Enumk12_education_opportunity_category_enumNullableListFilter<$PrismaModel = never> = {
+    equals?: $Enums.k12_education_opportunity_category_enum[] | ListEnumk12_education_opportunity_category_enumFieldRefInput<$PrismaModel> | null
+    has?: $Enums.k12_education_opportunity_category_enum | Enumk12_education_opportunity_category_enumFieldRefInput<$PrismaModel> | null
+    hasEvery?: $Enums.k12_education_opportunity_category_enum[] | ListEnumk12_education_opportunity_category_enumFieldRefInput<$PrismaModel>
+    hasSome?: $Enums.k12_education_opportunity_category_enum[] | ListEnumk12_education_opportunity_category_enumFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type OpportunitiesScalarRelationFilter = {
+    is?: opportunitiesWhereInput
+    isNot?: opportunitiesWhereInput
+  }
+
+  export type k12_education_opportunitiesCountOrderByAggregateInput = {
+    id?: SortOrder
+    opportunity_id?: SortOrder
+    description_summary?: SortOrder
+    category?: SortOrder
+    eligibility_summary?: SortOrder
+    relevance_score?: SortOrder
+  }
+
+  export type k12_education_opportunitiesAvgOrderByAggregateInput = {
+    id?: SortOrder
+    opportunity_id?: SortOrder
+    relevance_score?: SortOrder
+  }
+
+  export type k12_education_opportunitiesMaxOrderByAggregateInput = {
+    id?: SortOrder
+    opportunity_id?: SortOrder
+    description_summary?: SortOrder
+    eligibility_summary?: SortOrder
+    relevance_score?: SortOrder
+  }
+
+  export type k12_education_opportunitiesMinOrderByAggregateInput = {
+    id?: SortOrder
+    opportunity_id?: SortOrder
+    description_summary?: SortOrder
+    eligibility_summary?: SortOrder
+    relevance_score?: SortOrder
+  }
+
+  export type k12_education_opportunitiesSumOrderByAggregateInput = {
+    id?: SortOrder
+    opportunity_id?: SortOrder
+    relevance_score?: SortOrder
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
 
   export type opportunitiesCreatecategoryInput = {
     set: $Enums.opportunity_category_enum[]
+  }
+
+  export type opportunitiesCreateservicesInput = {
+    set: $Enums.opportunity_services_enum[]
+  }
+
+  export type k12_education_opportunitiesCreateNestedManyWithoutOpportunitiesInput = {
+    create?: XOR<k12_education_opportunitiesCreateWithoutOpportunitiesInput, k12_education_opportunitiesUncheckedCreateWithoutOpportunitiesInput> | k12_education_opportunitiesCreateWithoutOpportunitiesInput[] | k12_education_opportunitiesUncheckedCreateWithoutOpportunitiesInput[]
+    connectOrCreate?: k12_education_opportunitiesCreateOrConnectWithoutOpportunitiesInput | k12_education_opportunitiesCreateOrConnectWithoutOpportunitiesInput[]
+    createMany?: k12_education_opportunitiesCreateManyOpportunitiesInputEnvelope
+    connect?: k12_education_opportunitiesWhereUniqueInput | k12_education_opportunitiesWhereUniqueInput[]
+  }
+
+  export type k12_education_opportunitiesUncheckedCreateNestedManyWithoutOpportunitiesInput = {
+    create?: XOR<k12_education_opportunitiesCreateWithoutOpportunitiesInput, k12_education_opportunitiesUncheckedCreateWithoutOpportunitiesInput> | k12_education_opportunitiesCreateWithoutOpportunitiesInput[] | k12_education_opportunitiesUncheckedCreateWithoutOpportunitiesInput[]
+    connectOrCreate?: k12_education_opportunitiesCreateOrConnectWithoutOpportunitiesInput | k12_education_opportunitiesCreateOrConnectWithoutOpportunitiesInput[]
+    createMany?: k12_education_opportunitiesCreateManyOpportunitiesInputEnvelope
+    connect?: k12_education_opportunitiesWhereUniqueInput | k12_education_opportunitiesWhereUniqueInput[]
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
@@ -20443,12 +22156,45 @@ export namespace Prisma {
     push?: $Enums.opportunity_category_enum | $Enums.opportunity_category_enum[]
   }
 
+  export type opportunitiesUpdateservicesInput = {
+    set?: $Enums.opportunity_services_enum[]
+    push?: $Enums.opportunity_services_enum | $Enums.opportunity_services_enum[]
+  }
+
+  export type k12_education_opportunitiesUpdateManyWithoutOpportunitiesNestedInput = {
+    create?: XOR<k12_education_opportunitiesCreateWithoutOpportunitiesInput, k12_education_opportunitiesUncheckedCreateWithoutOpportunitiesInput> | k12_education_opportunitiesCreateWithoutOpportunitiesInput[] | k12_education_opportunitiesUncheckedCreateWithoutOpportunitiesInput[]
+    connectOrCreate?: k12_education_opportunitiesCreateOrConnectWithoutOpportunitiesInput | k12_education_opportunitiesCreateOrConnectWithoutOpportunitiesInput[]
+    upsert?: k12_education_opportunitiesUpsertWithWhereUniqueWithoutOpportunitiesInput | k12_education_opportunitiesUpsertWithWhereUniqueWithoutOpportunitiesInput[]
+    createMany?: k12_education_opportunitiesCreateManyOpportunitiesInputEnvelope
+    set?: k12_education_opportunitiesWhereUniqueInput | k12_education_opportunitiesWhereUniqueInput[]
+    disconnect?: k12_education_opportunitiesWhereUniqueInput | k12_education_opportunitiesWhereUniqueInput[]
+    delete?: k12_education_opportunitiesWhereUniqueInput | k12_education_opportunitiesWhereUniqueInput[]
+    connect?: k12_education_opportunitiesWhereUniqueInput | k12_education_opportunitiesWhereUniqueInput[]
+    update?: k12_education_opportunitiesUpdateWithWhereUniqueWithoutOpportunitiesInput | k12_education_opportunitiesUpdateWithWhereUniqueWithoutOpportunitiesInput[]
+    updateMany?: k12_education_opportunitiesUpdateManyWithWhereWithoutOpportunitiesInput | k12_education_opportunitiesUpdateManyWithWhereWithoutOpportunitiesInput[]
+    deleteMany?: k12_education_opportunitiesScalarWhereInput | k12_education_opportunitiesScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type k12_education_opportunitiesUncheckedUpdateManyWithoutOpportunitiesNestedInput = {
+    create?: XOR<k12_education_opportunitiesCreateWithoutOpportunitiesInput, k12_education_opportunitiesUncheckedCreateWithoutOpportunitiesInput> | k12_education_opportunitiesCreateWithoutOpportunitiesInput[] | k12_education_opportunitiesUncheckedCreateWithoutOpportunitiesInput[]
+    connectOrCreate?: k12_education_opportunitiesCreateOrConnectWithoutOpportunitiesInput | k12_education_opportunitiesCreateOrConnectWithoutOpportunitiesInput[]
+    upsert?: k12_education_opportunitiesUpsertWithWhereUniqueWithoutOpportunitiesInput | k12_education_opportunitiesUpsertWithWhereUniqueWithoutOpportunitiesInput[]
+    createMany?: k12_education_opportunitiesCreateManyOpportunitiesInputEnvelope
+    set?: k12_education_opportunitiesWhereUniqueInput | k12_education_opportunitiesWhereUniqueInput[]
+    disconnect?: k12_education_opportunitiesWhereUniqueInput | k12_education_opportunitiesWhereUniqueInput[]
+    delete?: k12_education_opportunitiesWhereUniqueInput | k12_education_opportunitiesWhereUniqueInput[]
+    connect?: k12_education_opportunitiesWhereUniqueInput | k12_education_opportunitiesWhereUniqueInput[]
+    update?: k12_education_opportunitiesUpdateWithWhereUniqueWithoutOpportunitiesInput | k12_education_opportunitiesUpdateWithWhereUniqueWithoutOpportunitiesInput[]
+    updateMany?: k12_education_opportunitiesUpdateManyWithWhereWithoutOpportunitiesInput | k12_education_opportunitiesUpdateManyWithWhereWithoutOpportunitiesInput[]
+    deleteMany?: k12_education_opportunitiesScalarWhereInput | k12_education_opportunitiesScalarWhereInput[]
   }
 
   export type AiChatCreateNestedManyWithoutUserInput = {
@@ -20465,9 +22211,9 @@ export namespace Prisma {
     connect?: GrantBookmarkWhereUniqueInput | GrantBookmarkWhereUniqueInput[]
   }
 
-  export type OrganizationCreateNestedOneWithoutUserInput = {
-    create?: XOR<OrganizationCreateWithoutUserInput, OrganizationUncheckedCreateWithoutUserInput>
-    connectOrCreate?: OrganizationCreateOrConnectWithoutUserInput
+  export type OrganizationCreateNestedOneWithoutUsersInput = {
+    create?: XOR<OrganizationCreateWithoutUsersInput, OrganizationUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutUsersInput
     connect?: OrganizationWhereUniqueInput
   }
 
@@ -20483,6 +22229,10 @@ export namespace Prisma {
     connectOrCreate?: GrantBookmarkCreateOrConnectWithoutUserInput | GrantBookmarkCreateOrConnectWithoutUserInput[]
     createMany?: GrantBookmarkCreateManyUserInputEnvelope
     connect?: GrantBookmarkWhereUniqueInput | GrantBookmarkWhereUniqueInput[]
+  }
+
+  export type EnumOrganizationRoleFieldUpdateOperationsInput = {
+    set?: $Enums.OrganizationRole
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
@@ -20521,12 +22271,12 @@ export namespace Prisma {
     deleteMany?: GrantBookmarkScalarWhereInput | GrantBookmarkScalarWhereInput[]
   }
 
-  export type OrganizationUpdateOneRequiredWithoutUserNestedInput = {
-    create?: XOR<OrganizationCreateWithoutUserInput, OrganizationUncheckedCreateWithoutUserInput>
-    connectOrCreate?: OrganizationCreateOrConnectWithoutUserInput
-    upsert?: OrganizationUpsertWithoutUserInput
+  export type OrganizationUpdateOneRequiredWithoutUsersNestedInput = {
+    create?: XOR<OrganizationCreateWithoutUsersInput, OrganizationUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutUsersInput
+    upsert?: OrganizationUpsertWithoutUsersInput
     connect?: OrganizationWhereUniqueInput
-    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutUserInput, OrganizationUpdateWithoutUserInput>, OrganizationUncheckedUpdateWithoutUserInput>
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutUsersInput, OrganizationUpdateWithoutUsersInput>, OrganizationUncheckedUpdateWithoutUsersInput>
   }
 
   export type AiChatUncheckedUpdateManyWithoutUserNestedInput = {
@@ -20592,10 +22342,11 @@ export namespace Prisma {
     connect?: RecommendationWhereUniqueInput | RecommendationWhereUniqueInput[]
   }
 
-  export type UserCreateNestedOneWithoutOrganizationInput = {
-    create?: XOR<UserCreateWithoutOrganizationInput, UserUncheckedCreateWithoutOrganizationInput>
-    connectOrCreate?: UserCreateOrConnectWithoutOrganizationInput
-    connect?: UserWhereUniqueInput
+  export type UserCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<UserCreateWithoutOrganizationInput, UserUncheckedCreateWithoutOrganizationInput> | UserCreateWithoutOrganizationInput[] | UserUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutOrganizationInput | UserCreateOrConnectWithoutOrganizationInput[]
+    createMany?: UserCreateManyOrganizationInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
   export type AiChatUncheckedCreateNestedManyWithoutOrganizationInput = {
@@ -20633,14 +22384,11 @@ export namespace Prisma {
     connect?: RecommendationWhereUniqueInput | RecommendationWhereUniqueInput[]
   }
 
-  export type UserUncheckedCreateNestedOneWithoutOrganizationInput = {
-    create?: XOR<UserCreateWithoutOrganizationInput, UserUncheckedCreateWithoutOrganizationInput>
-    connectOrCreate?: UserCreateOrConnectWithoutOrganizationInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type EnumOrganizationRoleFieldUpdateOperationsInput = {
-    set?: $Enums.OrganizationRole
+  export type UserUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<UserCreateWithoutOrganizationInput, UserUncheckedCreateWithoutOrganizationInput> | UserCreateWithoutOrganizationInput[] | UserUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutOrganizationInput | UserCreateOrConnectWithoutOrganizationInput[]
+    createMany?: UserCreateManyOrganizationInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
   export type NullableDecimalFieldUpdateOperationsInput = {
@@ -20729,14 +22477,18 @@ export namespace Prisma {
     deleteMany?: RecommendationScalarWhereInput | RecommendationScalarWhereInput[]
   }
 
-  export type UserUpdateOneWithoutOrganizationNestedInput = {
-    create?: XOR<UserCreateWithoutOrganizationInput, UserUncheckedCreateWithoutOrganizationInput>
-    connectOrCreate?: UserCreateOrConnectWithoutOrganizationInput
-    upsert?: UserUpsertWithoutOrganizationInput
-    disconnect?: UserWhereInput | boolean
-    delete?: UserWhereInput | boolean
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOrganizationInput, UserUpdateWithoutOrganizationInput>, UserUncheckedUpdateWithoutOrganizationInput>
+  export type UserUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<UserCreateWithoutOrganizationInput, UserUncheckedCreateWithoutOrganizationInput> | UserCreateWithoutOrganizationInput[] | UserUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutOrganizationInput | UserCreateOrConnectWithoutOrganizationInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutOrganizationInput | UserUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: UserCreateManyOrganizationInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutOrganizationInput | UserUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutOrganizationInput | UserUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
   export type AiChatUncheckedUpdateManyWithoutOrganizationNestedInput = {
@@ -20809,14 +22561,18 @@ export namespace Prisma {
     deleteMany?: RecommendationScalarWhereInput | RecommendationScalarWhereInput[]
   }
 
-  export type UserUncheckedUpdateOneWithoutOrganizationNestedInput = {
-    create?: XOR<UserCreateWithoutOrganizationInput, UserUncheckedCreateWithoutOrganizationInput>
-    connectOrCreate?: UserCreateOrConnectWithoutOrganizationInput
-    upsert?: UserUpsertWithoutOrganizationInput
-    disconnect?: UserWhereInput | boolean
-    delete?: UserWhereInput | boolean
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOrganizationInput, UserUpdateWithoutOrganizationInput>, UserUncheckedUpdateWithoutOrganizationInput>
+  export type UserUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<UserCreateWithoutOrganizationInput, UserUncheckedCreateWithoutOrganizationInput> | UserCreateWithoutOrganizationInput[] | UserUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutOrganizationInput | UserCreateOrConnectWithoutOrganizationInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutOrganizationInput | UserUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: UserCreateManyOrganizationInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutOrganizationInput | UserUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutOrganizationInput | UserUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
   export type OrganizationCreateNestedOneWithoutGrantBookmarksInput = {
@@ -21111,6 +22867,29 @@ export namespace Prisma {
     update?: XOR<XOR<ApplicationUpdateToOneWithWhereWithoutApplication_documentsInput, ApplicationUpdateWithoutApplication_documentsInput>, ApplicationUncheckedUpdateWithoutApplication_documentsInput>
   }
 
+  export type k12_education_opportunitiesCreatecategoryInput = {
+    set: $Enums.k12_education_opportunity_category_enum[]
+  }
+
+  export type opportunitiesCreateNestedOneWithoutK12_education_opportunitiesInput = {
+    create?: XOR<opportunitiesCreateWithoutK12_education_opportunitiesInput, opportunitiesUncheckedCreateWithoutK12_education_opportunitiesInput>
+    connectOrCreate?: opportunitiesCreateOrConnectWithoutK12_education_opportunitiesInput
+    connect?: opportunitiesWhereUniqueInput
+  }
+
+  export type k12_education_opportunitiesUpdatecategoryInput = {
+    set?: $Enums.k12_education_opportunity_category_enum[]
+    push?: $Enums.k12_education_opportunity_category_enum | $Enums.k12_education_opportunity_category_enum[]
+  }
+
+  export type opportunitiesUpdateOneRequiredWithoutK12_education_opportunitiesNestedInput = {
+    create?: XOR<opportunitiesCreateWithoutK12_education_opportunitiesInput, opportunitiesUncheckedCreateWithoutK12_education_opportunitiesInput>
+    connectOrCreate?: opportunitiesCreateOrConnectWithoutK12_education_opportunitiesInput
+    upsert?: opportunitiesUpsertWithoutK12_education_opportunitiesInput
+    connect?: opportunitiesWhereUniqueInput
+    update?: XOR<XOR<opportunitiesUpdateToOneWithWhereWithoutK12_education_opportunitiesInput, opportunitiesUpdateWithoutK12_education_opportunitiesInput>, opportunitiesUncheckedUpdateWithoutK12_education_opportunitiesInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -21355,6 +23134,13 @@ export namespace Prisma {
     not?: NestedUuidFilter<$PrismaModel> | string
   }
 
+  export type NestedEnumOrganizationRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrganizationRoleFilter<$PrismaModel> | $Enums.OrganizationRole
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -21385,6 +23171,16 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
+  export type NestedEnumOrganizationRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrganizationRoleWithAggregatesFilter<$PrismaModel> | $Enums.OrganizationRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOrganizationRoleFilter<$PrismaModel>
+    _max?: NestedEnumOrganizationRoleFilter<$PrismaModel>
+  }
+
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -21407,13 +23203,6 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
-  export type NestedEnumOrganizationRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrganizationRoleFilter<$PrismaModel> | $Enums.OrganizationRole
-  }
-
   export type NestedDecimalNullableFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
     in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
@@ -21423,16 +23212,6 @@ export namespace Prisma {
     gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
-  }
-
-  export type NestedEnumOrganizationRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrganizationRoleWithAggregatesFilter<$PrismaModel> | $Enums.OrganizationRole
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumOrganizationRoleFilter<$PrismaModel>
-    _max?: NestedEnumOrganizationRoleFilter<$PrismaModel>
   }
 
   export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -21562,6 +23341,59 @@ export namespace Prisma {
     _max?: NestedBigIntFilter<$PrismaModel>
   }
 
+  export type k12_education_opportunitiesCreateWithoutOpportunitiesInput = {
+    description_summary?: string | null
+    category?: k12_education_opportunitiesCreatecategoryInput | $Enums.k12_education_opportunity_category_enum[]
+    eligibility_summary?: string | null
+    relevance_score?: number | null
+  }
+
+  export type k12_education_opportunitiesUncheckedCreateWithoutOpportunitiesInput = {
+    id?: number
+    description_summary?: string | null
+    category?: k12_education_opportunitiesCreatecategoryInput | $Enums.k12_education_opportunity_category_enum[]
+    eligibility_summary?: string | null
+    relevance_score?: number | null
+  }
+
+  export type k12_education_opportunitiesCreateOrConnectWithoutOpportunitiesInput = {
+    where: k12_education_opportunitiesWhereUniqueInput
+    create: XOR<k12_education_opportunitiesCreateWithoutOpportunitiesInput, k12_education_opportunitiesUncheckedCreateWithoutOpportunitiesInput>
+  }
+
+  export type k12_education_opportunitiesCreateManyOpportunitiesInputEnvelope = {
+    data: k12_education_opportunitiesCreateManyOpportunitiesInput | k12_education_opportunitiesCreateManyOpportunitiesInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type k12_education_opportunitiesUpsertWithWhereUniqueWithoutOpportunitiesInput = {
+    where: k12_education_opportunitiesWhereUniqueInput
+    update: XOR<k12_education_opportunitiesUpdateWithoutOpportunitiesInput, k12_education_opportunitiesUncheckedUpdateWithoutOpportunitiesInput>
+    create: XOR<k12_education_opportunitiesCreateWithoutOpportunitiesInput, k12_education_opportunitiesUncheckedCreateWithoutOpportunitiesInput>
+  }
+
+  export type k12_education_opportunitiesUpdateWithWhereUniqueWithoutOpportunitiesInput = {
+    where: k12_education_opportunitiesWhereUniqueInput
+    data: XOR<k12_education_opportunitiesUpdateWithoutOpportunitiesInput, k12_education_opportunitiesUncheckedUpdateWithoutOpportunitiesInput>
+  }
+
+  export type k12_education_opportunitiesUpdateManyWithWhereWithoutOpportunitiesInput = {
+    where: k12_education_opportunitiesScalarWhereInput
+    data: XOR<k12_education_opportunitiesUpdateManyMutationInput, k12_education_opportunitiesUncheckedUpdateManyWithoutOpportunitiesInput>
+  }
+
+  export type k12_education_opportunitiesScalarWhereInput = {
+    AND?: k12_education_opportunitiesScalarWhereInput | k12_education_opportunitiesScalarWhereInput[]
+    OR?: k12_education_opportunitiesScalarWhereInput[]
+    NOT?: k12_education_opportunitiesScalarWhereInput | k12_education_opportunitiesScalarWhereInput[]
+    id?: IntFilter<"k12_education_opportunities"> | number
+    opportunity_id?: IntFilter<"k12_education_opportunities"> | number
+    description_summary?: StringNullableFilter<"k12_education_opportunities"> | string | null
+    category?: Enumk12_education_opportunity_category_enumNullableListFilter<"k12_education_opportunities">
+    eligibility_summary?: StringNullableFilter<"k12_education_opportunities"> | string | null
+    relevance_score?: IntNullableFilter<"k12_education_opportunities"> | number | null
+  }
+
   export type AiChatCreateWithoutUserInput = {
     id?: string
     title?: string | null
@@ -21620,13 +23452,12 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type OrganizationCreateWithoutUserInput = {
+  export type OrganizationCreateWithoutUsersInput = {
     id?: string
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
     slug: string
-    role?: $Enums.OrganizationRole
     address?: string | null
     annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
@@ -21659,13 +23490,12 @@ export namespace Prisma {
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
   }
 
-  export type OrganizationUncheckedCreateWithoutUserInput = {
+  export type OrganizationUncheckedCreateWithoutUsersInput = {
     id?: string
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
     slug: string
-    role?: $Enums.OrganizationRole
     address?: string | null
     annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
@@ -21698,9 +23528,9 @@ export namespace Prisma {
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
-  export type OrganizationCreateOrConnectWithoutUserInput = {
+  export type OrganizationCreateOrConnectWithoutUsersInput = {
     where: OrganizationWhereUniqueInput
-    create: XOR<OrganizationCreateWithoutUserInput, OrganizationUncheckedCreateWithoutUserInput>
+    create: XOR<OrganizationCreateWithoutUsersInput, OrganizationUncheckedCreateWithoutUsersInput>
   }
 
   export type AiChatUpsertWithWhereUniqueWithoutUserInput = {
@@ -21761,24 +23591,23 @@ export namespace Prisma {
     organizationId?: StringFilter<"GrantBookmark"> | string
   }
 
-  export type OrganizationUpsertWithoutUserInput = {
-    update: XOR<OrganizationUpdateWithoutUserInput, OrganizationUncheckedUpdateWithoutUserInput>
-    create: XOR<OrganizationCreateWithoutUserInput, OrganizationUncheckedCreateWithoutUserInput>
+  export type OrganizationUpsertWithoutUsersInput = {
+    update: XOR<OrganizationUpdateWithoutUsersInput, OrganizationUncheckedUpdateWithoutUsersInput>
+    create: XOR<OrganizationCreateWithoutUsersInput, OrganizationUncheckedCreateWithoutUsersInput>
     where?: OrganizationWhereInput
   }
 
-  export type OrganizationUpdateToOneWithWhereWithoutUserInput = {
+  export type OrganizationUpdateToOneWithWhereWithoutUsersInput = {
     where?: OrganizationWhereInput
-    data: XOR<OrganizationUpdateWithoutUserInput, OrganizationUncheckedUpdateWithoutUserInput>
+    data: XOR<OrganizationUpdateWithoutUsersInput, OrganizationUncheckedUpdateWithoutUsersInput>
   }
 
-  export type OrganizationUpdateWithoutUserInput = {
+  export type OrganizationUpdateWithoutUsersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21811,13 +23640,12 @@ export namespace Prisma {
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
   }
 
-  export type OrganizationUncheckedUpdateWithoutUserInput = {
+  export type OrganizationUncheckedUpdateWithoutUsersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21891,12 +23719,12 @@ export namespace Prisma {
     title?: string | null
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     application_documents?: application_documentsCreateNestedManyWithoutApplicationsInput
   }
@@ -21910,12 +23738,12 @@ export namespace Prisma {
     title?: string | null
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
     application_documents?: application_documentsUncheckedCreateNestedManyWithoutApplicationsInput
   }
@@ -22024,6 +23852,7 @@ export namespace Prisma {
     id: string
     email: string
     name?: string | null
+    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -22037,6 +23866,7 @@ export namespace Prisma {
     id: string
     email: string
     name?: string | null
+    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -22049,6 +23879,11 @@ export namespace Prisma {
   export type UserCreateOrConnectWithoutOrganizationInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutOrganizationInput, UserUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type UserCreateManyOrganizationInputEnvelope = {
+    data: UserCreateManyOrganizationInput | UserCreateManyOrganizationInput[]
+    skipDuplicates?: boolean
   }
 
   export type AiChatUpsertWithWhereUniqueWithoutOrganizationInput = {
@@ -22095,13 +23930,13 @@ export namespace Prisma {
     title?: StringNullableFilter<"Application"> | string | null
     notes?: StringNullableFilter<"Application"> | string | null
     documents?: JsonNullableFilter<"Application">
-    checklist?: JsonNullableFilter<"Application">
-    attachments_markdown?: StringNullableFilter<"Application"> | string | null
     createdAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
     organizationId?: StringFilter<"Application"> | string
+    checklist?: JsonNullableFilter<"Application">
+    attachments_markdown?: StringNullableFilter<"Application"> | string | null
   }
 
   export type GrantBookmarkUpsertWithWhereUniqueWithoutOrganizationInput = {
@@ -22182,41 +24017,36 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Recommendation"> | Date | string
   }
 
-  export type UserUpsertWithoutOrganizationInput = {
+  export type UserUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: UserWhereUniqueInput
     update: XOR<UserUpdateWithoutOrganizationInput, UserUncheckedUpdateWithoutOrganizationInput>
     create: XOR<UserCreateWithoutOrganizationInput, UserUncheckedCreateWithoutOrganizationInput>
-    where?: UserWhereInput
   }
 
-  export type UserUpdateToOneWithWhereWithoutOrganizationInput = {
-    where?: UserWhereInput
+  export type UserUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: UserWhereUniqueInput
     data: XOR<UserUpdateWithoutOrganizationInput, UserUncheckedUpdateWithoutOrganizationInput>
   }
 
-  export type UserUpdateWithoutOrganizationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    system_admin?: BoolFieldUpdateOperationsInput | boolean
-    aiChats?: AiChatUpdateManyWithoutUserNestedInput
-    grantBookmarks?: GrantBookmarkUpdateManyWithoutUserNestedInput
+  export type UserUpdateManyWithWhereWithoutOrganizationInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutOrganizationInput>
   }
 
-  export type UserUncheckedUpdateWithoutOrganizationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    system_admin?: BoolFieldUpdateOperationsInput | boolean
-    aiChats?: AiChatUncheckedUpdateManyWithoutUserNestedInput
-    grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutUserNestedInput
+  export type UserScalarWhereInput = {
+    AND?: UserScalarWhereInput | UserScalarWhereInput[]
+    OR?: UserScalarWhereInput[]
+    NOT?: UserScalarWhereInput | UserScalarWhereInput[]
+    id?: UuidFilter<"User"> | string
+    email?: StringFilter<"User"> | string
+    name?: StringNullableFilter<"User"> | string | null
+    role?: EnumOrganizationRoleFilter<"User"> | $Enums.OrganizationRole
+    createdAt?: DateTimeFilter<"User"> | Date | string
+    updatedAt?: DateTimeFilter<"User"> | Date | string
+    avatarUrl?: StringNullableFilter<"User"> | string | null
+    lastActiveAt?: DateTimeFilter<"User"> | Date | string
+    organizationId?: StringFilter<"User"> | string
+    system_admin?: BoolFilter<"User"> | boolean
   }
 
   export type OrganizationCreateWithoutGrantBookmarksInput = {
@@ -22225,7 +24055,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     slug: string
-    role?: $Enums.OrganizationRole
     address?: string | null
     annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
@@ -22255,7 +24084,7 @@ export namespace Prisma {
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
-    user?: UserCreateNestedOneWithoutOrganizationInput
+    users?: UserCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutGrantBookmarksInput = {
@@ -22264,7 +24093,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     slug: string
-    role?: $Enums.OrganizationRole
     address?: string | null
     annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
@@ -22294,7 +24122,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
-    user?: UserUncheckedCreateNestedOneWithoutOrganizationInput
+    users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutGrantBookmarksInput = {
@@ -22306,19 +24134,21 @@ export namespace Prisma {
     id: string
     email: string
     name?: string | null
+    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
     lastActiveAt?: Date | string
     system_admin?: boolean
     aiChats?: AiChatCreateNestedManyWithoutUserInput
-    organization: OrganizationCreateNestedOneWithoutUserInput
+    organization: OrganizationCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutGrantBookmarksInput = {
     id: string
     email: string
     name?: string | null
+    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -22350,7 +24180,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22380,7 +24209,7 @@ export namespace Prisma {
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
-    user?: UserUpdateOneWithoutOrganizationNestedInput
+    users?: UserUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutGrantBookmarksInput = {
@@ -22389,7 +24218,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22419,7 +24247,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
-    user?: UserUncheckedUpdateOneWithoutOrganizationNestedInput
+    users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutGrantBookmarksInput = {
@@ -22437,19 +24265,21 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     system_admin?: BoolFieldUpdateOperationsInput | boolean
     aiChats?: AiChatUpdateManyWithoutUserNestedInput
-    organization?: OrganizationUpdateOneRequiredWithoutUserNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGrantBookmarksInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22465,7 +24295,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     slug: string
-    role?: $Enums.OrganizationRole
     address?: string | null
     annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
@@ -22495,7 +24324,7 @@ export namespace Prisma {
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
-    user?: UserCreateNestedOneWithoutOrganizationInput
+    users?: UserCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutEligibilityAnalysesInput = {
@@ -22504,7 +24333,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     slug: string
-    role?: $Enums.OrganizationRole
     address?: string | null
     annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
@@ -22534,7 +24362,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
-    user?: UserUncheckedCreateNestedOneWithoutOrganizationInput
+    users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutEligibilityAnalysesInput = {
@@ -22559,7 +24387,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22589,7 +24416,7 @@ export namespace Prisma {
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
-    user?: UserUpdateOneWithoutOrganizationNestedInput
+    users?: UserUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutEligibilityAnalysesInput = {
@@ -22598,7 +24425,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22628,7 +24454,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
-    user?: UserUncheckedUpdateOneWithoutOrganizationNestedInput
+    users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type AiChatCreateWithoutApplicationInput = {
@@ -22701,7 +24527,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     slug: string
-    role?: $Enums.OrganizationRole
     address?: string | null
     annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
@@ -22731,7 +24556,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
-    user?: UserCreateNestedOneWithoutOrganizationInput
+    users?: UserCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutApplicationsInput = {
@@ -22740,7 +24565,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     slug: string
-    role?: $Enums.OrganizationRole
     address?: string | null
     annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
@@ -22770,7 +24594,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
-    user?: UserUncheckedCreateNestedOneWithoutOrganizationInput
+    users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutApplicationsInput = {
@@ -22842,7 +24666,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22872,7 +24695,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
-    user?: UserUpdateOneWithoutOrganizationNestedInput
+    users?: UserUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutApplicationsInput = {
@@ -22881,7 +24704,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22911,7 +24733,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
-    user?: UserUncheckedUpdateOneWithoutOrganizationNestedInput
+    users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type AiChatMessageCreateWithoutChatInput = {
@@ -22949,12 +24771,12 @@ export namespace Prisma {
     title?: string | null
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     application_documents?: application_documentsCreateNestedManyWithoutApplicationsInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
   }
@@ -22968,13 +24790,13 @@ export namespace Prisma {
     title?: string | null
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     application_documents?: application_documentsUncheckedCreateNestedManyWithoutApplicationsInput
   }
 
@@ -22989,7 +24811,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     slug: string
-    role?: $Enums.OrganizationRole
     address?: string | null
     annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
@@ -23019,7 +24840,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
-    user?: UserCreateNestedOneWithoutOrganizationInput
+    users?: UserCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutAiChatsInput = {
@@ -23028,7 +24849,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     slug: string
-    role?: $Enums.OrganizationRole
     address?: string | null
     annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
@@ -23058,7 +24878,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
-    user?: UserUncheckedCreateNestedOneWithoutOrganizationInput
+    users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutAiChatsInput = {
@@ -23070,19 +24890,21 @@ export namespace Prisma {
     id: string
     email: string
     name?: string | null
+    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
     lastActiveAt?: Date | string
     system_admin?: boolean
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutUserInput
-    organization: OrganizationCreateNestedOneWithoutUserInput
+    organization: OrganizationCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutAiChatsInput = {
     id: string
     email: string
     name?: string | null
+    role?: $Enums.OrganizationRole
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
@@ -23145,12 +24967,12 @@ export namespace Prisma {
     title?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     application_documents?: application_documentsUpdateManyWithoutApplicationsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
   }
@@ -23164,13 +24986,13 @@ export namespace Prisma {
     title?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     application_documents?: application_documentsUncheckedUpdateManyWithoutApplicationsNestedInput
   }
 
@@ -23191,7 +25013,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23221,7 +25042,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
-    user?: UserUpdateOneWithoutOrganizationNestedInput
+    users?: UserUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutAiChatsInput = {
@@ -23230,7 +25051,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23260,7 +25080,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
-    user?: UserUncheckedUpdateOneWithoutOrganizationNestedInput
+    users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutAiChatsInput = {
@@ -23278,19 +25098,21 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     system_admin?: BoolFieldUpdateOperationsInput | boolean
     grantBookmarks?: GrantBookmarkUpdateManyWithoutUserNestedInput
-    organization?: OrganizationUpdateOneRequiredWithoutUserNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAiChatsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23366,7 +25188,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     slug: string
-    role?: $Enums.OrganizationRole
     address?: string | null
     annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
@@ -23396,7 +25217,7 @@ export namespace Prisma {
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
-    user?: UserCreateNestedOneWithoutOrganizationInput
+    users?: UserCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutRecommendationsInput = {
@@ -23405,7 +25226,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     slug: string
-    role?: $Enums.OrganizationRole
     address?: string | null
     annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
     city?: string | null
@@ -23435,7 +25255,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
-    user?: UserUncheckedCreateNestedOneWithoutOrganizationInput
+    users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutRecommendationsInput = {
@@ -23460,7 +25280,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23490,7 +25309,7 @@ export namespace Prisma {
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
-    user?: UserUpdateOneWithoutOrganizationNestedInput
+    users?: UserUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutRecommendationsInput = {
@@ -23499,7 +25318,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     slug?: StringFieldUpdateOperationsInput | string
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     address?: NullableStringFieldUpdateOperationsInput | string | null
     annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23529,7 +25347,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
-    user?: UserUncheckedUpdateOneWithoutOrganizationNestedInput
+    users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type ApplicationCreateWithoutApplication_documentsInput = {
@@ -23541,12 +25359,12 @@ export namespace Prisma {
     title?: string | null
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
   }
@@ -23560,13 +25378,13 @@ export namespace Prisma {
     title?: string | null
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
   }
 
@@ -23595,12 +25413,12 @@ export namespace Prisma {
     title?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
   }
@@ -23614,14 +25432,215 @@ export namespace Prisma {
     title?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
+  }
+
+  export type opportunitiesCreateWithoutK12_education_opportunitiesInput = {
+    source: string
+    state_code?: string | null
+    source_grant_id?: string | null
+    status: $Enums.opportunity_status_enum
+    title: string
+    description?: string | null
+    description_summary?: string | null
+    agency?: string | null
+    funding_instrument?: string | null
+    fiscal_year?: number | null
+    post_date?: Date | string | null
+    close_date?: Date | string | null
+    archive_date?: Date | string | null
+    cost_sharing?: boolean | null
+    award_max?: number | null
+    award_min?: number | null
+    total_funding_amount?: number | null
+    eligibility?: string | null
+    eligibility_summary?: string | null
+    last_updated?: Date | string | null
+    contact_name?: string | null
+    contact_email?: string | null
+    contact_phone?: string | null
+    url?: string | null
+    attachments?: NullableJsonNullValueInput | InputJsonValue
+    extra?: NullableJsonNullValueInput | InputJsonValue
+    relevance_score?: number | null
+    raw_text?: string | null
+    content_hash?: string | null
+    funding_type?: $Enums.funding_type_enum | null
+    category?: opportunitiesCreatecategoryInput | $Enums.opportunity_category_enum[]
+    rfp_url?: string | null
+    services?: opportunitiesCreateservicesInput | $Enums.opportunity_services_enum[]
+    is_recurring?: boolean | null
+    application_instructions?: string | null
+  }
+
+  export type opportunitiesUncheckedCreateWithoutK12_education_opportunitiesInput = {
+    id?: number
+    source: string
+    state_code?: string | null
+    source_grant_id?: string | null
+    status: $Enums.opportunity_status_enum
+    title: string
+    description?: string | null
+    description_summary?: string | null
+    agency?: string | null
+    funding_instrument?: string | null
+    fiscal_year?: number | null
+    post_date?: Date | string | null
+    close_date?: Date | string | null
+    archive_date?: Date | string | null
+    cost_sharing?: boolean | null
+    award_max?: number | null
+    award_min?: number | null
+    total_funding_amount?: number | null
+    eligibility?: string | null
+    eligibility_summary?: string | null
+    last_updated?: Date | string | null
+    contact_name?: string | null
+    contact_email?: string | null
+    contact_phone?: string | null
+    url?: string | null
+    attachments?: NullableJsonNullValueInput | InputJsonValue
+    extra?: NullableJsonNullValueInput | InputJsonValue
+    relevance_score?: number | null
+    raw_text?: string | null
+    content_hash?: string | null
+    funding_type?: $Enums.funding_type_enum | null
+    category?: opportunitiesCreatecategoryInput | $Enums.opportunity_category_enum[]
+    rfp_url?: string | null
+    services?: opportunitiesCreateservicesInput | $Enums.opportunity_services_enum[]
+    is_recurring?: boolean | null
+    application_instructions?: string | null
+  }
+
+  export type opportunitiesCreateOrConnectWithoutK12_education_opportunitiesInput = {
+    where: opportunitiesWhereUniqueInput
+    create: XOR<opportunitiesCreateWithoutK12_education_opportunitiesInput, opportunitiesUncheckedCreateWithoutK12_education_opportunitiesInput>
+  }
+
+  export type opportunitiesUpsertWithoutK12_education_opportunitiesInput = {
+    update: XOR<opportunitiesUpdateWithoutK12_education_opportunitiesInput, opportunitiesUncheckedUpdateWithoutK12_education_opportunitiesInput>
+    create: XOR<opportunitiesCreateWithoutK12_education_opportunitiesInput, opportunitiesUncheckedCreateWithoutK12_education_opportunitiesInput>
+    where?: opportunitiesWhereInput
+  }
+
+  export type opportunitiesUpdateToOneWithWhereWithoutK12_education_opportunitiesInput = {
+    where?: opportunitiesWhereInput
+    data: XOR<opportunitiesUpdateWithoutK12_education_opportunitiesInput, opportunitiesUncheckedUpdateWithoutK12_education_opportunitiesInput>
+  }
+
+  export type opportunitiesUpdateWithoutK12_education_opportunitiesInput = {
+    source?: StringFieldUpdateOperationsInput | string
+    state_code?: NullableStringFieldUpdateOperationsInput | string | null
+    source_grant_id?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: Enumopportunity_status_enumFieldUpdateOperationsInput | $Enums.opportunity_status_enum
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    description_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    agency?: NullableStringFieldUpdateOperationsInput | string | null
+    funding_instrument?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscal_year?: NullableIntFieldUpdateOperationsInput | number | null
+    post_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    close_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    archive_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cost_sharing?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    award_max?: NullableIntFieldUpdateOperationsInput | number | null
+    award_min?: NullableIntFieldUpdateOperationsInput | number | null
+    total_funding_amount?: NullableIntFieldUpdateOperationsInput | number | null
+    eligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    eligibility_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    last_updated?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contact_name?: NullableStringFieldUpdateOperationsInput | string | null
+    contact_email?: NullableStringFieldUpdateOperationsInput | string | null
+    contact_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    attachments?: NullableJsonNullValueInput | InputJsonValue
+    extra?: NullableJsonNullValueInput | InputJsonValue
+    relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
+    raw_text?: NullableStringFieldUpdateOperationsInput | string | null
+    content_hash?: NullableStringFieldUpdateOperationsInput | string | null
+    funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
+    category?: opportunitiesUpdatecategoryInput | $Enums.opportunity_category_enum[]
+    rfp_url?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: opportunitiesUpdateservicesInput | $Enums.opportunity_services_enum[]
+    is_recurring?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    application_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type opportunitiesUncheckedUpdateWithoutK12_education_opportunitiesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    source?: StringFieldUpdateOperationsInput | string
+    state_code?: NullableStringFieldUpdateOperationsInput | string | null
+    source_grant_id?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: Enumopportunity_status_enumFieldUpdateOperationsInput | $Enums.opportunity_status_enum
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    description_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    agency?: NullableStringFieldUpdateOperationsInput | string | null
+    funding_instrument?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscal_year?: NullableIntFieldUpdateOperationsInput | number | null
+    post_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    close_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    archive_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cost_sharing?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    award_max?: NullableIntFieldUpdateOperationsInput | number | null
+    award_min?: NullableIntFieldUpdateOperationsInput | number | null
+    total_funding_amount?: NullableIntFieldUpdateOperationsInput | number | null
+    eligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    eligibility_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    last_updated?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contact_name?: NullableStringFieldUpdateOperationsInput | string | null
+    contact_email?: NullableStringFieldUpdateOperationsInput | string | null
+    contact_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    attachments?: NullableJsonNullValueInput | InputJsonValue
+    extra?: NullableJsonNullValueInput | InputJsonValue
+    relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
+    raw_text?: NullableStringFieldUpdateOperationsInput | string | null
+    content_hash?: NullableStringFieldUpdateOperationsInput | string | null
+    funding_type?: NullableEnumfunding_type_enumFieldUpdateOperationsInput | $Enums.funding_type_enum | null
+    category?: opportunitiesUpdatecategoryInput | $Enums.opportunity_category_enum[]
+    rfp_url?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: opportunitiesUpdateservicesInput | $Enums.opportunity_services_enum[]
+    is_recurring?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    application_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type k12_education_opportunitiesCreateManyOpportunitiesInput = {
+    id?: number
+    description_summary?: string | null
+    category?: k12_education_opportunitiesCreatecategoryInput | $Enums.k12_education_opportunity_category_enum[]
+    eligibility_summary?: string | null
+    relevance_score?: number | null
+  }
+
+  export type k12_education_opportunitiesUpdateWithoutOpportunitiesInput = {
+    description_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: k12_education_opportunitiesUpdatecategoryInput | $Enums.k12_education_opportunity_category_enum[]
+    eligibility_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type k12_education_opportunitiesUncheckedUpdateWithoutOpportunitiesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    description_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: k12_education_opportunitiesUpdatecategoryInput | $Enums.k12_education_opportunity_category_enum[]
+    eligibility_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type k12_education_opportunitiesUncheckedUpdateManyWithoutOpportunitiesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    description_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: k12_education_opportunitiesUpdatecategoryInput | $Enums.k12_education_opportunity_category_enum[]
+    eligibility_summary?: NullableStringFieldUpdateOperationsInput | string | null
+    relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type AiChatCreateManyUserInput = {
@@ -23717,12 +25736,12 @@ export namespace Prisma {
     title?: string | null
     notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: string | null
   }
 
   export type GrantBookmarkCreateManyOrganizationInput = {
@@ -23753,6 +25772,18 @@ export namespace Prisma {
     districtName: string
     queryDate: Date | string
     createdAt?: Date | string
+  }
+
+  export type UserCreateManyOrganizationInput = {
+    id: string
+    email: string
+    name?: string | null
+    role?: $Enums.OrganizationRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    avatarUrl?: string | null
+    lastActiveAt?: Date | string
+    system_admin?: boolean
   }
 
   export type AiChatUpdateWithoutOrganizationInput = {
@@ -23796,12 +25827,12 @@ export namespace Prisma {
     title?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     application_documents?: application_documentsUpdateManyWithoutApplicationsNestedInput
   }
@@ -23815,12 +25846,12 @@ export namespace Prisma {
     title?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
     application_documents?: application_documentsUncheckedUpdateManyWithoutApplicationsNestedInput
   }
@@ -23834,12 +25865,12 @@ export namespace Prisma {
     title?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
-    checklist?: NullableJsonNullValueInput | InputJsonValue
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklist?: NullableJsonNullValueInput | InputJsonValue
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type GrantBookmarkUpdateWithoutOrganizationInput = {
@@ -23930,6 +25961,46 @@ export namespace Prisma {
     districtName?: StringFieldUpdateOperationsInput | string
     queryDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    system_admin?: BoolFieldUpdateOperationsInput | boolean
+    aiChats?: AiChatUpdateManyWithoutUserNestedInput
+    grantBookmarks?: GrantBookmarkUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    system_admin?: BoolFieldUpdateOperationsInput | boolean
+    aiChats?: AiChatUncheckedUpdateManyWithoutUserNestedInput
+    grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    system_admin?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type AiChatCreateManyApplicationInput = {

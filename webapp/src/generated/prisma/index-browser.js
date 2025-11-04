@@ -157,13 +157,17 @@ exports.Prisma.OpportunitiesScalarFieldEnum = {
   content_hash: 'content_hash',
   funding_type: 'funding_type',
   category: 'category',
-  rfp_url: 'rfp_url'
+  rfp_url: 'rfp_url',
+  services: 'services',
+  is_recurring: 'is_recurring',
+  application_instructions: 'application_instructions'
 };
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   name: 'name',
+  role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   avatarUrl: 'avatarUrl',
@@ -178,7 +182,6 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   slug: 'slug',
-  role: 'role',
   address: 'address',
   annualOperatingBudget: 'annualOperatingBudget',
   city: 'city',
@@ -236,13 +239,13 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   title: 'title',
   notes: 'notes',
   documents: 'documents',
-  checklist: 'checklist',
-  attachments_markdown: 'attachments_markdown',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   submittedAt: 'submittedAt',
   lastEditedAt: 'lastEditedAt',
-  organizationId: 'organizationId'
+  organizationId: 'organizationId',
+  checklist: 'checklist',
+  attachments_markdown: 'attachments_markdown'
 };
 
 exports.Prisma.AiChatScalarFieldEnum = {
@@ -293,6 +296,15 @@ exports.Prisma.Application_documentsScalarFieldEnum = {
   version: 'version',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.K12_education_opportunitiesScalarFieldEnum = {
+  id: 'id',
+  opportunity_id: 'opportunity_id',
+  description_summary: 'description_summary',
+  category: 'category',
+  eligibility_summary: 'eligibility_summary',
+  relevance_score: 'relevance_score'
 };
 
 exports.Prisma.SortOrder = {
@@ -368,6 +380,11 @@ exports.opportunity_category_enum = exports.$Enums.opportunity_category_enum = {
   Other: 'Other'
 };
 
+exports.opportunity_services_enum = exports.$Enums.opportunity_services_enum = {
+  k12_education: 'k12_education',
+  higher_education: 'higher_education'
+};
+
 exports.OrganizationRole = exports.$Enums.OrganizationRole = {
   OWNER: 'OWNER',
   ADMIN: 'ADMIN',
@@ -405,6 +422,40 @@ exports.MessageRole = exports.$Enums.MessageRole = {
   SYSTEM: 'SYSTEM'
 };
 
+exports.k12_education_opportunity_category_enum = exports.$Enums.k12_education_opportunity_category_enum = {
+  stem_education: 'stem_education',
+  math_and_science_education: 'math_and_science_education',
+  career_and_technical_education: 'career_and_technical_education',
+  special_education: 'special_education',
+  early_childhood_education: 'early_childhood_education',
+  teacher_professional_development: 'teacher_professional_development',
+  leadership_and_administration_development: 'leadership_and_administration_development',
+  social_emotional_learning: 'social_emotional_learning',
+  school_climate_and_culture: 'school_climate_and_culture',
+  bullying_prevention: 'bullying_prevention',
+  school_safety_and_security: 'school_safety_and_security',
+  digital_literacy_and_technology: 'digital_literacy_and_technology',
+  educational_technology_innovation: 'educational_technology_innovation',
+  after_school_programs: 'after_school_programs',
+  arts_and_music_education: 'arts_and_music_education',
+  environmental_education: 'environmental_education',
+  health_and_wellness: 'health_and_wellness',
+  nutrition_and_school_meals: 'nutrition_and_school_meals',
+  student_mental_health: 'student_mental_health',
+  equity_and_inclusion: 'equity_and_inclusion',
+  community_engagement: 'community_engagement',
+  parental_involvement: 'parental_involvement',
+  college_and_career_readiness: 'college_and_career_readiness',
+  civic_and_history_education: 'civic_and_history_education',
+  english_language_learners: 'english_language_learners',
+  financial_literacy: 'financial_literacy',
+  educational_research_and_innovation: 'educational_research_and_innovation',
+  facilities_and_infrastructure: 'facilities_and_infrastructure',
+  data_and_assessment_initiatives: 'data_and_assessment_initiatives',
+  transportation_and_accessibility: 'transportation_and_accessibility',
+  other: 'other'
+};
+
 exports.Prisma.ModelName = {
   alembic_version: 'alembic_version',
   opportunities: 'opportunities',
@@ -417,7 +468,8 @@ exports.Prisma.ModelName = {
   AiChatMessage: 'AiChatMessage',
   Recommendation: 'Recommendation',
   documents: 'documents',
-  application_documents: 'application_documents'
+  application_documents: 'application_documents',
+  k12_education_opportunities: 'k12_education_opportunities'
 };
 
 /**

@@ -20,58 +20,64 @@ model alembic_version {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model opportunities {
-  id                   Int                         @id @default(autoincrement())
-  source               String                      @db.VarChar
-  state_code           String?                     @db.VarChar
-  source_grant_id      String?                     @db.VarChar
-  status               opportunity_status_enum
-  title                String                      @db.VarChar
-  description          String?
-  description_summary  String?                     @db.VarChar
-  agency               String?                     @db.VarChar
-  funding_instrument   String?                     @db.VarChar
-  fiscal_year          Int?
-  post_date            DateTime?                   @db.Date
-  close_date           DateTime?                   @db.Date
-  archive_date         DateTime?                   @db.Date
-  cost_sharing         Boolean?
-  award_max            Int?
-  award_min            Int?
-  total_funding_amount Int?
-  eligibility          String?
-  eligibility_summary  String?                     @db.VarChar
-  last_updated         DateTime?                   @db.Timestamp(6)
-  contact_name         String?                     @db.VarChar
-  contact_email        String?                     @db.VarChar
-  contact_phone        String?                     @db.VarChar
-  url                  String?                     @db.VarChar
-  attachments          Json?                       @db.Json
-  extra                Json?                       @db.Json
-  relevance_score      Int?
-  raw_text             String?
-  content_hash         String?                     @db.VarChar
-  funding_type         funding_type_enum?
-  category             opportunity_category_enum[]
-  rfp_url              String?                     @db.VarChar
+  id                          Int                           @id @default(autoincrement())
+  source                      String                        @db.VarChar
+  state_code                  String?                       @db.VarChar
+  source_grant_id             String?                       @db.VarChar
+  status                      opportunity_status_enum
+  title                       String                        @db.VarChar
+  description                 String?
+  description_summary         String?                       @db.VarChar
+  agency                      String?                       @db.VarChar
+  funding_instrument          String?                       @db.VarChar
+  fiscal_year                 Int?
+  post_date                   DateTime?                     @db.Date
+  close_date                  DateTime?                     @db.Date
+  archive_date                DateTime?                     @db.Date
+  cost_sharing                Boolean?
+  award_max                   Int?
+  award_min                   Int?
+  total_funding_amount        Int?
+  eligibility                 String?
+  eligibility_summary         String?                       @db.VarChar
+  last_updated                DateTime?                     @db.Timestamp(6)
+  contact_name                String?                       @db.VarChar
+  contact_email               String?                       @db.VarChar
+  contact_phone               String?                       @db.VarChar
+  url                         String?                       @db.VarChar
+  attachments                 Json?                         @db.Json
+  extra                       Json?                         @db.Json
+  relevance_score             Int?
+  raw_text                    String?
+  content_hash                String?                       @db.VarChar
+  funding_type                funding_type_enum?
+  category                    opportunity_category_enum[]
+  rfp_url                     String?                       @db.VarChar
+  services                    opportunity_services_enum[]
+  is_recurring                Boolean?
+  application_instructions    String?
+  k12_education_opportunities k12_education_opportunities[]
 
   @@schema("public")
 }
 
 /// ///// APP SCHEMA ////////
 model User {
-  id             String          @id @db.Uuid
-  email          String          @unique
+  id             String           @id @db.Uuid
+  email          String           @unique
   name           String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  role           OrganizationRole @default(MEMBER)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
   avatarUrl      String?
-  lastActiveAt   DateTime        @default(now())
-  organizationId String          @unique
-  system_admin   Boolean         @default(false)
+  lastActiveAt   DateTime         @default(now())
+  organizationId String
+  system_admin   Boolean          @default(false)
   aiChats        AiChat[]
   grantBookmarks GrantBookmark[]
-  organization   Organization    @relation("UserOrganization", fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization     @relation("UserOrganization", fields: [organizationId], references: [id], onDelete: Cascade)
 
+  @@index([organizationId, role])
   @@map("users")
   @@schema("app")
 }
@@ -82,7 +88,6 @@ model Organization {
   createdAt              DateTime                   @default(now())
   updatedAt              DateTime                   @updatedAt
   slug                   String                     @unique
-  role                   OrganizationRole           @default(MEMBER)
   address                String?
   annualOperatingBudget  Decimal?                   @db.Decimal(15, 2)
   city                   String?
@@ -113,7 +118,7 @@ model Organization {
   grantBookmarks         GrantBookmark[]
   eligibilityAnalyses    GrantEligibilityAnalysis[]
   recommendations        Recommendation[]
-  user                   User?                      @relation("UserOrganization")
+  users                  User[]                     @relation("UserOrganization")
 
   @@index([leaId])
   @@index([state])
@@ -162,13 +167,13 @@ model Application {
   title                 String?
   notes                 String?
   documents             Json?
-  checklist             Json?
-  attachments_markdown  String?
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
   submittedAt           DateTime?
   lastEditedAt          DateTime                @default(now())
   organizationId        String
+  checklist             Json?
+  attachments_markdown  String?
   aiChats               AiChat[]
   application_documents application_documents[]
   organization          Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -254,6 +259,19 @@ model application_documents {
   @@index([updatedAt])
   @@index([applicationId, createdAt])
   @@schema("app")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model k12_education_opportunities {
+  id                  Int                                       @id @default(autoincrement())
+  opportunity_id      Int
+  description_summary String?                                   @db.VarChar
+  category            k12_education_opportunity_category_enum[]
+  eligibility_summary String?                                   @db.VarChar
+  relevance_score     Int?
+  opportunities       opportunities                             @relation(fields: [opportunity_id], references: [id], onDelete: Cascade)
+
+  @@schema("public")
 }
 
 enum opportunity_status_enum {
@@ -353,6 +371,49 @@ enum opportunity_category_enum {
   Data_and_Assessment_Initiatives
   Transportation_and_Accessibility
   Other
+
+  @@schema("public")
+}
+
+enum k12_education_opportunity_category_enum {
+  stem_education
+  math_and_science_education
+  career_and_technical_education
+  special_education
+  early_childhood_education
+  teacher_professional_development
+  leadership_and_administration_development
+  social_emotional_learning
+  school_climate_and_culture
+  bullying_prevention
+  school_safety_and_security
+  digital_literacy_and_technology
+  educational_technology_innovation
+  after_school_programs
+  arts_and_music_education
+  environmental_education
+  health_and_wellness
+  nutrition_and_school_meals
+  student_mental_health
+  equity_and_inclusion
+  community_engagement
+  parental_involvement
+  college_and_career_readiness
+  civic_and_history_education
+  english_language_learners
+  financial_literacy
+  educational_research_and_innovation
+  facilities_and_infrastructure
+  data_and_assessment_initiatives
+  transportation_and_accessibility
+  other
+
+  @@schema("public")
+}
+
+enum opportunity_services_enum {
+  k12_education
+  higher_education
 
   @@schema("public")
 }

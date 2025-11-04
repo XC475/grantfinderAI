@@ -27,11 +27,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find the organization
+    // Find the organization and verify user is a member
     const organization = await prisma.organization.findFirst({
       where: {
         slug: organizationSlug,
-        user: { id: user.id },
+        users: {
+          some: { id: user.id },
+        },
       },
     });
 
@@ -226,7 +228,9 @@ export async function GET(request: NextRequest) {
     // Build where clause
     const whereClause: Prisma.ApplicationWhereInput = {
       organization: {
-        user: { id: user.id },
+        users: {
+          some: { id: user.id },
+        },
         ...(organizationSlug ? { slug: organizationSlug } : {}),
       },
     };

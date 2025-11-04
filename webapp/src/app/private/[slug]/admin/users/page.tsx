@@ -36,18 +36,31 @@ interface User {
   id: string;
   email: string;
   name: string;
+  role: string;
   system_admin: boolean;
   createdAt: string;
   lastActiveAt: string;
   organization?: {
     slug: string;
-    role: string;
     name: string;
     leaId: string | null;
     state: string | null;
     city: string | null;
     enrollment: number | null;
     countyName: string | null;
+  };
+}
+
+interface Organization {
+  id: string;
+  name: string;
+  slug: string;
+  leaId: string | null;
+  state: string | null;
+  city: string | null;
+  createdAt: string;
+  _count: {
+    users: number;
   };
 }
 
@@ -77,19 +90,46 @@ export default function AdminUsersPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [creating, setCreating] = useState(false);
 
-  // School districts state
+  // Mode selection: 'add_to_existing' or 'create_new'
+  const [mode, setMode] = useState<"add_to_existing" | "create_new">(
+    "add_to_existing"
+  );
+
+  // Organization state (for add_to_existing mode)
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [loadingOrganizations, setLoadingOrganizations] = useState(false);
+  const [selectedOrganization, setSelectedOrganization] = useState<string>("");
+
+  // Organization type for create_new mode
+  const [organizationType, setOrganizationType] = useState<
+    "school_district" | "custom"
+  >("school_district");
+
+  // School districts state (for school_district org type)
   const [districts, setDistricts] = useState<DistrictData[]>([]);
   const [loadingDistricts, setLoadingDistricts] = useState(false);
   const [districtSearch, setDistrictSearch] = useState("");
   const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
   const [selectedStateFilter, setSelectedStateFilter] = useState<string>("");
 
+  // Custom org state (for custom org type)
+  const [customOrgData, setCustomOrgData] = useState({
+    name: "",
+    website: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    zipCode: "",
+  });
+
   // Form state
   const [newUser, setNewUser] = useState({
     email: "",
     name: "",
     password: "",
-    organizationRole: "ADMIN",
+    role: "MEMBER",
     districtData: null as DistrictData | null,
   });
 
@@ -99,13 +139,26 @@ export default function AdminUsersPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Fetch organizations when dialog opens and mode is add_to_existing
+  useEffect(() => {
+    if (isDialogOpen && mode === "add_to_existing") {
+      fetchOrganizations();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDialogOpen, mode]);
+
   // Fetch districts when dialog opens or state filter changes
   useEffect(() => {
-    if (isDialogOpen && (selectedStateFilter || districtSearch.length > 2)) {
+    if (
+      isDialogOpen &&
+      mode === "create_new" &&
+      organizationType === "school_district" &&
+      (selectedStateFilter || districtSearch.length > 2)
+    ) {
       fetchDistricts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedStateFilter, isDialogOpen]);
+  }, [selectedStateFilter, isDialogOpen, mode, organizationType]);
 
   const checkAdminAccess = async () => {
     const supabase = createClient();
@@ -145,6 +198,25 @@ export default function AdminUsersPage() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchOrganizations = async () => {
+    try {
+      setLoadingOrganizations(true);
+      const response = await fetch("/api/admin/organizations");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch organizations");
+      }
+
+      const data = await response.json();
+      setOrganizations(data.organizations || []);
+    } catch (error) {
+      console.error("Error fetching organizations:", error);
+      toast.error("Failed to load organizations");
+    } finally {
+      setLoadingOrganizations(false);
     }
   };
 
@@ -197,10 +269,40 @@ export default function AdminUsersPage() {
     setCreating(true);
 
     try {
+      // Build request body based on mode
+      const requestBody: any = {
+        email: newUser.email,
+        name: newUser.name,
+        password: newUser.password,
+        mode,
+        role: newUser.role,
+      };
+
+      if (mode === "add_to_existing") {
+        if (!selectedOrganization) {
+          throw new Error("Please select an organization");
+        }
+        requestBody.organizationId = selectedOrganization;
+      } else if (mode === "create_new") {
+        requestBody.organizationType = organizationType;
+
+        if (organizationType === "school_district") {
+          if (!newUser.districtData) {
+            throw new Error("Please select a school district");
+          }
+          requestBody.districtData = newUser.districtData;
+        } else if (organizationType === "custom") {
+          if (!customOrgData.name) {
+            throw new Error("Please enter an organization name");
+          }
+          requestBody.customOrgData = customOrgData;
+        }
+      }
+
       const response = await fetch("/api/admin/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newUser),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
@@ -209,19 +311,35 @@ export default function AdminUsersPage() {
         throw new Error(data.error || "Failed to create user");
       }
 
-      toast.success(
-        `User created successfully${data.emailSent ? " and welcome email sent" : ""}`
-      );
+      const successMessage = data.newOrganizationCreated
+        ? `User and organization created successfully${data.emailSent ? " and welcome email sent" : ""}`
+        : `User created successfully${data.emailSent ? " and welcome email sent" : ""}`;
+
+      toast.success(successMessage);
       setIsDialogOpen(false);
+
+      // Reset form
       setNewUser({
         email: "",
         name: "",
         password: "",
-        organizationRole: "ADMIN",
+        role: "MEMBER",
         districtData: null,
       });
+      setSelectedOrganization("");
       setDistrictSearch("");
       setSelectedStateFilter("");
+      setCustomOrgData({
+        name: "",
+        website: "",
+        email: "",
+        phone: "",
+        address: "",
+        city: "",
+        state: "",
+        zipCode: "",
+      });
+
       fetchUsers();
     } catch (error) {
       console.error("Error creating user:", error);
@@ -299,36 +417,43 @@ export default function AdminUsersPage() {
     }
   };
 
-  // Organization role toggle handler - currently unused but kept for future feature
-  // const handleToggleOrgRole = async (userId: string, currentRole: string) => {
-  //   const newRole = currentRole === "ADMIN" ? "MEMBER" : "ADMIN";
+  const handleToggleRole = async (userId: string, currentRole: string) => {
+    // Cycle through roles: MEMBER -> ADMIN -> OWNER -> MEMBER
+    const roleOrder: string[] = ["MEMBER", "ADMIN", "OWNER"];
+    const currentIndex = roleOrder.indexOf(currentRole);
+    const newRole = roleOrder[(currentIndex + 1) % roleOrder.length];
 
-  //   if (!confirm(`Change organization role to ${newRole}?`)) {
-  //     return;
-  //   }
+    if (
+      !confirm(
+        `Change user role from ${currentRole} to ${newRole}? ${newRole === "OWNER" ? "Note: Only one owner is allowed per organization." : ""}`
+      )
+    ) {
+      return;
+    }
 
-  //   try {
-  //     const response = await fetch(`/api/admin/users/${userId}`, {
-  //       method: "PATCH",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ organizationRole: newRole }),
-  //     });
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: newRole }),
+      });
 
-  //     if (!response.ok) {
-  //       const data = await response.json();
-  //       throw new Error(data.error || "Failed to update organization role");
-  //     }
+      const data = await response.json();
 
-  //     toast.success("Organization role updated successfully");
-  //     fetchUsers();
-  //   } catch (error) {
-  //     console.error("Error updating organization role:", error);
-  //     toast.error(
-  //       (error instanceof Error ? error.message : String(error)) ||
-  //         "Failed to update organization role"
-  //     );
-  //   }
-  // };
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update user role");
+      }
+
+      toast.success("User role updated successfully");
+      fetchUsers();
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      toast.error(
+        (error instanceof Error ? error.message : String(error)) ||
+          "Failed to update user role"
+      );
+    }
+  };
 
   const selectedDistrict = newUser.districtData;
 
@@ -412,182 +537,371 @@ export default function AdminUsersPage() {
                 Add User
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Create New User</DialogTitle>
                 <DialogDescription>
-                  Add a new user account to the system
+                  Add a user to an existing organization or create a new one
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleCreateUser}>
-                <div className="space-y-4 py-4">
+                <div className="space-y-6 py-4">
+                  {/* Mode Selection */}
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
-                    <Input
-                      id="name"
-                      value={newUser.name}
-                      onChange={(e) =>
-                        setNewUser({ ...newUser, name: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={newUser.email}
-                      onChange={(e) =>
-                        setNewUser({ ...newUser, email: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      value={newUser.password}
-                      onChange={(e) =>
-                        setNewUser({ ...newUser, password: e.target.value })
-                      }
-                      required
-                      minLength={6}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="organizationRole">Organization Role</Label>
+                    <Label>Action</Label>
                     <Select
-                      value={newUser.organizationRole}
-                      onValueChange={(value) =>
-                        setNewUser({ ...newUser, organizationRole: value })
-                      }
+                      value={mode}
+                      onValueChange={(
+                        value: "add_to_existing" | "create_new"
+                      ) => setMode(value)}
                     >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="MEMBER">Member</SelectItem>
-                        <SelectItem value="ADMIN">Admin</SelectItem>
-                        <SelectItem value="OWNER">Owner</SelectItem>
+                        <SelectItem value="add_to_existing">
+                          Add User to Existing Organization
+                        </SelectItem>
+                        <SelectItem value="create_new">
+                          Create New Organization
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
-                  {/* School District Selection */}
-                  <div className="space-y-2">
-                    <Label htmlFor="district">School District (Optional)</Label>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Filter by state first, then search for the district
-                    </p>
+                  {/* Add to Existing Organization Mode */}
+                  {mode === "add_to_existing" && (
+                    <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
+                      <h3 className="font-semibold">Select Organization</h3>
+                      <div className="space-y-2">
+                        <Label htmlFor="organization">Organization</Label>
+                        {loadingOrganizations ? (
+                          <div className="flex items-center gap-2 p-2">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <span className="text-sm text-muted-foreground">
+                              Loading organizations...
+                            </span>
+                          </div>
+                        ) : (
+                          <Select
+                            value={selectedOrganization}
+                            onValueChange={setSelectedOrganization}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select an organization..." />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-[300px]">
+                              {organizations.map((org) => (
+                                <SelectItem key={org.id} value={org.id}>
+                                  {org.name} ({org._count.users}{" "}
+                                  {org._count.users === 1 ? "user" : "users"})
+                                  {org.leaId && ` • ${org.state}`}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
-                    {/* State Filter */}
-                    <Select
-                      value={selectedStateFilter}
-                      onValueChange={setSelectedStateFilter}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a state..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {US_STATES.map((state) => (
-                          <SelectItem key={state} value={state}>
-                            {state}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  {/* Create New Organization Mode */}
+                  {mode === "create_new" && (
+                    <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
+                      <h3 className="font-semibold">Create Organization</h3>
+                      <div className="space-y-2">
+                        <Label>Organization Type</Label>
+                        <Select
+                          value={organizationType}
+                          onValueChange={(
+                            value: "school_district" | "custom"
+                          ) => setOrganizationType(value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="school_district">
+                              School District
+                            </SelectItem>
+                            <SelectItem value="custom">
+                              Custom Organization
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                    {/* District Search */}
-                    {selectedStateFilter && (
-                      <div className="relative">
-                        <div className="relative">
-                          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            id="district"
-                            placeholder="Search for school district..."
-                            value={districtSearch}
-                            onChange={(e) =>
-                              handleSearchDistricts(e.target.value)
-                            }
-                            onFocus={() => setShowDistrictDropdown(true)}
-                            className="pl-9"
-                          />
-                        </div>
+                      {/* School District Organization Form */}
+                      {organizationType === "school_district" && (
+                        <div className="space-y-2">
+                          <Label htmlFor="district">School District</Label>
+                          <p className="text-sm text-muted-foreground mb-2">
+                            Filter by state first, then search for the district
+                          </p>
 
-                        {/* District Dropdown */}
-                        {showDistrictDropdown &&
-                          districtSearch.length > 2 &&
-                          !selectedDistrict && (
-                            <div className="absolute z-50 w-full mt-1 bg-background border rounded-md shadow-lg max-h-60 overflow-y-auto">
-                              {loadingDistricts ? (
-                                <div className="p-4 text-center">
-                                  <Loader2 className="h-4 w-4 animate-spin mx-auto" />
-                                </div>
-                              ) : districts.length > 0 ? (
-                                <div className="py-1">
-                                  {districts.map((district) => (
-                                    <button
-                                      key={district.leaId}
+                          {/* State Filter */}
+                          <Select
+                            value={selectedStateFilter}
+                            onValueChange={setSelectedStateFilter}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a state..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {US_STATES.map((state) => (
+                                <SelectItem key={state} value={state}>
+                                  {state}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+
+                          {/* District Search */}
+                          {selectedStateFilter && (
+                            <div className="relative">
+                              <div className="relative">
+                                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                  id="district"
+                                  placeholder="Search for school district..."
+                                  value={districtSearch}
+                                  onChange={(e) =>
+                                    handleSearchDistricts(e.target.value)
+                                  }
+                                  onFocus={() => setShowDistrictDropdown(true)}
+                                  className="pl-9"
+                                />
+                              </div>
+
+                              {/* District Dropdown */}
+                              {showDistrictDropdown &&
+                                districtSearch.length > 2 &&
+                                !selectedDistrict && (
+                                  <div className="absolute z-50 w-full mt-1 bg-background border rounded-md shadow-lg max-h-60 overflow-y-auto">
+                                    {loadingDistricts ? (
+                                      <div className="p-4 text-center">
+                                        <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                                      </div>
+                                    ) : districts.length > 0 ? (
+                                      <div className="py-1">
+                                        {districts.map((district) => (
+                                          <button
+                                            key={district.leaId}
+                                            type="button"
+                                            className="w-full px-4 py-2 text-left hover:bg-accent text-sm"
+                                            onClick={() =>
+                                              handleSelectDistrict(district)
+                                            }
+                                          >
+                                            <div className="font-medium">
+                                              {district.name}
+                                            </div>
+                                            <div className="text-xs text-muted-foreground">
+                                              {district.city}, {district.state}
+                                              {district.enrollment &&
+                                                ` • ${district.enrollment.toLocaleString()} students`}
+                                            </div>
+                                          </button>
+                                        ))}
+                                      </div>
+                                    ) : (
+                                      <div className="p-4 text-center text-sm text-muted-foreground">
+                                        No districts found. Try a different
+                                        search.
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+
+                              {/* Selected District Display */}
+                              {selectedDistrict && (
+                                <div className="mt-2 p-3 bg-accent rounded-md">
+                                  <div className="flex justify-between items-start">
+                                    <div>
+                                      <p className="font-medium">
+                                        {selectedDistrict.name}
+                                      </p>
+                                      <p className="text-sm text-muted-foreground">
+                                        {selectedDistrict.city},{" "}
+                                        {selectedDistrict.state}
+                                      </p>
+                                    </div>
+                                    <Button
                                       type="button"
-                                      className="w-full px-4 py-2 text-left hover:bg-accent text-sm"
-                                      onClick={() =>
-                                        handleSelectDistrict(district)
-                                      }
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => {
+                                        setNewUser({
+                                          ...newUser,
+                                          districtData: null,
+                                        });
+                                        setDistrictSearch("");
+                                      }}
                                     >
-                                      <div className="font-medium">
-                                        {district.name}
-                                      </div>
-                                      <div className="text-xs text-muted-foreground">
-                                        {district.city}, {district.state}
-                                        {district.enrollment &&
-                                          ` • ${district.enrollment.toLocaleString()} students`}
-                                      </div>
-                                    </button>
-                                  ))}
-                                </div>
-                              ) : (
-                                <div className="p-4 text-center text-sm text-muted-foreground">
-                                  No districts found. Try a different search.
+                                      Clear
+                                    </Button>
+                                  </div>
                                 </div>
                               )}
                             </div>
                           )}
+                        </div>
+                      )}
 
-                        {/* Selected District Display */}
-                        {selectedDistrict && (
-                          <div className="mt-2 p-3 bg-accent rounded-md">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <p className="font-medium">
-                                  {selectedDistrict.name}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  {selectedDistrict.city},{" "}
-                                  {selectedDistrict.state}
-                                </p>
-                              </div>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                  setNewUser({
-                                    ...newUser,
-                                    districtData: null,
-                                  });
-                                  setDistrictSearch("");
-                                }}
-                              >
-                                Clear
-                              </Button>
+                      {/* Custom Organization Form */}
+                      {organizationType === "custom" && (
+                        <div className="space-y-3">
+                          <div className="space-y-2">
+                            <Label htmlFor="orgName">Organization Name *</Label>
+                            <Input
+                              id="orgName"
+                              value={customOrgData.name}
+                              onChange={(e) =>
+                                setCustomOrgData({
+                                  ...customOrgData,
+                                  name: e.target.value,
+                                })
+                              }
+                              required={
+                                mode === "create_new" &&
+                                organizationType === "custom"
+                              }
+                              placeholder="Enter organization name"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-2">
+                              <Label htmlFor="orgWebsite">Website</Label>
+                              <Input
+                                id="orgWebsite"
+                                type="url"
+                                value={customOrgData.website}
+                                onChange={(e) =>
+                                  setCustomOrgData({
+                                    ...customOrgData,
+                                    website: e.target.value,
+                                  })
+                                }
+                                placeholder="https://example.com"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="orgEmail">Email</Label>
+                              <Input
+                                id="orgEmail"
+                                type="email"
+                                value={customOrgData.email}
+                                onChange={(e) =>
+                                  setCustomOrgData({
+                                    ...customOrgData,
+                                    email: e.target.value,
+                                  })
+                                }
+                                placeholder="contact@example.com"
+                              />
                             </div>
                           </div>
-                        )}
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-2">
+                              <Label htmlFor="orgPhone">Phone</Label>
+                              <Input
+                                id="orgPhone"
+                                type="tel"
+                                value={customOrgData.phone}
+                                onChange={(e) =>
+                                  setCustomOrgData({
+                                    ...customOrgData,
+                                    phone: e.target.value,
+                                  })
+                                }
+                                placeholder="(123) 456-7890"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="orgCity">City</Label>
+                              <Input
+                                id="orgCity"
+                                value={customOrgData.city}
+                                onChange={(e) =>
+                                  setCustomOrgData({
+                                    ...customOrgData,
+                                    city: e.target.value,
+                                  })
+                                }
+                                placeholder="City"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* User Details Section (always shown) */}
+                  <div className="space-y-4 p-4 border rounded-lg">
+                    <h3 className="font-semibold">User Details</h3>
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Full Name *</Label>
+                        <Input
+                          id="name"
+                          value={newUser.name}
+                          onChange={(e) =>
+                            setNewUser({ ...newUser, name: e.target.value })
+                          }
+                          required
+                          placeholder="John Doe"
+                        />
                       </div>
-                    )}
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email *</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={newUser.email}
+                          onChange={(e) =>
+                            setNewUser({ ...newUser, email: e.target.value })
+                          }
+                          required
+                          placeholder="john.doe@example.com"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="password">Password *</Label>
+                        <Input
+                          id="password"
+                          type="password"
+                          value={newUser.password}
+                          onChange={(e) =>
+                            setNewUser({ ...newUser, password: e.target.value })
+                          }
+                          required
+                          minLength={6}
+                          placeholder="Minimum 6 characters"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="role">Organization Role *</Label>
+                        <Select
+                          value={newUser.role}
+                          onValueChange={(value) =>
+                            setNewUser({ ...newUser, role: value })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="MEMBER">Member</SelectItem>
+                            <SelectItem value="ADMIN">Admin</SelectItem>
+                            <SelectItem value="OWNER">Owner</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground">
+                          Note: Only one owner allowed per organization
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <DialogFooter>
@@ -634,17 +948,19 @@ export default function AdminUsersPage() {
                             SYSTEM ADMIN
                           </span>
                         )}
-                        <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            user.organization?.role === "ADMIN"
-                              ? "bg-purple-100 text-purple-800"
-                              : user.organization?.role === "OWNER"
-                                ? "bg-blue-100 text-blue-800"
-                                : "bg-gray-100 text-gray-800"
+                        <button
+                          onClick={() => handleToggleRole(user.id, user.role)}
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full transition-colors hover:opacity-80 ${
+                            user.role === "OWNER"
+                              ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
+                              : user.role === "ADMIN"
+                                ? "bg-purple-100 text-purple-800 hover:bg-purple-200"
+                                : "bg-gray-100 text-gray-800 hover:bg-gray-200"
                           }`}
+                          title="Click to change role"
                         >
-                          {user.organization?.role || "MEMBER"}
-                        </span>
+                          {user.role}
+                        </button>
                       </div>
                     </td>
                     <td className="p-4 text-sm">

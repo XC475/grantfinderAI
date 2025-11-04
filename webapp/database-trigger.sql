@@ -1,46 +1,60 @@
--- Updated trigger for new schema structure
--- Renamed: Workspace → Organization, personalWorkspaceId → organizationId
+-- Updated trigger for multi-user organizations
+-- Supports adding users to existing organizations or creating new ones
 
 create or replace function public.handle_new_user()
 returns trigger as $$
 declare
-  v_organization_id text := 'org_' || replace(new.id::text, '-', '');
+  v_organization_id text;
   v_name text := coalesce(new.raw_user_meta_data->>'name', split_part(new.email, '@', 1));
+  v_existing_org_id text := new.raw_user_meta_data->>'organizationId';
+  v_role text := coalesce(new.raw_user_meta_data->>'role', 'MEMBER');
   v_district_name text := new.raw_user_meta_data->>'districtName';
   v_org_name text;
   v_slug text;
+  v_slug_counter integer := 0;
+  v_slug_candidate text;
 begin
-  -- Determine organization name: use district name if available, otherwise user name
-  if v_district_name is not null and v_district_name != '' then
-    v_org_name := v_district_name;
+  -- If organization ID provided, use it (adding to existing org)
+  if v_existing_org_id is not null and v_existing_org_id != '' then
+    v_organization_id := v_existing_org_id;
   else
-    v_org_name := v_name || '''s Organization';
+    -- Create new organization
+    v_organization_id := 'org_' || replace(new.id::text, '-', '');
+    
+    -- Determine organization name
+    if v_district_name is not null and v_district_name != '' then
+      v_org_name := v_district_name;
+    else
+      v_org_name := v_name || '''s Organization';
+    end if;
+    
+    -- Generate unique slug with conflict resolution
+    v_slug := lower(trim(coalesce(v_district_name, v_name)));
+    v_slug := regexp_replace(v_slug, '[^\w-]', '-', 'g');  -- Replace spaces & special chars with hyphens
+    v_slug := regexp_replace(v_slug, '-+', '-', 'g');      -- Replace multiple hyphens with single
+    v_slug := regexp_replace(v_slug, '^-+|-+$', '', 'g');  -- Remove leading/trailing hyphens
+    
+    -- Handle slug conflicts by appending a number
+    v_slug_candidate := v_slug;
+    while exists (select 1 from app.organizations where slug = v_slug_candidate) loop
+      v_slug_counter := v_slug_counter + 1;
+      v_slug_candidate := v_slug || '-' || v_slug_counter::text;
+    end loop;
+    v_slug := v_slug_candidate;
+    
+    -- Create organization (role field removed)
+    insert into app.organizations (id, name, slug, "createdAt", "updatedAt")
+    values (v_organization_id, v_org_name, v_slug, now(), now())
+    on conflict (id) do nothing;
   end if;
-
-  -- Properly sanitize the slug - remove ALL spaces and special characters
-  v_slug := lower(trim(coalesce(v_district_name, v_name)));
-  v_slug := regexp_replace(v_slug, '[^\w-]', '-', 'g');  -- Replace spaces & special chars with hyphens
-  v_slug := regexp_replace(v_slug, '-+', '-', 'g');      -- Replace multiple hyphens with single
-  v_slug := regexp_replace(v_slug, '^-+|-+$', '', 'g');  -- Remove leading/trailing hyphens
-
-  -- First create the organization (without type and schoolDistrictId fields)
-  insert into app.organizations (id, name, slug, role, "createdAt", "updatedAt")
-  values (
-    v_organization_id,
-    v_org_name,
-    v_slug,
-    'ADMIN'::app."OrganizationRole",
-    now(),
-    now()
-  )
-  on conflict (id) do nothing;
-
-  -- Then create the user with the organization reference
-  insert into app.users (id, email, name, "organizationId", system_admin, "createdAt", "updatedAt")
+  
+  -- Create user with role
+  insert into app.users (id, email, name, role, "organizationId", system_admin, "createdAt", "updatedAt")
   values (
     new.id,
     new.email,
     v_name,
+    v_role::app."OrganizationRole",
     v_organization_id,
     false,
     now(),

@@ -43,7 +43,9 @@ export async function POST(request: NextRequest) {
       where: {
         id: applicationId,
         organization: {
-          user: { id: user.id },
+          users: {
+            some: { id: user.id },
+          },
         },
       },
     });
