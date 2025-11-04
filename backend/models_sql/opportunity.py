@@ -64,6 +64,11 @@ class OpportunityCategoryEnum(str, PyEnum):
     Other = "Other"
 
 
+class OpportunityServicesEnum(str, PyEnum):
+    k12_education = "k12_education"
+    higher_education = "higher_education"
+
+
 class Opportunity(db.Model):
     __tablename__ = "opportunities"
 
@@ -81,7 +86,7 @@ class Opportunity(db.Model):
     funding_instrument = Column(String)  # e.g. "Grant", "Cooperative Agreement"
     category = Column(
         pg.ARRAY(Enum(OpportunityCategoryEnum, name="opportunity_category_enum")),
-        nullable=False,
+        nullable=True,
     )
     fiscal_year = Column(Integer)
     post_date = Column(Date)
@@ -105,6 +110,9 @@ class Opportunity(db.Model):
     raw_text = Column(Text)  # Full raw text of the grant posting for vectorization
     content_hash = Column(String)  # Hash of the main content div for change detection
     rfp_url = Column(String)  # URL to the RFP document if available
+    services = Column(
+        pg.ARRAY(Enum(OpportunityServicesEnum, name="opportunity_services_enum"))
+    )
 
     def __repr__(self):
         return f"<Opportunity {self.id} {self.title}>"
