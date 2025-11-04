@@ -113,6 +113,8 @@ class Opportunity(db.Model):
     services = Column(
         pg.ARRAY(Enum(OpportunityServicesEnum, name="opportunity_services_enum"))
     )
+    is_recurring = Column(Boolean, default=False)
+    application_instructions = Column(Text)  # Instructions for application process
 
     def __repr__(self):
         return f"<Opportunity {self.id} {self.title}>"
