@@ -99,19 +99,6 @@ export function DocumentEditor({
     }
   }, [enableCollaboration, currentUser]);
 
-  // Auto-save every 30 seconds
-  useEffect(() => {
-    if (!hasUnsavedChanges || !content) return;
-
-    const autoSaveInterval = setInterval(() => {
-      if (hasUnsavedChanges) {
-        handleSave();
-      }
-    }, 30000); // 30 seconds
-
-    return () => clearInterval(autoSaveInterval);
-  }, [hasUnsavedChanges, content]);
-
   const handleSave = useCallback(async () => {
     if (!hasUnsavedChanges) return;
 
@@ -125,7 +112,29 @@ export function DocumentEditor({
     }
   }, [content, hasUnsavedChanges, onSave]);
 
+  // Auto-save every 30 seconds
+  useEffect(() => {
+    if (!hasUnsavedChanges || !content) return;
+
+    console.log("⏱️  [DocumentEditor] Auto-save timer started");
+    const autoSaveInterval = setInterval(() => {
+      if (hasUnsavedChanges) {
+        console.log("💾 [DocumentEditor] Auto-saving document...");
+        handleSave();
+      }
+    }, 30000); // 30 seconds
+
+    return () => {
+      console.log("⏱️  [DocumentEditor] Auto-save timer cleared");
+      clearInterval(autoSaveInterval);
+    };
+  }, [hasUnsavedChanges, content, handleSave]);
+
   const handleContentChange = (newContent: string) => {
+    console.log("📝 [DocumentEditor] handleContentChange called", {
+      contentLength: newContent.length,
+      hasUnsavedChanges: newContent !== (document.content || ""),
+    });
     setContent(newContent);
     setHasUnsavedChanges(newContent !== (document.content || ""));
   };

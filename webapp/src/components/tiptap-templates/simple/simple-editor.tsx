@@ -219,12 +219,24 @@ export function SimpleEditor({
   const [isConnected, setIsConnected] = React.useState(false);
   const [activeUsers, setActiveUsers] = React.useState<any[]>([]);
 
+  // Debounce timer for content changes in collaboration mode
+  const contentChangeTimerRef = React.useRef<
+    ReturnType<typeof setTimeout> | undefined
+  >(undefined);
+
+  // Store onContentChange in a ref to avoid recreating editor on every render
+  const onContentChangeRef = React.useRef(onContentChange);
+  React.useEffect(() => {
+    onContentChangeRef.current = onContentChange;
+  }, [onContentChange]);
+
   // Extract stable values from config to prevent infinite loops
   const documentId = collaborationConfig?.documentId;
   const websocketUrl = collaborationConfig?.websocketUrl;
   const authToken = collaborationConfig?.authToken;
   const userName = collaborationConfig?.user?.name;
   const userColor = collaborationConfig?.user?.color;
+  const isCollaborationEnabled = !!collaborationConfig;
 
   // Debug logging
   React.useEffect(() => {
@@ -406,12 +418,6 @@ export function SimpleEditor({
       extensions: [
         StarterKit.configure({
           horizontalRule: false,
-          link: {
-            openOnClick: false,
-            enableClickSelection: true,
-          },
-          // Disable history when using collaboration (Yjs handles it)
-          ...(ydoc ? { history: false } : {}),
         }),
         HorizontalRule,
         TextAlign.configure({ types: ["heading", "paragraph"] }),
@@ -450,14 +456,35 @@ export function SimpleEditor({
       // Yjs will load the content from the shared document
       content: ydoc ? undefined : initialContent || "",
       onUpdate: ({ editor }) => {
-        if (onContentChange && !collaborationConfig) {
-          // Only call onContentChange if not in collaboration mode
-          // (collaboration handles its own persistence)
-          onContentChange(editor.getHTML());
+        const callback = onContentChangeRef.current;
+        console.log("📝 [SimpleEditor] onUpdate triggered", {
+          hasCallback: !!callback,
+          isCollaborationEnabled,
+        });
+        if (callback) {
+          if (isCollaborationEnabled) {
+            // In collaboration mode, debounce content changes to avoid excessive DB writes
+            // Multiple users typing simultaneously shouldn't trigger a save on every keystroke
+            if (contentChangeTimerRef.current) {
+              clearTimeout(contentChangeTimerRef.current);
+            }
+            contentChangeTimerRef.current = setTimeout(() => {
+              console.log(
+                "💾 [SimpleEditor] Calling onContentChange (debounced)"
+              );
+              callback(editor.getHTML());
+            }, 2000); // 2 second debounce
+          } else {
+            // In non-collaboration mode, update immediately
+            console.log(
+              "💾 [SimpleEditor] Calling onContentChange (immediate)"
+            );
+            callback(editor.getHTML());
+          }
         }
       },
     },
-    [ydoc, provider, userName, userColor]
+    [ydoc, provider, userName, userColor, isCollaborationEnabled]
   );
 
   const rect = useCursorVisibility({
@@ -476,11 +503,16 @@ export function SimpleEditor({
       const storedContent = (ydoc as any)._initialContent;
       if (storedContent) {
         const yXmlFragment = ydoc.getXmlFragment("default");
+        console.log("📝 [SimpleEditor] Checking Yjs document:", {
+          fragmentLength: yXmlFragment.length,
+          contentLength: storedContent.length,
+        });
         if (yXmlFragment.length === 0) {
           console.log(
             "📝 [SimpleEditor] Yjs document is empty after sync, populating with database content"
           );
           editor.commands.setContent(storedContent);
+          console.log("✅ [SimpleEditor] Initial content set successfully");
         } else {
           console.log(
             "📝 [SimpleEditor] Yjs document has content from server, skipping initial content"
@@ -488,6 +520,8 @@ export function SimpleEditor({
         }
         // Clear the temporary storage either way
         delete (ydoc as any)._initialContent;
+      } else {
+        console.log("📝 [SimpleEditor] No initial content to populate");
       }
 
       // Remove listener after first sync
@@ -506,6 +540,15 @@ export function SimpleEditor({
       setMobileView("main");
     }
   }, [isMobile, mobileView]);
+
+  // Cleanup debounce timer on unmount
+  React.useEffect(() => {
+    return () => {
+      if (contentChangeTimerRef.current) {
+        clearTimeout(contentChangeTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="simple-editor-wrapper">
