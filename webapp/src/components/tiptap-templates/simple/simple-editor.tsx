@@ -14,6 +14,13 @@ import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
 import { Selection } from "@tiptap/extensions";
 
+// --- Collaboration Extensions ---
+import { Collaboration } from "@tiptap/extension-collaboration";
+// Temporarily disabled - has issues with provider.doc
+// import { CollaborationCursor } from "@tiptap/extension-collaboration-cursor";
+import * as Y from "yjs";
+import { WebsocketProvider } from "y-websocket";
+
 // --- UI Primitives ---
 import { Button } from "@/components/tiptap-ui-primitive/button";
 import { Spacer } from "@/components/tiptap-ui-primitive/spacer";
@@ -176,14 +183,30 @@ const MobileToolbarContent = ({
   </>
 );
 
+interface CollaborationConfig {
+  documentId: string;
+  user: {
+    id: string;
+    name: string;
+    color: string;
+    avatar?: string | null;
+  };
+  websocketUrl: string;
+  authToken: string;
+  onConnectionStatusChange?: (isConnected: boolean) => void;
+  onActiveUsersChange?: (users: any[]) => void;
+}
+
 interface SimpleEditorProps {
   initialContent?: string;
   onContentChange?: (content: string) => void;
+  collaborationConfig?: CollaborationConfig;
 }
 
 export function SimpleEditor({
   initialContent,
   onContentChange,
+  collaborationConfig,
 }: SimpleEditorProps = {}) {
   const isMobile = useIsMobile();
   const { height } = useWindowSize();
@@ -192,56 +215,291 @@ export function SimpleEditor({
   >("main");
   const toolbarRef = React.useRef<HTMLDivElement>(null);
 
-  const editor = useEditor({
-    immediatelyRender: false,
-    shouldRerenderOnTransaction: false,
-    editorProps: {
-      attributes: {
-        autocomplete: "off",
-        autocorrect: "off",
-        autocapitalize: "off",
-        "aria-label": "Main content area, start typing to enter text.",
-        class: "simple-editor",
+  // Collaboration state
+  const [isConnected, setIsConnected] = React.useState(false);
+  const [activeUsers, setActiveUsers] = React.useState<any[]>([]);
+
+  // Extract stable values from config to prevent infinite loops
+  const documentId = collaborationConfig?.documentId;
+  const websocketUrl = collaborationConfig?.websocketUrl;
+  const authToken = collaborationConfig?.authToken;
+  const userName = collaborationConfig?.user?.name;
+  const userColor = collaborationConfig?.user?.color;
+
+  // Debug logging
+  React.useEffect(() => {
+    console.log("🔍 [SimpleEditor] Extracted values:", {
+      documentId,
+      websocketUrl,
+      hasAuthToken: !!authToken,
+      userName,
+      userColor,
+    });
+  }, [documentId, websocketUrl, authToken, userName, userColor]);
+
+  // Use refs for callbacks to avoid infinite re-renders
+  const onConnectionStatusChangeRef = React.useRef(
+    collaborationConfig?.onConnectionStatusChange
+  );
+  const onActiveUsersChangeRef = React.useRef(
+    collaborationConfig?.onActiveUsersChange
+  );
+
+  // Update refs when callbacks change
+  React.useEffect(() => {
+    onConnectionStatusChangeRef.current =
+      collaborationConfig?.onConnectionStatusChange;
+    onActiveUsersChangeRef.current = collaborationConfig?.onActiveUsersChange;
+  }, [
+    collaborationConfig?.onConnectionStatusChange,
+    collaborationConfig?.onActiveUsersChange,
+  ]);
+
+  // Initialize Yjs and WebSocket provider BEFORE editor creation
+  // This is critical - we need these objects to exist when useEditor runs
+  const { ydoc, provider } = React.useMemo(() => {
+    // Validate all required values are present
+    if (!collaborationConfig) {
+      console.log("⚠️ [SimpleEditor] No collaboration config");
+      return { ydoc: null, provider: null };
+    }
+
+    if (!documentId) {
+      console.error("❌ [SimpleEditor] Missing documentId!");
+      return { ydoc: null, provider: null };
+    }
+
+    if (!websocketUrl) {
+      console.error("❌ [SimpleEditor] Missing websocketUrl!");
+      return { ydoc: null, provider: null };
+    }
+
+    if (!authToken) {
+      console.error("❌ [SimpleEditor] Missing authToken!");
+      return { ydoc: null, provider: null };
+    }
+
+    const roomName = `doc-${documentId}`;
+    console.log("🔌 [SimpleEditor] Setting up WebSocket connection:", {
+      documentId,
+      roomName,
+      websocketUrl,
+      userName,
+    });
+
+    // Create Yjs document
+    const ydoc = new Y.Doc();
+
+    // If there's initial content and the Yjs document is empty, populate it
+    // This ensures existing database content is loaded into the collaborative document
+    if (initialContent) {
+      console.log(
+        "📝 [SimpleEditor] Populating Yjs document with initial content"
+      );
+      const yXmlFragment = ydoc.getXmlFragment("default");
+      // Only populate if the fragment is empty (new document)
+      if (yXmlFragment.length === 0) {
+        // We'll let the editor handle this after it's created
+        // Store initial content in a temporary variable
+        (ydoc as any)._initialContent = initialContent;
+      }
+    }
+
+    // Create WebSocket provider - much simpler now!
+    const provider = new WebsocketProvider(websocketUrl, roomName, ydoc, {
+      // Simple server uses "room" parameter
+      params: { room: roomName },
+      // Don't connect immediately - connect after editor is set up
+      connect: false,
+    });
+
+    console.log(
+      "✅ [SimpleEditor] WebSocket provider created, ready to connect"
+    );
+
+    return { ydoc, provider };
+  }, [documentId, websocketUrl, authToken, userName, initialContent]);
+
+  // Setup event listeners for provider
+  React.useEffect(() => {
+    if (!provider) return;
+
+    console.log("🔌 [SimpleEditor] Setting up provider event listeners");
+
+    // Handle connection status
+    const handleStatus = (event: { status: string }) => {
+      console.log(`📡 [SimpleEditor] WebSocket Status: ${event.status}`);
+      const connected = event.status === "connected";
+      setIsConnected(connected);
+      // Notify parent component via ref
+      onConnectionStatusChangeRef.current?.(connected);
+    };
+
+    const handleSync = (isSynced: boolean) => {
+      console.log(`🔄 [SimpleEditor] Document Synced: ${isSynced}`);
+    };
+
+    const handleConnectionError = (error: any) => {
+      console.error("❌ [SimpleEditor] Connection error:", error);
+    };
+
+    // Handle awareness changes (active users)
+    const handleAwarenessChange = () => {
+      if (!provider.awareness) return;
+
+      const states = Array.from(provider.awareness.getStates().entries());
+      const users = states
+        .map(([clientId, state]: [number, any]) => {
+          if (!state.user) return null;
+          return {
+            clientId,
+            ...state.user,
+          };
+        })
+        .filter(Boolean);
+
+      console.log(`👥 [SimpleEditor] Active users updated:`, users.length);
+      setActiveUsers(users);
+
+      // Notify parent component via ref
+      onActiveUsersChangeRef.current?.(users);
+    };
+
+    provider.on("status", handleStatus);
+    provider.on("sync", handleSync);
+    provider.on("connection-error", handleConnectionError);
+    provider.awareness.on("change", handleAwarenessChange);
+
+    // Initial awareness update
+    handleAwarenessChange();
+
+    // Connect the provider NOW (after editor is set up)
+    console.log("🔗 [SimpleEditor] Connecting WebSocket provider...");
+    provider.connect();
+
+    // Cleanup on unmount
+    return () => {
+      console.log("🧹 [SimpleEditor] Cleaning up provider listeners");
+      provider.off("status", handleStatus);
+      provider.off("sync", handleSync);
+      provider.off("connection-error", handleConnectionError);
+      provider.awareness.off("change", handleAwarenessChange);
+      provider.disconnect();
+      provider.destroy();
+      ydoc?.destroy();
+    };
+  }, [provider, ydoc]);
+
+  const editor = useEditor(
+    {
+      immediatelyRender: false,
+      shouldRerenderOnTransaction: false,
+      editorProps: {
+        attributes: {
+          autocomplete: "off",
+          autocorrect: "off",
+          autocapitalize: "off",
+          "aria-label": "Main content area, start typing to enter text.",
+          class: "simple-editor",
+        },
+      },
+      extensions: [
+        StarterKit.configure({
+          horizontalRule: false,
+          link: {
+            openOnClick: false,
+            enableClickSelection: true,
+          },
+          // Disable history when using collaboration (Yjs handles it)
+          ...(ydoc ? { history: false } : {}),
+        }),
+        HorizontalRule,
+        TextAlign.configure({ types: ["heading", "paragraph"] }),
+        TaskList,
+        TaskItem.configure({ nested: true }),
+        Highlight.configure({ multicolor: true }),
+        Image,
+        Typography,
+        Superscript,
+        Subscript,
+        Selection,
+        ImageUploadNode.configure({
+          accept: "image/*",
+          maxSize: MAX_FILE_SIZE,
+          limit: 3,
+          upload: handleImageUpload,
+          onError: (error) => console.error("Upload failed:", error),
+        }),
+        // Add collaboration extensions if ydoc and provider exist
+        ...(ydoc && provider
+          ? [
+              Collaboration.configure({
+                document: ydoc,
+              }),
+              // TODO: Add CollaborationCursor back after testing
+              // CollaborationCursor has issues with provider.doc being undefined
+              // We'll add it back once basic sync is working
+              // CollaborationCursor.configure({
+              //   provider: provider,
+              //   user: collaborationConfig!.user,
+              // }),
+            ]
+          : []),
+      ],
+      // CRITICAL: Don't set initial content when using collaboration
+      // Yjs will load the content from the shared document
+      content: ydoc ? undefined : initialContent || "",
+      onUpdate: ({ editor }) => {
+        if (onContentChange && !collaborationConfig) {
+          // Only call onContentChange if not in collaboration mode
+          // (collaboration handles its own persistence)
+          onContentChange(editor.getHTML());
+        }
       },
     },
-    extensions: [
-      StarterKit.configure({
-        horizontalRule: false,
-        link: {
-          openOnClick: false,
-          enableClickSelection: true,
-        },
-      }),
-      HorizontalRule,
-      TextAlign.configure({ types: ["heading", "paragraph"] }),
-      TaskList,
-      TaskItem.configure({ nested: true }),
-      Highlight.configure({ multicolor: true }),
-      Image,
-      Typography,
-      Superscript,
-      Subscript,
-      Selection,
-      ImageUploadNode.configure({
-        accept: "image/*",
-        maxSize: MAX_FILE_SIZE,
-        limit: 3,
-        upload: handleImageUpload,
-        onError: (error) => console.error("Upload failed:", error),
-      }),
-    ],
-    content: initialContent || "",
-    onUpdate: ({ editor }) => {
-      if (onContentChange) {
-        onContentChange(editor.getHTML());
-      }
-    },
-  });
+    [ydoc, provider, userName, userColor]
+  );
 
   const rect = useCursorVisibility({
     editor,
     overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
   });
+
+  // Populate editor with initial content AFTER first sync, if Yjs document is empty
+  React.useEffect(() => {
+    if (!provider || !editor || !ydoc) return;
+
+    const handleFirstSync = (isSynced: boolean) => {
+      if (!isSynced) return;
+
+      // Check if there's stored initial content and the Yjs document is empty
+      const storedContent = (ydoc as any)._initialContent;
+      if (storedContent) {
+        const yXmlFragment = ydoc.getXmlFragment("default");
+        if (yXmlFragment.length === 0) {
+          console.log(
+            "📝 [SimpleEditor] Yjs document is empty after sync, populating with database content"
+          );
+          editor.commands.setContent(storedContent);
+        } else {
+          console.log(
+            "📝 [SimpleEditor] Yjs document has content from server, skipping initial content"
+          );
+        }
+        // Clear the temporary storage either way
+        delete (ydoc as any)._initialContent;
+      }
+
+      // Remove listener after first sync
+      provider.off("sync", handleFirstSync);
+    };
+
+    provider.on("sync", handleFirstSync);
+
+    return () => {
+      provider.off("sync", handleFirstSync);
+    };
+  }, [editor, ydoc, provider]);
 
   React.useEffect(() => {
     if (!isMobile && mobileView !== "main") {

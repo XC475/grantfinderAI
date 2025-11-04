@@ -16,17 +16,41 @@ interface Document {
   updatedAt: string;
 }
 
+interface User {
+  id: string;
+  email: string;
+  name: string | null;
+  avatarUrl: string | null;
+}
+
 interface DocumentPageProps {
   params: Promise<{ slug: string; applicationId: string; documentId: string }>;
 }
 
 export default function DocumentPage({ params }: DocumentPageProps) {
   const [document, setDocument] = useState<Document | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const router = useRouter();
 
   const { slug: organizationSlug, applicationId, documentId } = use(params);
+
+  // Fetch current user
+  useEffect(() => {
+    async function fetchCurrentUser() {
+      try {
+        const response = await fetch("/api/user/me");
+        if (response.ok) {
+          const userData = await response.json();
+          setCurrentUser(userData);
+        }
+      } catch (error) {
+        console.error("Error fetching current user:", error);
+      }
+    }
+    fetchCurrentUser();
+  }, []);
 
   const fetchDocument = useCallback(async () => {
     try {
@@ -119,6 +143,8 @@ export default function DocumentPage({ params }: DocumentPageProps) {
       organizationSlug={organizationSlug}
       onSave={handleSave}
       isSaving={saving}
+      currentUser={currentUser || undefined}
+      enableCollaboration={true}
     />
   );
 }
