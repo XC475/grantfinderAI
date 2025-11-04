@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
+import { OrganizationRole } from "@/generated/prisma";
 
 // DELETE /api/admin/users/[userId] - Delete a user (admin only).
 export async function DELETE(
@@ -149,12 +150,12 @@ export async function PATCH(
     }
 
     // Build update data
-    const updateData: { system_admin?: boolean; role?: string } = {};
+    const updateData: { system_admin?: boolean; role?: OrganizationRole } = {};
     if (system_admin !== undefined) {
       updateData.system_admin = system_admin;
     }
     if (role) {
-      updateData.role = role;
+      updateData.role = role as OrganizationRole;
     }
 
     // Update user
