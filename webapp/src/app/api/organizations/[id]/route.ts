@@ -21,13 +21,17 @@ export async function PATCH(
     const { id } = await params;
     const body = await request.json();
 
-    // Verify user owns this organization
+    // Verify user is a member of this organization (with ADMIN or OWNER role)
     const organization = await prisma.organization.findUnique({
       where: { id },
       select: {
         id: true,
-        user: {
-          select: { id: true },
+        users: {
+          where: {
+            id: user.id,
+            role: { in: ["ADMIN", "OWNER"] },
+          },
+          select: { id: true, role: true },
         },
       },
     });
@@ -39,8 +43,11 @@ export async function PATCH(
       );
     }
 
-    if (organization.user?.id !== user.id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (organization.users.length === 0) {
+      return NextResponse.json(
+        { error: "Forbidden - Admin or Owner access required" },
+        { status: 403 }
+      );
     }
 
     // Update organization
@@ -63,10 +70,6 @@ export async function PATCH(
         city: body.city,
         state: body.state,
         zipCode: body.zipCode,
-        onboardingCompleted:
-          body.onboarding_completed !== undefined
-            ? body.onboarding_completed
-            : undefined,
       },
       select: {
         id: true,
@@ -85,7 +88,6 @@ export async function PATCH(
         city: true,
         state: true,
         zipCode: true,
-        onboardingCompleted: true,
         createdAt: true,
         updatedAt: true,
       },

@@ -187,7 +187,7 @@ export function DocumentChatSidebar({
   return (
     <div className="flex flex-col h-full bg-background border-l">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
+      <div className="flex items-center justify-between p-4 border-b flex-shrink-0 ml-6">
         <h2 className="text-lg font-semibold">Assistant</h2>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0">

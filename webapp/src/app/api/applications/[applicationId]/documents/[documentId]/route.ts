@@ -26,7 +26,9 @@ export async function GET(
         applicationId: applicationId,
         applications: {
           organization: {
-            user: { id: user.id },
+            users: {
+              some: { id: user.id },
+            },
           },
         },
       },
@@ -73,7 +75,9 @@ export async function PUT(
         applicationId: applicationId,
         applications: {
           organization: {
-            user: { id: user.id },
+            users: {
+              some: { id: user.id },
+            },
           },
         },
       },
@@ -135,7 +139,9 @@ export async function DELETE(
         applicationId: applicationId,
         applications: {
           organization: {
-            user: { id: user.id },
+            users: {
+              some: { id: user.id },
+            },
           },
         },
       },

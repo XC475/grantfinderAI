@@ -4,11 +4,15 @@ import { Separator } from "@/components/ui/separator";
 import { DynamicBreadcrumb } from "@/components/sidebar/dynamic-breadcrumb";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import { unstable_noStore } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 
 // Note: Authentication and access checks are now handled by middleware.ts
 // This makes the layout lighter and prevents full page reloads on navigation
+
+// Disable caching for this layout to always get fresh onboarding status
+export const dynamic = "force-dynamic";
 
 export default async function OrganizationLayout({
   children,
@@ -23,46 +27,56 @@ export default async function OrganizationLayout({
   const headersList = await headers();
   const pathname = headersList.get("x-pathname") || "";
 
-  // Check if user needs to complete onboarding
+  // Check if we're on the onboarding page first (before any DB queries)
+  // Use exact path matching - check if pathname ends with /onboarding or /onboarding/
+  const isOnboardingPage = pathname.includes("/onboarding");
+
+  // Early return for onboarding page to prevent any redirect loops
+  // This MUST happen before any database queries or user checks
+  if (isOnboardingPage) {
+    return <>{children}</>;
+  }
+
+  // Check if user needs to complete onboarding (only if not already on onboarding page)
+  // Use unstable_noStore to prevent caching of onboarding status
+  unstable_noStore();
+
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (user) {
-    const userWithOrg = await prisma.user.findUnique({
+    // Fetch fresh data without caching
+    const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
-      include: {
+      select: {
+        onboardingCompleted: true,
         organization: {
           select: {
-            onboardingCompleted: true,
             slug: true,
           },
         },
       },
     });
 
-    // Redirect to onboarding if not completed, but not if already on onboarding page
-    const isOnboardingPage = pathname.includes("/onboarding");
+    // Redirect to onboarding if not completed and we're not already there
+    if (dbUser && !dbUser.onboardingCompleted && dbUser.organization?.slug) {
+      const targetSlug = dbUser.organization.slug;
+      const targetOnboardingPath = `/private/${targetSlug}/onboarding`;
 
-    if (
-      userWithOrg?.organization &&
-      !userWithOrg.organization.onboardingCompleted &&
-      !isOnboardingPage
-    ) {
-      redirect(`/private/${userWithOrg.organization.slug}/onboarding`);
+      // Double-check we're not already on the onboarding page
+      if (
+        !pathname.includes("/onboarding") &&
+        pathname !== targetOnboardingPath
+      ) {
+        redirect(targetOnboardingPath);
+      }
     }
   }
 
-  // Don't show sidebar on onboarding page
-  const isOnboardingPage = pathname.includes("/onboarding");
-
   // Check if we're on a document editor page
   const isDocumentPage = pathname.includes("/documents/");
-
-  if (isOnboardingPage) {
-    return <>{children}</>;
-  }
 
   return (
     <SidebarProvider>

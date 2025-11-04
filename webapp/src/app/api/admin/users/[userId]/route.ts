@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
+import { OrganizationRole } from "@/generated/prisma";
 
 // DELETE /api/admin/users/[userId] - Delete a user (admin only).
 export async function DELETE(
@@ -100,7 +101,7 @@ export async function PATCH(
   try {
     const { userId } = await params;
     const body = await request.json();
-    const { system_admin, organizationRole } = body;
+    const { system_admin, role } = body;
 
     if (!userId) {
       return NextResponse.json({ error: "User ID required" }, { status: 400 });
@@ -114,38 +115,54 @@ export async function PATCH(
       );
     }
 
-    if (
-      organizationRole &&
-      !["OWNER", "ADMIN", "MEMBER"].includes(organizationRole)
-    ) {
+    if (role && !["OWNER", "ADMIN", "MEMBER"].includes(role)) {
       return NextResponse.json(
-        { error: "Invalid organization role" },
+        { error: "Invalid role. Must be OWNER, ADMIN, or MEMBER" },
         { status: 400 }
       );
     }
 
-    // Update user system_admin if provided
-    if (system_admin !== undefined) {
-      await prisma.user.update({
-        where: { id: userId },
-        data: { system_admin },
-      });
-    }
-
-    // Update organization role if provided
-    if (organizationRole) {
+    // If updating to OWNER role, check for existing owner
+    if (role === "OWNER") {
       const user = await prisma.user.findUnique({
         where: { id: userId },
         select: { organizationId: true },
       });
 
       if (user?.organizationId) {
-        await prisma.organization.update({
-          where: { id: user.organizationId },
-          data: { role: organizationRole },
+        const existingOwner = await prisma.user.findFirst({
+          where: {
+            organizationId: user.organizationId,
+            role: "OWNER",
+            id: { not: userId }, // Exclude current user
+          },
         });
+
+        if (existingOwner) {
+          return NextResponse.json(
+            {
+              error: `Organization already has an owner: ${existingOwner.name} (${existingOwner.email})`,
+            },
+            { status: 400 }
+          );
+        }
       }
     }
+
+    // Build update data
+    const updateData: { system_admin?: boolean; role?: OrganizationRole } = {};
+    if (system_admin !== undefined) {
+      updateData.system_admin = system_admin;
+    }
+    if (role) {
+      updateData.role = role as OrganizationRole;
+    }
+
+    // Update user
+    await prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+    });
 
     // Get updated user with organization
     const updatedUser = await prisma.user.findUnique({
@@ -154,11 +171,12 @@ export async function PATCH(
         id: true,
         email: true,
         name: true,
+        role: true,
         system_admin: true,
         organization: {
           select: {
-            role: true,
             slug: true,
+            name: true,
           },
         },
       },

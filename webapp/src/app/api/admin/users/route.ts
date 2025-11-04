@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 import { sendWelcomeEmail } from "@/lib/email";
+import crypto from "crypto";
 
 // POST /api/admin/users - Admin creates a new user
 export async function POST(request: NextRequest) {
@@ -35,31 +36,64 @@ export async function POST(request: NextRequest) {
       email,
       name,
       password,
-      organizationRole = "ADMIN",
-      districtData,
+      mode, // 'add_to_existing' or 'create_new'
+      organizationId, // Required for 'add_to_existing'
+      role = "MEMBER", // User's role in organization
+      system_admin = false, // System admin flag
+      organizationType, // 'school_district' or 'custom' for 'create_new'
+      districtData, // For school district orgs
+      customOrgData, // For custom orgs
     } = body;
 
     console.log(
-      `[Admin] Creating user with email: ${email}, has district data: ${!!districtData}`
+      `[Admin] Creating user with email: ${email}, mode: ${mode}, role: ${role}, system_admin: ${system_admin}`
     );
-    if (districtData) {
-      console.log(
-        `[Admin] District data:`,
-        JSON.stringify(districtData, null, 2)
-      );
-    }
 
     // Validate input
-    if (!email || !name || !password) {
+    if (!email || !name) {
       return NextResponse.json(
-        { error: "Email, name, and password are required" },
+        { error: "Email and name are required" },
         { status: 400 }
       );
     }
 
-    // Store district data for later organization update
-    const districtInfo = districtData?.leaId
-      ? {
+    // Generate secure random password if not provided
+    const generatedPassword =
+      password || crypto.randomBytes(16).toString("base64url");
+
+    if (!mode || (mode !== "add_to_existing" && mode !== "create_new")) {
+      return NextResponse.json(
+        { error: "Mode must be 'add_to_existing' or 'create_new'" },
+        { status: 400 }
+      );
+    }
+
+    // Validate mode-specific requirements
+    if (mode === "add_to_existing" && !organizationId) {
+      return NextResponse.json(
+        { error: "organizationId is required for add_to_existing mode" },
+        { status: 400 }
+      );
+    }
+
+    if (mode === "create_new" && !organizationType) {
+      return NextResponse.json(
+        {
+          error:
+            "organizationType ('school_district' or 'custom') is required for create_new mode",
+        },
+        { status: 400 }
+      );
+    }
+
+    let targetOrganizationId = organizationId;
+    let newOrganizationCreated = false;
+
+    // If creating new organization, handle that first
+    if (mode === "create_new") {
+      if (organizationType === "school_district" && districtData?.leaId) {
+        // Create organization with district data
+        const districtInfo = {
           leaId: districtData.leaId,
           state: districtData.state,
           stateLeaId: districtData.stateLeaId,
@@ -75,27 +109,122 @@ export async function POST(request: NextRequest) {
           highestGrade: districtData.highestGrade,
           urbanCentricLocale: districtData.urbanCentricLocale,
           districtDataYear: districtData.districtDataYear || 2022,
-        }
-      : null;
+        };
 
-    // Store district name separately to update organization name
-    const districtName = districtData?.name;
+        // Generate slug from district name
+        const slug = districtData.name
+          .toLowerCase()
+          .replace(/[^\w-]/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-+|-+$/g, "");
+
+        // Ensure slug is unique
+        let slugCounter = 0;
+        let uniqueSlug = slug;
+        while (
+          await prisma.organization.findUnique({ where: { slug: uniqueSlug } })
+        ) {
+          slugCounter++;
+          uniqueSlug = `${slug}-${slugCounter}`;
+        }
+
+        const newOrg = await prisma.organization.create({
+          data: {
+            name: districtData.name,
+            slug: uniqueSlug,
+            ...districtInfo,
+          },
+        });
+
+        targetOrganizationId = newOrg.id;
+        newOrganizationCreated = true;
+        console.log(
+          `[Admin] Created new school district organization: ${newOrg.name} (${newOrg.slug})`
+        );
+      } else if (organizationType === "custom" && customOrgData?.name) {
+        // Create custom organization
+        const slug = customOrgData.name
+          .toLowerCase()
+          .replace(/[^\w-]/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-+|-+$/g, "");
+
+        // Ensure slug is unique
+        let slugCounter = 0;
+        let uniqueSlug = slug;
+        while (
+          await prisma.organization.findUnique({ where: { slug: uniqueSlug } })
+        ) {
+          slugCounter++;
+          uniqueSlug = `${slug}-${slugCounter}`;
+        }
+
+        const newOrg = await prisma.organization.create({
+          data: {
+            name: customOrgData.name,
+            slug: uniqueSlug,
+            website: customOrgData.website || null,
+            email: customOrgData.email || null,
+            phone: customOrgData.phone || null,
+            address: customOrgData.address || null,
+            city: customOrgData.city || null,
+            state: customOrgData.state || null,
+            zipCode: customOrgData.zipCode || null,
+          },
+        });
+
+        targetOrganizationId = newOrg.id;
+        newOrganizationCreated = true;
+        console.log(
+          `[Admin] Created new custom organization: ${newOrg.name} (${newOrg.slug})`
+        );
+      } else {
+        return NextResponse.json(
+          { error: "Invalid organization data provided" },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Verify organization exists
+    const organization = await prisma.organization.findUnique({
+      where: { id: targetOrganizationId },
+      include: {
+        users: {
+          where: { role: "OWNER" },
+        },
+      },
+    });
+
+    if (!organization) {
+      return NextResponse.json(
+        { error: "Organization not found" },
+        { status: 404 }
+      );
+    }
+
+    // Check for single owner constraint
+    if (role === "OWNER" && organization.users.length > 0) {
+      return NextResponse.json(
+        {
+          error: `Organization already has an owner: ${organization.users[0].name} (${organization.users[0].email})`,
+        },
+        { status: 400 }
+      );
+    }
 
     // Create user in Supabase Auth with admin API
     console.log(`[Admin] Creating Supabase Auth user...`);
     const { data: authData, error: authError } =
       await supabase.auth.admin.createUser({
         email,
-        password,
+        password: generatedPassword,
         email_confirm: true, // Auto-confirm email
         user_metadata: {
           name,
-          ...(districtName && districtInfo?.leaId
-            ? {
-                districtName: districtName,
-                leaId: districtInfo.leaId,
-              }
-            : {}),
+          organizationId: targetOrganizationId,
+          role: role,
+          hasTemporaryPassword: true,
         },
       });
 
@@ -119,7 +248,7 @@ export async function POST(request: NextRequest) {
 
     // Verify user was created by trigger
     console.log(`[Admin] Verifying user creation in app.users...`);
-    const newUser = await prisma.user.findUnique({
+    let newUser = await prisma.user.findUnique({
       where: { id: userId },
       include: { organization: true },
     });
@@ -134,6 +263,16 @@ export async function POST(request: NextRequest) {
 
     console.log(`[Admin] User record found in database`);
 
+    // Update system_admin field if needed
+    if (system_admin && newUser) {
+      console.log(`[Admin] Setting system_admin flag to true...`);
+      newUser = await prisma.user.update({
+        where: { id: userId },
+        data: { system_admin: true },
+        include: { organization: true },
+      });
+    }
+
     if (!newUser.organization) {
       console.error(
         `[Admin] Trigger failed to create organization for ${email}`
@@ -145,41 +284,9 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`[Admin] Organization found: ${newUser.organization.slug}`);
-
     console.log(
-      `[Admin] User ${email} created with organization ${newUser.organization.slug}`
+      `[Admin] User ${email} created in organization ${newUser.organization.slug} with role ${newUser.role}`
     );
-
-    // Update organization with role and district data
-    const updateData = {
-      role: organizationRole,
-      ...(districtName ? { name: districtName } : {}),
-      ...(districtInfo || {}),
-    };
-
-    console.log(
-      `[Admin] Updating organization with data:`,
-      JSON.stringify(updateData, null, 2)
-    );
-
-    try {
-      await prisma.organization.update({
-        where: { id: newUser.organization.id },
-        data: updateData,
-      });
-      console.log(`[Admin] Organization role set to ${organizationRole}`);
-
-      if (districtInfo && districtName) {
-        console.log(
-          `[Admin] Organization created for district: ${districtName}`
-        );
-      }
-    } catch (updateError) {
-      console.error(`[Admin] Error updating organization:`, updateError);
-      throw new Error(
-        `Failed to update organization: ${updateError instanceof Error ? updateError.message : "Unknown error"}`
-      );
-    }
 
     // Get updated user with organization
     const updatedUser = await prisma.user.findUnique({
@@ -202,7 +309,7 @@ export async function POST(request: NextRequest) {
       to: email,
       name: name,
       loginUrl: `${siteUrl}/login`,
-      temporaryPassword: password,
+      temporaryPassword: generatedPassword,
       organizationUrl: `${siteUrl}/private/${organizationSlug}/dashboard`,
     });
 
@@ -218,13 +325,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       message: "User created successfully",
       emailSent: emailResult.success,
+      newOrganizationCreated,
       user: {
         id: updatedUser?.id,
         email: updatedUser?.email,
         name: updatedUser?.name,
+        role: updatedUser?.role,
         system_admin: updatedUser?.system_admin,
         organizationSlug: updatedUser?.organization?.slug,
-        organizationRole: updatedUser?.organization?.role,
+        organizationName: updatedUser?.organization?.name,
+        organizationId: updatedUser?.organization?.id,
         districtInfo: updatedUser?.organization?.leaId
           ? {
               name: updatedUser.organization.name,
@@ -279,13 +389,13 @@ export async function GET() {
         id: true,
         email: true,
         name: true,
+        role: true,
         system_admin: true,
         createdAt: true,
         lastActiveAt: true,
         organization: {
           select: {
             slug: true,
-            role: true,
             name: true,
             leaId: true,
             state: true,

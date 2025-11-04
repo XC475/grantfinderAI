@@ -84,6 +84,7 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith("/register") &&
     !request.nextUrl.pathname.startsWith("/auth") &&
     !request.nextUrl.pathname.startsWith("/error") &&
+    !request.nextUrl.pathname.startsWith("/set-password") &&
     request.nextUrl.pathname !== "/"
   ) {
     // no user, potentially respond by redirecting the user to the login page
@@ -91,6 +92,9 @@ export async function updateSession(request: NextRequest) {
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
+
+  // Note: Temporary password check is handled in login action (not middleware)
+  // because Prisma cannot run on Edge runtime where middleware executes
 
   // Organization access verification (for /private/[slug] routes)
   if (user && request.nextUrl.pathname.startsWith("/private/")) {

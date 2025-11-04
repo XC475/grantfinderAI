@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { redirectWithToast } from "@/lib/toast";
 import { getUserOrganization } from "@/lib/organization";
+import prisma from "@/lib/prisma";
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
@@ -33,6 +34,17 @@ export async function login(formData: FormData) {
   // Get user's organization and redirect to it
   if (authData.user) {
     try {
+      // Check if user has temporary password
+      const dbUser = await prisma.user.findUnique({
+        where: { id: authData.user.id },
+        select: { hasTemporaryPassword: true },
+      });
+
+      if (dbUser?.hasTemporaryPassword) {
+        revalidatePath("/", "layout");
+        redirect("/set-password");
+      }
+
       const organization = await getUserOrganization(authData.user.id);
       revalidatePath("/", "layout");
       redirect(

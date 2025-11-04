@@ -24,7 +24,9 @@ export async function PATCH(
       where: {
         id: applicationId,
         organization: {
-          user: { id: user.id },
+          users: {
+            some: { id: user.id },
+          },
         },
       },
     });
@@ -96,7 +98,9 @@ export async function GET(
       where: {
         id: applicationId,
         organization: {
-          user: { id: user.id },
+          users: {
+            some: { id: user.id },
+          },
         },
       },
       select: {

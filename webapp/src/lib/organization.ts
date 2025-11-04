@@ -82,7 +82,8 @@ export async function verifyOrganizationAccess(
     where: { slug: organizationSlug },
     select: {
       id: true,
-      user: {
+      users: {
+        where: { id: userId },
         select: { id: true },
       },
     },
@@ -92,8 +93,8 @@ export async function verifyOrganizationAccess(
     return false;
   }
 
-  // Check if it's their organization
-  if (organization.user?.id === userId) {
+  // Check if user is a member of this organization
+  if (organization.users.length > 0) {
     return true;
   }
 

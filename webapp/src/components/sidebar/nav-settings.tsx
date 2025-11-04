@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BadgeCheck, CreditCard, Bell } from "lucide-react";
+import { BadgeCheck, CreditCard, Bell, Users } from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -36,6 +36,11 @@ export function NavSettings({ organizationSlug }: NavSettingsProps) {
       url: `/private/${organizationSlug}/settings/notifications`,
       icon: Bell,
     },
+    {
+      title: "Team",
+      url: `/private/${organizationSlug}/settings/team`,
+      icon: Users,
+    },
   ];
 
   return (
@@ -59,4 +64,3 @@ export function NavSettings({ organizationSlug }: NavSettingsProps) {
     </SidebarGroup>
   );
 }
-
