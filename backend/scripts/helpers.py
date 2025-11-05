@@ -184,16 +184,102 @@ def calculate_content_hash(content: str) -> str:
     return hashlib.md5(content.encode("utf-8")).hexdigest()
 
 
-def fetch_and_hash_page(page_url: str, timeout: int = 30) -> str:
+def normalize_content_for_hashing(html_content: str) -> str:
     """
-    Fetch page content and return both the HTML and its content hash.
+    Normalize HTML content by removing dynamic elements that don't affect grant content.
+    This helps create stable hashes even when pages have dynamic elements.
+    """
+    try:
+        from bs4 import BeautifulSoup
+        import re
+
+        soup = BeautifulSoup(html_content, "html.parser")
+
+        # Remove common dynamic elements
+        # Remove script tags (analytics, tracking, etc.)
+        for script in soup.find_all("script"):
+            script.decompose()
+
+        # Remove style tags (might contain dynamic CSS)
+        for style in soup.find_all("style"):
+            style.decompose()
+
+        # Remove common tracking/analytics elements
+        tracking_selectors = [
+            "[data-gtag]",
+            "[data-analytics]",
+            "[data-tracking]",
+            ".google-analytics",
+            ".gtag",
+            ".tracking",
+            '[id*="google"]',
+            '[class*="analytics"]',
+        ]
+
+        for selector in tracking_selectors:
+            try:
+                for element in soup.select(selector):
+                    element.decompose()
+            except Exception as e:
+                print(
+                    f"Warning: failed to remove elements matching selector '{selector}': {e}"
+                )
+                continue
+
+        # Remove elements with dynamic IDs (like session IDs)
+        for element in soup.find_all(attrs={"id": True}):
+            id_value = element.get("id", "")
+            # Remove elements with IDs that look like session/random strings
+            if re.match(
+                r"^[a-f0-9]{8,}$|^session|^csrf|^nonce|^random", id_value, re.I
+            ):
+                element.decompose()
+
+        # Get text content and remove timestamp patterns
+        text_content = soup.get_text()
+
+        # Remove common timestamp patterns
+        timestamp_patterns = [
+            r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}",  # ISO timestamps
+            r"\d{1,2}/\d{1,2}/\d{4} \d{1,2}:\d{2}",  # Date/time patterns
+            r"Last updated:?\s*\d+",  # "Last updated" text
+            r"Generated at:?\s*\d+",  # "Generated at" text
+            r"Cache:?\s*\d+",  # Cache timestamps
+        ]
+
+        for pattern in timestamp_patterns:
+            text_content = re.sub(
+                pattern, "[TIMESTAMP_REMOVED]", text_content, flags=re.I
+            )
+
+        # Return normalized text content (most stable for hashing)
+        return text_content.strip()
+
+    except Exception as e:
+        print(f"Error normalizing content: {e}")
+        # Fallback to original content
+        return html_content
+
+
+def calculate_normalized_content_hash(html_content: str) -> str:
+    """Calculate hash of normalized content for more stable change detection."""
+    normalized = normalize_content_for_hashing(html_content)
+    return hashlib.md5(normalized.encode("utf-8")).hexdigest()
+
+
+def fetch_and_hash_page(
+    page_url: str, timeout: int = 30, use_normalized: bool = True
+) -> str:
+    """
+    Fetch page content and return its content hash.
 
     Args:
         page_url: URL to fetch
         timeout: Request timeout in seconds
+        use_normalized: Use normalized hashing for more stable results
 
     Returns:
-        Tuple of (html_content, content_hash)
+        Content hash string
     """
 
     try:
@@ -207,8 +293,11 @@ def fetch_and_hash_page(page_url: str, timeout: int = 30) -> str:
         # Get the raw HTML
         html_content = response.text
 
-        # Calculate hash of the full HTML content
-        content_hash = calculate_content_hash(html_content)
+        # Calculate hash using normalized or regular method
+        if use_normalized:
+            content_hash = calculate_normalized_content_hash(html_content)
+        else:
+            content_hash = calculate_content_hash(html_content)
 
         return content_hash
 
@@ -460,7 +549,7 @@ def smart_scrape_pipeline(
     from models_sql.opportunity import Opportunity
 
     # Calculate content hash
-    content_hash = calculate_content_hash(html_content)
+    content_hash = calculate_normalized_content_hash(html_content)
 
     # Check if opportunity already exists by URL
     existing_opportunity = db_session.query(Opportunity).filter_by(url=page_url).first()
