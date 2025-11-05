@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bookmark, BookmarkCheck, ExternalLink } from "lucide-react";
+import { Bookmark, BookmarkCheck, ExternalLink, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { Loading } from "@/components/ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 
 type Grant = {
   id: number;
@@ -68,6 +69,7 @@ function formatDate(dateString: string | null) {
 
 export default function GrantDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const grantId = params.grantId as string;
   const slug = params.slug as string;
 
@@ -75,6 +77,7 @@ export default function GrantDetailPage() {
   const [loading, setLoading] = useState(true);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [bookmarking, setBookmarking] = useState(false);
+  const [applying, setApplying] = useState(false);
 
   useEffect(() => {
     fetchGrant();
@@ -131,6 +134,52 @@ export default function GrantDetailPage() {
     }
   };
 
+  const handleApply = async () => {
+    try {
+      setApplying(true);
+
+      // Create a new application for this grant
+      const res = await fetch("/api/applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          opportunityId: parseInt(grantId),
+          organizationSlug: slug,
+          grantTitle: grant?.title,
+          alsoBookmark: true, // Also bookmark when creating application
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.status === 409) {
+        toast.info("Application already exists for this grant");
+        // Navigate to existing application if we have the ID
+        if (data.applicationId) {
+          router.push(`/private/${slug}/applications/${data.applicationId}`);
+        }
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to create application");
+      }
+
+      toast.success("Application created successfully!");
+
+      // Navigate to the application page
+      router.push(`/private/${slug}/applications/${data.application.id}`);
+    } catch (error) {
+      console.error("Error creating application:", error);
+      toast.error(
+        (error instanceof Error ? error.message : String(error)) ||
+          "Failed to create application"
+      );
+    } finally {
+      setApplying(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
@@ -179,24 +228,35 @@ export default function GrantDetailPage() {
               )}
             </div>
           </div>
-          <Button
-            onClick={toggleBookmark}
-            disabled={bookmarking}
-            variant={isBookmarked ? "default" : "outline"}
-            className="flex-shrink-0"
-          >
-            {isBookmarked ? (
-              <>
-                <BookmarkCheck className="h-4 w-4 mr-2" />
-                Saved
-              </>
-            ) : (
-              <>
-                <Bookmark className="h-4 w-4 mr-2" />
-                Save
-              </>
-            )}
-          </Button>
+          <div className="flex gap-2 flex-shrink-0">
+            <Button
+              onClick={toggleBookmark}
+              disabled={bookmarking}
+              variant={isBookmarked ? "default" : "outline"}
+            >
+              {isBookmarked ? (
+                <>
+                  <BookmarkCheck className="h-4 w-4 mr-2" />
+                  Saved
+                </>
+              ) : (
+                <>
+                  <Bookmark className="h-4 w-4 mr-2" />
+                  Save
+                </>
+              )}
+            </Button>
+            <Button onClick={handleApply} disabled={applying} variant="default">
+              {applying ? (
+                <Spinner size="sm" />
+              ) : (
+                <>
+                  <FileText className="h-4 w-4 mr-2" />
+                  Apply
+                </>
+              )}
+            </Button>
+          </div>
         </div>
 
         <div className="text-sm text-gray-600">
