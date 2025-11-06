@@ -1,8 +1,6 @@
 name: Daily Grant Fetch
 
 on:
-  schedule:
-    - cron: '0 10 * * *'  # every day at 5am EST/6am EDT (12pm UTC)
   workflow_dispatch:
 
 env:
