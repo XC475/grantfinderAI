@@ -10,14 +10,13 @@ export async function createGrantsAgent(
   // Initialize LLM
   const model = new ChatOpenAI({
     modelName: "gpt-4o-mini",
-    temperature: 0.7,
+    temperature: 0.1,
     streaming: true,
   });
 
   // Create tools
   const tools = [createGrantSearchTool(districtInfo)];
 
-  // Create agent using the new LangChain 1.0 API
   // The createAgent function returns a ReactAgent which has invoke() and stream() methods
   const agent = createAgent({
     model,
