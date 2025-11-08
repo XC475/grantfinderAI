@@ -46,7 +46,7 @@ export function DocumentEditorLayout({
                 {children}
                 {/* Toggle button when sidebar is closed */}
                 {!isSidebarOpen && (
-                  <div className="fixed top-20 right-4 z-40">
+                  <div className="fixed top-4 right-4 z-40">
                     <Button
                       variant="ghost"
                       size="icon"
