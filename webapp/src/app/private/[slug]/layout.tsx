@@ -7,7 +7,6 @@ import { headers } from "next/headers";
 import { unstable_noStore } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
-import { DocumentEditorLayout } from "@/components/layouts/DocumentEditorLayout";
 
 // Note: Authentication and access checks are now handled by middleware.ts
 // This makes the layout lighter and prevents full page reloads on navigation
@@ -76,21 +75,12 @@ export default async function OrganizationLayout({
     }
   }
 
-  // Check if we're on a document editor page
+  // Check if we're on a document page - if so, let the nested layout handle everything
   const isDocumentPage = pathname.includes("/documents/");
-
-  // Extract documentId from pathname if on document page
-  const documentId = isDocumentPage
-    ? pathname.split("/documents/")[1]?.split("/")[0] || ""
-    : "";
-
-  // If on document editor page, use special layout with document sidebar
-  if (isDocumentPage && documentId) {
-    return (
-      <DocumentEditorLayout organizationSlug={slug} documentId={documentId}>
-        {children}
-      </DocumentEditorLayout>
-    );
+  
+  if (isDocumentPage) {
+    // Document pages have their own layout, just render children
+    return <>{children}</>;
   }
 
   // Normal layout for other pages

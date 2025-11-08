@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Settings } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { DocumentSidebarChat } from "./DocumentSidebarChat";
 import { Message } from "@/components/ui/chat-message";
 import { useDocument } from "@/contexts/DocumentContext";
@@ -265,13 +263,9 @@ export function DocumentChatSidebar({
 
       {/* Footer */}
       <div className="p-4 border-t text-center flex-shrink-0">
-        <p className="text-xs text-muted-foreground mb-2">
+        <p className="text-xs text-muted-foreground">
           GrantWare can make mistakes. Please check responses.
         </p>
-        <Button variant="ghost" size="sm" className="h-8">
-          <Settings className="h-3 w-3 mr-1" />
-          Settings
-        </Button>
       </div>
     </div>
   );
