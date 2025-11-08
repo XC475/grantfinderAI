@@ -22,10 +22,15 @@ export function LoginForm() {
       // The login action handles redirects, so errors here are mostly redirect-related
       // which is expected behavior
       console.error("Login error:", error);
-    } finally {
-      // Don't set loading to false as we'll redirect on success
-      // Only reset if there's an actual error that doesn't redirect
+      // Reset loading state if redirect fails
+      setIsLoading(false);
     }
+
+    // Safety timeout: reset loading state if redirect hasn't happened
+    // This prevents infinite loading in edge cases
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
   };
 
   return (
