@@ -1,10 +1,15 @@
 // src/app/api/ai/assistant-agent/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 import { createGrantsAgent } from "@/lib/ai/agent";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { DistrictInfo } from "@/lib/ai/prompts/grants-assistant";
+
+interface ChatMessage {
+  role: string;
+  content: string;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -111,7 +116,7 @@ export async function POST(req: NextRequest) {
     const agent = await createGrantsAgent(districtInfo, baseUrl);
 
     // 9. Convert all messages to LangChain format (including last user message)
-    const langChainMessages = messages.map((m: any) =>
+    const langChainMessages = messages.map((m: ChatMessage) =>
       m.role === "user" ? new HumanMessage(m.content) : new AIMessage(m.content)
     );
 

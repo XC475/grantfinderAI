@@ -58,7 +58,7 @@ export async function searchGrants(
 
     // Build metadata filter for Supabase
     // Note: SupabaseVectorStore expects metadata fields without the metadata prefix
-    const filter: Record<string, any> = {};
+    const filter: Record<string, string> = {};
 
     if (filters?.stateCode) {
       filter.state_code = filters.stateCode;

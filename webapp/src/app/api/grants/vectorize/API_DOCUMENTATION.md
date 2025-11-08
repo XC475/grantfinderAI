@@ -388,7 +388,6 @@ Stored in `documents.metadata` as JSONB:
   "status": "posted",
   "title": "STEM Education Grant 2024",
   "agency": "Department of Education",
-  "category": ["STEM_Education", "Math_and_Science_Education"],
   "funding_instrument": "Grant",
   "state_code": "US",
   "fiscal_year": 2024,
