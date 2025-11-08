@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       return new Response("Messages are required", { status: 400 });
     }
 
-    // Get user's organization for context
+    // Get user's organization and document's application for context
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
       select: {
@@ -55,6 +55,47 @@ export async function POST(req: NextRequest) {
 
     const organization = dbUser?.organization;
 
+    // Get the document's application and associated opportunity
+    let applicationContext = "";
+    if (documentId) {
+      const document = await prisma.application_documents.findUnique({
+        where: { id: documentId },
+        select: {
+          applicationId: true,
+          applications: {
+            select: {
+              id: true,
+              title: true,
+              opportunityId: true,
+            },
+          },
+        },
+      });
+
+      if (document?.applications?.opportunityId) {
+        // Fetch the opportunity's raw_text from the public schema
+        const opportunity = await prisma.opportunities.findUnique({
+          where: { id: document.applications.opportunityId },
+          select: {
+            title: true,
+            agency: true,
+            raw_text: true,
+          },
+        });
+
+        if (opportunity?.raw_text) {
+          applicationContext = `
+
+APPLICATION CONTEXT:
+This document is part of a grant application for: ${opportunity.title}
+Agency: ${opportunity.agency || "N/A"}
+
+GRANT OPPORTUNITY DETAILS:
+${opportunity.raw_text}`;
+        }
+      }
+    }
+
     // Build organization context for system prompt
     let organizationContext = "";
     if (organization) {
@@ -71,10 +112,11 @@ ${organization.annualOperatingBudget ? `\nAnnual Operating Budget: $${Number(org
 ${organization.fiscalYearEnd ? `Fiscal Year End: ${organization.fiscalYearEnd}` : ""}`;
     }
 
-    // Build system prompt with document context and organization info
+    // Build system prompt with document context, organization info, and application context
     const systemPrompt = `You are a helpful assistant for a grant writing application called GrantWare. 
 You are helping the user with their document titled "${documentTitle || "Untitled Document"}".
 ${organizationContext}
+${applicationContext}
 
 CURRENT DOCUMENT CONTENT:
 ${documentContent || "No content yet."}
@@ -82,7 +124,8 @@ ${documentContent || "No content yet."}
 Provide helpful, concise responses about the document content, suggest improvements, 
 answer questions, and help with grant writing tasks. Be specific and reference the 
 actual content when relevant. Use the organization context to provide tailored suggestions 
-that align with the organization's mission, size, and needs.`;
+that align with the organization's mission, size, and needs. When application context is 
+available, ensure your suggestions align with the grant opportunity's requirements and guidelines.`;
 
     // Prepare messages for OpenAI
     const openAiMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
