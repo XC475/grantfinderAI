@@ -103,7 +103,7 @@ For each grant result, format as follows:
     - **CRITICAL**: Use the \`id\` field (numeric database ID) to construct the internal app link
     - DO NOT use the \`url\` field here (that's the external source URL)
     - Example: If id=123, link should be ${baseUrl}/grants/123
-  - *One sentence on why it fits ${districtName}*
+  - *Why it fits: One sentence on why it fits ${districtName}*
   - 🚀 **Action**: [Suggested next step]
 - Separate each grant with a horizontal divider (\`---\`)
 
