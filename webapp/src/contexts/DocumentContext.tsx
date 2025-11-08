@@ -7,6 +7,8 @@ interface DocumentContextType {
   documentContent: string;
   setDocumentTitle: (title: string) => void;
   setDocumentContent: (content: string) => void;
+  saveStatus: "saved" | "saving" | "unsaved";
+  setSaveStatus: (status: "saved" | "saving" | "unsaved") => void;
 }
 
 const DocumentContext = createContext<DocumentContextType | undefined>(
@@ -16,6 +18,7 @@ const DocumentContext = createContext<DocumentContextType | undefined>(
 export function DocumentProvider({ children }: { children: ReactNode }) {
   const [documentTitle, setDocumentTitle] = useState("");
   const [documentContent, setDocumentContent] = useState("");
+  const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "unsaved">("saved");
 
   return (
     <DocumentContext.Provider
@@ -24,6 +27,8 @@ export function DocumentProvider({ children }: { children: ReactNode }) {
         documentContent,
         setDocumentTitle,
         setDocumentContent,
+        saveStatus,
+        setSaveStatus,
       }}
     >
       {children}

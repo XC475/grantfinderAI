@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PanelRight } from "lucide-react";
+import { PanelRight, Loader2, Check } from "lucide-react";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { Separator } from "@/components/ui/separator";
@@ -13,12 +13,36 @@ import {
   ResizableHandle,
 } from "@/components/ui/resizable";
 import { DocumentChatSidebar } from "@/components/applications/DocumentChatSidebar";
-import { DocumentProvider } from "@/contexts/DocumentContext";
+import { DocumentProvider, useDocument } from "@/contexts/DocumentContext";
 
 interface DocumentEditorLayoutProps {
   children: React.ReactNode;
   organizationSlug: string;
   documentId: string;
+}
+
+function SaveStatusIndicator() {
+  const { saveStatus } = useDocument();
+
+  if (saveStatus === "saving") {
+    return (
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Loader2 className="h-3 w-3 animate-spin" />
+        <span>Saving...</span>
+      </div>
+    );
+  }
+
+  if (saveStatus === "saved") {
+    return (
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Check className="h-3 w-3 text-green-600" />
+        <span>Saved</span>
+      </div>
+    );
+  }
+
+  return null;
 }
 
 export function DocumentEditorLayout({
@@ -36,10 +60,13 @@ export function DocumentEditorLayout({
           {/* Main content panel with breadcrumbs */}
           <ResizablePanel defaultSize={isSidebarOpen ? 60 : 100} minSize={30}>
             <SidebarInset className="flex flex-col h-full">
-              <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 border-b">
+              <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 border-b">
                 <div className="flex items-center gap-2 px-4">
                   <Separator orientation="vertical" className="mr-2 h-4" />
                   <DynamicBreadcrumb organizationSlug={organizationSlug} />
+                </div>
+                <div className="flex items-center gap-2 px-4">
+                  <SaveStatusIndicator />
                 </div>
               </header>
               <div className="flex-1 flex flex-col overflow-hidden">

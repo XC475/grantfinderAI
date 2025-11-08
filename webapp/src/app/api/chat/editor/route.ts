@@ -125,7 +125,15 @@ Provide helpful, concise responses about the document content, suggest improveme
 answer questions, and help with grant writing tasks. Be specific and reference the 
 actual content when relevant. Use the organization context to provide tailored suggestions 
 that align with the organization's mission, size, and needs. When application context is 
-available, ensure your suggestions align with the grant opportunity's requirements and guidelines.`;
+available, ensure your suggestions align with the grant opportunity's requirements and guidelines.
+
+OUTPUT FORMAT:
+Use **clean, well-structured markdown** with clear visual hierarchy.
+- Use \`#\` for the **main title**
+- Use \`##\` or \`###\` for **section headers**
+- Use \`**bold**\` for important data, field names, and emphasis.
+- Use bullet points (\`-\`) or numbered lists when listing actions, insights, or recommendations.
+`;
 
     // Prepare messages for OpenAI
     const openAiMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
