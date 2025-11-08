@@ -65,26 +65,26 @@ export function DocumentEditorLayout({
                   <Separator orientation="vertical" className="mr-2 h-4" />
                   <DynamicBreadcrumb organizationSlug={organizationSlug} />
                 </div>
-                <div className="flex items-center gap-2 px-4">
+                <div className="flex items-center gap-3 px-4">
                   <SaveStatusIndicator />
+                  <Separator orientation="vertical" className="h-4" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    className="size-7"
+                  >
+                    <PanelRight 
+                      className={`h-4 w-4 transition-transform ${isSidebarOpen ? "rotate-180" : ""}`} 
+                    />
+                    <span className="sr-only">
+                      {isSidebarOpen ? "Close" : "Open"} Assistant Sidebar
+                    </span>
+                  </Button>
                 </div>
               </header>
               <div className="flex-1 flex flex-col overflow-hidden">
                 {children}
-                {/* Toggle button when sidebar is closed */}
-                {!isSidebarOpen && (
-                  <div className="fixed top-4 right-4 z-40">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setIsSidebarOpen(true)}
-                      className="size-7 bg-background/95 backdrop-blur-sm border shadow-sm"
-                    >
-                      <PanelRight className="h-4 w-4" />
-                      <span className="sr-only">Open Assistant Sidebar</span>
-                    </Button>
-                  </div>
-                )}
               </div>
             </SidebarInset>
           </ResizablePanel>
@@ -96,17 +96,8 @@ export function DocumentEditorLayout({
           {isSidebarOpen && (
             <ResizablePanel defaultSize={40} minSize={25} maxSize={60}>
               <div className="h-full flex flex-col border-l bg-background">
-                {/* Toggle sidebar button - aligned with breadcrumbs */}
+                {/* Header aligned with breadcrumbs */}
                 <div className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className="size-7"
-                  >
-                    <PanelRight className="h-4 w-4 transition-transform rotate-180" />
-                    <span className="sr-only">Close Assistant Sidebar</span>
-                  </Button>
                   <h2 className="text-lg font-semibold">Assistant</h2>
                 </div>
                 <div className="flex-1 overflow-hidden">
