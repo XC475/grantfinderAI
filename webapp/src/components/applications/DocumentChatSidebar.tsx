@@ -24,6 +24,7 @@ export function DocumentChatSidebar({
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const hasAutoSent = useRef(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -49,6 +50,13 @@ export function DocumentChatSidebar({
       setMessages((prev) => [...prev, userMessage]);
       setInput("");
       setIsLoading(true);
+      console.log(
+        "🔄 [DocumentChat] isLoading set to TRUE - stop button should appear"
+      );
+
+      // Create abort controller for this request
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
 
       try {
         // Convert messages to the format expected by the API
@@ -68,6 +76,7 @@ export function DocumentChatSidebar({
             documentTitle,
             documentContent,
           }),
+          signal: abortController.signal,
         });
 
         if (!response.ok) {
@@ -83,6 +92,7 @@ export function DocumentChatSidebar({
         let fullContent = "";
         let displayedContent = "";
         let isStreamComplete = false;
+        let isCancelled = false;
 
         const assistantMessage: Message = {
           id: `assistant-${Date.now()}`,
@@ -94,11 +104,18 @@ export function DocumentChatSidebar({
         // Add empty assistant message immediately
         setMessages((prev) => [...prev, assistantMessage]);
 
+        // Listen for abort event to immediately cancel reader
+        abortController.signal.addEventListener("abort", () => {
+          console.log("Abort signal received");
+          isCancelled = true;
+          reader.cancel().catch(console.error);
+        });
+
         // Smooth character-by-character display
         const smoothDisplay = async () => {
           while (
-            !isStreamComplete ||
-            displayedContent.length < fullContent.length
+            (!isStreamComplete && !isCancelled) ||
+            (displayedContent.length < fullContent.length && !isCancelled)
           ) {
             if (displayedContent.length < fullContent.length) {
               // Display next few characters for smoother feel
@@ -131,7 +148,7 @@ export function DocumentChatSidebar({
         smoothDisplay();
 
         try {
-          while (true) {
+          while (true && !isCancelled) {
             const { done, value } = await reader.read();
             if (done) {
               isStreamComplete = true;
@@ -145,25 +162,41 @@ export function DocumentChatSidebar({
           reader.releaseLock();
         }
       } catch (error) {
-        console.error("Error calling editor chat API:", error);
-        // Add error message
-        const errorMessage: Message = {
-          id: `error-${Date.now()}`,
-          role: "assistant",
-          content:
-            "Sorry, there was an error processing your request. Please try again.",
-          createdAt: new Date(),
-        };
-        setMessages((prev) => [...prev, errorMessage]);
+        // Check if the error is from abort
+        if (error instanceof Error && error.name === "AbortError") {
+          console.log("Stream aborted by user");
+          // Don't show error message for user-initiated stops
+        } else {
+          console.error("Error calling editor chat API:", error);
+          // Add error message
+          const errorMessage: Message = {
+            id: `error-${Date.now()}`,
+            role: "assistant",
+            content:
+              "Sorry, there was an error processing your request. Please try again.",
+            createdAt: new Date(),
+          };
+          setMessages((prev) => [...prev, errorMessage]);
+        }
       } finally {
         setIsLoading(false);
+        abortControllerRef.current = null;
       }
     },
     [input, messages, isLoading, documentId, documentTitle, documentContent]
   );
 
   const stop = useCallback(() => {
+    console.log("🛑 [DocumentChat] Stop button clicked");
+    // Abort the ongoing request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
     setIsLoading(false);
+    console.log(
+      "🔄 [DocumentChat] isLoading set to FALSE - stop button should hide"
+    );
   }, []);
 
   const handleSuggestedAction = (action: string) => {
