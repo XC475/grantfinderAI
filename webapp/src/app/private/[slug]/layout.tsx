@@ -7,6 +7,7 @@ import { headers } from "next/headers";
 import { unstable_noStore } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
+import { DocumentEditorLayout } from "@/components/layouts/DocumentEditorLayout";
 
 // Note: Authentication and access checks are now handled by middleware.ts
 // This makes the layout lighter and prevents full page reloads on navigation
@@ -78,6 +79,21 @@ export default async function OrganizationLayout({
   // Check if we're on a document editor page
   const isDocumentPage = pathname.includes("/documents/");
 
+  // Extract documentId from pathname if on document page
+  const documentId = isDocumentPage
+    ? pathname.split("/documents/")[1]?.split("/")[0] || ""
+    : "";
+
+  // If on document editor page, use special layout with document sidebar
+  if (isDocumentPage && documentId) {
+    return (
+      <DocumentEditorLayout organizationSlug={slug} documentId={documentId}>
+        {children}
+      </DocumentEditorLayout>
+    );
+  }
+
+  // Normal layout for other pages
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -88,15 +104,7 @@ export default async function OrganizationLayout({
             <DynamicBreadcrumb organizationSlug={slug} />
           </div>
         </header>
-        <div
-          className={
-            isDocumentPage
-              ? "flex flex-1 flex-col"
-              : "flex flex-1 flex-col gap-4 p-4 pt-0"
-          }
-        >
-          {children}
-        </div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

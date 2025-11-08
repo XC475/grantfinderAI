@@ -3,15 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Save, Loader2, PanelLeft } from "lucide-react";
+import { Save, Loader2 } from "lucide-react";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
-import { DocumentChatSidebar } from "./DocumentChatSidebar";
-import {
-  ResizablePanelGroup,
-  ResizablePanel,
-  ResizableHandle,
-} from "@/components/ui/resizable";
-import { cn } from "@/lib/utils";
+import { useDocument } from "@/contexts/DocumentContext";
 import "./editor-overrides.css";
 
 interface Document {
@@ -39,10 +33,16 @@ export function DocumentEditor({
   onSave,
   isSaving,
 }: DocumentEditorProps) {
+  const { setDocumentTitle, setDocumentContent } = useDocument();
   const [title, setTitle] = useState(document.title);
   const [content, setContent] = useState(document.content || "");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(true);
+
+  // Update context when title or content changes
+  useEffect(() => {
+    setDocumentTitle(title);
+    setDocumentContent(content);
+  }, [title, content, setDocumentTitle, setDocumentContent]);
 
   // Auto-save every 30 seconds
   useEffect(() => {
@@ -107,68 +107,19 @@ export function DocumentEditor({
         )}
       </div>
 
-      {/* Resizable layout with editor and sidebar */}
-      <ResizablePanelGroup direction="horizontal" className="h-full">
-        {/* Main editor panel */}
-        <ResizablePanel defaultSize={isChatOpen ? 60 : 100} minSize={30}>
-          <div className="h-full flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto">
-              <div className="container max-w-4xl mx-auto px-8 pb-8">
-                <div className="prose prose-lg max-w-none">
-                  <SimpleEditor
-                    initialContent={content}
-                    onContentChange={handleContentChange}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </ResizablePanel>
-
-        {/* Resizable handle (only shown when sidebar is open) */}
-        {isChatOpen && <ResizableHandle withHandle />}
-
-        {/* Chat sidebar panel */}
-        {isChatOpen && (
-          <ResizablePanel defaultSize={40} minSize={25} maxSize={60}>
-            <div className="relative h-full">
-              {/* Toggle sidebar button - sticky to left edge of sidebar */}
-              <div className="absolute top-2 ml-2 mt-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsChatOpen(!isChatOpen)}
-                  className="size-7 bg-background/95"
-                >
-                  <PanelLeft className="h-4 w-4 transition-transform rotate-180" />
-                  <span className="sr-only">Toggle Assistant Sidebar</span>
-                </Button>
-              </div>
-              <DocumentChatSidebar
-                documentId={document.id}
-                documentTitle={title}
-                documentContent={content}
-                onToggle={() => setIsChatOpen(!isChatOpen)}
+      {/* Main editor */}
+      <div className="h-full flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto">
+          <div className="container max-w-4xl mx-auto px-8 pb-8">
+            <div className="prose prose-lg max-w-none">
+              <SimpleEditor
+                initialContent={content}
+                onContentChange={handleContentChange}
               />
             </div>
-          </ResizablePanel>
-        )}
-
-        {/* Toggle button when sidebar is closed */}
-        {!isChatOpen && (
-          <div className="fixed top-20 right-4 z-40">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsChatOpen(!isChatOpen)}
-              className="size-7 bg-background/95 backdrop-blur-sm border shadow-sm"
-            >
-              <PanelLeft className="h-4 w-4 transition-transform" />
-              <span className="sr-only">Toggle Assistant Sidebar</span>
-            </Button>
           </div>
-        )}
-      </ResizablePanelGroup>
+        </div>
+      </div>
     </div>
   );
 }

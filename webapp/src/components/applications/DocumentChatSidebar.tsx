@@ -1,25 +1,22 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Plus, Clock, MoreHorizontal, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DocumentSidebarChat } from "./DocumentSidebarChat";
 import { Message } from "@/components/ui/chat-message";
-import { cn } from "@/lib/utils";
+import { useDocument } from "@/contexts/DocumentContext";
 
 interface DocumentChatSidebarProps {
   documentId: string;
-  documentTitle: string;
-  documentContent: string;
   onToggle: () => void;
 }
 
 export function DocumentChatSidebar({
   documentId,
-  documentTitle,
-  documentContent,
   onToggle,
 }: DocumentChatSidebarProps) {
+  const { documentTitle, documentContent } = useDocument();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -218,23 +215,7 @@ export function DocumentChatSidebar({
   ];
 
   return (
-    <div className="flex flex-col h-full bg-background border-l">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b flex-shrink-0 ml-6">
-        <h2 className="text-lg font-semibold">Assistant</h2>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-            <Plus className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-            <Clock className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
+    <div className="flex flex-col h-full bg-background">
       {/* Main content area */}
       <div className="flex-1 flex flex-col overflow-hidden min-h-0 p-1 pt-2">
         {isEmpty && (
