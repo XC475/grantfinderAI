@@ -24,6 +24,7 @@ export function ChatDemo(props: ChatDemoProps) {
     () => props.chatId || `chat_${Date.now()}`
   );
   const hasAutoSent = useRef(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Update messages when initialMessages prop changes (e.g., when navigating between chats)
   useEffect(() => {
@@ -64,6 +65,13 @@ export function ChatDemo(props: ChatDemoProps) {
       setMessages((prev) => [...prev, userMessage]);
       setInput("");
       setIsLoading(true);
+      console.log(
+        "🔄 [Chat] isLoading set to TRUE - stop button should appear"
+      );
+
+      // Create abort controller for this request
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
 
       try {
         // Convert messages to the format expected by your API
@@ -72,7 +80,7 @@ export function ChatDemo(props: ChatDemoProps) {
           content: msg.content,
         }));
 
-        const response = await fetch("/api/chat", {
+        const response = await fetch("/api/ai/assistant-agent", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -81,6 +89,7 @@ export function ChatDemo(props: ChatDemoProps) {
             messages: apiMessages,
             chatId: chatId,
           }),
+          signal: abortController.signal,
         });
 
         if (!response.ok) {
@@ -110,6 +119,7 @@ export function ChatDemo(props: ChatDemoProps) {
         let fullContent = "";
         let displayedContent = "";
         let isStreamComplete = false;
+        let isCancelled = false;
 
         const assistantMessage: Message = {
           id: `assistant-${Date.now()}`,
@@ -121,11 +131,18 @@ export function ChatDemo(props: ChatDemoProps) {
         // Add empty assistant message immediately
         setMessages((prev) => [...prev, assistantMessage]);
 
+        // Listen for abort event to immediately cancel reader
+        abortController.signal.addEventListener("abort", () => {
+          console.log("Abort signal received");
+          isCancelled = true;
+          reader.cancel().catch(console.error);
+        });
+
         // Smooth character-by-character display
         const smoothDisplay = async () => {
           while (
-            !isStreamComplete ||
-            displayedContent.length < fullContent.length
+            (!isStreamComplete && !isCancelled) ||
+            (displayedContent.length < fullContent.length && !isCancelled)
           ) {
             if (displayedContent.length < fullContent.length) {
               // Display next few characters for smoother feel
@@ -158,7 +175,7 @@ export function ChatDemo(props: ChatDemoProps) {
         smoothDisplay();
 
         try {
-          while (true) {
+          while (true && !isCancelled) {
             const { done, value } = await reader.read();
             if (done) {
               isStreamComplete = true;
@@ -170,34 +187,51 @@ export function ChatDemo(props: ChatDemoProps) {
           }
 
           // After streaming is complete, notify sidebar to refresh (for message count and timestamp)
-          window.dispatchEvent(
-            new CustomEvent("chatUpdated", {
-              detail: { chatId: chatId },
-            })
-          );
+          // Only notify if not cancelled
+          if (!isCancelled) {
+            window.dispatchEvent(
+              new CustomEvent("chatUpdated", {
+                detail: { chatId: chatId },
+              })
+            );
+          }
         } finally {
           reader.releaseLock();
         }
       } catch (error) {
-        console.error("Error calling chat API:", error);
-        // Add error message
-        const errorMessage: Message = {
-          id: `error-${Date.now()}`,
-          role: "assistant",
-          content:
-            "Sorry, there was an error processing your request. Please try again.",
-          createdAt: new Date(),
-        };
-        setMessages((prev) => [...prev, errorMessage]);
+        // Check if the error is from abort
+        if (error instanceof Error && error.name === "AbortError") {
+          console.log("Stream aborted by user");
+          // Don't show error message for user-initiated stops
+        } else {
+          console.error("Error calling chat API:", error);
+          // Add error message
+          const errorMessage: Message = {
+            id: `error-${Date.now()}`,
+            role: "assistant",
+            content:
+              "Sorry, there was an error processing your request. Please try again.",
+            createdAt: new Date(),
+          };
+          setMessages((prev) => [...prev, errorMessage]);
+        }
       } finally {
         setIsLoading(false);
+        abortControllerRef.current = null;
       }
     },
     [input, messages, isLoading, chatId, props]
   );
 
   const stop = useCallback(() => {
+    console.log("🛑 [Chat] Stop button clicked");
+    // Abort the ongoing request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
     setIsLoading(false);
+    console.log("🔄 [Chat] isLoading set to FALSE - stop button should hide");
   }, []);
 
   const append = useCallback(

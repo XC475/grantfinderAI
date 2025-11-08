@@ -12,6 +12,7 @@
     "@ai-sdk/react": "^2.0.51",
     "@floating-ui/react": "^0.27.16",
     "@hookform/resolvers": "^5.2.2",
+    "@langchain/community": "^1.0.0",
     "@langchain/core": "^1.0.3",
     "@langchain/openai": "^1.0.0",
     "@mendable/firecrawl-js": "^4.4.1",
