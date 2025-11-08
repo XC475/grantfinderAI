@@ -97,11 +97,20 @@ export async function POST(request: NextRequest) {
     }
 
     // Send welcome email
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    // Dynamically construct site URL from request headers (works in dev and prod)
+    const forwardedProto = request.headers.get("x-forwarded-proto");
+    const forwardedHost = request.headers.get("host");
+
+    const siteUrl =
+      (forwardedProto && forwardedHost
+        ? `${forwardedProto}://${forwardedHost}`
+        : process.env.NEXT_PUBLIC_SITE_URL) ||
+      "https://grantware-ai.vercel.app/";
+
     const emailResult = await sendWelcomeEmail({
       to: email,
       name,
-      loginUrl: `${siteUrl}/`,
+      loginUrl: `${siteUrl}/login`,
       temporaryPassword: password,
       organizationUrl: `${siteUrl}/private/${currentUser.organization.slug}/dashboard`,
     });
