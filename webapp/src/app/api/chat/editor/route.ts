@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import OpenAI from "openai";
 import { createClient } from "@/utils/supabase/server";
+import prisma from "@/lib/prisma";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -26,16 +27,62 @@ export async function POST(req: NextRequest) {
       return new Response("Messages are required", { status: 400 });
     }
 
-    // Build system prompt with document context
+    // Get user's organization for context
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: {
+        organizationId: true,
+        organization: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            state: true,
+            zipCode: true,
+            countyName: true,
+            enrollment: true,
+            numberOfSchools: true,
+            lowestGrade: true,
+            highestGrade: true,
+            missionStatement: true,
+            strategicPlan: true,
+            annualOperatingBudget: true,
+            fiscalYearEnd: true,
+          },
+        },
+      },
+    });
+
+    const organization = dbUser?.organization;
+
+    // Build organization context for system prompt
+    let organizationContext = "";
+    if (organization) {
+      organizationContext = `
+
+ORGANIZATION CONTEXT:
+You are assisting ${organization.name}${organization.city && organization.state ? ` located in ${organization.city}, ${organization.state}` : ""}.
+${organization.enrollment ? `Enrollment: ${organization.enrollment.toLocaleString()} students` : ""}
+${organization.numberOfSchools ? `Number of Schools: ${organization.numberOfSchools}` : ""}
+${organization.lowestGrade && organization.highestGrade ? `Grade Range: ${organization.lowestGrade} - ${organization.highestGrade}` : ""}
+${organization.missionStatement ? `\nMission Statement: ${organization.missionStatement}` : ""}
+${organization.strategicPlan ? `\nStrategic Plan: ${organization.strategicPlan}` : ""}
+${organization.annualOperatingBudget ? `\nAnnual Operating Budget: $${Number(organization.annualOperatingBudget).toLocaleString()}` : ""}
+${organization.fiscalYearEnd ? `Fiscal Year End: ${organization.fiscalYearEnd}` : ""}`;
+    }
+
+    // Build system prompt with document context and organization info
     const systemPrompt = `You are a helpful assistant for a grant writing application called GrantWare. 
 You are helping the user with their document titled "${documentTitle || "Untitled Document"}".
+${organizationContext}
 
-Current document content:
+CURRENT DOCUMENT CONTENT:
 ${documentContent || "No content yet."}
 
 Provide helpful, concise responses about the document content, suggest improvements, 
 answer questions, and help with grant writing tasks. Be specific and reference the 
-actual content when relevant.`;
+actual content when relevant. Use the organization context to provide tailored suggestions 
+that align with the organization's mission, size, and needs.`;
 
     // Prepare messages for OpenAI
     const openAiMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
@@ -51,11 +98,11 @@ actual content when relevant.`;
 
     // Create streaming completion
     const stream = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o-mini",
       messages: openAiMessages,
       stream: true,
       temperature: 0.7,
-      max_tokens: 1000,
+      max_tokens: 2000,
     });
 
     // Create a readable stream for the response
