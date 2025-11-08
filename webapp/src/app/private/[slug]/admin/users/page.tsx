@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Loader2, Plus, Trash2, Search, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -94,6 +95,14 @@ export default function AdminUsersPage() {
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [selectedRole, setSelectedRole] = useState<string>("MEMBER");
+  const [selectedSystemAdmin, setSelectedSystemAdmin] =
+    useState<boolean>(false);
+  const [isUpdatingRole, setIsUpdatingRole] = useState(false);
+
+  // Delete user dialog
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Mode selection: 'add_to_existing' or 'create_new'
   const [mode, setMode] = useState<"add_to_existing" | "create_new">(
@@ -367,17 +376,17 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleDeleteUser = async (userId: string, userEmail: string) => {
-    if (
-      !confirm(
-        `Are you sure you want to delete user ${userEmail}? This cannot be undone.`
-      )
-    ) {
-      return;
-    }
+  const handleDeleteUser = (user: User) => {
+    setUserToDelete(user);
+    setDeleteDialogOpen(true);
+  };
 
+  const confirmDelete = async () => {
+    if (!userToDelete) return;
+
+    setIsDeleting(true);
     try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
+      const response = await fetch(`/api/admin/users/${userToDelete.id}`, {
         method: "DELETE",
       });
 
@@ -394,6 +403,10 @@ export default function AdminUsersPage() {
         (error instanceof Error ? error.message : String(error)) ||
           "Failed to delete user"
       );
+    } finally {
+      setIsDeleting(false);
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
     }
   };
 
@@ -403,21 +416,20 @@ export default function AdminUsersPage() {
     isSystemAdmin: boolean
   ) => {
     setSelectedUserId(userId);
-    // If user is a system admin, set role to SYSTEM_ADMIN, otherwise use their org role
-    setSelectedRole(isSystemAdmin ? "SYSTEM_ADMIN" : currentRole);
+    setSelectedRole(currentRole);
+    setSelectedSystemAdmin(isSystemAdmin);
     setIsRoleDialogOpen(true);
   };
 
   const handleConfirmRole = async () => {
+    setIsUpdatingRole(true);
     try {
-      // If system admin is selected, set role to ADMIN and system_admin to true
-      const isSystemAdmin = selectedRole === "SYSTEM_ADMIN";
       const requestBody: {
         role: string;
         system_admin: boolean;
       } = {
-        role: isSystemAdmin ? "ADMIN" : selectedRole,
-        system_admin: isSystemAdmin,
+        role: selectedRole,
+        system_admin: selectedSystemAdmin,
       };
 
       const response = await fetch(`/api/admin/users/${selectedUserId}`, {
@@ -432,11 +444,7 @@ export default function AdminUsersPage() {
         throw new Error(data.error || "Failed to update user role");
       }
 
-      toast.success(
-        isSystemAdmin
-          ? "User granted System Admin access"
-          : "User role updated successfully"
-      );
+      toast.success("User role updated successfully");
       setIsRoleDialogOpen(false);
       fetchUsers();
     } catch (error) {
@@ -445,6 +453,8 @@ export default function AdminUsersPage() {
         (error instanceof Error ? error.message : String(error)) ||
           "Failed to update user role"
       );
+    } finally {
+      setIsUpdatingRole(false);
     }
   };
 
@@ -1036,7 +1046,7 @@ export default function AdminUsersPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDeleteUser(user.id, user.email)}
+                        onClick={() => handleDeleteUser(user)}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
@@ -1053,133 +1063,138 @@ export default function AdminUsersPage() {
       <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Change User Role</DialogTitle>
+            <DialogTitle>Change User Role & Permissions</DialogTitle>
             <DialogDescription>
-              Select the organization role for this user
+              Select the organization role and optionally grant system admin
+              access
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="space-y-3">
-              <div
-                className="flex items-start space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
-                onClick={() => setSelectedRole("MEMBER")}
-              >
-                <input
-                  type="radio"
-                  id="role-member"
-                  name="role-selection"
-                  checked={selectedRole === "MEMBER"}
-                  onChange={() => setSelectedRole("MEMBER")}
-                  className="mt-1"
-                />
-                <div className="flex-1">
-                  <label
-                    htmlFor="role-member"
-                    className="font-medium cursor-pointer"
-                  >
-                    Member
-                  </label>
-                  <p className="text-sm text-muted-foreground">
-                    Standard user with basic access to organization resources
-                  </p>
-                </div>
-              </div>
-              <div
-                className="flex items-start space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
-                onClick={() => setSelectedRole("ADMIN")}
-              >
-                <input
-                  type="radio"
-                  id="role-admin"
-                  name="role-selection"
-                  checked={selectedRole === "ADMIN"}
-                  onChange={() => setSelectedRole("ADMIN")}
-                  className="mt-1"
-                />
-                <div className="flex-1">
-                  <label
-                    htmlFor="role-admin"
-                    className="font-medium cursor-pointer"
-                  >
-                    Admin
-                  </label>
-                  <p className="text-sm text-muted-foreground">
-                    Can manage users and settings within their organization
-                  </p>
-                </div>
-              </div>
-              <div
-                className="flex items-start space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
-                onClick={() => setSelectedRole("OWNER")}
-              >
-                <input
-                  type="radio"
-                  id="role-owner"
-                  name="role-selection"
-                  checked={selectedRole === "OWNER"}
-                  onChange={() => setSelectedRole("OWNER")}
-                  className="mt-1"
-                />
-                <div className="flex-1">
-                  <label
-                    htmlFor="role-owner"
-                    className="font-medium cursor-pointer"
-                  >
-                    Owner
-                  </label>
-                  <p className="text-sm text-muted-foreground">
-                    Full control over the organization (only one per
-                    organization)
-                  </p>
-                </div>
-              </div>
-
-              {/* Separator */}
-              <div className="relative my-4">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-destructive/30"></div>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-destructive font-semibold">
-                    Danger Zone
-                  </span>
-                </div>
-              </div>
-
-              {/* System Admin Option with Warning */}
-              <div
-                className="flex items-start space-x-3 p-3 border-2 border-destructive/50 rounded-lg cursor-pointer hover:bg-destructive/5 transition-colors bg-destructive/5"
-                onClick={() => setSelectedRole("SYSTEM_ADMIN")}
-              >
-                <input
-                  type="radio"
-                  id="role-system-admin"
-                  name="role-selection"
-                  checked={selectedRole === "SYSTEM_ADMIN"}
-                  onChange={() => setSelectedRole("SYSTEM_ADMIN")}
-                  className="mt-1"
-                />
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
+            <div>
+              <Label className="text-sm font-medium mb-3 block">
+                Organization Role
+              </Label>
+              <div className="space-y-3">
+                <div
+                  className="flex items-start space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => setSelectedRole("MEMBER")}
+                >
+                  <input
+                    type="radio"
+                    id="role-member"
+                    name="role-selection"
+                    checked={selectedRole === "MEMBER"}
+                    onChange={() => setSelectedRole("MEMBER")}
+                    className="mt-1"
+                  />
+                  <div className="flex-1">
                     <label
-                      htmlFor="role-system-admin"
-                      className="font-medium cursor-pointer text-destructive"
+                      htmlFor="role-member"
+                      className="font-medium cursor-pointer"
                     >
-                      System Admin
+                      Member
                     </label>
-                    <AlertTriangle className="h-4 w-4 text-destructive" />
+                    <p className="text-sm text-muted-foreground">
+                      Standard user with basic access to organization resources
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Full platform access - can manage ALL users and
-                    organizations across the entire system
-                  </p>
-                  <div className="mt-2 p-2 bg-destructive/10 rounded text-xs text-destructive font-medium flex items-start gap-2">
-                    <AlertTriangle className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                    <span>
-                      Warning: This grants unrestricted access to all platform
-                      data and settings. Use with extreme caution.
-                    </span>
+                </div>
+                <div
+                  className="flex items-start space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => setSelectedRole("ADMIN")}
+                >
+                  <input
+                    type="radio"
+                    id="role-admin"
+                    name="role-selection"
+                    checked={selectedRole === "ADMIN"}
+                    onChange={() => setSelectedRole("ADMIN")}
+                    className="mt-1"
+                  />
+                  <div className="flex-1">
+                    <label
+                      htmlFor="role-admin"
+                      className="font-medium cursor-pointer"
+                    >
+                      Admin
+                    </label>
+                    <p className="text-sm text-muted-foreground">
+                      Can manage users and settings within their organization
+                    </p>
                   </div>
+                </div>
+                <div
+                  className="flex items-start space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => setSelectedRole("OWNER")}
+                >
+                  <input
+                    type="radio"
+                    id="role-owner"
+                    name="role-selection"
+                    checked={selectedRole === "OWNER"}
+                    onChange={() => setSelectedRole("OWNER")}
+                    className="mt-1"
+                  />
+                  <div className="flex-1">
+                    <label
+                      htmlFor="role-owner"
+                      className="font-medium cursor-pointer"
+                    >
+                      Owner
+                    </label>
+                    <p className="text-sm text-muted-foreground">
+                      Full control over the organization (only one per
+                      organization)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Separator */}
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border"></div>
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground font-medium">
+                  Additional Permissions
+                </span>
+              </div>
+            </div>
+
+            {/* System Admin Switch */}
+            <div
+              className={`flex items-start gap-4 p-4 border-2 rounded-lg transition-colors ${
+                selectedSystemAdmin
+                  ? "border-destructive/50 bg-destructive/5"
+                  : "border-border bg-muted/30"
+              }`}
+            >
+              <Switch
+                id="system-admin-switch"
+                checked={selectedSystemAdmin}
+                onCheckedChange={setSelectedSystemAdmin}
+              />
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <Label
+                    htmlFor="system-admin-switch"
+                    className="font-semibold cursor-pointer"
+                  >
+                    System Admin
+                  </Label>
+                  <AlertTriangle className="h-4 w-4 text-destructive" />
+                </div>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Grants full platform access across ALL organizations and users
+                </p>
+                <div className="p-2 bg-destructive/10 rounded text-xs text-destructive font-medium flex items-start gap-2">
+                  <AlertTriangle className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                  <span>
+                    Warning: This grants unrestricted access to all platform
+                    data and settings. Use with extreme caution.
+                  </span>
                 </div>
               </div>
             </div>
@@ -1189,10 +1204,53 @@ export default function AdminUsersPage() {
               type="button"
               variant="outline"
               onClick={() => setIsRoleDialogOpen(false)}
+              disabled={isUpdatingRole}
             >
               Cancel
             </Button>
-            <Button onClick={handleConfirmRole}>Confirm</Button>
+            <Button onClick={handleConfirmRole} disabled={isUpdatingRole}>
+              {isUpdatingRole && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {isUpdatingRole ? "Updating..." : "Confirm"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete User Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Delete user?</DialogTitle>
+            <DialogDescription>
+              This will permanently delete{" "}
+              <strong>{userToDelete?.name || userToDelete?.email}</strong> and
+              remove them from the organization. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteDialogOpen(false)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
