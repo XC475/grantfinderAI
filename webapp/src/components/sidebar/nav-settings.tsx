@@ -2,14 +2,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BadgeCheck, CreditCard, Bell, Users } from "lucide-react";
+import { BadgeCheck, Users, Settings, ChevronRight } from "lucide-react";
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface NavSettingsProps {
   organizationSlug: string | null;
@@ -27,40 +35,52 @@ export function NavSettings({ organizationSlug }: NavSettingsProps) {
       icon: BadgeCheck,
     },
     {
-      title: "Billing",
-      url: `/private/${organizationSlug}/settings/billing`,
-      icon: CreditCard,
-    },
-    {
-      title: "Notifications",
-      url: `/private/${organizationSlug}/settings/notifications`,
-      icon: Bell,
-    },
-    {
       title: "Team",
       url: `/private/${organizationSlug}/settings/team`,
       icon: Users,
     },
   ];
 
+  // Check if any settings page is active
+  const isSettingsActive = pathname.includes("/settings");
+
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Settings</SidebarGroupLabel>
-      <SidebarMenu>
-        {settingsItems.map((item) => {
-          const isActive = pathname === item.url;
-          return (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild isActive={isActive}>
-                <Link href={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
+    <>
+      <SidebarGroup>
+        <SidebarMenu>
+          <Collapsible
+            defaultOpen={isSettingsActive}
+            className="group/collapsible"
+          >
+            <SidebarMenuItem>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton tooltip="Settings">
+                  <Settings />
+                  <span>Settings</span>
+                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  {settingsItems.map((item) => {
+                    const isActive = pathname === item.url;
+                    return (
+                      <SidebarMenuSubItem key={item.title}>
+                        <SidebarMenuSubButton asChild isActive={isActive}>
+                          <Link href={item.url}>
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    );
+                  })}
+                </SidebarMenuSub>
+              </CollapsibleContent>
             </SidebarMenuItem>
-          );
-        })}
-      </SidebarMenu>
-    </SidebarGroup>
+          </Collapsible>
+        </SidebarMenu>
+      </SidebarGroup>
+    </>
   );
 }

@@ -122,40 +122,6 @@ const data = {
       url: "/private/profile",
       icon: Building2,
     },
-    // {
-    //   title: "Org Profile",
-    //   url: "/org-profile",
-    //   icon: Building2,
-    // },
-    // {
-    //   title: "Applications",
-    //   url: "/applications",
-    //   icon: ClipboardList,
-    // },
-    // {
-    //   title: "Projects",
-    //   url: "/projects",
-    //   icon: FolderOpen,
-    // },
-    // {
-    //   title: "Settings",
-    //   url: "#",
-    //   icon: Settings2,
-    //   items: [
-    //     {
-    //       title: "Account",
-    //       url: "/settings/account",
-    //     },
-    //     {
-    //       title: "Billing",
-    //       url: "/settings/billing",
-    //     },
-    //     {
-    //       title: "Organizations",
-    //       url: "/settings/organizations",
-    //     },
-    //   ],
-    // },
   ],
   navAdmin: [
     {
@@ -264,9 +230,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }));
   }, [organizationSlug]);
 
-  // Check if we're on a settings page
-  const isOnSettingsPage = pathname.includes("/settings");
-
   return (
     <>
       <style
@@ -326,27 +289,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarTrigger className="group-data-[collapsible=icon]:hidden" />
         </SidebarHeader>
         <SidebarContent>
-          {isOnSettingsPage ? (
-            <NavSettings organizationSlug={organizationSlug} />
-          ) : (
-            <>
-              <NavMain
-                items={navItems}
-                iconSize={SIDEBAR_CONFIG.navigationIconSize}
-              />
-              <NavOrganization
-                items={navOrganizationItems}
-                iconSize={SIDEBAR_CONFIG.navigationIconSize}
-              />
-              {isAdmin && (
-                <NavAdmin
-                  items={navAdminItems}
-                  iconSize={SIDEBAR_CONFIG.navigationIconSize}
-                />
-              )}
-              <NavChats organizationSlug={organizationSlug} />
-            </>
+          <NavMain
+            items={navItems}
+            iconSize={SIDEBAR_CONFIG.navigationIconSize}
+          />
+          <NavOrganization
+            items={navOrganizationItems}
+            iconSize={SIDEBAR_CONFIG.navigationIconSize}
+          />
+          <NavSettings organizationSlug={organizationSlug} />
+          {isAdmin && (
+            <NavAdmin
+              items={navAdminItems}
+              iconSize={SIDEBAR_CONFIG.navigationIconSize}
+            />
           )}
+          <NavChats organizationSlug={organizationSlug} />
         </SidebarContent>
         <SidebarFooter>{user && <NavUser user={user} />}</SidebarFooter>
         <SidebarRail />
