@@ -1,431 +1,205 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   BotMessageSquare,
   FileText,
-  Bookmark,
-  ClipboardList,
-  Building2,
   Sparkles,
-  ArrowRight,
-  Send,
+  Clock,
+  Loader2,
 } from "lucide-react";
+import { toast } from "sonner";
+import { ApplicationsTable } from "@/components/applications/ApplicationsTable";
 
-// Commented out - Old recommendations interface
-// interface Recommendation {
-//   id: string;
-//   opportunityId: string;
-//   fitScore: number;
-//   fitReasoning: string;
-//   fitDescription: string;
-//   districtName: string;
-//   queryDate: string;
-//   grant?: {
-//     title: string;
-//     agency: string;
-//     total_funding_amount?: number;
-//     award_min?: number;
-//     award_max?: number;
-//     url?: string;
-//   };
-// }
+interface Application {
+  id: string;
+  opportunityId: number;
+  status: string;
+  title: string | null;
+  createdAt: string;
+  updatedAt: string;
+  submittedAt: string | null;
+  lastEditedAt: string;
+  organization: {
+    slug: string;
+    name: string;
+  };
+  opportunity?: {
+    total_funding_amount: number | null;
+    close_date: string | null;
+  };
+}
 
-const placeholderTexts = [
-  "Ask anything...",
-  "Help with search...",
-  "Help with writing...",
-  "Find grants...",
-  "Get recommendations...",
-];
+interface CachedAction {
+  id: string;
+  name: string;
+  lastAccessed: string;
+}
 
 export default function DashboardPage() {
   const params = useParams();
-  const router = useRouter();
   const organizationSlug = params.slug as string;
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [chatInput, setChatInput] = useState("");
-  const [currentPlaceholder, setCurrentPlaceholder] = useState(
-    placeholderTexts[0]
-  );
-
-  // Animated placeholder effect
-  useEffect(() => {
-    let currentIndex = 0;
-    let currentCharIndex = 0;
-    let isPaused = false;
-    let isDeleting = false;
-
-    const animatePlaceholder = () => {
-      const currentText = placeholderTexts[currentIndex];
-
-      if (!isDeleting && currentCharIndex <= currentText.length) {
-        setCurrentPlaceholder(currentText.slice(0, currentCharIndex));
-        currentCharIndex++;
-
-        if (currentCharIndex > currentText.length) {
-          isPaused = true;
-          setTimeout(() => {
-            isPaused = false;
-            isDeleting = true;
-          }, 2000);
-        }
-      } else if (isDeleting && currentCharIndex >= 0) {
-        setCurrentPlaceholder(currentText.slice(0, currentCharIndex));
-        currentCharIndex--;
-
-        if (currentCharIndex === 0) {
-          isDeleting = false;
-          currentIndex = (currentIndex + 1) % placeholderTexts.length;
-        }
-      }
-    };
-
-    const interval = setInterval(() => {
-      if (!isPaused) {
-        animatePlaceholder();
-      }
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleChatSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (chatInput.trim()) {
-      router.push(
-        `/private/${organizationSlug}/chat?message=${encodeURIComponent(chatInput.trim())}`
-      );
-    }
-  };
-
-  // Commented out - Old recommendations fetching logic
-  // useEffect(() => {
-  //   fetchRecommendations();
-  // }, []);
-
-  // const fetchRecommendations = async () => {
-  //   try {
-  //     const response = await fetch(`/api/recommendations/list`);
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch recommendations");
-  //     }
-
-  //     const data = await response.json();
-  //     if (data.success && data.recommendations) {
-  //       // API already sorts by fit score, just take top 3
-  //       const topRecommendations = data.recommendations.slice(0, 3);
-
-  //       // Fetch grant details for each recommendation
-  //       const recommendationsWithGrants = await Promise.all(
-  //         topRecommendations.map(async (rec: Recommendation) => {
-  //           try {
-  //             const grantResponse = await fetch(
-  //               `/api/grants/${rec.opportunityId}`
-  //             );
-  //             if (grantResponse.ok) {
-  //               const grantData = await grantResponse.json();
-  //               return { ...rec, grant: grantData };
-  //             }
-  //           } catch (error) {
-  //             console.error(
-  //               `Failed to fetch grant ${rec.opportunityId}:`,
-  //               error
-  //             );
-  //           }
-  //           return rec;
-  //         })
-  //       );
-
-  //       setRecommendations(recommendationsWithGrants);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching recommendations:", error);
-  //     toast.error("Failed to load recommendations");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const formatAwardAmount = (grant?: Recommendation["grant"]) => {
-  //   if (!grant) return "Amount not available";
-
-  //   if (grant.total_funding_amount) {
-  //     return `$${grant.total_funding_amount.toLocaleString()}`;
-  //   }
-
-  //   if (grant.award_min && grant.award_max) {
-  //     return `$${grant.award_min.toLocaleString()} - $${grant.award_max.toLocaleString()}`;
-  //   }
-
-  //   if (grant.award_min) {
-  //     return `$${grant.award_min.toLocaleString()}+`;
-  //   }
-
-  //   if (grant.award_max) {
-  //     return `Up to $${grant.award_max.toLocaleString()}`;
-  //   }
-
-  //   return "Amount not available";
-  // };
-
-  // Dashboard page cards
-  const dashboardCards = [
+  // Dummy data for "Jump back in"
+  const cachedActions: CachedAction[] = [
     {
-      title: "AI Assistant",
-      description:
-        "Get personalized grant recommendations and answers to your funding questions using our intelligent chatbot.",
-      icon: BotMessageSquare,
-      url: `/private/${organizationSlug}/chat`,
-      color: "text-blue-500",
+      id: "1",
+      name: "STEM Education Grant Draft",
+      lastAccessed: "2 minutes ago",
     },
     {
-      title: "Grant Search",
-      description:
-        "Browse and search through thousands of available grants. Filter by category, deadline, and funding amount.",
-      icon: FileText,
-      url: `/private/${organizationSlug}/grants`,
-      color: "text-green-500",
+      id: "2",
+      name: "Search: Special Education",
+      lastAccessed: "1 hour ago",
     },
     {
-      title: "Recommendations",
-      description:
-        "View AI-powered grant recommendations tailored specifically to your organization's profile and needs.",
-      icon: Sparkles,
-      url: `/private/${organizationSlug}/recommendations`,
-      color: "text-purple-500",
+      id: "3",
+      name: "Technology Infrastructure Proposal",
+      lastAccessed: "3 hours ago",
     },
     {
-      title: "Bookmarks",
-      description:
-        "Access your saved grants and keep track of opportunities you're interested in applying for.",
-      icon: Bookmark,
-      url: `/private/${organizationSlug}/bookmarks`,
-      color: "text-yellow-500",
-    },
-    {
-      title: "Applications",
-      description:
-        "Manage your grant applications, track deadlines, and monitor the status of your submissions.",
-      icon: ClipboardList,
-      url: `/private/${organizationSlug}/applications`,
-      color: "text-orange-500",
-    },
-    {
-      title: "Organization Profile",
-      description:
-        "Update your organization's information, mission statement, and strategic priorities for better matches.",
-      icon: Building2,
-      url: `/private/${organizationSlug}/profile`,
-      color: "text-indigo-500",
+      id: "4",
+      name: "Chat: Grant Requirements",
+      lastAccessed: "Yesterday",
     },
   ];
 
+  // Fetch applications
+  const fetchApplications = async () => {
+    try {
+      const response = await fetch(
+        `/api/applications?organizationSlug=${organizationSlug}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setApplications(data.applications.slice(0, 5)); // Show only first 5
+      } else {
+        toast.error("Failed to load applications");
+      }
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+      toast.error("Failed to load applications");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchApplications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [organizationSlug]);
+
   return (
-    <div className="space-y-6 p-4 ">
+    <div className="space-y-6 p-4">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome to your grant management hub. Explore the tools and features
-          available to you.
-        </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {dashboardCards.map((card) => {
-          const Icon = card.icon;
+      {/* Top 3 Cards */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Link href={`/private/${organizationSlug}/chat`}>
+          <Card className="hover:shadow-md transition-all hover:border-primary/50 cursor-pointer h-full">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-blue-50">
+                  <BotMessageSquare className="h-6 w-6 text-blue-500" />
+                </div>
+                <CardTitle className="text-lg">AI Assistant</CardTitle>
+              </div>
+            </CardHeader>
+          </Card>
+        </Link>
 
-          // Special handling for AI Assistant card
-          if (card.title === "AI Assistant") {
-            return (
-              <Card
-                key={card.title}
-                className="hover:shadow-md transition-all hover:border-primary/50 h-full"
-              >
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`p-2 rounded-lg bg-muted transition-colors`}
-                    >
-                      <Icon className={`h-6 w-6 ${card.color}`} />
-                    </div>
-                    <Link href={card.url}>
-                      <CardTitle className="text-xl hover:text-primary transition-colors cursor-pointer">
-                        {card.title}
-                      </CardTitle>
-                    </Link>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4 mt-[-10px]">
-                  <CardDescription className="text-sm leading-relaxed">
-                    {card.description}
-                  </CardDescription>
-                  <form onSubmit={handleChatSubmit} className="relative">
-                    <input
-                      type="text"
-                      value={chatInput}
-                      onChange={(e) => setChatInput(e.target.value)}
-                      placeholder={currentPlaceholder}
-                      className="w-full px-4 py-2 pr-12 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all cursor-text"
-                    />
-                    <Button
-                      type="submit"
-                      size="sm"
-                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
-                      disabled={!chatInput.trim()}
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            );
-          }
+        <Link href={`/private/${organizationSlug}/grants`}>
+          <Card className="hover:shadow-md transition-all hover:border-primary/50 cursor-pointer h-full">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-green-50">
+                  <FileText className="h-6 w-6 text-green-500" />
+                </div>
+                <CardTitle className="text-lg">Grants Search</CardTitle>
+              </div>
+            </CardHeader>
+          </Card>
+        </Link>
 
-          // Regular cards for other items
-          return (
-            <Link key={card.title} href={card.url}>
-              <Card className="hover:shadow-md transition-all hover:border-primary/50 cursor-pointer group h-full">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`p-2 rounded-lg bg-muted group-hover:bg-primary/10 transition-colors`}
-                    >
-                      <Icon className={`h-6 w-6 ${card.color}`} />
-                    </div>
-                    <CardTitle className="text-xl">{card.title}</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4 mt-[-10px]">
-                  <CardDescription className="text-sm leading-relaxed">
-                    {card.description}
-                  </CardDescription>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full justify-between transition-colors"
-                    asChild
-                  >
-                    <span>
-                      Go to {card.title}
-                      <ArrowRight className="h-4 w-4" />
-                    </span>
-                  </Button>
-                </CardContent>
-              </Card>
-            </Link>
-          );
-        })}
+        <Link href={`/private/${organizationSlug}/grants?tab=recommendations`}>
+          <Card className="hover:shadow-md transition-all hover:border-primary/50 cursor-pointer h-full">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-purple-50">
+                  <Sparkles className="h-6 w-6 text-purple-500" />
+                </div>
+                <CardTitle className="text-lg">Recommendations</CardTitle>
+              </div>
+            </CardHeader>
+          </Card>
+        </Link>
       </div>
 
-      {/* Commented out - Old recommendations section */}
-      {/* {loading ? (
-        <div className="flex items-center justify-center p-8">
-          <div className="text-muted-foreground">
-            Loading recommendations...
-          </div>
-        </div>
-      ) : recommendations.length > 0 ? (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-              <Sparkles className="h-5 w-5" />
-              Top Grant Recommendations
-            </h2>
-            <Button
-              variant="outline"
-              onClick={() =>
-                router.push(`/private/${organizationSlug}/recommendations`)
-              }
-              className="flex items-center gap-2"
-            >
-              View All Recommendations
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-            {recommendations.map((recommendation) => (
-              <Card
-                key={recommendation.id}
-                className="hover:shadow-md transition-shadow"
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <CardTitle className="text-lg leading-tight">
-                      {recommendation.grant?.title
-                        ?.split(" ")
-                        .slice(0, 5)
-                        .join(" ") + "..." || "Grant Title Not Available"}
-                    </CardTitle>
-                    <Badge variant="secondary" className="ml-2 flex-shrink-0">
-                      {recommendation.fitScore}% Match
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <DollarSign className="h-4 w-4" />
-                    <span>{formatAwardAmount(recommendation.grant)}</span>
-                  </div>
-
-                  {recommendation.grant?.agency && (
-                    <div className="text-sm text-muted-foreground">
-                      <strong>Agency:</strong> {recommendation.grant.agency}
-                    </div>
-                  )}
-
-                  {recommendation.grant?.url && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full"
-                      onClick={() =>
-                        window.open(recommendation.grant?.url, "_blank")
-                      }
-                    >
-                      View Grant Details
-                      <ExternalLink className="h-3 w-3 ml-1" />
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      ) : (
+      {/* Two Column Layout */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Left: Jump Back In */}
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-8">
-            <Sparkles className="h-8 w-8 text-muted-foreground mb-2" />
-            <h3 className="text-lg font-semibold mb-1">
-              No Recommendations Yet
-            </h3>
-            <p className="text-muted-foreground text-center mb-4">
-              Get personalized grant recommendations by running an AI analysis
-              of your organization.
-            </p>
-            <Button
-              onClick={() =>
-                router.push(`/private/${organizationSlug}/recommendations`)
-              }
-              className="flex items-center gap-2"
-            >
-              <Sparkles className="h-4 w-4" />
-              Get Recommendations
-            </Button>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5" />
+              Jump Back In
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {cachedActions.map((action) => (
+                <div
+                  key={action.id}
+                  className="flex items-center justify-between p-3 rounded-lg hover:bg-muted cursor-pointer transition-colors"
+                >
+                  <div className="font-medium text-sm">{action.name}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {action.lastAccessed}
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
-      )} */}
+
+        {/* Right: Applications Table */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Applications</CardTitle>
+              <Link
+                href={`/private/${organizationSlug}/applications`}
+                className="text-sm text-primary hover:underline"
+              >
+                View all
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : applications.length === 0 ? (
+              <div className="text-center py-8 text-sm text-muted-foreground">
+                No applications yet
+              </div>
+            ) : (
+              <ApplicationsTable
+                applications={applications}
+                slug={organizationSlug}
+              />
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
