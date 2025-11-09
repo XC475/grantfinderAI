@@ -151,7 +151,6 @@ exports.Prisma.OpportunitiesScalarFieldEnum = {
   contact_phone: 'contact_phone',
   url: 'url',
   attachments: 'attachments',
-  extra: 'extra',
   relevance_score: 'relevance_score',
   raw_text: 'raw_text',
   content_hash: 'content_hash',
@@ -167,15 +166,15 @@ exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   name: 'name',
-  role: 'role',
-  onboardingCompleted: 'onboardingCompleted',
-  hasTemporaryPassword: 'hasTemporaryPassword',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   avatarUrl: 'avatarUrl',
   lastActiveAt: 'lastActiveAt',
   organizationId: 'organizationId',
-  system_admin: 'system_admin'
+  system_admin: 'system_admin',
+  role: 'role',
+  onboardingCompleted: 'onboardingCompleted',
+  hasTemporaryPassword: 'hasTemporaryPassword'
 };
 
 exports.Prisma.OrganizationScalarFieldEnum = {
@@ -235,10 +234,7 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   id: 'id',
   opportunityId: 'opportunityId',
   status: 'status',
-  content: 'content',
-  contentHtml: 'contentHtml',
   title: 'title',
-  notes: 'notes',
   documents: 'documents',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',

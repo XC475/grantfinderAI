@@ -46,7 +46,6 @@ model opportunities {
   contact_phone               String?                       @db.VarChar
   url                         String?                       @db.VarChar
   attachments                 Json?                         @db.Json
-  extra                       Json?                         @db.Json
   relevance_score             Int?
   raw_text                    String?
   content_hash                String?                       @db.VarChar
@@ -63,21 +62,21 @@ model opportunities {
 
 /// ///// APP SCHEMA ////////
 model User {
-  id                     String           @id @db.Uuid
-  email                  String           @unique
-  name                   String?
-  role                   OrganizationRole @default(MEMBER)
-  onboardingCompleted    Boolean          @default(false)
-  hasTemporaryPassword   Boolean          @default(false)
-  createdAt              DateTime         @default(now())
-  updatedAt              DateTime         @updatedAt
-  avatarUrl              String?
-  lastActiveAt           DateTime         @default(now())
-  organizationId         String
-  system_admin           Boolean          @default(false)
-  aiChats                AiChat[]
-  grantBookmarks         GrantBookmark[]
-  organization           Organization     @relation("UserOrganization", fields: [organizationId], references: [id], onDelete: Cascade)
+  id                   String           @id @db.Uuid
+  email                String           @unique
+  name                 String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  avatarUrl            String?
+  lastActiveAt         DateTime         @default(now())
+  organizationId       String
+  system_admin         Boolean          @default(false)
+  role                 OrganizationRole @default(MEMBER)
+  onboardingCompleted  Boolean          @default(false)
+  hasTemporaryPassword Boolean          @default(false)
+  aiChats              AiChat[]
+  grantBookmarks       GrantBookmark[]
+  organization         Organization     @relation("UserOrganization", fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId, role])
   @@map("users")
@@ -163,10 +162,7 @@ model Application {
   id                    String                  @id @default(cuid())
   opportunityId         Int
   status                ApplicationStatus       @default(DRAFT)
-  content               Json?
-  contentHtml           String?
   title                 String?
-  notes                 String?
   documents             Json?
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt

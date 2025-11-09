@@ -27,6 +27,9 @@ interface Application {
     slug: string;
     name: string;
   };
+  opportunity?: {
+    total_funding_amount: number | null;
+  };
 }
 
 function getStatusColor(status: string): string {
@@ -54,6 +57,16 @@ function getStatusColor(status: string): string {
 
 function formatStatus(status: string): string {
   return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+}
+
+function formatCurrency(amount: number | null | undefined): string {
+  if (!amount) return "N/A";
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
 }
 
 export default function ApplicationsPage({
@@ -142,8 +155,8 @@ export default function ApplicationsPage({
             <tr className="border-b bg-muted/50">
               <th className="p-4 text-left font-medium">Name</th>
               <th className="p-4 text-left font-medium">Status</th>
+              <th className="p-4 text-left font-medium">$Funding</th>
               <th className="p-4 text-left font-medium">Last Edited</th>
-              <th className="p-4 text-left font-medium">Created</th>
             </tr>
           </thead>
           <tbody>
@@ -171,11 +184,13 @@ export default function ApplicationsPage({
                     {formatStatus(application.status)}
                   </Badge>
                 </td>
-                <td className="p-4 text-sm text-muted-foreground">
-                  {new Date(application.lastEditedAt).toLocaleDateString()}
+                <td className="p-4 text-sm font-medium">
+                  {formatCurrency(
+                    application.opportunity?.total_funding_amount
+                  )}
                 </td>
                 <td className="p-4 text-sm text-muted-foreground">
-                  {new Date(application.createdAt).toLocaleDateString()}
+                  {new Date(application.lastEditedAt).toLocaleDateString()}
                 </td>
               </tr>
             ))}

@@ -13,12 +13,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Save } from "lucide-react";
 
 export default function AccountSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [user, setUser] = useState<{ id: string; email?: string; created_at?: string } | null>(null);
 
   // Form state
   const [fullName, setFullName] = useState("");
@@ -39,7 +38,6 @@ export default function AccountSettingsPage() {
       } = await supabase.auth.getUser();
 
       if (user) {
-        setUser(user);
         setFullName(user.user_metadata?.name || "");
         setEmail(user.email || "");
       }
@@ -69,7 +67,10 @@ export default function AccountSettingsPage() {
       fetchUser(); // Refresh user data
     } catch (error) {
       console.error("Error updating profile:", error);
-      toast.error((error instanceof Error ? error.message : String(error)) || "Failed to update profile");
+      toast.error(
+        (error instanceof Error ? error.message : String(error)) ||
+          "Failed to update profile"
+      );
     } finally {
       setSaving(false);
     }
@@ -103,7 +104,10 @@ export default function AccountSettingsPage() {
       setConfirmPassword("");
     } catch (error) {
       console.error("Error changing password:", error);
-      toast.error((error instanceof Error ? error.message : String(error)) || "Failed to change password");
+      toast.error(
+        (error instanceof Error ? error.message : String(error)) ||
+          "Failed to change password"
+      );
     } finally {
       setSaving(false);
     }
@@ -165,7 +169,10 @@ export default function AccountSettingsPage() {
                   Saving...
                 </>
               ) : (
-                "Save Changes"
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Changes
+                </>
               )}
             </Button>
           </form>
@@ -215,34 +222,6 @@ export default function AccountSettingsPage() {
               )}
             </Button>
           </form>
-        </CardContent>
-      </Card>
-
-      {/* Account Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Account Information</CardTitle>
-          <CardDescription>Your account details</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Account ID
-              </p>
-              <p className="text-sm font-mono">{user?.id}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Created At
-              </p>
-              <p className="text-sm">
-                {user?.created_at
-                  ? new Date(user.created_at).toLocaleDateString()
-                  : "N/A"}
-              </p>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>
