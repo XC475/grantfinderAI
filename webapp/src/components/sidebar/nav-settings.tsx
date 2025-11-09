@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BadgeCheck, Users, Settings, ChevronRight } from "lucide-react";
+import { Settings, ChevronRight, type LucideIcon } from "lucide-react";
 import {
   SidebarGroup,
   SidebarMenu,
@@ -29,7 +29,7 @@ interface NavSettingsProps {
   items: {
     title: string;
     url: string;
-    icon: any;
+    icon: LucideIcon;
   }[];
 }
 
