@@ -6,12 +6,13 @@ import {
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
-  BotMessageSquare,
   FileText,
   ClipboardList,
   LayoutDashboard,
   Building2,
   Users,
+  Search,
+  SquarePen,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
@@ -21,6 +22,7 @@ import { NavChats } from "@/components/sidebar/nav-chats";
 import { NavUser } from "@/components/sidebar/nav-user";
 import { NavSettings } from "@/components/sidebar/nav-settings";
 import { TeamSwitcher } from "@/components/sidebar/team-switcher";
+import { SearchChatsModal } from "@/components/sidebar/search-chats-modal";
 import {
   Sidebar,
   SidebarContent,
@@ -101,9 +103,14 @@ const data = {
       icon: LayoutDashboard,
     },
     {
-      title: "AI Assistant",
+      title: "New Chat",
       url: "/private/chat",
-      icon: BotMessageSquare,
+      icon: SquarePen,
+    },
+    {
+      title: "Search Chats",
+      url: "#",
+      icon: Search,
     },
     {
       title: "Grants",
@@ -147,6 +154,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   } | null>(null);
   const [loadingOrganization, setLoadingOrganization] = React.useState(true);
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [searchChatsOpen, setSearchChatsOpen] = React.useState(false);
 
   // Extract organization slug from pathname: /private/[slug]/...
   const organizationSlug = React.useMemo(() => {
@@ -204,10 +212,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navItems = React.useMemo(() => {
     if (!organizationSlug) return data.navMain;
 
-    return data.navMain.map((item) => ({
-      ...item,
-      url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
-    }));
+    return data.navMain.map((item) => {
+      // Add onClick handler for Search Chats
+      if (item.title === "Search Chats") {
+        return {
+          ...item,
+          url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
+          onClick: () => setSearchChatsOpen(true),
+        };
+      }
+
+      return {
+        ...item,
+        url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
+      };
+    });
   }, [organizationSlug]);
 
   // Build organization navigation items with organization slug
@@ -309,6 +328,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarFooter>{user && <NavUser user={user} />}</SidebarFooter>
         <SidebarRail />
       </Sidebar>
+      <SearchChatsModal
+        open={searchChatsOpen}
+        onOpenChange={setSearchChatsOpen}
+        organizationSlug={organizationSlug}
+      />
     </>
   );
 }
