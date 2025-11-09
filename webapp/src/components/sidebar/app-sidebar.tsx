@@ -125,7 +125,7 @@ const data = {
       icon: ClipboardList,
     },
     {
-      title: "Profile",
+      title: "Org Profile",
       url: "/private/profile",
       icon: Building2,
     },
