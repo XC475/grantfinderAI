@@ -72,9 +72,7 @@ export function CreateDocumentModal({
       onSuccess();
 
       // Navigate to the document editor
-      router.push(
-        `/private/${organizationSlug}/applications/${applicationId}/documents/${document.id}`
-      );
+      router.push(`/private/${organizationSlug}/editor/${document.id}`);
     } catch (error) {
       console.error("Error creating document:", error);
       toast.error(

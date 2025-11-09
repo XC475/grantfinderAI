@@ -12,53 +12,54 @@ interface Document {
   content?: string;
   contentType: string;
   version: number;
+  applicationId: string;
   createdAt: string;
   updatedAt: string;
 }
 
 interface DocumentPageProps {
-  params: Promise<{ slug: string; applicationId: string; documentId: string }>;
+  params: Promise<{ slug: string; documentId: string }>;
 }
 
-export default function DocumentPage({ params }: DocumentPageProps) {
+export default function EditorPage({ params }: DocumentPageProps) {
   const [document, setDocument] = useState<Document | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const router = useRouter();
 
-  const { slug: organizationSlug, applicationId, documentId } = use(params);
+  const { slug: organizationSlug, documentId } = use(params);
 
   const fetchDocument = useCallback(async () => {
     try {
-      const response = await fetch(
-        `/api/applications/${applicationId}/documents/${documentId}`
-      );
+      // Fetch document without needing applicationId in the URL
+      const response = await fetch(`/api/documents/${documentId}`);
 
       if (response.ok) {
         const data = await response.json();
         setDocument(data.document);
       } else if (response.status === 404) {
         toast.error("Document not found");
-        router.push(
-          `/private/${organizationSlug}/applications/${applicationId}`
-        );
+        router.push(`/private/${organizationSlug}/applications`);
       } else {
         throw new Error("Failed to fetch document");
       }
     } catch (error) {
       console.error("Error fetching document:", error);
       toast.error("Failed to load document");
-      router.push(`/private/${organizationSlug}/applications/${applicationId}`);
+      router.push(`/private/${organizationSlug}/applications`);
     } finally {
       setLoading(false);
     }
-  }, [applicationId, documentId, organizationSlug, router]);
+  }, [documentId, organizationSlug, router]);
 
   const handleSave = async (content: string) => {
+    if (!document) return;
+
     setSaving(true);
     try {
+      // Use the applicationId from the document data
       const response = await fetch(
-        `/api/applications/${applicationId}/documents/${documentId}`,
+        `/api/applications/${document.applicationId}/documents/${documentId}`,
         {
           method: "PUT",
           headers: {
@@ -88,7 +89,7 @@ export default function DocumentPage({ params }: DocumentPageProps) {
 
   useEffect(() => {
     fetchDocument();
-  }, [applicationId, documentId, fetchDocument]);
+  }, [documentId, fetchDocument]);
 
   if (loading) {
     return (
@@ -115,7 +116,7 @@ export default function DocumentPage({ params }: DocumentPageProps) {
   return (
     <DocumentEditor
       document={document}
-      applicationId={applicationId}
+      applicationId={document.applicationId}
       organizationSlug={organizationSlug}
       onSave={handleSave}
       isSaving={saving}

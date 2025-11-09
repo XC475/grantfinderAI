@@ -163,9 +163,7 @@ export function ApplicationPage({
   };
 
   const handleEditDocument = (documentId: string) => {
-    router.push(
-      `/private/${organizationSlug}/applications/${applicationId}/documents/${documentId}`
-    );
+    router.push(`/private/${organizationSlug}/editor/${documentId}`);
   };
 
   const handleDeleteDocument = async (documentId: string) => {

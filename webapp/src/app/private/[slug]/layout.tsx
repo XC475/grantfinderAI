@@ -7,6 +7,7 @@ import { headers } from "next/headers";
 import { unstable_noStore } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
+import { ConditionalLayout } from "@/components/layouts/ConditionalLayout";
 
 // Note: Authentication and access checks are now handled by middleware.ts
 // This makes the layout lighter and prevents full page reloads on navigation
@@ -75,27 +76,7 @@ export default async function OrganizationLayout({
     }
   }
 
-  // Check if we're on a document page - if so, let the nested layout handle everything
-  const isDocumentPage = pathname.includes("/documents/");
-  
-  if (isDocumentPage) {
-    // Document pages have their own layout, just render children
-    return <>{children}</>;
-  }
-
-  // Normal layout for other pages
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <DynamicBreadcrumb organizationSlug={slug} />
-          </div>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
-      </SidebarInset>
-    </SidebarProvider>
+    <ConditionalLayout organizationSlug={slug}>{children}</ConditionalLayout>
   );
 }
