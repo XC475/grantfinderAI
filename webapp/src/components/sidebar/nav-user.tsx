@@ -1,7 +1,6 @@
 "use client";
 
-import { ChevronsUpDown, LogOut, Sparkles, Settings, Moon } from "lucide-react";
-import { useRouter, usePathname } from "next/navigation";
+import { ChevronsUpDown, LogOut, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -34,12 +33,7 @@ export function NavUser({
 }) {
   const { isMobile, state } = useSidebar();
   const isCollapsed = state === "collapsed";
-  const router = useRouter();
-  const pathname = usePathname();
   const { theme, setTheme } = useTheme();
-
-  // Extract workspace slug from pathname
-  const workspaceSlug = pathname.match(/^\/private\/([^\/]+)/)?.[1];
 
   // Handle logout
   const handleLogout = async () => {
@@ -123,13 +117,6 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
               <DropdownMenuItem
                 onSelect={(e) => {
                   e.preventDefault();
@@ -146,15 +133,6 @@ export function NavUser({
                   className="ml-auto"
                   onClick={(e) => e.stopPropagation()}
                 />
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() =>
-                  workspaceSlug &&
-                  router.push(`/private/${workspaceSlug}/settings`)
-                }
-              >
-                <Settings />
-                Settings
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
