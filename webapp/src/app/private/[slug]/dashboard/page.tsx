@@ -152,8 +152,8 @@ export default function DashboardPage() {
                 <CardTitle className="text-lg">Recommendations</CardTitle>
               </div>
               <CardDescription className="pt-2">
-                AI-powered grant matches tailored to your district's profile,
-                priorities, and strategic goals
+                AI-powered grant matches tailored to your district&apos;s
+                profile, priorities, and strategic goals
               </CardDescription>
             </CardHeader>
           </Card>
