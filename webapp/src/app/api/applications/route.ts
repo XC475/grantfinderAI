@@ -259,7 +259,7 @@ export async function GET(request: NextRequest) {
 
     const { data: opportunities, error: oppError } = await supabaseServer
       .from("opportunities")
-      .select("id, total_funding_amount")
+      .select("id, total_funding_amount, close_date")
       .in("id", opportunityIds);
 
     if (oppError) {

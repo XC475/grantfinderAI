@@ -3,12 +3,27 @@
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  type ColumnDef,
+  type ColumnResizeMode,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Loader2, FileText } from "lucide-react";
@@ -29,6 +44,7 @@ interface Application {
   };
   opportunity?: {
     total_funding_amount: number | null;
+    close_date: string | null;
   };
 }
 
@@ -78,6 +94,7 @@ export default function ApplicationsPage({
   const router = useRouter();
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
+  const [columnResizeMode] = useState<ColumnResizeMode>("onChange");
 
   const fetchApplications = async () => {
     try {
@@ -102,6 +119,101 @@ export default function ApplicationsPage({
     fetchApplications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
+
+  // Define table columns with resizing support
+  const columns: ColumnDef<Application>[] = [
+    {
+      accessorKey: "title",
+      header: "Application Name",
+      cell: ({ row }) => (
+        <div className="cursor-pointer">
+          <div className="font-medium hover:underline line-clamp-1">
+            {row.original.title || `Grant #${row.original.opportunityId}`}
+          </div>
+          <div className="text-sm text-muted-foreground">
+            Opportunity ID: {row.original.opportunityId}
+          </div>
+        </div>
+      ),
+      size: 250,
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <Badge className={getStatusColor(row.original.status)}>
+          {formatStatus(row.original.status)}
+        </Badge>
+      ),
+      size: 150,
+    },
+    {
+      accessorKey: "funding",
+      header: "Funding Amount",
+      cell: ({ row }) => (
+        <div className="font-medium">
+          {formatCurrency(row.original.opportunity?.total_funding_amount)}
+        </div>
+      ),
+      size: 150,
+    },
+    {
+      accessorKey: "deadline",
+      header: "Deadline",
+      cell: ({ row }) => (
+        <div className="text-sm text-muted-foreground">
+          {row.original.opportunity?.close_date
+            ? new Date(row.original.opportunity.close_date).toLocaleDateString(
+                "en-US",
+                {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                }
+              )
+            : "No deadline"}
+        </div>
+      ),
+      size: 140,
+    },
+    {
+      accessorKey: "lastEditedAt",
+      header: "Last Edited",
+      cell: ({ row }) => (
+        <div className="text-sm text-muted-foreground">
+          {new Date(row.original.lastEditedAt).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </div>
+      ),
+      size: 140,
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Created",
+      cell: ({ row }) => (
+        <div className="text-sm text-muted-foreground">
+          {new Date(row.original.createdAt).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </div>
+      ),
+      size: 140,
+    },
+  ];
+
+  const table = useReactTable({
+    data: applications,
+    columns,
+    columnResizeMode,
+    getCoreRowModel: getCoreRowModel(),
+    enableColumnResizing: true,
+    columnResizeDirection: "ltr",
+  });
 
   if (loading) {
     return (
@@ -149,53 +261,80 @@ export default function ApplicationsPage({
         </p>
       </div>
 
-      <div className="rounded-md border">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b bg-muted/50">
-              <th className="p-4 text-left font-medium">Name</th>
-              <th className="p-4 text-left font-medium">Status</th>
-              <th className="p-4 text-left font-medium">$Funding</th>
-              <th className="p-4 text-left font-medium">Last Edited</th>
-            </tr>
-          </thead>
-          <tbody>
-            {applications.map((application) => (
-              <tr
-                key={application.id}
-                className="border-b hover:bg-muted/50 transition-colors cursor-pointer"
-                onClick={() =>
-                  router.push(`/private/${slug}/applications/${application.id}`)
-                }
-              >
-                <td className="p-4">
-                  <div>
-                    <div className="font-medium hover:underline">
-                      {application.title ||
-                        `Grant #${application.opportunityId}`}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Opportunity ID: {application.opportunityId}
-                    </div>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <Badge className={getStatusColor(application.status)}>
-                    {formatStatus(application.status)}
-                  </Badge>
-                </td>
-                <td className="p-4 text-sm font-medium">
-                  {formatCurrency(
-                    application.opportunity?.total_funding_amount
-                  )}
-                </td>
-                <td className="p-4 text-sm text-muted-foreground">
-                  {new Date(application.lastEditedAt).toLocaleDateString()}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="overflow-hidden rounded-md border bg-background">
+        <div className="overflow-x-auto">
+          <Table style={{ width: table.getTotalSize(), tableLayout: "fixed" }}>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead
+                      className="relative"
+                      key={header.id}
+                      style={{ width: header.getSize() }}
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                      <div
+                        onMouseDown={header.getResizeHandler()}
+                        onTouchStart={header.getResizeHandler()}
+                        className={`absolute top-0 right-0 h-full w-1 cursor-col-resize touch-none select-none bg-border opacity-0 hover:opacity-100 ${
+                          header.column.getIsResizing()
+                            ? "bg-primary opacity-100"
+                            : ""
+                        }`}
+                      />
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    className="cursor-pointer"
+                    onClick={() =>
+                      router.push(
+                        `/private/${slug}/applications/${row.original.id}`
+                      )
+                    }
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        style={{ width: cell.column.getSize() }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    className="h-24 text-center"
+                    colSpan={columns.length}
+                  >
+                    No applications found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <p className="p-4 text-muted-foreground text-sm border-t">
+          💡 Drag column edges to resize. Click on any row to view application
+          details.
+        </p>
       </div>
     </div>
   );
