@@ -30,9 +30,11 @@ export function NavMain({
     url: string;
     icon?: LucideIcon;
     isActive?: boolean;
+    onClick?: () => void;
     items?: {
       title: string;
       url: string;
+      onClick?: () => void;
     }[];
   }[];
   iconSize?: string;
@@ -56,8 +58,7 @@ export function NavMain({
   };
 
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+    <SidebarGroup className="mt-2">
       <SidebarMenu>
         {items.map((item) => {
           // If item has sub-items, render as collapsible dropdown
@@ -106,14 +107,30 @@ export function NavMain({
           // If item has no sub-items, render as simple button
           return (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild tooltip={item.title}>
-                <Link href={item.url} onClick={(e) => handleClick(e, item.url)}>
+              {item.onClick ? (
+                // If item has onClick, render as button
+                <SidebarMenuButton tooltip={item.title} onClick={item.onClick}>
                   {item.icon && (
                     <item.icon style={{ width: iconSize, height: iconSize }} />
                   )}
                   {!isCollapsed && <span>{item.title}</span>}
-                </Link>
-              </SidebarMenuButton>
+                </SidebarMenuButton>
+              ) : (
+                // Otherwise render as link
+                <SidebarMenuButton asChild tooltip={item.title}>
+                  <Link
+                    href={item.url}
+                    onClick={(e) => handleClick(e, item.url)}
+                  >
+                    {item.icon && (
+                      <item.icon
+                        style={{ width: iconSize, height: iconSize }}
+                      />
+                    )}
+                    {!isCollapsed && <span>{item.title}</span>}
+                  </Link>
+                </SidebarMenuButton>
+              )}
             </SidebarMenuItem>
           );
         })}

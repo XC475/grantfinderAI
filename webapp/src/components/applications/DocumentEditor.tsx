@@ -1,17 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Save, Loader2, PanelLeft } from "lucide-react";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
-import { DocumentChatSidebar } from "./DocumentChatSidebar";
-import {
-  ResizablePanelGroup,
-  ResizablePanel,
-  ResizableHandle,
-} from "@/components/ui/resizable";
-import { cn } from "@/lib/utils";
+import { useDocument } from "@/contexts/DocumentContext";
 import "./editor-overrides.css";
 
 interface Document {
@@ -39,136 +31,94 @@ export function DocumentEditor({
   onSave,
   isSaving,
 }: DocumentEditorProps) {
+  const { setDocumentTitle, setDocumentContent, setSaveStatus } = useDocument();
   const [title, setTitle] = useState(document.title);
   const [content, setContent] = useState(document.content || "");
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(true);
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastSavedContentRef = useRef(document.content || "");
 
-  // Auto-save every 30 seconds
+  // Update context when title or content changes
   useEffect(() => {
-    if (!hasUnsavedChanges || !content) return;
+    setDocumentTitle(title);
+    setDocumentContent(content);
+  }, [title, content, setDocumentTitle, setDocumentContent]);
 
-    const autoSaveInterval = setInterval(() => {
-      if (hasUnsavedChanges) {
-        handleSave();
+  // Debounced auto-save (Google Docs style)
+  useEffect(() => {
+    // Clear any existing timeout
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+
+    // Don't auto-save if there are no changes
+    if (content === lastSavedContentRef.current) {
+      return;
+    }
+
+    // Set status to unsaved
+    setSaveStatus("unsaved");
+
+    // Set up new timeout to save after 2 seconds of inactivity
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      handleSave();
+    }, 2000); // 2 seconds - Google Docs-style delay
+
+    // Cleanup
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
       }
-    }, 30000); // 30 seconds
-
-    return () => clearInterval(autoSaveInterval);
-  }, [hasUnsavedChanges, content]);
+    };
+  }, [content]); // Only trigger on content changes
 
   const handleSave = useCallback(async () => {
-    if (!hasUnsavedChanges) return;
+    if (content === lastSavedContentRef.current) return;
 
+    setSaveStatus("saving");
+    
     try {
       await onSave(content);
-      setHasUnsavedChanges(false);
-      toast.success("Document saved");
+      lastSavedContentRef.current = content;
+      setSaveStatus("saved");
+      
+      // Hide "saved" status after 2 seconds
+      setTimeout(() => {
+        if (content === lastSavedContentRef.current) {
+          setSaveStatus("saved");
+        }
+      }, 2000);
     } catch (error) {
       console.error("Error saving document:", error);
+      setSaveStatus("unsaved");
       toast.error("Failed to save document");
     }
-  }, [content, hasUnsavedChanges, onSave]);
+  }, [content, onSave, setSaveStatus]);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
-    setHasUnsavedChanges(newContent !== (document.content || ""));
+    // Auto-save logic is handled by useEffect with debouncing
   };
 
   const handleTitleChange = (newTitle: string) => {
     setTitle(newTitle);
-    setHasUnsavedChanges(true);
+    // Title changes are handled separately if needed
   };
 
   return (
-    <div className="h-full bg-background relative">
-      {/* Floating action buttons - top right */}
-      <div className="fixed top-20 right-6 z-40 flex items-center gap-2">
-        {hasUnsavedChanges && (
-          <span className="text-sm text-muted-foreground whitespace-nowrap bg-background/95 backdrop-blur-sm px-3 py-1.5 rounded-md border shadow-sm">
-            • Unsaved
-          </span>
-        )}
-        {hasUnsavedChanges && (
-          <Button
-            variant="outline"
-            onClick={handleSave}
-            disabled={isSaving}
-            size="sm"
-            className="shadow-sm bg-background/95 backdrop-blur-sm"
-          >
-            {isSaving ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4 mr-2" />
-            )}
-            {isSaving ? "Saving..." : "Save"}
-          </Button>
-        )}
-      </div>
-
-      {/* Resizable layout with editor and sidebar */}
-      <ResizablePanelGroup direction="horizontal" className="h-full">
-        {/* Main editor panel */}
-        <ResizablePanel defaultSize={isChatOpen ? 60 : 100} minSize={30}>
-          <div className="h-full flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto">
-              <div className="container max-w-4xl mx-auto px-8 pb-8">
-                <div className="prose prose-lg max-w-none">
-                  <SimpleEditor
-                    initialContent={content}
-                    onContentChange={handleContentChange}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </ResizablePanel>
-
-        {/* Resizable handle (only shown when sidebar is open) */}
-        {isChatOpen && <ResizableHandle withHandle />}
-
-        {/* Chat sidebar panel */}
-        {isChatOpen && (
-          <ResizablePanel defaultSize={40} minSize={25} maxSize={60}>
-            <div className="relative h-full">
-              {/* Toggle sidebar button - sticky to left edge of sidebar */}
-              <div className="absolute top-2 ml-2 mt-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsChatOpen(!isChatOpen)}
-                  className="size-7 bg-background/95"
-                >
-                  <PanelLeft className="h-4 w-4 transition-transform rotate-180" />
-                  <span className="sr-only">Toggle Assistant Sidebar</span>
-                </Button>
-              </div>
-              <DocumentChatSidebar
-                documentId={document.id}
-                documentTitle={title}
-                documentContent={content}
-                onToggle={() => setIsChatOpen(!isChatOpen)}
+    <div className="h-full bg-background">
+      {/* Main editor */}
+      <div className="h-full flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto">
+          <div className="container max-w-4xl mx-auto px-8 pb-8">
+            <div className="prose prose-lg max-w-none">
+              <SimpleEditor
+                initialContent={content}
+                onContentChange={handleContentChange}
               />
             </div>
-          </ResizablePanel>
-        )}
-
-        {/* Toggle button when sidebar is closed */}
-        {!isChatOpen && (
-          <div className="fixed top-20 right-4 z-40">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsChatOpen(!isChatOpen)}
-              className="size-7 bg-background/95 backdrop-blur-sm border shadow-sm"
-            >
-              <PanelLeft className="h-4 w-4 transition-transform" />
-              <span className="sr-only">Toggle Assistant Sidebar</span>
-            </Button>
           </div>
-        )}
-      </ResizablePanelGroup>
+        </div>
+      </div>
     </div>
   );
 }

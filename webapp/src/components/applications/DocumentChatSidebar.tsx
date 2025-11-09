@@ -1,29 +1,25 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Plus, Clock, MoreHorizontal, Settings } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { DocumentSidebarChat } from "./DocumentSidebarChat";
 import { Message } from "@/components/ui/chat-message";
-import { cn } from "@/lib/utils";
+import { useDocument } from "@/contexts/DocumentContext";
 
 interface DocumentChatSidebarProps {
   documentId: string;
-  documentTitle: string;
-  documentContent: string;
   onToggle: () => void;
 }
 
 export function DocumentChatSidebar({
   documentId,
-  documentTitle,
-  documentContent,
   onToggle,
 }: DocumentChatSidebarProps) {
+  const { documentTitle, documentContent } = useDocument();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const hasAutoSent = useRef(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -49,6 +45,13 @@ export function DocumentChatSidebar({
       setMessages((prev) => [...prev, userMessage]);
       setInput("");
       setIsLoading(true);
+      console.log(
+        "🔄 [DocumentChat] isLoading set to TRUE - stop button should appear"
+      );
+
+      // Create abort controller for this request
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
 
       try {
         // Convert messages to the format expected by the API
@@ -68,6 +71,7 @@ export function DocumentChatSidebar({
             documentTitle,
             documentContent,
           }),
+          signal: abortController.signal,
         });
 
         if (!response.ok) {
@@ -83,6 +87,7 @@ export function DocumentChatSidebar({
         let fullContent = "";
         let displayedContent = "";
         let isStreamComplete = false;
+        let isCancelled = false;
 
         const assistantMessage: Message = {
           id: `assistant-${Date.now()}`,
@@ -94,11 +99,18 @@ export function DocumentChatSidebar({
         // Add empty assistant message immediately
         setMessages((prev) => [...prev, assistantMessage]);
 
+        // Listen for abort event to immediately cancel reader
+        abortController.signal.addEventListener("abort", () => {
+          console.log("Abort signal received");
+          isCancelled = true;
+          reader.cancel().catch(console.error);
+        });
+
         // Smooth character-by-character display
         const smoothDisplay = async () => {
           while (
-            !isStreamComplete ||
-            displayedContent.length < fullContent.length
+            (!isStreamComplete && !isCancelled) ||
+            (displayedContent.length < fullContent.length && !isCancelled)
           ) {
             if (displayedContent.length < fullContent.length) {
               // Display next few characters for smoother feel
@@ -131,7 +143,7 @@ export function DocumentChatSidebar({
         smoothDisplay();
 
         try {
-          while (true) {
+          while (true && !isCancelled) {
             const { done, value } = await reader.read();
             if (done) {
               isStreamComplete = true;
@@ -145,25 +157,41 @@ export function DocumentChatSidebar({
           reader.releaseLock();
         }
       } catch (error) {
-        console.error("Error calling editor chat API:", error);
-        // Add error message
-        const errorMessage: Message = {
-          id: `error-${Date.now()}`,
-          role: "assistant",
-          content:
-            "Sorry, there was an error processing your request. Please try again.",
-          createdAt: new Date(),
-        };
-        setMessages((prev) => [...prev, errorMessage]);
+        // Check if the error is from abort
+        if (error instanceof Error && error.name === "AbortError") {
+          console.log("Stream aborted by user");
+          // Don't show error message for user-initiated stops
+        } else {
+          console.error("Error calling editor chat API:", error);
+          // Add error message
+          const errorMessage: Message = {
+            id: `error-${Date.now()}`,
+            role: "assistant",
+            content:
+              "Sorry, there was an error processing your request. Please try again.",
+            createdAt: new Date(),
+          };
+          setMessages((prev) => [...prev, errorMessage]);
+        }
       } finally {
         setIsLoading(false);
+        abortControllerRef.current = null;
       }
     },
     [input, messages, isLoading, documentId, documentTitle, documentContent]
   );
 
   const stop = useCallback(() => {
+    console.log("🛑 [DocumentChat] Stop button clicked");
+    // Abort the ongoing request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
     setIsLoading(false);
+    console.log(
+      "🔄 [DocumentChat] isLoading set to FALSE - stop button should hide"
+    );
   }, []);
 
   const handleSuggestedAction = (action: string) => {
@@ -185,23 +213,7 @@ export function DocumentChatSidebar({
   ];
 
   return (
-    <div className="flex flex-col h-full bg-background border-l">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b flex-shrink-0 ml-6">
-        <h2 className="text-lg font-semibold">Assistant</h2>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-            <Plus className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-            <Clock className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
+    <div className="flex flex-col h-full bg-background">
       {/* Main content area */}
       <div className="flex-1 flex flex-col overflow-hidden min-h-0 p-1 pt-2">
         {isEmpty && (
@@ -251,13 +263,9 @@ export function DocumentChatSidebar({
 
       {/* Footer */}
       <div className="p-4 border-t text-center flex-shrink-0">
-        <p className="text-xs text-muted-foreground mb-2">
+        <p className="text-xs text-muted-foreground">
           GrantWare can make mistakes. Please check responses.
         </p>
-        <Button variant="ghost" size="sm" className="h-8">
-          <Settings className="h-3 w-3 mr-1" />
-          Settings
-        </Button>
       </div>
     </div>
   );

@@ -3438,7 +3438,6 @@ export namespace Prisma {
     contact_phone: number
     url: number
     attachments: number
-    extra: number
     relevance_score: number
     raw_text: number
     content_hash: number
@@ -3567,7 +3566,6 @@ export namespace Prisma {
     contact_phone?: true
     url?: true
     attachments?: true
-    extra?: true
     relevance_score?: true
     raw_text?: true
     content_hash?: true
@@ -3693,7 +3691,6 @@ export namespace Prisma {
     contact_phone: string | null
     url: string | null
     attachments: JsonValue | null
-    extra: JsonValue | null
     relevance_score: number | null
     raw_text: string | null
     content_hash: string | null
@@ -3751,7 +3748,6 @@ export namespace Prisma {
     contact_phone?: boolean
     url?: boolean
     attachments?: boolean
-    extra?: boolean
     relevance_score?: boolean
     raw_text?: boolean
     content_hash?: boolean
@@ -3792,7 +3788,6 @@ export namespace Prisma {
     contact_phone?: boolean
     url?: boolean
     attachments?: boolean
-    extra?: boolean
     relevance_score?: boolean
     raw_text?: boolean
     content_hash?: boolean
@@ -3831,7 +3826,6 @@ export namespace Prisma {
     contact_phone?: boolean
     url?: boolean
     attachments?: boolean
-    extra?: boolean
     relevance_score?: boolean
     raw_text?: boolean
     content_hash?: boolean
@@ -3870,7 +3864,6 @@ export namespace Prisma {
     contact_phone?: boolean
     url?: boolean
     attachments?: boolean
-    extra?: boolean
     relevance_score?: boolean
     raw_text?: boolean
     content_hash?: boolean
@@ -3882,7 +3875,7 @@ export namespace Prisma {
     application_instructions?: boolean
   }
 
-  export type opportunitiesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "source" | "state_code" | "source_grant_id" | "status" | "title" | "description" | "description_summary" | "agency" | "funding_instrument" | "fiscal_year" | "post_date" | "close_date" | "archive_date" | "cost_sharing" | "award_max" | "award_min" | "total_funding_amount" | "eligibility" | "eligibility_summary" | "last_updated" | "contact_name" | "contact_email" | "contact_phone" | "url" | "attachments" | "extra" | "relevance_score" | "raw_text" | "content_hash" | "funding_type" | "category" | "rfp_url" | "services" | "is_recurring" | "application_instructions", ExtArgs["result"]["opportunities"]>
+  export type opportunitiesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "source" | "state_code" | "source_grant_id" | "status" | "title" | "description" | "description_summary" | "agency" | "funding_instrument" | "fiscal_year" | "post_date" | "close_date" | "archive_date" | "cost_sharing" | "award_max" | "award_min" | "total_funding_amount" | "eligibility" | "eligibility_summary" | "last_updated" | "contact_name" | "contact_email" | "contact_phone" | "url" | "attachments" | "relevance_score" | "raw_text" | "content_hash" | "funding_type" | "category" | "rfp_url" | "services" | "is_recurring" | "application_instructions", ExtArgs["result"]["opportunities"]>
   export type opportunitiesInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     k12_education_opportunities?: boolean | opportunities$k12_education_opportunitiesArgs<ExtArgs>
     _count?: boolean | OpportunitiesCountOutputTypeDefaultArgs<ExtArgs>
@@ -3922,7 +3915,6 @@ export namespace Prisma {
       contact_phone: string | null
       url: string | null
       attachments: Prisma.JsonValue | null
-      extra: Prisma.JsonValue | null
       relevance_score: number | null
       raw_text: string | null
       content_hash: string | null
@@ -4382,7 +4374,6 @@ export namespace Prisma {
     readonly contact_phone: FieldRef<"opportunities", 'String'>
     readonly url: FieldRef<"opportunities", 'String'>
     readonly attachments: FieldRef<"opportunities", 'Json'>
-    readonly extra: FieldRef<"opportunities", 'Json'>
     readonly relevance_score: FieldRef<"opportunities", 'Int'>
     readonly raw_text: FieldRef<"opportunities", 'String'>
     readonly content_hash: FieldRef<"opportunities", 'String'>
@@ -4836,45 +4827,45 @@ export namespace Prisma {
     id: string | null
     email: string | null
     name: string | null
-    role: $Enums.OrganizationRole | null
-    onboardingCompleted: boolean | null
-    hasTemporaryPassword: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
     avatarUrl: string | null
     lastActiveAt: Date | null
     organizationId: string | null
     system_admin: boolean | null
+    role: $Enums.OrganizationRole | null
+    onboardingCompleted: boolean | null
+    hasTemporaryPassword: boolean | null
   }
 
   export type UserMaxAggregateOutputType = {
     id: string | null
     email: string | null
     name: string | null
-    role: $Enums.OrganizationRole | null
-    onboardingCompleted: boolean | null
-    hasTemporaryPassword: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
     avatarUrl: string | null
     lastActiveAt: Date | null
     organizationId: string | null
     system_admin: boolean | null
+    role: $Enums.OrganizationRole | null
+    onboardingCompleted: boolean | null
+    hasTemporaryPassword: boolean | null
   }
 
   export type UserCountAggregateOutputType = {
     id: number
     email: number
     name: number
-    role: number
-    onboardingCompleted: number
-    hasTemporaryPassword: number
     createdAt: number
     updatedAt: number
     avatarUrl: number
     lastActiveAt: number
     organizationId: number
     system_admin: number
+    role: number
+    onboardingCompleted: number
+    hasTemporaryPassword: number
     _all: number
   }
 
@@ -4883,45 +4874,45 @@ export namespace Prisma {
     id?: true
     email?: true
     name?: true
-    role?: true
-    onboardingCompleted?: true
-    hasTemporaryPassword?: true
     createdAt?: true
     updatedAt?: true
     avatarUrl?: true
     lastActiveAt?: true
     organizationId?: true
     system_admin?: true
+    role?: true
+    onboardingCompleted?: true
+    hasTemporaryPassword?: true
   }
 
   export type UserMaxAggregateInputType = {
     id?: true
     email?: true
     name?: true
-    role?: true
-    onboardingCompleted?: true
-    hasTemporaryPassword?: true
     createdAt?: true
     updatedAt?: true
     avatarUrl?: true
     lastActiveAt?: true
     organizationId?: true
     system_admin?: true
+    role?: true
+    onboardingCompleted?: true
+    hasTemporaryPassword?: true
   }
 
   export type UserCountAggregateInputType = {
     id?: true
     email?: true
     name?: true
-    role?: true
-    onboardingCompleted?: true
-    hasTemporaryPassword?: true
     createdAt?: true
     updatedAt?: true
     avatarUrl?: true
     lastActiveAt?: true
     organizationId?: true
     system_admin?: true
+    role?: true
+    onboardingCompleted?: true
+    hasTemporaryPassword?: true
     _all?: true
   }
 
@@ -5001,15 +4992,15 @@ export namespace Prisma {
     id: string
     email: string
     name: string | null
-    role: $Enums.OrganizationRole
-    onboardingCompleted: boolean
-    hasTemporaryPassword: boolean
     createdAt: Date
     updatedAt: Date
     avatarUrl: string | null
     lastActiveAt: Date
     organizationId: string
     system_admin: boolean
+    role: $Enums.OrganizationRole
+    onboardingCompleted: boolean
+    hasTemporaryPassword: boolean
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -5033,15 +5024,15 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     name?: boolean
-    role?: boolean
-    onboardingCompleted?: boolean
-    hasTemporaryPassword?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     avatarUrl?: boolean
     lastActiveAt?: boolean
     organizationId?: boolean
     system_admin?: boolean
+    role?: boolean
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     aiChats?: boolean | User$aiChatsArgs<ExtArgs>
     grantBookmarks?: boolean | User$grantBookmarksArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -5052,15 +5043,15 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     name?: boolean
-    role?: boolean
-    onboardingCompleted?: boolean
-    hasTemporaryPassword?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     avatarUrl?: boolean
     lastActiveAt?: boolean
     organizationId?: boolean
     system_admin?: boolean
+    role?: boolean
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -5068,15 +5059,15 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     name?: boolean
-    role?: boolean
-    onboardingCompleted?: boolean
-    hasTemporaryPassword?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     avatarUrl?: boolean
     lastActiveAt?: boolean
     organizationId?: boolean
     system_admin?: boolean
+    role?: boolean
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -5084,18 +5075,18 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     name?: boolean
-    role?: boolean
-    onboardingCompleted?: boolean
-    hasTemporaryPassword?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     avatarUrl?: boolean
     lastActiveAt?: boolean
     organizationId?: boolean
     system_admin?: boolean
+    role?: boolean
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "role" | "onboardingCompleted" | "hasTemporaryPassword" | "createdAt" | "updatedAt" | "avatarUrl" | "lastActiveAt" | "organizationId" | "system_admin", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "createdAt" | "updatedAt" | "avatarUrl" | "lastActiveAt" | "organizationId" | "system_admin" | "role" | "onboardingCompleted" | "hasTemporaryPassword", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | User$aiChatsArgs<ExtArgs>
     grantBookmarks?: boolean | User$grantBookmarksArgs<ExtArgs>
@@ -5120,15 +5111,15 @@ export namespace Prisma {
       id: string
       email: string
       name: string | null
-      role: $Enums.OrganizationRole
-      onboardingCompleted: boolean
-      hasTemporaryPassword: boolean
       createdAt: Date
       updatedAt: Date
       avatarUrl: string | null
       lastActiveAt: Date
       organizationId: string
       system_admin: boolean
+      role: $Enums.OrganizationRole
+      onboardingCompleted: boolean
+      hasTemporaryPassword: boolean
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -5558,15 +5549,15 @@ export namespace Prisma {
     readonly id: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly name: FieldRef<"User", 'String'>
-    readonly role: FieldRef<"User", 'OrganizationRole'>
-    readonly onboardingCompleted: FieldRef<"User", 'Boolean'>
-    readonly hasTemporaryPassword: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
     readonly avatarUrl: FieldRef<"User", 'String'>
     readonly lastActiveAt: FieldRef<"User", 'DateTime'>
     readonly organizationId: FieldRef<"User", 'String'>
     readonly system_admin: FieldRef<"User", 'Boolean'>
+    readonly role: FieldRef<"User", 'OrganizationRole'>
+    readonly onboardingCompleted: FieldRef<"User", 'Boolean'>
+    readonly hasTemporaryPassword: FieldRef<"User", 'Boolean'>
   }
     
 
@@ -9906,9 +9897,7 @@ export namespace Prisma {
     id: string | null
     opportunityId: number | null
     status: $Enums.ApplicationStatus | null
-    contentHtml: string | null
     title: string | null
-    notes: string | null
     createdAt: Date | null
     updatedAt: Date | null
     submittedAt: Date | null
@@ -9921,9 +9910,7 @@ export namespace Prisma {
     id: string | null
     opportunityId: number | null
     status: $Enums.ApplicationStatus | null
-    contentHtml: string | null
     title: string | null
-    notes: string | null
     createdAt: Date | null
     updatedAt: Date | null
     submittedAt: Date | null
@@ -9936,10 +9923,7 @@ export namespace Prisma {
     id: number
     opportunityId: number
     status: number
-    content: number
-    contentHtml: number
     title: number
-    notes: number
     documents: number
     createdAt: number
     updatedAt: number
@@ -9964,9 +9948,7 @@ export namespace Prisma {
     id?: true
     opportunityId?: true
     status?: true
-    contentHtml?: true
     title?: true
-    notes?: true
     createdAt?: true
     updatedAt?: true
     submittedAt?: true
@@ -9979,9 +9961,7 @@ export namespace Prisma {
     id?: true
     opportunityId?: true
     status?: true
-    contentHtml?: true
     title?: true
-    notes?: true
     createdAt?: true
     updatedAt?: true
     submittedAt?: true
@@ -9994,10 +9974,7 @@ export namespace Prisma {
     id?: true
     opportunityId?: true
     status?: true
-    content?: true
-    contentHtml?: true
     title?: true
-    notes?: true
     documents?: true
     createdAt?: true
     updatedAt?: true
@@ -10099,10 +10076,7 @@ export namespace Prisma {
     id: string
     opportunityId: number
     status: $Enums.ApplicationStatus
-    content: JsonValue | null
-    contentHtml: string | null
     title: string | null
-    notes: string | null
     documents: JsonValue | null
     createdAt: Date
     updatedAt: Date
@@ -10136,10 +10110,7 @@ export namespace Prisma {
     id?: boolean
     opportunityId?: boolean
     status?: boolean
-    content?: boolean
-    contentHtml?: boolean
     title?: boolean
-    notes?: boolean
     documents?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -10158,10 +10129,7 @@ export namespace Prisma {
     id?: boolean
     opportunityId?: boolean
     status?: boolean
-    content?: boolean
-    contentHtml?: boolean
     title?: boolean
-    notes?: boolean
     documents?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -10177,10 +10145,7 @@ export namespace Prisma {
     id?: boolean
     opportunityId?: boolean
     status?: boolean
-    content?: boolean
-    contentHtml?: boolean
     title?: boolean
-    notes?: boolean
     documents?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -10196,10 +10161,7 @@ export namespace Prisma {
     id?: boolean
     opportunityId?: boolean
     status?: boolean
-    content?: boolean
-    contentHtml?: boolean
     title?: boolean
-    notes?: boolean
     documents?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -10210,7 +10172,7 @@ export namespace Prisma {
     attachments_markdown?: boolean
   }
 
-  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "content" | "contentHtml" | "title" | "notes" | "documents" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId" | "checklist" | "attachments_markdown", ExtArgs["result"]["application"]>
+  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "title" | "documents" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId" | "checklist" | "attachments_markdown", ExtArgs["result"]["application"]>
   export type ApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     application_documents?: boolean | Application$application_documentsArgs<ExtArgs>
@@ -10235,10 +10197,7 @@ export namespace Prisma {
       id: string
       opportunityId: number
       status: $Enums.ApplicationStatus
-      content: Prisma.JsonValue | null
-      contentHtml: string | null
       title: string | null
-      notes: string | null
       documents: Prisma.JsonValue | null
       createdAt: Date
       updatedAt: Date
@@ -10676,10 +10635,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Application", 'String'>
     readonly opportunityId: FieldRef<"Application", 'Int'>
     readonly status: FieldRef<"Application", 'ApplicationStatus'>
-    readonly content: FieldRef<"Application", 'Json'>
-    readonly contentHtml: FieldRef<"Application", 'String'>
     readonly title: FieldRef<"Application", 'String'>
-    readonly notes: FieldRef<"Application", 'String'>
     readonly documents: FieldRef<"Application", 'Json'>
     readonly createdAt: FieldRef<"Application", 'DateTime'>
     readonly updatedAt: FieldRef<"Application", 'DateTime'>
@@ -17819,7 +17775,6 @@ export namespace Prisma {
     contact_phone: 'contact_phone',
     url: 'url',
     attachments: 'attachments',
-    extra: 'extra',
     relevance_score: 'relevance_score',
     raw_text: 'raw_text',
     content_hash: 'content_hash',
@@ -17838,15 +17793,15 @@ export namespace Prisma {
     id: 'id',
     email: 'email',
     name: 'name',
-    role: 'role',
-    onboardingCompleted: 'onboardingCompleted',
-    hasTemporaryPassword: 'hasTemporaryPassword',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     avatarUrl: 'avatarUrl',
     lastActiveAt: 'lastActiveAt',
     organizationId: 'organizationId',
-    system_admin: 'system_admin'
+    system_admin: 'system_admin',
+    role: 'role',
+    onboardingCompleted: 'onboardingCompleted',
+    hasTemporaryPassword: 'hasTemporaryPassword'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -17918,10 +17873,7 @@ export namespace Prisma {
     id: 'id',
     opportunityId: 'opportunityId',
     status: 'status',
-    content: 'content',
-    contentHtml: 'contentHtml',
     title: 'title',
-    notes: 'notes',
     documents: 'documents',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
@@ -18368,7 +18320,6 @@ export namespace Prisma {
     contact_phone?: StringNullableFilter<"opportunities"> | string | null
     url?: StringNullableFilter<"opportunities"> | string | null
     attachments?: JsonNullableFilter<"opportunities">
-    extra?: JsonNullableFilter<"opportunities">
     relevance_score?: IntNullableFilter<"opportunities"> | number | null
     raw_text?: StringNullableFilter<"opportunities"> | string | null
     content_hash?: StringNullableFilter<"opportunities"> | string | null
@@ -18408,7 +18359,6 @@ export namespace Prisma {
     contact_phone?: SortOrderInput | SortOrder
     url?: SortOrderInput | SortOrder
     attachments?: SortOrderInput | SortOrder
-    extra?: SortOrderInput | SortOrder
     relevance_score?: SortOrderInput | SortOrder
     raw_text?: SortOrderInput | SortOrder
     content_hash?: SortOrderInput | SortOrder
@@ -18451,7 +18401,6 @@ export namespace Prisma {
     contact_phone?: StringNullableFilter<"opportunities"> | string | null
     url?: StringNullableFilter<"opportunities"> | string | null
     attachments?: JsonNullableFilter<"opportunities">
-    extra?: JsonNullableFilter<"opportunities">
     relevance_score?: IntNullableFilter<"opportunities"> | number | null
     raw_text?: StringNullableFilter<"opportunities"> | string | null
     content_hash?: StringNullableFilter<"opportunities"> | string | null
@@ -18491,7 +18440,6 @@ export namespace Prisma {
     contact_phone?: SortOrderInput | SortOrder
     url?: SortOrderInput | SortOrder
     attachments?: SortOrderInput | SortOrder
-    extra?: SortOrderInput | SortOrder
     relevance_score?: SortOrderInput | SortOrder
     raw_text?: SortOrderInput | SortOrder
     content_hash?: SortOrderInput | SortOrder
@@ -18538,7 +18486,6 @@ export namespace Prisma {
     contact_phone?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
     url?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
     attachments?: JsonNullableWithAggregatesFilter<"opportunities">
-    extra?: JsonNullableWithAggregatesFilter<"opportunities">
     relevance_score?: IntNullableWithAggregatesFilter<"opportunities"> | number | null
     raw_text?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
     content_hash?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
@@ -18557,15 +18504,15 @@ export namespace Prisma {
     id?: UuidFilter<"User"> | string
     email?: StringFilter<"User"> | string
     name?: StringNullableFilter<"User"> | string | null
-    role?: EnumOrganizationRoleFilter<"User"> | $Enums.OrganizationRole
-    onboardingCompleted?: BoolFilter<"User"> | boolean
-    hasTemporaryPassword?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     avatarUrl?: StringNullableFilter<"User"> | string | null
     lastActiveAt?: DateTimeFilter<"User"> | Date | string
     organizationId?: StringFilter<"User"> | string
     system_admin?: BoolFilter<"User"> | boolean
+    role?: EnumOrganizationRoleFilter<"User"> | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFilter<"User"> | boolean
+    hasTemporaryPassword?: BoolFilter<"User"> | boolean
     aiChats?: AiChatListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
@@ -18575,15 +18522,15 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrderInput | SortOrder
-    role?: SortOrder
-    onboardingCompleted?: SortOrder
-    hasTemporaryPassword?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avatarUrl?: SortOrderInput | SortOrder
     lastActiveAt?: SortOrder
     organizationId?: SortOrder
     system_admin?: SortOrder
+    role?: SortOrder
+    onboardingCompleted?: SortOrder
+    hasTemporaryPassword?: SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     grantBookmarks?: GrantBookmarkOrderByRelationAggregateInput
     organization?: OrganizationOrderByWithRelationInput
@@ -18596,15 +18543,15 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     name?: StringNullableFilter<"User"> | string | null
-    role?: EnumOrganizationRoleFilter<"User"> | $Enums.OrganizationRole
-    onboardingCompleted?: BoolFilter<"User"> | boolean
-    hasTemporaryPassword?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     avatarUrl?: StringNullableFilter<"User"> | string | null
     lastActiveAt?: DateTimeFilter<"User"> | Date | string
     organizationId?: StringFilter<"User"> | string
     system_admin?: BoolFilter<"User"> | boolean
+    role?: EnumOrganizationRoleFilter<"User"> | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFilter<"User"> | boolean
+    hasTemporaryPassword?: BoolFilter<"User"> | boolean
     aiChats?: AiChatListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
@@ -18614,15 +18561,15 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrderInput | SortOrder
-    role?: SortOrder
-    onboardingCompleted?: SortOrder
-    hasTemporaryPassword?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avatarUrl?: SortOrderInput | SortOrder
     lastActiveAt?: SortOrder
     organizationId?: SortOrder
     system_admin?: SortOrder
+    role?: SortOrder
+    onboardingCompleted?: SortOrder
+    hasTemporaryPassword?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -18635,15 +18582,15 @@ export namespace Prisma {
     id?: UuidWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
     name?: StringNullableWithAggregatesFilter<"User"> | string | null
-    role?: EnumOrganizationRoleWithAggregatesFilter<"User"> | $Enums.OrganizationRole
-    onboardingCompleted?: BoolWithAggregatesFilter<"User"> | boolean
-    hasTemporaryPassword?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     avatarUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
     lastActiveAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     organizationId?: StringWithAggregatesFilter<"User"> | string
     system_admin?: BoolWithAggregatesFilter<"User"> | boolean
+    role?: EnumOrganizationRoleWithAggregatesFilter<"User"> | $Enums.OrganizationRole
+    onboardingCompleted?: BoolWithAggregatesFilter<"User"> | boolean
+    hasTemporaryPassword?: BoolWithAggregatesFilter<"User"> | boolean
   }
 
   export type OrganizationWhereInput = {
@@ -18989,10 +18936,7 @@ export namespace Prisma {
     id?: StringFilter<"Application"> | string
     opportunityId?: IntFilter<"Application"> | number
     status?: EnumApplicationStatusFilter<"Application"> | $Enums.ApplicationStatus
-    content?: JsonNullableFilter<"Application">
-    contentHtml?: StringNullableFilter<"Application"> | string | null
     title?: StringNullableFilter<"Application"> | string | null
-    notes?: StringNullableFilter<"Application"> | string | null
     documents?: JsonNullableFilter<"Application">
     createdAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
@@ -19010,10 +18954,7 @@ export namespace Prisma {
     id?: SortOrder
     opportunityId?: SortOrder
     status?: SortOrder
-    content?: SortOrderInput | SortOrder
-    contentHtml?: SortOrderInput | SortOrder
     title?: SortOrderInput | SortOrder
-    notes?: SortOrderInput | SortOrder
     documents?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -19035,10 +18976,7 @@ export namespace Prisma {
     NOT?: ApplicationWhereInput | ApplicationWhereInput[]
     opportunityId?: IntFilter<"Application"> | number
     status?: EnumApplicationStatusFilter<"Application"> | $Enums.ApplicationStatus
-    content?: JsonNullableFilter<"Application">
-    contentHtml?: StringNullableFilter<"Application"> | string | null
     title?: StringNullableFilter<"Application"> | string | null
-    notes?: StringNullableFilter<"Application"> | string | null
     documents?: JsonNullableFilter<"Application">
     createdAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
@@ -19056,10 +18994,7 @@ export namespace Prisma {
     id?: SortOrder
     opportunityId?: SortOrder
     status?: SortOrder
-    content?: SortOrderInput | SortOrder
-    contentHtml?: SortOrderInput | SortOrder
     title?: SortOrderInput | SortOrder
-    notes?: SortOrderInput | SortOrder
     documents?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -19082,10 +19017,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Application"> | string
     opportunityId?: IntWithAggregatesFilter<"Application"> | number
     status?: EnumApplicationStatusWithAggregatesFilter<"Application"> | $Enums.ApplicationStatus
-    content?: JsonNullableWithAggregatesFilter<"Application">
-    contentHtml?: StringNullableWithAggregatesFilter<"Application"> | string | null
     title?: StringNullableWithAggregatesFilter<"Application"> | string | null
-    notes?: StringNullableWithAggregatesFilter<"Application"> | string | null
     documents?: JsonNullableWithAggregatesFilter<"Application">
     createdAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
@@ -19549,7 +19481,6 @@ export namespace Prisma {
     contact_phone?: string | null
     url?: string | null
     attachments?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: number | null
     raw_text?: string | null
     content_hash?: string | null
@@ -19589,7 +19520,6 @@ export namespace Prisma {
     contact_phone?: string | null
     url?: string | null
     attachments?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: number | null
     raw_text?: string | null
     content_hash?: string | null
@@ -19628,7 +19558,6 @@ export namespace Prisma {
     contact_phone?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
     attachments?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
     raw_text?: NullableStringFieldUpdateOperationsInput | string | null
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19668,7 +19597,6 @@ export namespace Prisma {
     contact_phone?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
     attachments?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
     raw_text?: NullableStringFieldUpdateOperationsInput | string | null
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19708,7 +19636,6 @@ export namespace Prisma {
     contact_phone?: string | null
     url?: string | null
     attachments?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: number | null
     raw_text?: string | null
     content_hash?: string | null
@@ -19746,7 +19673,6 @@ export namespace Prisma {
     contact_phone?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
     attachments?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
     raw_text?: NullableStringFieldUpdateOperationsInput | string | null
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19785,7 +19711,6 @@ export namespace Prisma {
     contact_phone?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
     attachments?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
     raw_text?: NullableStringFieldUpdateOperationsInput | string | null
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19801,14 +19726,14 @@ export namespace Prisma {
     id: string
     email: string
     name?: string | null
-    role?: $Enums.OrganizationRole
-    onboardingCompleted?: boolean
-    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
     lastActiveAt?: Date | string
     system_admin?: boolean
+    role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     aiChats?: AiChatCreateNestedManyWithoutUserInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutUserInput
     organization: OrganizationCreateNestedOneWithoutUsersInput
@@ -19818,15 +19743,15 @@ export namespace Prisma {
     id: string
     email: string
     name?: string | null
-    role?: $Enums.OrganizationRole
-    onboardingCompleted?: boolean
-    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
     lastActiveAt?: Date | string
     organizationId: string
     system_admin?: boolean
+    role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     aiChats?: AiChatUncheckedCreateNestedManyWithoutUserInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutUserInput
   }
@@ -19835,14 +19760,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
-    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     system_admin?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     aiChats?: AiChatUpdateManyWithoutUserNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
@@ -19852,15 +19777,15 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
-    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
     system_admin?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     aiChats?: AiChatUncheckedUpdateManyWithoutUserNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -19869,44 +19794,44 @@ export namespace Prisma {
     id: string
     email: string
     name?: string | null
-    role?: $Enums.OrganizationRole
-    onboardingCompleted?: boolean
-    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
     lastActiveAt?: Date | string
     organizationId: string
     system_admin?: boolean
+    role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
   }
 
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
-    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     system_admin?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
-    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
     system_admin?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrganizationCreateInput = {
@@ -20305,10 +20230,7 @@ export namespace Prisma {
     id?: string
     opportunityId: number
     status?: $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: string | null
     title?: string | null
-    notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20325,10 +20247,7 @@ export namespace Prisma {
     id?: string
     opportunityId: number
     status?: $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: string | null
     title?: string | null
-    notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20345,10 +20264,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20365,10 +20281,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20385,10 +20298,7 @@ export namespace Prisma {
     id?: string
     opportunityId: number
     status?: $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: string | null
     title?: string | null
-    notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20403,10 +20313,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20420,10 +20327,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21034,7 +20938,6 @@ export namespace Prisma {
     contact_phone?: SortOrder
     url?: SortOrder
     attachments?: SortOrder
-    extra?: SortOrder
     relevance_score?: SortOrder
     raw_text?: SortOrder
     content_hash?: SortOrder
@@ -21264,18 +21167,6 @@ export namespace Prisma {
     not?: NestedUuidFilter<$PrismaModel> | string
   }
 
-  export type EnumOrganizationRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrganizationRoleFilter<$PrismaModel> | $Enums.OrganizationRole
-  }
-
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -21285,6 +21176,18 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type EnumOrganizationRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrganizationRoleFilter<$PrismaModel> | $Enums.OrganizationRole
   }
 
   export type AiChatListRelationFilter = {
@@ -21316,45 +21219,45 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrder
-    role?: SortOrder
-    onboardingCompleted?: SortOrder
-    hasTemporaryPassword?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avatarUrl?: SortOrder
     lastActiveAt?: SortOrder
     organizationId?: SortOrder
     system_admin?: SortOrder
+    role?: SortOrder
+    onboardingCompleted?: SortOrder
+    hasTemporaryPassword?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrder
-    role?: SortOrder
-    onboardingCompleted?: SortOrder
-    hasTemporaryPassword?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avatarUrl?: SortOrder
     lastActiveAt?: SortOrder
     organizationId?: SortOrder
     system_admin?: SortOrder
+    role?: SortOrder
+    onboardingCompleted?: SortOrder
+    hasTemporaryPassword?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
     name?: SortOrder
-    role?: SortOrder
-    onboardingCompleted?: SortOrder
-    hasTemporaryPassword?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     avatarUrl?: SortOrder
     lastActiveAt?: SortOrder
     organizationId?: SortOrder
     system_admin?: SortOrder
+    role?: SortOrder
+    onboardingCompleted?: SortOrder
+    hasTemporaryPassword?: SortOrder
   }
 
   export type UuidWithAggregatesFilter<$PrismaModel = never> = {
@@ -21372,24 +21275,6 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type EnumOrganizationRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrganizationRoleWithAggregatesFilter<$PrismaModel> | $Enums.OrganizationRole
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumOrganizationRoleFilter<$PrismaModel>
-    _max?: NestedEnumOrganizationRoleFilter<$PrismaModel>
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -21402,6 +21287,24 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type EnumOrganizationRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrganizationRoleWithAggregatesFilter<$PrismaModel> | $Enums.OrganizationRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOrganizationRoleFilter<$PrismaModel>
+    _max?: NestedEnumOrganizationRoleFilter<$PrismaModel>
   }
 
   export type DecimalNullableFilter<$PrismaModel = never> = {
@@ -21760,10 +21663,7 @@ export namespace Prisma {
     id?: SortOrder
     opportunityId?: SortOrder
     status?: SortOrder
-    content?: SortOrder
-    contentHtml?: SortOrder
     title?: SortOrder
-    notes?: SortOrder
     documents?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -21782,9 +21682,7 @@ export namespace Prisma {
     id?: SortOrder
     opportunityId?: SortOrder
     status?: SortOrder
-    contentHtml?: SortOrder
     title?: SortOrder
-    notes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     submittedAt?: SortOrder
@@ -21797,9 +21695,7 @@ export namespace Prisma {
     id?: SortOrder
     opportunityId?: SortOrder
     status?: SortOrder
-    contentHtml?: SortOrder
     title?: SortOrder
-    notes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     submittedAt?: SortOrder
@@ -22260,16 +22156,16 @@ export namespace Prisma {
     connect?: GrantBookmarkWhereUniqueInput | GrantBookmarkWhereUniqueInput[]
   }
 
-  export type EnumOrganizationRoleFieldUpdateOperationsInput = {
-    set?: $Enums.OrganizationRole
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
   }
 
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
   }
 
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
+  export type EnumOrganizationRoleFieldUpdateOperationsInput = {
+    set?: $Enums.OrganizationRole
   }
 
   export type AiChatUpdateManyWithoutUserNestedInput = {
@@ -23163,18 +23059,6 @@ export namespace Prisma {
     not?: NestedUuidFilter<$PrismaModel> | string
   }
 
-  export type NestedEnumOrganizationRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrganizationRoleFilter<$PrismaModel> | $Enums.OrganizationRole
-  }
-
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -23184,6 +23068,18 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedEnumOrganizationRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrganizationRoleFilter<$PrismaModel> | $Enums.OrganizationRole
   }
 
   export type NestedUuidWithAggregatesFilter<$PrismaModel = never> = {
@@ -23200,24 +23096,6 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type NestedEnumOrganizationRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrganizationRoleWithAggregatesFilter<$PrismaModel> | $Enums.OrganizationRole
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumOrganizationRoleFilter<$PrismaModel>
-    _max?: NestedEnumOrganizationRoleFilter<$PrismaModel>
-  }
-
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -23230,6 +23108,24 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedEnumOrganizationRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrganizationRole | EnumOrganizationRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrganizationRole[] | ListEnumOrganizationRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrganizationRoleWithAggregatesFilter<$PrismaModel> | $Enums.OrganizationRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOrganizationRoleFilter<$PrismaModel>
+    _max?: NestedEnumOrganizationRoleFilter<$PrismaModel>
   }
 
   export type NestedDecimalNullableFilter<$PrismaModel = never> = {
@@ -23739,10 +23635,7 @@ export namespace Prisma {
     id?: string
     opportunityId: number
     status?: $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: string | null
     title?: string | null
-    notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -23758,10 +23651,7 @@ export namespace Prisma {
     id?: string
     opportunityId: number
     status?: $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: string | null
     title?: string | null
-    notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -23877,14 +23767,14 @@ export namespace Prisma {
     id: string
     email: string
     name?: string | null
-    role?: $Enums.OrganizationRole
-    onboardingCompleted?: boolean
-    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
     lastActiveAt?: Date | string
     system_admin?: boolean
+    role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     aiChats?: AiChatCreateNestedManyWithoutUserInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutUserInput
   }
@@ -23893,14 +23783,14 @@ export namespace Prisma {
     id: string
     email: string
     name?: string | null
-    role?: $Enums.OrganizationRole
-    onboardingCompleted?: boolean
-    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
     lastActiveAt?: Date | string
     system_admin?: boolean
+    role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     aiChats?: AiChatUncheckedCreateNestedManyWithoutUserInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutUserInput
   }
@@ -23954,10 +23844,7 @@ export namespace Prisma {
     id?: StringFilter<"Application"> | string
     opportunityId?: IntFilter<"Application"> | number
     status?: EnumApplicationStatusFilter<"Application"> | $Enums.ApplicationStatus
-    content?: JsonNullableFilter<"Application">
-    contentHtml?: StringNullableFilter<"Application"> | string | null
     title?: StringNullableFilter<"Application"> | string | null
-    notes?: StringNullableFilter<"Application"> | string | null
     documents?: JsonNullableFilter<"Application">
     createdAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
@@ -24069,15 +23956,15 @@ export namespace Prisma {
     id?: UuidFilter<"User"> | string
     email?: StringFilter<"User"> | string
     name?: StringNullableFilter<"User"> | string | null
-    role?: EnumOrganizationRoleFilter<"User"> | $Enums.OrganizationRole
-    onboardingCompleted?: BoolFilter<"User"> | boolean
-    hasTemporaryPassword?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     avatarUrl?: StringNullableFilter<"User"> | string | null
     lastActiveAt?: DateTimeFilter<"User"> | Date | string
     organizationId?: StringFilter<"User"> | string
     system_admin?: BoolFilter<"User"> | boolean
+    role?: EnumOrganizationRoleFilter<"User"> | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFilter<"User"> | boolean
+    hasTemporaryPassword?: BoolFilter<"User"> | boolean
   }
 
   export type OrganizationCreateWithoutGrantBookmarksInput = {
@@ -24163,14 +24050,14 @@ export namespace Prisma {
     id: string
     email: string
     name?: string | null
-    role?: $Enums.OrganizationRole
-    onboardingCompleted?: boolean
-    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
     lastActiveAt?: Date | string
     system_admin?: boolean
+    role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     aiChats?: AiChatCreateNestedManyWithoutUserInput
     organization: OrganizationCreateNestedOneWithoutUsersInput
   }
@@ -24179,15 +24066,15 @@ export namespace Prisma {
     id: string
     email: string
     name?: string | null
-    role?: $Enums.OrganizationRole
-    onboardingCompleted?: boolean
-    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
     lastActiveAt?: Date | string
     organizationId: string
     system_admin?: boolean
+    role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     aiChats?: AiChatUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -24296,14 +24183,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
-    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     system_admin?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     aiChats?: AiChatUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
   }
@@ -24312,15 +24199,15 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
-    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
     system_admin?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     aiChats?: AiChatUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -24793,10 +24680,7 @@ export namespace Prisma {
     id?: string
     opportunityId: number
     status?: $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: string | null
     title?: string | null
-    notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -24812,10 +24696,7 @@ export namespace Prisma {
     id?: string
     opportunityId: number
     status?: $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: string | null
     title?: string | null
-    notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -24915,14 +24796,14 @@ export namespace Prisma {
     id: string
     email: string
     name?: string | null
-    role?: $Enums.OrganizationRole
-    onboardingCompleted?: boolean
-    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
     lastActiveAt?: Date | string
     system_admin?: boolean
+    role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutUserInput
     organization: OrganizationCreateNestedOneWithoutUsersInput
   }
@@ -24931,15 +24812,15 @@ export namespace Prisma {
     id: string
     email: string
     name?: string | null
-    role?: $Enums.OrganizationRole
-    onboardingCompleted?: boolean
-    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
     lastActiveAt?: Date | string
     organizationId: string
     system_admin?: boolean
+    role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -24991,10 +24872,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25010,10 +24888,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25125,14 +25000,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
-    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     system_admin?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     grantBookmarks?: GrantBookmarkUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
   }
@@ -25141,15 +25016,15 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
-    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
     system_admin?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -25381,10 +25256,7 @@ export namespace Prisma {
     id?: string
     opportunityId: number
     status?: $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: string | null
     title?: string | null
-    notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -25400,10 +25272,7 @@ export namespace Prisma {
     id?: string
     opportunityId: number
     status?: $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: string | null
     title?: string | null
-    notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -25435,10 +25304,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25454,10 +25320,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25495,7 +25358,6 @@ export namespace Prisma {
     contact_phone?: string | null
     url?: string | null
     attachments?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: number | null
     raw_text?: string | null
     content_hash?: string | null
@@ -25534,7 +25396,6 @@ export namespace Prisma {
     contact_phone?: string | null
     url?: string | null
     attachments?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: number | null
     raw_text?: string | null
     content_hash?: string | null
@@ -25588,7 +25449,6 @@ export namespace Prisma {
     contact_phone?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
     attachments?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
     raw_text?: NullableStringFieldUpdateOperationsInput | string | null
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25627,7 +25487,6 @@ export namespace Prisma {
     contact_phone?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
     attachments?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
     relevance_score?: NullableIntFieldUpdateOperationsInput | number | null
     raw_text?: NullableStringFieldUpdateOperationsInput | string | null
     content_hash?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25758,10 +25617,7 @@ export namespace Prisma {
     id?: string
     opportunityId: number
     status?: $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: string | null
     title?: string | null
-    notes?: string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -25805,14 +25661,14 @@ export namespace Prisma {
     id: string
     email: string
     name?: string | null
-    role?: $Enums.OrganizationRole
-    onboardingCompleted?: boolean
-    hasTemporaryPassword?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     avatarUrl?: string | null
     lastActiveAt?: Date | string
     system_admin?: boolean
+    role?: $Enums.OrganizationRole
+    onboardingCompleted?: boolean
+    hasTemporaryPassword?: boolean
   }
 
   export type AiChatUpdateWithoutOrganizationInput = {
@@ -25851,10 +25707,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25870,10 +25723,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25889,10 +25739,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: IntFieldUpdateOperationsInput | number
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
-    content?: NullableJsonNullValueInput | InputJsonValue
-    contentHtml?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25996,14 +25843,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
-    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     system_admin?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     aiChats?: AiChatUpdateManyWithoutUserNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutUserNestedInput
   }
@@ -26012,14 +25859,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
-    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     system_admin?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     aiChats?: AiChatUncheckedUpdateManyWithoutUserNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -26028,14 +25875,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
-    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
-    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     system_admin?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+    onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
+    hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type AiChatCreateManyApplicationInput = {

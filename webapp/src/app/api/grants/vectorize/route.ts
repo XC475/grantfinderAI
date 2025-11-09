@@ -79,7 +79,6 @@ export async function POST(req: NextRequest) {
         status: true,
         title: true,
         agency: true,
-        category: true,
         funding_instrument: true,
         fiscal_year: true,
         total_funding_amount: true,
@@ -93,11 +92,34 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // Create a Set of valid opportunity IDs for orphan detection
+    const validOpportunityIds = new Set(allOpportunities.map((opp) => opp.id));
+
+    // Find and delete orphaned documents (documents for opportunities that no longer exist)
+    const orphanedDocuments = existingDocuments.filter(
+      (doc) => !validOpportunityIds.has(doc.opportunity_id)
+    );
+
+    if (orphanedDocuments.length > 0) {
+      console.log(
+        `🗑️ [Vectorize] Found ${orphanedDocuments.length} orphaned documents (opportunities no longer exist)`
+      );
+      const orphanedDocIds = orphanedDocuments.map((doc) => doc.doc_id);
+      await prisma.$executeRaw`
+        DELETE FROM public.documents 
+        WHERE id = ANY(${orphanedDocIds}::bigint[])
+      `;
+      console.log(
+        `✅ [Vectorize] Deleted ${orphanedDocuments.length} orphaned documents`
+      );
+    }
+
     // Determine which opportunities need vectorization
     const opportunitiesToVectorize = [];
     const documentsToDelete = [];
     let changedCount = 0;
     let newCount = 0;
+    const orphanedCount = orphanedDocuments.length;
 
     for (const opportunity of allOpportunities) {
       // Skip if no raw_text available
@@ -144,13 +166,17 @@ export async function POST(req: NextRequest) {
     if (opportunitiesToVectorize.length === 0) {
       return NextResponse.json({
         success: true,
-        message: "All grants are up to date",
+        message:
+          orphanedCount > 0
+            ? `All grants are up to date. Cleaned up ${orphanedCount} orphaned documents.`
+            : "All grants are up to date",
         stats: {
           opportunities: totalOpportunities,
-          documents: totalDocuments,
+          documents: totalDocuments - orphanedCount,
           vectorized: 0,
           changed: 0,
           new: 0,
+          orphaned: orphanedCount,
         },
       });
     }
@@ -210,7 +236,6 @@ export async function POST(req: NextRequest) {
             status: opportunity.status,
             title: opportunity.title,
             agency: opportunity.agency,
-            category: opportunity.category,
             funding_instrument: opportunity.funding_instrument,
             state_code: opportunity.state_code,
             fiscal_year: opportunity.fiscal_year,
@@ -260,18 +285,20 @@ export async function POST(req: NextRequest) {
     }
 
     console.log(
-      `🎉 [Vectorize] Vectorization complete! Vectorized: ${vectorizedCount} (${newCount} new, ${changedCount} changed), Errors: ${errors.length}`
+      `🎉 [Vectorize] Vectorization complete! Vectorized: ${vectorizedCount} (${newCount} new, ${changedCount} changed), Orphaned: ${orphanedCount}, Errors: ${errors.length}`
     );
 
     return NextResponse.json({
       success: true,
-      message: `Successfully vectorized ${vectorizedCount} grants (${newCount} new, ${changedCount} changed)`,
+      message: `Successfully vectorized ${vectorizedCount} grants (${newCount} new, ${changedCount} changed)${orphanedCount > 0 ? `, cleaned up ${orphanedCount} orphaned documents` : ""}`,
       stats: {
         opportunities: totalOpportunities,
-        documents: totalDocuments + vectorizedCount - changedCount,
+        documents:
+          totalDocuments + vectorizedCount - changedCount - orphanedCount,
         vectorized: vectorizedCount,
         new: newCount,
         changed: changedCount,
+        orphaned: orphanedCount,
         errors: errors.length,
       },
       errors: errors.length > 0 ? errors : undefined,

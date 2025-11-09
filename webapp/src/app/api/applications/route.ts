@@ -250,7 +250,42 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ applications });
+    // Fetch opportunity data for each application (from public schema)
+    const opportunityIds = applications.map((app) => app.opportunityId);
+
+    if (opportunityIds.length === 0) {
+      return NextResponse.json({ applications });
+    }
+
+    const { data: opportunities, error: oppError } = await supabaseServer
+      .from("opportunities")
+      .select("id, total_funding_amount, close_date")
+      .in("id", opportunityIds);
+
+    if (oppError) {
+      console.error("Error fetching opportunities:", oppError);
+    }
+
+    console.log("Opportunity IDs:", opportunityIds);
+    console.log("Fetched opportunities:", opportunities);
+
+    // Create a map for quick lookup
+    const opportunityMap = new Map(
+      opportunities?.map((opp) => [opp.id, opp]) || []
+    );
+
+    // Merge opportunity data with applications
+    const applicationsWithOpportunities = applications.map((app) => ({
+      ...app,
+      opportunity: opportunityMap.get(app.opportunityId) || null,
+    }));
+
+    console.log(
+      "Applications with opportunities:",
+      JSON.stringify(applicationsWithOpportunities, null, 2)
+    );
+
+    return NextResponse.json({ applications: applicationsWithOpportunities });
   } catch (error) {
     console.error("Error fetching applications:", error);
     return NextResponse.json(

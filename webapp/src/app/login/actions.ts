@@ -21,9 +21,11 @@ export async function login(formData: FormData) {
     await supabase.auth.signInWithPassword(data);
 
   if (error) {
+    // Redirect to root (/) since /login redirects there anyway
+    // prevents double-redirect that can lose toast params
     redirect(
       redirectWithToast(
-        "/login",
+        "/",
         "error",
         (error instanceof Error ? error.message : String(error)) ||
           "Invalid email or password"
@@ -67,20 +69,20 @@ export async function login(formData: FormData) {
       }
       console.error("Error fetching organization:", error);
       revalidatePath("/", "layout");
-      redirect(redirectWithToast("/login", "error", "Organization not found"));
+      redirect(redirectWithToast("/", "error", "Organization not found"));
     }
   }
 
   revalidatePath("/", "layout");
-  redirect(redirectWithToast("/login", "error", "Login failed"));
+  redirect(redirectWithToast("/", "error", "Login failed"));
 }
 
 export async function logout() {
   const supabase = await createClient();
   const { error } = await supabase.auth.signOut();
   if (error) {
-    redirect(redirectWithToast("/login", "error", "Failed to sign out"));
+    redirect(redirectWithToast("/", "error", "Failed to sign out"));
   }
   revalidatePath("/", "layout");
-  redirect(redirectWithToast("/login", "success", "You have been signed out"));
+  redirect(redirectWithToast("/", "success", "You have been signed out"));
 }

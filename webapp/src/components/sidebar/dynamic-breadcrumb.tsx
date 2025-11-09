@@ -121,17 +121,23 @@ export function DynamicBreadcrumb({
         items.push({
           label: "Application Details",
           href: `/private/${organizationSlug}/applications/${segments[1]}`,
-          isLast: segments.length === 2,
+          isLast: true,
         });
+      }
+    } else if (segments[0] === "editor") {
+      // Document editor breadcrumb
+      items.push({
+        label: "Applications",
+        href: `/private/${organizationSlug}/applications`,
+        isLast: false,
+      });
 
-        // If we're viewing a document within an application
-        if (segments.length > 3 && segments[2] === "documents" && segments[3]) {
-          items.push({
-            label: documentTitle || "Document",
-            href: `/private/${organizationSlug}/applications/${segments[1]}/documents/${segments[3]}`,
-            isLast: true,
-          });
-        }
+      if (segments.length > 1 && segments[1]) {
+        items.push({
+          label: documentTitle || "Document",
+          href: `#`,
+          isLast: true,
+        });
       }
     } else {
       // For other pages, show the path
@@ -178,15 +184,9 @@ export function DynamicBreadcrumb({
     const path = pathname.replace(`/private/${organizationSlug}`, "");
     const segments = path.split("/").filter(Boolean);
 
-    if (
-      segments[0] === "applications" &&
-      segments[1] &&
-      segments[2] === "documents" &&
-      segments[3]
-    ) {
-      const applicationId = segments[1];
-      const documentId = segments[3];
-      fetch(`/api/applications/${applicationId}/documents/${documentId}`)
+    if (segments[0] === "editor" && segments[1]) {
+      const documentId = segments[1];
+      fetch(`/api/documents/${documentId}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.document && data.document.title) {

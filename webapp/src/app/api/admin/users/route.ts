@@ -302,7 +302,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Send welcome email with credentials
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    const forwardedProto = request.headers.get("x-forwarded-proto");
+    const forwardedHost = request.headers.get("host");
+    const siteUrl =
+      (forwardedProto && forwardedHost
+        ? `${forwardedProto}://${forwardedHost}`
+        : process.env.NEXT_PUBLIC_SITE_URL) ||
+      "https://grantware-ai.vercel.app/";
     const organizationSlug = updatedUser.organization?.slug;
 
     const emailResult = await sendWelcomeEmail({

@@ -6,21 +6,23 @@ import {
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
-  BotMessageSquare,
   FileText,
-  ClipboardList,
   LayoutDashboard,
   Building2,
   Users,
+  Search,
+  SquarePen,
+  Target,
+  BadgeCheck,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
-import { NavOrganization } from "@/components/sidebar/nav-organization";
 import { NavAdmin } from "@/components/sidebar/nav-admin";
 import { NavChats } from "@/components/sidebar/nav-chats";
 import { NavUser } from "@/components/sidebar/nav-user";
 import { NavSettings } from "@/components/sidebar/nav-settings";
 import { TeamSwitcher } from "@/components/sidebar/team-switcher";
+import { SearchChatsModal } from "@/components/sidebar/search-chats-modal";
 import {
   Sidebar,
   SidebarContent,
@@ -101,67 +103,48 @@ const data = {
       icon: LayoutDashboard,
     },
     {
-      title: "AI Assistant",
+      title: "New Chat",
       url: "/private/chat",
-      icon: BotMessageSquare,
+      icon: SquarePen,
+    },
+    {
+      title: "Search Chats",
+      url: "#",
+      icon: Search,
     },
     {
       title: "Grants",
       url: "/private/grants",
       icon: FileText,
     },
-  ],
-  navOrganization: [
     {
       title: "Applications",
       url: "/private/applications",
-      icon: ClipboardList,
+      icon: Target,
     },
-    {
-      title: "Profile",
-      url: "/private/profile",
-      icon: Building2,
-    },
-    // {
-    //   title: "Org Profile",
-    //   url: "/org-profile",
-    //   icon: Building2,
-    // },
-    // {
-    //   title: "Applications",
-    //   url: "/applications",
-    //   icon: ClipboardList,
-    // },
-    // {
-    //   title: "Projects",
-    //   url: "/projects",
-    //   icon: FolderOpen,
-    // },
-    // {
-    //   title: "Settings",
-    //   url: "#",
-    //   icon: Settings2,
-    //   items: [
-    //     {
-    //       title: "Account",
-    //       url: "/settings/account",
-    //     },
-    //     {
-    //       title: "Billing",
-    //       url: "/settings/billing",
-    //     },
-    //     {
-    //       title: "Organizations",
-    //       url: "/settings/organizations",
-    //     },
-    //   ],
-    // },
   ],
   navAdmin: [
     {
       title: "Users",
       url: "/private/admin/users",
       icon: Users,
+    },
+  ],
+  navSettings: [
+    {
+      title: "Account",
+      url: "/private/settings/account",
+      icon: BadgeCheck,
+    },
+    {
+      title: "Team",
+      url: "/private/settings/team",
+      icon: Users,
+    },
+    {
+      title: "Org Profile",
+      url: "/private/profile",
+      icon: Building2,
     },
   ],
 };
@@ -181,6 +164,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   } | null>(null);
   const [loadingOrganization, setLoadingOrganization] = React.useState(true);
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [searchChatsOpen, setSearchChatsOpen] = React.useState(false);
 
   // Extract organization slug from pathname: /private/[slug]/...
   const organizationSlug = React.useMemo(() => {
@@ -238,20 +222,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navItems = React.useMemo(() => {
     if (!organizationSlug) return data.navMain;
 
-    return data.navMain.map((item) => ({
-      ...item,
-      url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
-    }));
-  }, [organizationSlug]);
+    return data.navMain.map((item) => {
+      // Add onClick handler for Search Chats
+      if (item.title === "Search Chats") {
+        return {
+          ...item,
+          url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
+          onClick: () => setSearchChatsOpen(true),
+        };
+      }
 
-  // Build organization navigation items with organization slug
-  const navOrganizationItems = React.useMemo(() => {
-    if (!organizationSlug) return data.navOrganization;
-
-    return data.navOrganization.map((item) => ({
-      ...item,
-      url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
-    }));
+      return {
+        ...item,
+        url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
+      };
+    });
   }, [organizationSlug]);
 
   // Build admin navigation items with organization slug
@@ -264,8 +249,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }));
   }, [organizationSlug]);
 
-  // Check if we're on a settings page
-  const isOnSettingsPage = pathname.includes("/settings");
+  // Build settings navigation items with organization slug
+  const navSettingsItems = React.useMemo(() => {
+    if (!organizationSlug) return data.navSettings;
+
+    return data.navSettings.map((item) => ({
+      ...item,
+      url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
+    }));
+  }, [organizationSlug]);
 
   return (
     <>
@@ -326,31 +318,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarTrigger className="group-data-[collapsible=icon]:hidden" />
         </SidebarHeader>
         <SidebarContent>
-          {isOnSettingsPage ? (
-            <NavSettings organizationSlug={organizationSlug} />
-          ) : (
-            <>
-              <NavMain
-                items={navItems}
-                iconSize={SIDEBAR_CONFIG.navigationIconSize}
-              />
-              <NavOrganization
-                items={navOrganizationItems}
-                iconSize={SIDEBAR_CONFIG.navigationIconSize}
-              />
-              {isAdmin && (
-                <NavAdmin
-                  items={navAdminItems}
-                  iconSize={SIDEBAR_CONFIG.navigationIconSize}
-                />
-              )}
-              <NavChats organizationSlug={organizationSlug} />
-            </>
+          <NavMain
+            items={navItems}
+            iconSize={SIDEBAR_CONFIG.navigationIconSize}
+          />
+          <NavSettings items={navSettingsItems} />
+          {isAdmin && (
+            <NavAdmin
+              items={navAdminItems}
+              iconSize={SIDEBAR_CONFIG.navigationIconSize}
+            />
           )}
+          <NavChats organizationSlug={organizationSlug} />
         </SidebarContent>
         <SidebarFooter>{user && <NavUser user={user} />}</SidebarFooter>
         <SidebarRail />
       </Sidebar>
+      <SearchChatsModal
+        open={searchChatsOpen}
+        onOpenChange={setSearchChatsOpen}
+        organizationSlug={organizationSlug}
+      />
     </>
   );
 }

@@ -9,10 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Loader2, FileText } from "lucide-react";
 import { toast } from "sonner";
+import { ApplicationsTable } from "@/components/applications/ApplicationsTable";
 
 interface Application {
   id: string;
@@ -27,33 +27,10 @@ interface Application {
     slug: string;
     name: string;
   };
-}
-
-function getStatusColor(status: string): string {
-  switch (status) {
-    case "DRAFT":
-      return "bg-gray-100 text-gray-800";
-    case "IN_PROGRESS":
-      return "bg-blue-100 text-blue-800";
-    case "READY_TO_SUBMIT":
-      return "bg-purple-100 text-purple-800";
-    case "SUBMITTED":
-      return "bg-green-100 text-green-800";
-    case "UNDER_REVIEW":
-      return "bg-yellow-100 text-yellow-800";
-    case "AWARDED":
-      return "bg-emerald-100 text-emerald-800";
-    case "REJECTED":
-      return "bg-red-100 text-red-800";
-    case "WITHDRAWN":
-      return "bg-orange-100 text-orange-800";
-    default:
-      return "bg-gray-100 text-gray-800";
-  }
-}
-
-function formatStatus(status: string): string {
-  return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+  opportunity?: {
+    total_funding_amount: number | null;
+    close_date: string | null;
+  };
 }
 
 export default function ApplicationsPage({
@@ -136,52 +113,7 @@ export default function ApplicationsPage({
         </p>
       </div>
 
-      <div className="rounded-md border">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b bg-muted/50">
-              <th className="p-4 text-left font-medium">Name</th>
-              <th className="p-4 text-left font-medium">Status</th>
-              <th className="p-4 text-left font-medium">Last Edited</th>
-              <th className="p-4 text-left font-medium">Created</th>
-            </tr>
-          </thead>
-          <tbody>
-            {applications.map((application) => (
-              <tr
-                key={application.id}
-                className="border-b hover:bg-muted/50 transition-colors cursor-pointer"
-                onClick={() =>
-                  router.push(`/private/${slug}/applications/${application.id}`)
-                }
-              >
-                <td className="p-4">
-                  <div>
-                    <div className="font-medium hover:underline">
-                      {application.title ||
-                        `Grant #${application.opportunityId}`}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Opportunity ID: {application.opportunityId}
-                    </div>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <Badge className={getStatusColor(application.status)}>
-                    {formatStatus(application.status)}
-                  </Badge>
-                </td>
-                <td className="p-4 text-sm text-muted-foreground">
-                  {new Date(application.lastEditedAt).toLocaleDateString()}
-                </td>
-                <td className="p-4 text-sm text-muted-foreground">
-                  {new Date(application.createdAt).toLocaleDateString()}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <ApplicationsTable applications={applications} slug={slug} />
     </div>
   );
 }

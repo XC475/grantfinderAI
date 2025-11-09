@@ -10,11 +10,7 @@ import {
 } from "@/components/ui/card";
 import { LoginForm } from "@/components/auth/LoginForm";
 
-interface HomePageProps {
-  searchParams: Promise<{ message?: string }>;
-}
-
-export default async function Home({ searchParams }: HomePageProps) {
+export default async function Home() {
   const supabase = await createClient();
 
   // Check if user is already logged in
@@ -42,8 +38,6 @@ export default async function Home({ searchParams }: HomePageProps) {
     }
   }
 
-  const { message } = await searchParams;
-
   // Login page as root
   return (
     <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
@@ -57,12 +51,6 @@ export default async function Home({ searchParams }: HomePageProps) {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {message && (
-            <div className="p-3 bg-green-100 border border-green-400 text-green-700 rounded-md text-sm">
-              {message}
-            </div>
-          )}
-
           <LoginForm />
 
           <div className="text-center">
