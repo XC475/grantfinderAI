@@ -3,7 +3,13 @@
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   BotMessageSquare,
   FileText,
@@ -111,19 +117,27 @@ export default function DashboardPage() {
                 </div>
                 <CardTitle className="text-lg">AI Assistant</CardTitle>
               </div>
+              <CardDescription className="pt-2">
+                Get help with the entire grants lifecycle—from discovery and
+                eligibility analysis to writing and submission support
+              </CardDescription>
             </CardHeader>
           </Card>
         </Link>
 
-        <Link href={`/private/${organizationSlug}/grants`}>
+        <Link href={`/private/${organizationSlug}/grants?tab=search`}>
           <Card className="hover:shadow-md transition-all hover:border-primary/50 cursor-pointer h-full">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-green-50">
                   <FileText className="h-6 w-6 text-green-500" />
                 </div>
-                <CardTitle className="text-lg">Grants Search</CardTitle>
+                <CardTitle className="text-lg">Grants</CardTitle>
               </div>
+              <CardDescription className="pt-2">
+                Search, discover, and bookmark funding opportunities from
+                federal, state, and private sources with advanced filters
+              </CardDescription>
             </CardHeader>
           </Card>
         </Link>
@@ -137,6 +151,10 @@ export default function DashboardPage() {
                 </div>
                 <CardTitle className="text-lg">Recommendations</CardTitle>
               </div>
+              <CardDescription className="pt-2">
+                AI-powered grant matches tailored to your district's profile,
+                priorities, and strategic goals
+              </CardDescription>
             </CardHeader>
           </Card>
         </Link>
