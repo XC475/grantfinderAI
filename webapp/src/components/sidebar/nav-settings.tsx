@@ -26,28 +26,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface NavSettingsProps {
-  organizationSlug: string | null;
+  items: {
+    title: string;
+    url: string;
+    icon: any;
+  }[];
 }
 
-export function NavSettings({ organizationSlug }: NavSettingsProps) {
+export function NavSettings({ items }: NavSettingsProps) {
   const pathname = usePathname();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
-  if (!organizationSlug) return null;
+  if (!items || items.length === 0) return null;
 
-  const settingsItems = [
-    {
-      title: "Account",
-      url: `/private/${organizationSlug}/settings/account`,
-      icon: BadgeCheck,
-    },
-    {
-      title: "Team",
-      url: `/private/${organizationSlug}/settings/team`,
-      icon: Users,
-    },
-  ];
+  const settingsItems = items;
 
   // Check if any settings page is active
   const isSettingsActive = pathname.includes("/settings");

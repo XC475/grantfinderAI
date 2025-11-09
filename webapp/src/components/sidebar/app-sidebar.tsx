@@ -7,16 +7,16 @@ import {
   Command,
   GalleryVerticalEnd,
   FileText,
-  ClipboardList,
   LayoutDashboard,
   Building2,
   Users,
   Search,
   SquarePen,
+  Target,
+  BadgeCheck,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
-import { NavOrganization } from "@/components/sidebar/nav-organization";
 import { NavAdmin } from "@/components/sidebar/nav-admin";
 import { NavChats } from "@/components/sidebar/nav-chats";
 import { NavUser } from "@/components/sidebar/nav-user";
@@ -117,17 +117,10 @@ const data = {
       url: "/private/grants",
       icon: FileText,
     },
-  ],
-  navOrganization: [
     {
       title: "Applications",
       url: "/private/applications",
-      icon: ClipboardList,
-    },
-    {
-      title: "Org Profile",
-      url: "/private/profile",
-      icon: Building2,
+      icon: Target,
     },
   ],
   navAdmin: [
@@ -135,6 +128,23 @@ const data = {
       title: "Users",
       url: "/private/admin/users",
       icon: Users,
+    },
+  ],
+  navSettings: [
+    {
+      title: "Account",
+      url: "/private/settings/account",
+      icon: BadgeCheck,
+    },
+    {
+      title: "Team",
+      url: "/private/settings/team",
+      icon: Users,
+    },
+    {
+      title: "Org Profile",
+      url: "/private/profile",
+      icon: Building2,
     },
   ],
 };
@@ -229,21 +239,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     });
   }, [organizationSlug]);
 
-  // Build organization navigation items with organization slug
-  const navOrganizationItems = React.useMemo(() => {
-    if (!organizationSlug) return data.navOrganization;
-
-    return data.navOrganization.map((item) => ({
-      ...item,
-      url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
-    }));
-  }, [organizationSlug]);
-
   // Build admin navigation items with organization slug
   const navAdminItems = React.useMemo(() => {
     if (!organizationSlug) return data.navAdmin;
 
     return data.navAdmin.map((item) => ({
+      ...item,
+      url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
+    }));
+  }, [organizationSlug]);
+
+  // Build settings navigation items with organization slug
+  const navSettingsItems = React.useMemo(() => {
+    if (!organizationSlug) return data.navSettings;
+
+    return data.navSettings.map((item) => ({
       ...item,
       url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
     }));
@@ -312,11 +322,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             items={navItems}
             iconSize={SIDEBAR_CONFIG.navigationIconSize}
           />
-          <NavOrganization
-            items={navOrganizationItems}
-            iconSize={SIDEBAR_CONFIG.navigationIconSize}
-          />
-          <NavSettings organizationSlug={organizationSlug} />
+          <NavSettings items={navSettingsItems} />
           {isAdmin && (
             <NavAdmin
               items={navAdminItems}

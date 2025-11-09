@@ -58,8 +58,7 @@ export function NavMain({
   };
 
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+    <SidebarGroup className="mt-2">
       <SidebarMenu>
         {items.map((item) => {
           // If item has sub-items, render as collapsible dropdown
