@@ -11,13 +11,19 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarSeparator,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface NavSettingsProps {
   organizationSlug: string | null;
@@ -25,6 +31,8 @@ interface NavSettingsProps {
 
 export function NavSettings({ organizationSlug }: NavSettingsProps) {
   const pathname = usePathname();
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
 
   if (!organizationSlug) return null;
 
@@ -44,6 +52,36 @@ export function NavSettings({ organizationSlug }: NavSettingsProps) {
   // Check if any settings page is active
   const isSettingsActive = pathname.includes("/settings");
 
+  // When collapsed, show dropdown menu on hover
+  if (isCollapsed) {
+    return (
+      <SidebarGroup>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton tooltip="Settings">
+                  <Settings />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="right" align="start" className="w-48">
+                {settingsItems.map((item) => (
+                  <DropdownMenuItem key={item.title} asChild>
+                    <Link href={item.url} className="flex items-center gap-2">
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarGroup>
+    );
+  }
+
+  // When expanded, show collapsible as normal
   return (
     <>
       <SidebarGroup>
