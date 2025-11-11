@@ -49,25 +49,86 @@ export function ChatDemo(props: ChatDemoProps) {
   );
 
   const handleSubmit = useCallback(
-    async (event?: { preventDefault?: () => void }) => {
+    async (
+      event?: { preventDefault?: () => void },
+      options?: { experimental_attachments?: FileList }
+    ) => {
       event?.preventDefault?.();
 
-      if (!input.trim() || isLoading) return;
+      // Allow sending if there's text OR attachments
+      const hasText = input.trim().length > 0;
+      const hasAttachments =
+        options?.experimental_attachments &&
+        options.experimental_attachments.length > 0;
+
+      if (!hasText && !hasAttachments) return;
+      if (isLoading) return;
+
+      // Set loading state immediately to prevent double submission
+      setIsLoading(true);
+      console.log("🔄 [Chat] Upload started - loading state enabled");
+
+      // Handle file attachments if present
+      let attachments: any[] | undefined;
+      if (
+        options?.experimental_attachments &&
+        options.experimental_attachments.length > 0
+      ) {
+        try {
+          console.log(
+            "📤 [Chat] Uploading files...",
+            options.experimental_attachments.length
+          );
+          const formData = new FormData();
+          Array.from(options.experimental_attachments).forEach((file) => {
+            formData.append("files", file);
+          });
+
+          const uploadResponse = await fetch("/api/chat/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!uploadResponse.ok) {
+            const errorText = await uploadResponse.text();
+            console.error("Upload failed:", errorText);
+            throw new Error("Failed to upload files");
+          }
+
+          const uploadResult = await uploadResponse.json();
+          attachments = uploadResult.files;
+          console.log(
+            "✅ [Chat] Files uploaded successfully:",
+            attachments?.length || 0
+          );
+        } catch (error) {
+          console.error("Error uploading files:", error);
+          setIsLoading(false);
+          // Show error message
+          const errorMessage: Message = {
+            id: `error-${Date.now()}`,
+            role: "assistant",
+            content:
+              "Sorry, there was an error uploading your files. Please try again.",
+            createdAt: new Date(),
+          };
+          setMessages((prev) => [...prev, errorMessage]);
+          return;
+        }
+      }
 
       const userMessage: Message = {
         id: `user-${Date.now()}`,
         role: "user",
-        content: input.trim(),
+        content: input.trim() || "(Sent files)", // Use placeholder if no text
         createdAt: new Date(),
+        experimental_attachments: attachments,
       };
 
-      // Add user message immediately
+      // Add user message immediately (after upload completes)
       setMessages((prev) => [...prev, userMessage]);
       setInput("");
-      setIsLoading(true);
-      console.log(
-        "🔄 [Chat] isLoading set to TRUE - stop button should appear"
-      );
+      console.log("💬 [Chat] Message added to chat - sending to AI");
 
       // Create abort controller for this request
       const abortController = new AbortController();
@@ -78,6 +139,7 @@ export function ChatDemo(props: ChatDemoProps) {
         const apiMessages = [...messages, userMessage].map((msg) => ({
           role: msg.role,
           content: msg.content,
+          attachments: msg.experimental_attachments,
         }));
 
         const response = await fetch("/api/ai/assistant-agent", {

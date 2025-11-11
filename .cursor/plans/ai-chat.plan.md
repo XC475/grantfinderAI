@@ -37,14 +37,54 @@ Update `AiChatMessage` model to support attachments in metadata:
 Create endpoint to handle file uploads:
 
 - Accept multipart/form-data with files
-- Validate file type (pdf, docx, txt, csv, xlsx, png, jpg, jpeg) and size (20MB limit)
+- Validate file type (pdf, docx, txt, csv, xlsx, png, jpg, jpeg) and size (40MB limit)
 - Upload to Supabase Storage bucket `chat-attachments`
-- Extract text content using appropriate libraries:
-  - PDFs: `pdf-parse` or `pdfjs-dist`
-  - Word docs: `mammoth`
-  - Images: `tesseract.js` (OCR)
-  - Text/CSV: direct read
+- Extract text content using LangChain Document Loaders:
+  - Use appropriate loader based on file type:
+    - PDFs: `PDFLoader` from `@langchain/community/document_loaders/fs/pdf`
+    - Word docs: `DocxLoader` from `@langchain/community/document_loaders/fs/docx`
+    - Text files: `TextLoader` from `langchain/document_loaders/fs/text`
+    - CSV: `CSVLoader` from `@langchain/community/document_loaders/fs/csv`
+    - Images: `UnstructuredImageLoader` (with OCR support)
+  - Call `loader.load()` to get Document objects with `page_content` and `metadata`
+  - Combine page_content from all Document chunks
 - Return file metadata including extracted text
+
+**Example implementation:**
+
+```typescript
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
+import { TextLoader } from "langchain/document_loaders/fs/text";
+import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
+
+async function extractTextFromFile(filePath: string, mimeType: string): Promise<string> {
+  let loader;
+  
+  switch (mimeType) {
+    case "application/pdf":
+      loader = new PDFLoader(filePath);
+      break;
+    case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+      loader = new DocxLoader(filePath);
+      break;
+    case "text/plain":
+      loader = new TextLoader(filePath);
+      break;
+    case "text/csv":
+      loader = new CSVLoader(filePath);
+      break;
+    default:
+      throw new Error(`Unsupported file type: ${mimeType}`);
+  }
+  
+  // Load documents
+  const documents = await loader.load();
+  
+  // Combine all page_content from Document objects
+  return documents.map(doc => doc.page_content).join("\n\n");
+}
+```
 
 ### 3. Update Chat Component
 
@@ -89,8 +129,15 @@ Update message display:
 ### 6. Install Required Dependencies
 
 ```bash
-npm install pdf-parse mammoth tesseract.js
+npm install @langchain/community langchain
+npm install pdf-parse  # Required by PDFLoader
 ```
+
+Additional optional dependencies for enhanced functionality:
+
+- For DOCX support: LangChain's DocxLoader uses built-in Node.js capabilities
+- For image OCR: May require `unstructured` API or local installation
+- For Excel: LangChain CSV loader can handle basic spreadsheet data
 
 ### 7. Configure Supabase Storage
 
@@ -110,7 +157,12 @@ npm install pdf-parse mammoth tesseract.js
 
 **File Size Limit**: 20MB per file (can increase later)
 
-**Text Extraction**: Server-side extraction before sending to AI
+**Text Extraction**: Server-side extraction using LangChain Document Loaders
+
+- Provides unified interface across all file types
+- Returns standardized Document objects with page_content and metadata
+- Easier to maintain and extend than multiple individual libraries
+- Already compatible with existing LangChain AI infrastructure in the project
 
 ## Files to Modify
 
@@ -126,13 +178,20 @@ npm install pdf-parse mammoth tesseract.js
 - The shadcn chat UI already has file upload button (`allowAttachments` prop is set)
 - File previews are already partially supported via `experimental_attachments`
 - Main work is backend upload, text extraction, and AI integration
+- **LangChain Document Loaders**: Using LangChain provides:
+  - Unified interface for all document types via `BaseLoader`
+  - Standardized `Document` objects with `page_content` and `metadata`
+  - Built-in support for chunking large documents with `load_and_split()`
+  - Consistent error handling across different file types
+  - Easy to extend with custom loaders if needed
 
 ### To-dos
 
-- [ ] Install required npm packages for text extraction (pdf-parse, mammoth, tesseract.js)
+- [ ] Install LangChain packages (@langchain/community, langchain, pdf-parse)
 - [ ] Create chat-attachments storage bucket in Supabase with proper RLS policies
-- [ ] Create /api/chat/upload endpoint to handle file uploads and text extraction
+- [ ] Create /api/chat/upload endpoint using LangChain Document Loaders for text extraction
+- [ ] Implement loader selection logic based on file MIME type
 - [ ] Modify Chat.tsx handleSubmit to upload files before sending message
 - [ ] Update assistant-agent API to process attachments and include extracted text in AI context
 - [ ] Update chat-message.tsx to display file attachments with previews and download links
-- [ ] Test uploading various file types (PDF, Word, images) and verify AI can process them
+- [ ] Test uploading various file types (PDF, Word, CSV, text, images) and verify AI can process them

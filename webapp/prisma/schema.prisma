@@ -159,20 +159,20 @@ model GrantEligibilityAnalysis {
 }
 
 model Application {
-  id                   String              @id @default(cuid())
+  id                   String            @id @default(cuid())
   opportunityId        Int
-  status               ApplicationStatus   @default(DRAFT)
+  status               ApplicationStatus @default(DRAFT)
   title                String?
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
   submittedAt          DateTime?
-  lastEditedAt         DateTime            @default(now())
+  lastEditedAt         DateTime          @default(now())
   organizationId       String
   checklist            Json?
   attachments_markdown String?
   aiChats              AiChat[]
+  organization         Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   documents            Document[]
-  organization         Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@unique([opportunityId, organizationId])
   @@index([organizationId, status])
