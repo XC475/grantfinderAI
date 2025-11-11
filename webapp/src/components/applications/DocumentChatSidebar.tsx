@@ -39,10 +39,48 @@ export function DocumentChatSidebar({
   const [loadingSessions, setLoadingSessions] = useState(false);
   const hasAutoSent = useRef(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const hasAutoLoaded = useRef(false);
 
-  // Load chat sessions on mount
+  // Load chat sessions on mount and auto-load most recent
   useEffect(() => {
-    loadChatSessions();
+    const loadAndRestoreSession = async () => {
+      try {
+        setLoadingSessions(true);
+        const response = await fetch(
+          `/api/chats/editor?documentId=${documentId}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const sessions = data.chats || [];
+          setChatSessions(sessions);
+
+          // Try to restore the last active chat from localStorage
+          const lastChatKey = `lastEditorChat_${documentId}`;
+          const lastChatId = localStorage.getItem(lastChatKey);
+
+          // Auto-load the saved chat or most recent session
+          if (!hasAutoLoaded.current && sessions.length > 0) {
+            hasAutoLoaded.current = true;
+
+            // Find the saved chat in sessions
+            const savedChat = lastChatId
+              ? sessions.find((s: ChatSession) => s.id === lastChatId)
+              : null;
+
+            // Load saved chat if it exists, otherwise load most recent
+            const chatToLoad = savedChat ? savedChat.id : sessions[0].id;
+            console.log("💬 [DocumentChat] Auto-loading session:", chatToLoad);
+            await loadChatSession(chatToLoad);
+          }
+        }
+      } catch (error) {
+        console.error("Error loading chat sessions:", error);
+      } finally {
+        setLoadingSessions(false);
+      }
+    };
+
+    loadAndRestoreSession();
   }, [documentId]);
 
   const loadChatSessions = async () => {
@@ -83,6 +121,11 @@ export function DocumentChatSidebar({
         );
         setMessages(loadedMessages);
         setChatId(sessionId);
+
+        // Save to localStorage for persistence across refreshes
+        const lastChatKey = `lastEditorChat_${documentId}`;
+        localStorage.setItem(lastChatKey, sessionId);
+
         console.log("💬 [DocumentChat] Loaded chat session:", sessionId);
       }
     } catch (error) {
@@ -95,6 +138,11 @@ export function DocumentChatSidebar({
   const startNewChat = () => {
     setMessages([]);
     setChatId(null);
+
+    // Clear localStorage for this document
+    const lastChatKey = `lastEditorChat_${documentId}`;
+    localStorage.removeItem(lastChatKey);
+
     console.log("💬 [DocumentChat] Starting new chat session");
   };
 
@@ -157,7 +205,15 @@ export function DocumentChatSidebar({
           const newChatId = response.headers.get("X-Chat-Id");
           if (newChatId) {
             setChatId(newChatId);
-            console.log("💬 [DocumentChat] New chat created with ID:", newChatId);
+
+            // Save to localStorage for persistence
+            const lastChatKey = `lastEditorChat_${documentId}`;
+            localStorage.setItem(lastChatKey, newChatId);
+
+            console.log(
+              "💬 [DocumentChat] New chat created with ID:",
+              newChatId
+            );
             // Reload sessions to include new chat
             loadChatSessions();
           }
