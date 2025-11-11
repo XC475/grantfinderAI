@@ -285,6 +285,7 @@ exports.Prisma.VectorDocumentScalarFieldEnum = {
 exports.Prisma.DocumentScalarFieldEnum = {
   id: 'id',
   applicationId: 'applicationId',
+  organizationId: 'organizationId',
   title: 'title',
   content: 'content',
   contentType: 'contentType',

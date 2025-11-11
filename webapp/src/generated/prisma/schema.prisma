@@ -118,6 +118,7 @@ model Organization {
   grantBookmarks         GrantBookmark[]
   eligibilityAnalyses    GrantEligibilityAnalysis[]
   recommendations        Recommendation[]
+  documents              Document[]                 @relation("OrganizationDocuments")
   users                  User[]                     @relation("UserOrganization")
 
   @@index([leaId])
@@ -241,16 +242,18 @@ model VectorDocument {
 }
 
 model Document {
-  id            String       @id @default(cuid())
-  applicationId String?
-  title         String
-  content       String?
-  contentType   String       @default("html")
-  metadata      Json?
-  version       Int          @default(1)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  application   Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  id             String       @id @default(cuid())
+  applicationId  String?
+  organizationId String
+  title          String
+  content        String?
+  contentType    String       @default("html")
+  metadata       Json?
+  version        Int          @default(1)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  application    Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  organization   Organization @relation("OrganizationDocuments", fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([applicationId])
   @@index([updatedAt])

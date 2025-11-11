@@ -18,6 +18,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 interface Document {
@@ -45,12 +47,15 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
   const router = useRouter();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isCreating, setIsCreating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [documentToDelete, setDocumentToDelete] = useState<{
     id: string;
     applicationId?: string | null;
   } | null>(null);
+  const [newDocumentTitle, setNewDocumentTitle] = useState("");
   const [pagination, setPagination] = useState({
     total: 0,
     limit: 10,
@@ -114,6 +119,54 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
   ) => {
     setDocumentToDelete({ id: documentId, applicationId });
     setDeleteDialogOpen(true);
+  };
+
+  const handleCreateClick = () => {
+    setNewDocumentTitle("Untitled Document");
+    setCreateDialogOpen(true);
+  };
+
+  const resetCreateDialog = () => {
+    setCreateDialogOpen(false);
+    setNewDocumentTitle("");
+    setIsCreating(false);
+  };
+
+  const handleCreateDocument = async () => {
+    if (!newDocumentTitle.trim()) {
+      toast.error("Please provide a title for the document");
+      return;
+    }
+
+    setIsCreating(true);
+    try {
+      const response = await fetch("/api/documents", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: newDocumentTitle.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Failed to create document");
+      }
+
+      const { document } = await response.json();
+      toast.success("Document created");
+      resetCreateDialog();
+      fetchDocuments();
+      router.push(`/private/${slug}/editor/${document.id}`);
+    } catch (error) {
+      console.error("Error creating document:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create document"
+      );
+      setIsCreating(false);
+    }
   };
 
   const confirmDelete = async () => {
@@ -193,11 +246,14 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
   if (documents.length === 0) {
     return (
       <div className="p-4 mx-auto w-full">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Documents</h1>
-          <p className="text-muted-foreground">
-            View and manage all your grant application documents
-          </p>
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Documents</h1>
+            <p className="text-muted-foreground">
+              View and manage all your grant application documents
+            </p>
+          </div>
+          <Button onClick={handleCreateClick}>New Document</Button>
         </div>
         <div className="space-y-4">
           <div className="flex justify-between items-center">
@@ -205,8 +261,60 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
           </div>
           <div className="text-center py-8 text-muted-foreground">
             <p>No documents yet. Create your first document to get started.</p>
+            <Button className="mt-4" onClick={handleCreateClick}>
+              Create Document
+            </Button>
           </div>
         </div>
+
+        {/* Create Document Dialog */}
+        <Dialog
+          open={createDialogOpen}
+          onOpenChange={(open) => {
+            setCreateDialogOpen(open);
+            if (!open) {
+              setNewDocumentTitle("");
+              setIsCreating(false);
+            }
+          }}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create Document</DialogTitle>
+              <DialogDescription>
+                Start a new document that doesn&apos;t belong to an application
+                yet.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="new-document-title">Title</Label>
+                <Input
+                  id="new-document-title"
+                  value={newDocumentTitle}
+                  onChange={(event) => setNewDocumentTitle(event.target.value)}
+                  placeholder="e.g. Fall Grant Narrative"
+                  autoFocus
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={resetCreateDialog}
+                disabled={isCreating}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleCreateDocument}
+                disabled={isCreating || !newDocumentTitle.trim()}
+              >
+                {isCreating ? "Creating..." : "Create"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
@@ -214,11 +322,14 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
   return (
     <div className="p-4 mx-auto w-full">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Documents</h1>
-        <p className="text-muted-foreground">
-          View and manage all your grant application documents
-        </p>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Documents</h1>
+          <p className="text-muted-foreground">
+            View and manage all your grant application documents
+          </p>
+        </div>
+        <Button onClick={handleCreateClick}>New Document</Button>
       </div>
 
       {/* Documents List */}
@@ -316,6 +427,55 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
               disabled={isDeleting}
             >
               {isDeleting ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Document Dialog */}
+      <Dialog
+        open={createDialogOpen}
+        onOpenChange={(open) => {
+          setCreateDialogOpen(open);
+          if (!open) {
+            setNewDocumentTitle("");
+            setIsCreating(false);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create Document</DialogTitle>
+            <DialogDescription>
+              Start a new document that doesn&apos;t belong to an application
+              yet.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="new-document-title">Title</Label>
+              <Input
+                id="new-document-title"
+                value={newDocumentTitle}
+                onChange={(event) => setNewDocumentTitle(event.target.value)}
+                placeholder="e.g. Fall Grant Narrative"
+                autoFocus
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={resetCreateDialog}
+              disabled={isCreating}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreateDocument}
+              disabled={isCreating || !newDocumentTitle.trim()}
+            >
+              {isCreating ? "Creating..." : "Create"}
             </Button>
           </DialogFooter>
         </DialogContent>

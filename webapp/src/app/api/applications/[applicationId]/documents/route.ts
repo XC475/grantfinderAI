@@ -136,6 +136,7 @@ export async function POST(
     const document = await prisma.document.create({
       data: {
         applicationId: applicationId,
+        organizationId: application.organizationId,
         title,
         content: gettingStartedContent,
         contentType,
