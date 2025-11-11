@@ -159,21 +159,20 @@ model GrantEligibilityAnalysis {
 }
 
 model Application {
-  id                    String                  @id @default(cuid())
-  opportunityId         Int
-  status                ApplicationStatus       @default(DRAFT)
-  title                 String?
-  documents             Json?
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
-  submittedAt           DateTime?
-  lastEditedAt          DateTime                @default(now())
-  organizationId        String
-  checklist             Json?
-  attachments_markdown  String?
-  aiChats               AiChat[]
-  application_documents application_documents[]
-  organization          Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  id                   String            @id @default(cuid())
+  opportunityId        Int
+  status               ApplicationStatus @default(DRAFT)
+  title                String?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  submittedAt          DateTime?
+  lastEditedAt         DateTime          @default(now())
+  organizationId       String
+  checklist            Json?
+  attachments_markdown String?
+  aiChats              AiChat[]
+  organization         Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  documents            Document[]
 
   @@unique([opportunityId, organizationId])
   @@index([organizationId, status])
@@ -231,30 +230,32 @@ model Recommendation {
   @@schema("app")
 }
 
-model documents {
+model VectorDocument {
   id        BigInt                 @id @default(autoincrement())
   content   String?
   metadata  Json?
   embedding Unsupported("vector")?
 
+  @@map("documents")
   @@schema("public")
 }
 
-model application_documents {
-  id            String      @id @default(cuid())
-  applicationId String
+model Document {
+  id            String       @id @default(cuid())
+  applicationId String?
   title         String
   content       String?
-  contentType   String      @default("html")
+  contentType   String       @default("html")
   metadata      Json?
-  version       Int         @default(1)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  applications  Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  version       Int          @default(1)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  application   Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
   @@index([applicationId])
   @@index([updatedAt])
   @@index([applicationId, createdAt])
+  @@map("documents")
   @@schema("app")
 }
 
@@ -411,6 +412,9 @@ enum k12_education_opportunity_category_enum {
 enum opportunity_services_enum {
   k12_education
   higher_education
+  non_profit
+  government_agencies
+  other
 
   @@schema("public")
 }

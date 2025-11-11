@@ -14,6 +14,7 @@ import {
   SquarePen,
   Target,
   BadgeCheck,
+  Files,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
@@ -121,6 +122,11 @@ const data = {
       title: "Applications",
       url: "/private/applications",
       icon: Target,
+    },
+    {
+      title: "Documents",
+      url: "/private/documents",
+      icon: Files,
     },
   ],
   navAdmin: [

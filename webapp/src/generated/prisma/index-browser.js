@@ -235,7 +235,6 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   opportunityId: 'opportunityId',
   status: 'status',
   title: 'title',
-  documents: 'documents',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   submittedAt: 'submittedAt',
@@ -277,13 +276,13 @@ exports.Prisma.RecommendationScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
-exports.Prisma.DocumentsScalarFieldEnum = {
+exports.Prisma.VectorDocumentScalarFieldEnum = {
   id: 'id',
   content: 'content',
   metadata: 'metadata'
 };
 
-exports.Prisma.Application_documentsScalarFieldEnum = {
+exports.Prisma.DocumentScalarFieldEnum = {
   id: 'id',
   applicationId: 'applicationId',
   title: 'title',
@@ -379,7 +378,10 @@ exports.opportunity_category_enum = exports.$Enums.opportunity_category_enum = {
 
 exports.opportunity_services_enum = exports.$Enums.opportunity_services_enum = {
   k12_education: 'k12_education',
-  higher_education: 'higher_education'
+  higher_education: 'higher_education',
+  non_profit: 'non_profit',
+  government_agencies: 'government_agencies',
+  other: 'other'
 };
 
 exports.OrganizationRole = exports.$Enums.OrganizationRole = {
@@ -464,8 +466,8 @@ exports.Prisma.ModelName = {
   AiChat: 'AiChat',
   AiChatMessage: 'AiChatMessage',
   Recommendation: 'Recommendation',
-  documents: 'documents',
-  application_documents: 'application_documents',
+  VectorDocument: 'VectorDocument',
+  Document: 'Document',
   k12_education_opportunities: 'k12_education_opportunities'
 };
 

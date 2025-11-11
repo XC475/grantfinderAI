@@ -314,14 +314,18 @@ export const ChatForm = forwardRef<HTMLFormElement, ChatFormProps>(
   ({ children, handleSubmit, className }, ref) => {
     const [files, setFiles] = useState<File[] | null>(null);
 
-    const onSubmit = (event: React.FormEvent) => {
+    const onSubmit = async (event: React.FormEvent) => {
+      event.preventDefault();
+
       if (!files) {
         handleSubmit(event);
         return;
       }
 
       const fileList = createFileList(files);
-      handleSubmit(event, { experimental_attachments: fileList });
+      // Wait for upload to complete before clearing files
+      await handleSubmit(event, { experimental_attachments: fileList });
+      // Clear files only after successful upload
       setFiles(null);
     };
 

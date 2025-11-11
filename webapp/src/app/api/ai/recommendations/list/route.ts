@@ -1,11 +1,11 @@
-import prisma from "@/lib/prisma";
-import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server";
+import prisma from "@/lib/prisma";
 
 /**
- * Bookmarks API Endpoint
+ * Recommendations List API Endpoint
  *
- * Returns paginated list of bookmarked grants for the authenticated user
+ * Returns paginated list of grant recommendations for the authenticated user's organization
  *
  * Query Parameters:
  * - limit (number): Number of results to return (default: 10, max: 100)
@@ -13,7 +13,7 @@ import { NextRequest, NextResponse } from "next/server";
  *
  * Response Format:
  * {
- *   data: Bookmark[],
+ *   data: Recommendation[],
  *   pagination: {
  *     total: number,
  *     limit: number,
@@ -32,20 +32,33 @@ export async function GET(req: NextRequest) {
   const requestId = Math.random().toString(36).substring(7);
 
   try {
-    console.log(`🔖 [${requestId}] Bookmarks API called`);
+    console.log(`📋 [${requestId}] Recommendations List API called`);
 
-    // Authenticate user
+    // 1. Authenticate user
     const supabase = await createClient();
     const {
       data: { user },
-      error,
+      error: authError,
     } = await supabase.auth.getUser();
 
-    if (error || !user) {
+    if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Extract pagination parameters
+    // 2. Get user's organization
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { organizationId: true },
+    });
+
+    if (!dbUser?.organizationId) {
+      return NextResponse.json(
+        { error: "User organization not found" },
+        { status: 404 }
+      );
+    }
+
+    // 3. Extract pagination parameters
     const { searchParams } = new URL(req.url);
     let limit = parseInt(searchParams.get("limit") || "10");
     let offset = parseInt(searchParams.get("offset") || "0");
@@ -61,43 +74,36 @@ export async function GET(req: NextRequest) {
     }
 
     console.log(
-      `🔖 [${requestId}] Pagination: limit=${limit}, offset=${offset}`
+      `📋 [${requestId}] Pagination: limit=${limit}, offset=${offset}`
     );
 
-    // Get total count
-    const totalCount = await prisma.grantBookmark.count({
-      where: { userId: user.id },
+    // 4. Get total count
+    const totalCount = await prisma.recommendation.count({
+      where: {
+        organizationId: dbUser.organizationId,
+      },
     });
 
-    // Fetch bookmarks with pagination
-    const bookmarks = await prisma.grantBookmark.findMany({
-      where: { userId: user.id },
-      orderBy: { createdAt: "desc" },
+    // 5. Fetch recommendations for this organization with pagination
+    const recommendations = await prisma.recommendation.findMany({
+      where: {
+        organizationId: dbUser.organizationId,
+      },
+      orderBy: [
+        { fitScore: "desc" }, // Sort by fit score (highest first)
+        { queryDate: "desc" }, // Then by query date (most recent first)
+      ],
       take: limit,
       skip: offset,
     });
 
     console.log(
-      `🔖 [${requestId}] Found ${bookmarks.length} of ${totalCount} total bookmarks`
+      `✅ [${requestId}] Found ${recommendations.length} of ${totalCount} total recommendations`
     );
 
-    // Fetch opportunity details for each bookmark
-    const bookmarksWithOpportunities = await Promise.all(
-      bookmarks.map(async (bookmark) => {
-        const opportunity = await prisma.$queryRaw<
-          Array<Record<string, unknown>>
-        >`
-          SELECT * FROM public.opportunities WHERE id = ${bookmark.opportunityId} LIMIT 1
-        `;
-        return {
-          ...bookmark,
-          opportunity: opportunity[0] || null,
-        };
-      })
-    );
-
+    // 6. Return recommendations with pagination info
     return NextResponse.json({
-      data: bookmarksWithOpportunities,
+      data: recommendations,
       pagination: {
         total: totalCount,
         limit,
@@ -110,14 +116,17 @@ export async function GET(req: NextRequest) {
         processingTimeMs: Date.now() - startTime,
       },
     });
-  } catch (e) {
+  } catch (error) {
     const processingTime = Date.now() - startTime;
-    console.error(`❌ [${requestId}] Error listing bookmarks:`, e);
+    console.error(`❌ [${requestId}] Recommendations List Error:`, error);
     console.error(`❌ [${requestId}] Processing time: ${processingTime}ms`);
 
     return NextResponse.json(
       {
-        error: "Error listing bookmarks",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch recommendations",
         requestId,
         timestamp: new Date().toISOString(),
         processingTimeMs: processingTime,

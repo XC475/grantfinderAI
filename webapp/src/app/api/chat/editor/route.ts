@@ -58,11 +58,11 @@ export async function POST(req: NextRequest) {
     // Get the document's application and associated opportunity
     let applicationContext = "";
     if (documentId) {
-      const document = await prisma.application_documents.findUnique({
+      const document = await prisma.document.findUnique({
         where: { id: documentId },
         select: {
           applicationId: true,
-          applications: {
+          application: {
             select: {
               id: true,
               title: true,
@@ -72,10 +72,10 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      if (document?.applications?.opportunityId) {
+      if (document?.application?.opportunityId) {
         // Fetch the opportunity's raw_text from the public schema
         const opportunity = await prisma.opportunities.findUnique({
-          where: { id: document.applications.opportunityId },
+          where: { id: document.application.opportunityId },
           select: {
             title: true,
             agency: true,

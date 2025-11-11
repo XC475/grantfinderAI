@@ -367,22 +367,21 @@ export function MessageInput({
         </div>
 
         <div className="absolute right-3 top-3 z-20 flex gap-2">
-          {/* Attachment button - commented out */}
-          {/* {props.allowAttachments && (
-          <Button
-            type="button"
-            size="icon"
-            variant="outline"
-            className="h-8 w-8"
-            aria-label="Attach a file"
-            onClick={async () => {
-              const files = await showFileUploadDialog();
-              addFiles(files);
-            }}
-          >
-            <Paperclip className="h-4 w-4" />
-          </Button>
-        )} */}
+          {props.allowAttachments && (
+            <Button
+              type="button"
+              size="icon"
+              variant="outline"
+              className="h-8 w-8"
+              aria-label="Attach a file"
+              onClick={async () => {
+                const files = await showFileUploadDialog();
+                addFiles(files);
+              }}
+            >
+              <Paperclip className="h-4 w-4" />
+            </Button>
+          )}
           {isSpeechSupported && (
             <Button
               type="button"
@@ -411,7 +410,15 @@ export function MessageInput({
               size="icon"
               className="h-8 w-8 transition-opacity"
               aria-label="Send message"
-              disabled={props.value === "" || isGenerating}
+              disabled={
+                (props.value === "" &&
+                  !(
+                    props.allowAttachments &&
+                    props.files &&
+                    props.files.length > 0
+                  )) ||
+                isGenerating
+              }
             >
               <ArrowUp className="h-5 w-5" />
             </Button>
@@ -464,7 +471,9 @@ function showFileUploadDialog() {
 
   input.type = "file";
   input.multiple = true;
-  input.accept = "*/*";
+  // Accept only supported file types: PDF, Word, Text, CSV
+  input.accept =
+    ".pdf,.docx,.txt,.csv,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv";
   input.click();
 
   return new Promise<File[] | null>((resolve) => {

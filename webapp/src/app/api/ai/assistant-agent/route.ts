@@ -6,9 +6,19 @@ import { createGrantsAgent } from "@/lib/ai/agent";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { DistrictInfo } from "@/lib/ai/prompts/grants-assistant";
 
+interface FileAttachment {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  url: string;
+  extractedText?: string;
+}
+
 interface ChatMessage {
   role: string;
   content: string;
+  attachments?: FileAttachment[];
 }
 
 export async function POST(req: NextRequest) {
@@ -71,7 +81,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 6. Save user message
+    // 6. Save user message with attachments
     await prisma.aiChatMessage.create({
       data: {
         role: "USER",
@@ -80,6 +90,7 @@ export async function POST(req: NextRequest) {
         metadata: {
           timestamp: Date.now(),
           source: "webapp",
+          attachments: lastUserMessage.attachments || [],
         },
       },
     });
@@ -116,9 +127,28 @@ export async function POST(req: NextRequest) {
     const agent = await createGrantsAgent(districtInfo, baseUrl);
 
     // 9. Convert all messages to LangChain format (including last user message)
-    const langChainMessages = messages.map((m: ChatMessage) =>
-      m.role === "user" ? new HumanMessage(m.content) : new AIMessage(m.content)
-    );
+    // If message has attachments, append extracted text to content
+    const langChainMessages = messages.map((m: ChatMessage) => {
+      let content = m.content;
+
+      // Append extracted text from attachments to user messages
+      if (m.role === "user" && m.attachments && m.attachments.length > 0) {
+        const attachmentTexts = m.attachments
+          .map((attachment) => {
+            if (attachment.extractedText) {
+              return `\n\n[Attached: ${attachment.name}]\nFile contents:\n${attachment.extractedText}`;
+            }
+            return `\n\n[Attached: ${attachment.name}]`;
+          })
+          .join("\n");
+
+        content = content + attachmentTexts;
+      }
+
+      return m.role === "user"
+        ? new HumanMessage(content)
+        : new AIMessage(content);
+    });
 
     // 10. Execute agent and stream response
     console.log("🤖 [Assistant Agent] Executing agent for chat:", chat.id);

@@ -54,9 +54,13 @@ const chatBubbleVariants = cva("group/message relative break-words text-base", {
 type Animation = VariantProps<typeof chatBubbleVariants>["animation"];
 
 interface Attachment {
+  id?: string;
   name?: string;
   contentType?: string;
+  type?: string;
   url: string;
+  size?: number;
+  extractedText?: string;
 }
 
 interface PartialToolCall {
@@ -148,11 +152,30 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
 }) => {
   const files = useMemo(() => {
     return experimental_attachments?.map((attachment) => {
-      const dataArray = dataUrlToUint8Array(attachment.url);
-      const file = new File([dataArray], attachment.name ?? "Unknown", {
-        type: attachment.contentType,
-      });
-      return file;
+      // Check if URL is a data URL or a regular URL (Supabase Storage)
+      if (attachment.url.startsWith("data:")) {
+        // Data URL - convert to File
+        const dataArray = dataUrlToUint8Array(attachment.url);
+        const file = new File(
+          [dataArray],
+          attachment.name ?? "Unknown",
+          {
+            type: attachment.contentType || attachment.type,
+          }
+        );
+        return { file, previewUrl: undefined };
+      } else {
+        // Regular URL - create a placeholder File object for preview
+        const blob = new Blob([], { type: attachment.contentType || attachment.type || "application/octet-stream" });
+        const file = new File(
+          [blob],
+          attachment.name ?? "Unknown",
+          {
+            type: attachment.contentType || attachment.type || "application/octet-stream"
+          }
+        );
+        return { file, previewUrl: attachment.url };
+      }
     });
   }, [experimental_attachments]);
 
@@ -173,8 +196,8 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
       >
         {files ? (
           <div className="mb-1 flex flex-wrap gap-2">
-            {files.map((file, index) => {
-              return <FilePreview file={file} key={index} />;
+            {files.map(({ file, previewUrl }, index) => {
+              return <FilePreview file={file} previewUrl={previewUrl} key={index} />;
             })}
           </div>
         ) : null}

@@ -1,11 +1,11 @@
-import prisma from "@/lib/prisma";
-import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server";
+import prisma from "@/lib/prisma";
 
 /**
- * Bookmarks API Endpoint
+ * Documents API Endpoint
  *
- * Returns paginated list of bookmarked grants for the authenticated user
+ * Returns paginated list of all documents for the authenticated user's organization
  *
  * Query Parameters:
  * - limit (number): Number of results to return (default: 10, max: 100)
@@ -13,7 +13,7 @@ import { NextRequest, NextResponse } from "next/server";
  *
  * Response Format:
  * {
- *   data: Bookmark[],
+ *   data: Document[],
  *   pagination: {
  *     total: number,
  *     limit: number,
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
   const requestId = Math.random().toString(36).substring(7);
 
   try {
-    console.log(`🔖 [${requestId}] Bookmarks API called`);
+    console.log(`📄 [${requestId}] Documents API called`);
 
     // Authenticate user
     const supabase = await createClient();
@@ -43,6 +43,19 @@ export async function GET(req: NextRequest) {
 
     if (error || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Get user's organization
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { organizationId: true },
+    });
+
+    if (!dbUser?.organizationId) {
+      return NextResponse.json(
+        { error: "User organization not found" },
+        { status: 404 }
+      );
     }
 
     // Extract pagination parameters
@@ -61,43 +74,47 @@ export async function GET(req: NextRequest) {
     }
 
     console.log(
-      `🔖 [${requestId}] Pagination: limit=${limit}, offset=${offset}`
+      `📄 [${requestId}] Pagination: limit=${limit}, offset=${offset}`
     );
 
-    // Get total count
-    const totalCount = await prisma.grantBookmark.count({
-      where: { userId: user.id },
+    // Get total count of documents for this organization
+    const totalCount = await prisma.document.count({
+      where: {
+        application: {
+          organizationId: dbUser.organizationId,
+        },
+      },
     });
 
-    // Fetch bookmarks with pagination
-    const bookmarks = await prisma.grantBookmark.findMany({
-      where: { userId: user.id },
-      orderBy: { createdAt: "desc" },
+    // Fetch documents with pagination, including application details
+    const documents = await prisma.document.findMany({
+      where: {
+        application: {
+          organizationId: dbUser.organizationId,
+        },
+      },
+      include: {
+        application: {
+          select: {
+            id: true,
+            title: true,
+            opportunityId: true,
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
       take: limit,
       skip: offset,
     });
 
     console.log(
-      `🔖 [${requestId}] Found ${bookmarks.length} of ${totalCount} total bookmarks`
-    );
-
-    // Fetch opportunity details for each bookmark
-    const bookmarksWithOpportunities = await Promise.all(
-      bookmarks.map(async (bookmark) => {
-        const opportunity = await prisma.$queryRaw<
-          Array<Record<string, unknown>>
-        >`
-          SELECT * FROM public.opportunities WHERE id = ${bookmark.opportunityId} LIMIT 1
-        `;
-        return {
-          ...bookmark,
-          opportunity: opportunity[0] || null,
-        };
-      })
+      `✅ [${requestId}] Found ${documents.length} of ${totalCount} total documents`
     );
 
     return NextResponse.json({
-      data: bookmarksWithOpportunities,
+      data: documents,
       pagination: {
         total: totalCount,
         limit,
@@ -112,12 +129,12 @@ export async function GET(req: NextRequest) {
     });
   } catch (e) {
     const processingTime = Date.now() - startTime;
-    console.error(`❌ [${requestId}] Error listing bookmarks:`, e);
+    console.error(`❌ [${requestId}] Error listing documents:`, e);
     console.error(`❌ [${requestId}] Processing time: ${processingTime}ms`);
 
     return NextResponse.json(
       {
-        error: "Error listing bookmarks",
+        error: "Error listing documents",
         requestId,
         timestamp: new Date().toISOString(),
         processingTimeMs: processingTime,

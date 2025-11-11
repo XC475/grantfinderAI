@@ -20,11 +20,11 @@ export async function GET(
     }
 
     // Verify user has access to this application and document
-    const document = await prisma.application_documents.findFirst({
+    const document = await prisma.document.findFirst({
       where: {
         id: documentId,
         applicationId: applicationId,
-        applications: {
+        application: {
           organization: {
             users: {
               some: { id: user.id },
@@ -69,11 +69,11 @@ export async function PUT(
     }
 
     // Verify user has access to this application and document
-    const existingDocument = await prisma.application_documents.findFirst({
+    const existingDocument = await prisma.document.findFirst({
       where: {
         id: documentId,
         applicationId: applicationId,
-        applications: {
+        application: {
           organization: {
             users: {
               some: { id: user.id },
@@ -94,7 +94,7 @@ export async function PUT(
     const { title, content, contentType } = body;
 
     // Update document
-    const document = await prisma.application_documents.update({
+    const document = await prisma.document.update({
       where: { id: documentId },
       data: {
         ...(title && { title }),
@@ -133,11 +133,11 @@ export async function DELETE(
     }
 
     // Verify user has access to this application and document
-    const existingDocument = await prisma.application_documents.findFirst({
+    const existingDocument = await prisma.document.findFirst({
       where: {
         id: documentId,
         applicationId: applicationId,
-        applications: {
+        application: {
           organization: {
             users: {
               some: { id: user.id },
@@ -155,7 +155,7 @@ export async function DELETE(
     }
 
     // Delete document
-    await prisma.application_documents.delete({
+    await prisma.document.delete({
       where: { id: documentId },
     });
 

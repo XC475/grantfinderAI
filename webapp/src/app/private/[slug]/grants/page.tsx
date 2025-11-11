@@ -120,9 +120,9 @@ function GrantsSearchPage() {
   const searchParams = useSearchParams();
   const slug = params.slug as string;
 
-  // Tab state - default to recommendations as it's now the primary tab
+  // Tab state - default to search
   const [activeTab, setActiveTab] = useState<TabView>(
-    (searchParams.get("tab") as TabView) || "recommendations"
+    (searchParams.get("tab") as TabView) || "search"
   );
   const [grants, setGrants] = useState<Grant[]>([]);
   const [loading, setLoading] = useState(true);
@@ -180,12 +180,22 @@ function GrantsSearchPage() {
   const [loadingRecommendations, setLoadingRecommendations] = useState(false);
   const [runningRecommendations, setRunningRecommendations] = useState(false);
   const [organization, setOrganization] = useState<Organization | null>(null);
+  const [recommendationsPagination, setRecommendationsPagination] = useState({
+    total: 0,
+    limit: 10,
+    offset: 0,
+    hasMore: false,
+  });
 
   // Bookmarks state
   const [bookmarks, setBookmarks] = useState<BookmarkData[]>([]);
   const [loadingBookmarks, setLoadingBookmarks] = useState(false);
-  const [bookmarksInitiallyFetched, setBookmarksInitiallyFetched] =
-    useState(false);
+  const [bookmarksPagination, setBookmarksPagination] = useState({
+    total: 0,
+    limit: 10,
+    offset: 0,
+    hasMore: false,
+  });
 
   // Cache state with timestamps (5 minute TTL)
   const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
@@ -234,18 +244,6 @@ function GrantsSearchPage() {
     fetchBookmarks();
   }, []);
 
-  // Switch to bookmarks tab if bookmarks exist and no tab was specified in URL
-  useEffect(() => {
-    if (bookmarksInitiallyFetched && !searchParams.get("tab")) {
-      if (bookmarks.length > 0) {
-        setActiveTab("bookmarks");
-        console.log(
-          "📌 Auto-switching to Bookmarks tab (you have saved grants)"
-        );
-      }
-    }
-  }, [bookmarksInitiallyFetched, bookmarks.length, searchParams]);
-
   // Fetch filter options
   useEffect(() => {
     const fetchFilterOptions = async () => {
@@ -284,6 +282,10 @@ function GrantsSearchPage() {
         params.append("closeDateFrom", format(closeDateFrom, "yyyy-MM-dd"));
       if (closeDateTo)
         params.append("closeDateTo", format(closeDateTo, "yyyy-MM-dd"));
+
+      // Pass organization slug so backend can fetch bookmarks/applications
+      params.append("organizationSlug", slug);
+
       params.append("limit", pagination.limit.toString());
       const offset = resetOffset
         ? 0
@@ -300,6 +302,7 @@ function GrantsSearchPage() {
 
       const data: SearchResponse = await response.json();
 
+      // Backend now handles deprioritization, so just use the data as-is
       if (resetOffset) {
         setGrants(data.data);
       } else {
@@ -500,11 +503,16 @@ function GrantsSearchPage() {
     return timestamp > 0 && Date.now() - timestamp < CACHE_TTL;
   };
 
-  // Fetch recommendations
-  const fetchRecommendations = async (force = false) => {
-    // Check cache validity
+  // Fetch recommendations with pagination
+  const fetchRecommendations = async (
+    resetOffset = true,
+    customOffset?: number,
+    force = false
+  ) => {
+    // Check cache validity (only if not paginating)
     if (
       !force &&
+      resetOffset &&
       isCacheValid("recommendations") &&
       recommendations.length > 0
     ) {
@@ -513,18 +521,30 @@ function GrantsSearchPage() {
     }
     setLoadingRecommendations(true);
     try {
-      // Fetch organization data
-      const orgResponse = await fetch("/api/organizations");
-      if (orgResponse.ok) {
-        const orgData = await orgResponse.json();
-        setOrganization(orgData);
+      // Fetch organization data (only if needed)
+      if (!organization) {
+        const orgResponse = await fetch("/api/organizations");
+        if (orgResponse.ok) {
+          const orgData = await orgResponse.json();
+          setOrganization(orgData);
+        }
       }
 
-      // Fetch existing recommendations
-      const recResponse = await fetch("/api/recommendations/list");
+      // Build params for pagination
+      const params = new URLSearchParams();
+      params.append("limit", recommendationsPagination.limit.toString());
+      const offset = resetOffset
+        ? 0
+        : customOffset !== undefined
+          ? customOffset
+          : recommendationsPagination.offset;
+      params.append("offset", offset.toString());
+
+      // Fetch existing recommendations with pagination
+      const recResponse = await fetch(`/api/ai/recommendations/list?${params}`);
       if (recResponse.ok) {
         const recData = await recResponse.json();
-        const recs = recData.recommendations || [];
+        const recs = recData.data || [];
 
         // Fetch grant details for each recommendation
         const recsWithGrants = await Promise.all(
@@ -547,7 +567,14 @@ function GrantsSearchPage() {
           })
         );
 
-        setRecommendations(recsWithGrants);
+        // Update recommendations based on reset flag
+        if (resetOffset) {
+          setRecommendations(recsWithGrants);
+        } else {
+          setRecommendations((prev) => [...prev, ...recsWithGrants]);
+        }
+
+        setRecommendationsPagination(recData.pagination);
         cacheTimestamps.current.recommendations = Date.now();
         console.log("✅ Recommendations fetched and cached");
       }
@@ -562,43 +589,71 @@ function GrantsSearchPage() {
   const handleRunRecommendations = async () => {
     setRunningRecommendations(true);
     try {
-      const response = await fetch("/api/recommendations", {
+      const response = await fetch("/api/ai/recommendations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          message: "Generate grant recommendations for our organization",
-        }),
+        body: JSON.stringify({}),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to generate recommendations");
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || "Failed to generate recommendations"
+        );
       }
 
-      toast.success("Recommendations generated successfully!");
+      const data = await response.json();
+      toast.success(
+        `Recommendations generated successfully! Found ${data.count} grant${data.count !== 1 ? "s" : ""}.`
+      );
       // Force refresh after generating new recommendations
       await fetchRecommendations(true);
     } catch (error) {
       console.error("Error generating recommendations:", error);
-      toast.error("Failed to generate recommendations. Please try again.");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to generate recommendations. Please try again."
+      );
     } finally {
       setRunningRecommendations(false);
     }
   };
 
-  // Fetch bookmarks
-  const fetchBookmarks = async (force = false) => {
-    // Check cache validity
-    if (!force && isCacheValid("bookmarks") && bookmarks.length > 0) {
+  // Fetch bookmarks with pagination
+  const fetchBookmarks = async (
+    resetOffset = true,
+    customOffset?: number,
+    force = false
+  ) => {
+    // Check cache validity (only if not paginating)
+    if (
+      !force &&
+      resetOffset &&
+      isCacheValid("bookmarks") &&
+      bookmarks.length > 0
+    ) {
       console.log("📦 Using cached bookmarks");
       return;
     }
     setLoadingBookmarks(true);
     try {
-      const res = await fetch("/api/bookmarks");
+      // Build params for pagination
+      const params = new URLSearchParams();
+      params.append("limit", bookmarksPagination.limit.toString());
+      const offset = resetOffset
+        ? 0
+        : customOffset !== undefined
+          ? customOffset
+          : bookmarksPagination.offset;
+      params.append("offset", offset.toString());
+
+      const res = await fetch(`/api/bookmarks?${params}`);
       if (!res.ok) throw new Error(`Failed: ${res.status}`);
-      const data = await res.json();
+      const responseData = await res.json();
+      const data = responseData.data || [];
 
       // Filter out bookmarks with missing opportunities and log them
       const validBookmarks = data.filter((b: BookmarkData) => {
@@ -616,23 +671,21 @@ function GrantsSearchPage() {
         console.warn(`⚠️ ${invalidCount} bookmark(s) reference deleted grants`);
       }
 
-      setBookmarks(validBookmarks);
+      // Update bookmarks based on reset flag
+      if (resetOffset) {
+        setBookmarks(validBookmarks);
+      } else {
+        setBookmarks((prev) => [...prev, ...validBookmarks]);
+      }
+
+      setBookmarksPagination(responseData.pagination);
       cacheTimestamps.current.bookmarks = Date.now();
       console.log(
         `✅ Bookmarks fetched and cached (${validBookmarks.length} valid)`
       );
-
-      // Mark as initially fetched for tab switching logic
-      if (!bookmarksInitiallyFetched) {
-        setBookmarksInitiallyFetched(true);
-      }
     } catch (e) {
       console.error(e);
       toast.error("Failed to load bookmarks");
-      // Still mark as fetched even on error
-      if (!bookmarksInitiallyFetched) {
-        setBookmarksInitiallyFetched(true);
-      }
     } finally {
       setLoadingBookmarks(false);
     }
@@ -746,58 +799,16 @@ function GrantsSearchPage() {
       {/* Tab Navigation */}
       <div className="mb-6">
         <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
-            {/* Bookmarks first if any exist */}
-            {bookmarks.length > 0 && (
-              <button
-                onClick={() => handleTabChange("bookmarks")}
-                className={`
-                  py-4 px-1 border-b-2 font-medium text-sm transition-colors
-                  ${
-                    activeTab === "bookmarks"
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                  }
-                `}
-              >
-                <Bookmark className="inline h-4 w-4 mr-2" />
-                Bookmarks
-                <span className="ml-2 text-xs bg-cyan-100 text-cyan-600 px-2 py-1 rounded-full">
-                  {bookmarks.length}
-                </span>
-              </button>
-            )}
-
-            {/* Recommendations */}
-            <button
-              onClick={() => handleTabChange("recommendations")}
-              className={`
-                py-4 px-1 border-b-2 font-medium text-sm transition-colors
-                ${
-                  activeTab === "recommendations"
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                }
-              `}
-            >
-              <Sparkles className="inline h-4 w-4 mr-2" />
-              Recommendations
-              {recommendations.length > 0 && (
-                <span className="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
-                  {recommendations.length}
-                </span>
-              )}
-            </button>
-
+          <nav className="-mb-px flex space-x-2">
             {/* Search Grants */}
             <button
               onClick={() => handleTabChange("search")}
               className={`
-                py-4 px-1 border-b-2 font-medium text-sm transition-colors
+                py-3 px-4 font-medium text-sm transition-all rounded-t-lg
                 ${
                   activeTab === "search"
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
+                    ? "bg-background text-primary border border-b-0 border-gray-200"
+                    : "text-muted-foreground hover:text-foreground hover:bg-gray-50"
                 }
               `}
             >
@@ -810,23 +821,47 @@ function GrantsSearchPage() {
               )}
             </button>
 
-            {/* Bookmarks last if none exist */}
-            {bookmarks.length === 0 && (
-              <button
-                onClick={() => handleTabChange("bookmarks")}
-                className={`
-                  py-4 px-1 border-b-2 font-medium text-sm transition-colors
-                  ${
-                    activeTab === "bookmarks"
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                  }
-                `}
-              >
-                <Bookmark className="inline h-4 w-4 mr-2" />
-                Bookmarks
-              </button>
-            )}
+            {/* Recommendations */}
+            <button
+              onClick={() => handleTabChange("recommendations")}
+              className={`
+                py-3 px-4 font-medium text-sm transition-all rounded-t-lg
+                ${
+                  activeTab === "recommendations"
+                    ? "bg-background text-primary border border-b-0 border-gray-200"
+                    : "text-muted-foreground hover:text-foreground hover:bg-gray-50"
+                }
+              `}
+            >
+              <Sparkles className="inline h-4 w-4 mr-2" />
+              Recommendations
+              {recommendationsPagination.total > 0 && (
+                <span className="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+                  {recommendationsPagination.total}
+                </span>
+              )}
+            </button>
+
+            {/* Bookmarks */}
+            <button
+              onClick={() => handleTabChange("bookmarks")}
+              className={`
+                py-3 px-4 font-medium text-sm transition-all rounded-t-lg
+                ${
+                  activeTab === "bookmarks"
+                    ? "bg-background text-primary border border-b-0 border-gray-200"
+                    : "text-muted-foreground hover:text-foreground hover:bg-gray-50"
+                }
+              `}
+            >
+              <Bookmark className="inline h-4 w-4 mr-2" />
+              Bookmarks
+              {bookmarksPagination.total > 0 && (
+                <span className="ml-2 text-xs bg-cyan-100 text-cyan-600 px-2 py-1 rounded-full">
+                  {bookmarksPagination.total}
+                </span>
+              )}
+            </button>
           </nav>
         </div>
       </div>
@@ -1330,7 +1365,8 @@ function GrantsSearchPage() {
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <p className="text-sm text-muted-foreground">
-                        Showing {recommendations.length} personalized
+                        Showing {recommendations.length} of{" "}
+                        {recommendationsPagination.total} personalized
                         recommendations
                       </p>
                     </div>
@@ -1480,6 +1516,25 @@ function GrantsSearchPage() {
                       </Card>
                     ))}
                   </div>
+
+                  {/* Load More Button for Recommendations */}
+                  {recommendationsPagination.hasMore && (
+                    <div className="text-center mt-8">
+                      <Button
+                        onClick={() =>
+                          fetchRecommendations(
+                            false,
+                            recommendationsPagination.offset +
+                              recommendationsPagination.limit
+                          )
+                        }
+                        disabled={loadingRecommendations}
+                        variant="outline"
+                      >
+                        {loadingRecommendations ? "Loading..." : "Load More"}
+                      </Button>
+                    </div>
+                  )}
                 </>
               )}
             </>
@@ -1503,23 +1558,52 @@ function GrantsSearchPage() {
               </p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {bookmarks.map((b) => (
-                <GrantCard
-                  key={b.id}
-                  grant={b.opportunity!}
-                  organizationSlug={slug}
-                  isSaved={true}
-                  hasApplication={grantApplications.includes(b.opportunity!.id)}
-                  isCreatingApplication={
-                    creatingApplication === b.opportunity!.id
-                  }
-                  onToggleBookmark={removeBookmark}
-                  onCreateApplication={handleCreateApplication}
-                  fromBookmarks={true}
-                />
-              ))}
-            </div>
+            <>
+              <div className="mb-4">
+                <p className="text-sm text-muted-foreground">
+                  Showing {bookmarks.length} of {bookmarksPagination.total}{" "}
+                  bookmarked grants
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                {bookmarks.map((b) => (
+                  <GrantCard
+                    key={b.id}
+                    grant={b.opportunity!}
+                    organizationSlug={slug}
+                    isSaved={true}
+                    hasApplication={grantApplications.includes(
+                      b.opportunity!.id
+                    )}
+                    isCreatingApplication={
+                      creatingApplication === b.opportunity!.id
+                    }
+                    onToggleBookmark={removeBookmark}
+                    onCreateApplication={handleCreateApplication}
+                    fromBookmarks={true}
+                  />
+                ))}
+              </div>
+
+              {/* Load More Button for Bookmarks */}
+              {bookmarksPagination.hasMore && (
+                <div className="text-center mt-8">
+                  <Button
+                    onClick={() =>
+                      fetchBookmarks(
+                        false,
+                        bookmarksPagination.offset + bookmarksPagination.limit
+                      )
+                    }
+                    disabled={loadingBookmarks}
+                    variant="outline"
+                  >
+                    {loadingBookmarks ? "Loading..." : "Load More"}
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </>
       )}

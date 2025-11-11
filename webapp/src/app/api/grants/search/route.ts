@@ -1,5 +1,6 @@
 import { supabaseServer } from "@/lib/supabaseServer";
 import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 
 /**
  * Grants Search API Endpoint
@@ -98,8 +99,45 @@ export async function GET(req: NextRequest) {
     const source = searchParams.get("source") || "";
     const closeDateFrom = searchParams.get("closeDateFrom");
     const closeDateTo = searchParams.get("closeDateTo");
+    const organizationSlug = searchParams.get("organizationSlug");
     let limit = parseInt(searchParams.get("limit") || "50");
     let offset = parseInt(searchParams.get("offset") || "0");
+
+    // Fetch bookmarked and applied grant IDs from database
+    let deprioritizeIds: number[] = [];
+    if (organizationSlug) {
+      try {
+        // Get organization by slug
+        const organization = await prisma.organization.findUnique({
+          where: { slug: organizationSlug },
+          select: { id: true },
+        });
+
+        if (organization) {
+          // Fetch bookmarked grants
+          const bookmarks = await prisma.grantBookmark.findMany({
+            where: { organizationId: organization.id },
+            select: { opportunityId: true },
+          });
+
+          // Fetch applications
+          const applications = await prisma.application.findMany({
+            where: { organizationId: organization.id },
+            select: { opportunityId: true },
+          });
+
+          // Combine opportunity IDs
+          const bookmarkedIds = bookmarks.map((b) => b.opportunityId);
+          const applicationIds = applications.map((a) => a.opportunityId);
+          deprioritizeIds = [...new Set([...bookmarkedIds, ...applicationIds])];
+        }
+      } catch (error) {
+        console.error(
+          `⚠️ [${requestId}] Error fetching bookmarks/applications:`,
+          error
+        );
+      }
+    }
 
     console.log(`🔍 [${requestId}] Search parameters:`, {
       query,
@@ -115,6 +153,9 @@ export async function GET(req: NextRequest) {
       source,
       closeDateFrom,
       closeDateTo,
+      organizationSlug,
+      deprioritizeIds:
+        deprioritizeIds.length > 0 ? `${deprioritizeIds.length} IDs` : "none",
       limit,
       offset,
     });
@@ -256,7 +297,7 @@ export async function GET(req: NextRequest) {
       } total records before pagination`
     );
 
-    // Sort all data by status first, then relevance, then date
+    // Sort all data: deprioritized grants last, then by status, relevance, and date
     const statusPriority: { [key: string]: number } = {
       posted: 1,
       forecasted: 2,
@@ -265,21 +306,27 @@ export async function GET(req: NextRequest) {
 
     const sortedAllData =
       allData?.sort((a, b) => {
-        // First, sort by status priority (posted, forecasted, closed)
+        // FIRST: Deprioritize bookmarked/applied grants (push them to the end)
+        const aIsDeprioritized = deprioritizeIds.includes(a.id);
+        const bIsDeprioritized = deprioritizeIds.includes(b.id);
+        if (aIsDeprioritized && !bIsDeprioritized) return 1;
+        if (!aIsDeprioritized && bIsDeprioritized) return -1;
+
+        // SECOND: Sort by status priority (posted, forecasted, closed)
         const aStatusPriority = statusPriority[a.status?.toLowerCase()] ?? 999;
         const bStatusPriority = statusPriority[b.status?.toLowerCase()] ?? 999;
         if (aStatusPriority !== bStatusPriority) {
           return aStatusPriority - bStatusPriority;
         }
 
-        // Then, within same status, sort by relevance_score (descending, nulls last)
+        // THIRD: Within same status, sort by relevance_score (descending, nulls last)
         const aRelevance = a.relevance_score ?? -Infinity;
         const bRelevance = b.relevance_score ?? -Infinity;
         if (aRelevance !== bRelevance) {
           return bRelevance - aRelevance;
         }
 
-        // Finally, sort by post_date (descending, most recent first)
+        // FOURTH: Finally, sort by post_date (descending, most recent first)
         const aDate = a.post_date ? new Date(a.post_date).getTime() : 0;
         const bDate = b.post_date ? new Date(b.post_date).getTime() : 0;
         return bDate - aDate;
