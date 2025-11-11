@@ -36,6 +36,7 @@ export function DocumentChatSidebar({
   const [isLoading, setIsLoading] = useState(false);
   const [chatId, setChatId] = useState<string | null>(null);
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
+  const [openTabs, setOpenTabs] = useState<string[]>([]); // Track which chats are open in tabs
   const [loadingSessions, setLoadingSessions] = useState(false);
   const hasAutoSent = useRef(false);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -54,6 +55,17 @@ export function DocumentChatSidebar({
           const sessions = data.chats || [];
           setChatSessions(sessions);
 
+          // Restore open tabs from localStorage
+          const openTabsKey = `openEditorTabs_${documentId}`;
+          const savedOpenTabs = localStorage.getItem(openTabsKey);
+          const restoredTabs = savedOpenTabs ? JSON.parse(savedOpenTabs) : [];
+
+          // Filter to only include tabs that still exist
+          const validTabs = restoredTabs.filter((tabId: string) =>
+            sessions.some((s: ChatSession) => s.id === tabId)
+          );
+          setOpenTabs(validTabs);
+
           // Try to restore the last active chat from localStorage
           const lastChatKey = `lastEditorChat_${documentId}`;
           const lastChatId = localStorage.getItem(lastChatKey);
@@ -70,7 +82,9 @@ export function DocumentChatSidebar({
             // Load saved chat if it exists, otherwise load most recent
             const chatToLoad = savedChat ? savedChat.id : sessions[0].id;
             console.log("💬 [DocumentChat] Auto-loading session:", chatToLoad);
-            await loadChatSession(chatToLoad);
+
+            // Skip adding to tabs since we already restored them
+            await loadChatSession(chatToLoad, true);
           }
         }
       } catch (error) {
@@ -100,7 +114,10 @@ export function DocumentChatSidebar({
     }
   };
 
-  const loadChatSession = async (sessionId: string) => {
+  const loadChatSession = async (
+    sessionId: string,
+    skipAddingToTabs = false
+  ) => {
     try {
       setIsLoading(true);
       const response = await fetch(`/api/chats/editor/${sessionId}`);
@@ -122,6 +139,22 @@ export function DocumentChatSidebar({
         setMessages(loadedMessages);
         setChatId(sessionId);
 
+        // Add to open tabs if not already there (and not in restore mode)
+        if (!skipAddingToTabs) {
+          setOpenTabs((currentTabs) => {
+            if (!currentTabs.includes(sessionId)) {
+              const newOpenTabs = [...currentTabs, sessionId];
+
+              // Save to localStorage
+              const openTabsKey = `openEditorTabs_${documentId}`;
+              localStorage.setItem(openTabsKey, JSON.stringify(newOpenTabs));
+
+              return newOpenTabs;
+            }
+            return currentTabs;
+          });
+        }
+
         // Save to localStorage for persistence across refreshes
         const lastChatKey = `lastEditorChat_${documentId}`;
         localStorage.setItem(lastChatKey, sessionId);
@@ -135,11 +168,37 @@ export function DocumentChatSidebar({
     }
   };
 
+  const closeTab = (tabId: string) => {
+    // Remove from open tabs
+    const newOpenTabs = openTabs.filter((id) => id !== tabId);
+    setOpenTabs(newOpenTabs);
+
+    // Save to localStorage
+    const openTabsKey = `openEditorTabs_${documentId}`;
+    localStorage.setItem(openTabsKey, JSON.stringify(newOpenTabs));
+
+    // If closing the active tab, switch to another tab
+    if (tabId === chatId) {
+      if (newOpenTabs.length > 0) {
+        // Find the index of the closed tab
+        const closedIndex = openTabs.indexOf(tabId);
+        // Switch to the previous tab, or the next one if it was the first
+        const nextTabId = newOpenTabs[Math.max(0, closedIndex - 1)];
+        loadChatSession(nextTabId);
+      } else {
+        // No more tabs, start fresh
+        startNewChat();
+      }
+    }
+
+    console.log("💬 [DocumentChat] Closed tab:", tabId);
+  };
+
   const startNewChat = () => {
     setMessages([]);
     setChatId(null);
 
-    // Clear localStorage for this document
+    // Don't clear open tabs, just clear the active chat
     const lastChatKey = `lastEditorChat_${documentId}`;
     localStorage.removeItem(lastChatKey);
 
@@ -206,9 +265,16 @@ export function DocumentChatSidebar({
           if (newChatId) {
             setChatId(newChatId);
 
-            // Save to localStorage for persistence
+            // Add to open tabs
+            const newOpenTabs = [...openTabs, newChatId];
+            setOpenTabs(newOpenTabs);
+
+            // Save both to localStorage
             const lastChatKey = `lastEditorChat_${documentId}`;
             localStorage.setItem(lastChatKey, newChatId);
+
+            const openTabsKey = `openEditorTabs_${documentId}`;
+            localStorage.setItem(openTabsKey, JSON.stringify(newOpenTabs));
 
             console.log(
               "💬 [DocumentChat] New chat created with ID:",
@@ -363,35 +429,42 @@ export function DocumentChatSidebar({
       <div className="flex items-center border-b bg-background">
         {/* Tabs section - scrollable */}
         <div className="flex-1 flex items-center overflow-x-auto scrollbar-thin scrollbar-thumb-muted">
-          {chatSessions.length === 0 ? (
+          {openTabs.length === 0 ? (
             <div className="px-4 py-2 text-sm text-muted-foreground">
               No active chats
             </div>
           ) : (
-            chatSessions.slice(0, 5).map((session) => (
-              <button
-                key={session.id}
-                onClick={() => loadChatSession(session.id)}
-                className={`
-                  group flex items-center gap-2 px-3 py-2 border-r hover:bg-muted/50 transition-colors
-                  min-w-[120px] max-w-[200px] flex-shrink-0
-                  ${chatId === session.id ? "bg-muted" : ""}
-                `}
-              >
-                <span className="text-sm truncate flex-1 text-left">
-                  {session.title}
-                </span>
-                {chatId === session.id && (
+            openTabs.map((tabId) => {
+              const session = chatSessions.find((s) => s.id === tabId);
+              if (!session) return null;
+
+              return (
+                <button
+                  key={session.id}
+                  onClick={() => loadChatSession(session.id)}
+                  className={`
+                    group flex items-center gap-2 px-3 py-2 border-r hover:bg-muted/50 transition-colors
+                    min-w-[120px] max-w-[200px] flex-shrink-0
+                    ${chatId === session.id ? "bg-muted" : ""}
+                  `}
+                >
+                  <span className="text-sm truncate flex-1 text-left">
+                    {session.title}
+                  </span>
                   <X
-                    className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className={`h-3 w-3 transition-opacity ${
+                      chatId === session.id
+                        ? "opacity-0 group-hover:opacity-100"
+                        : "opacity-0"
+                    }`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      startNewChat();
+                      closeTab(session.id);
                     }}
                   />
-                )}
-              </button>
-            ))
+                </button>
+              );
+            })
           )}
         </div>
 
