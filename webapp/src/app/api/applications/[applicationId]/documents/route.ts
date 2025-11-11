@@ -39,7 +39,7 @@ export async function GET(
     }
 
     // Get all documents for this application - handle gracefully if no documents exist
-    const documents = await prisma.application_documents.findMany({
+    const documents = await prisma.document.findMany({
       where: {
         applicationId: applicationId,
       },
@@ -133,7 +133,7 @@ export async function POST(
       <p>Happy writing!</p>
     `;
 
-    const document = await prisma.application_documents.create({
+    const document = await prisma.document.create({
       data: {
         applicationId: applicationId,
         title,

@@ -20,10 +20,10 @@ export async function GET(
     }
 
     // Fetch document with applicationId included
-    const document = await prisma.application_documents.findFirst({
+    const document = await prisma.document.findFirst({
       where: {
         id: documentId,
-        applications: {
+        application: {
           organization: {
             users: {
               some: { id: user.id },
@@ -45,6 +45,59 @@ export async function GET(
     console.error("Error fetching document:", error);
     return NextResponse.json(
       { error: "Failed to fetch document" },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE /api/documents/[documentId] - Delete specific document
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ documentId: string }> }
+) {
+  try {
+    const { documentId } = await params;
+
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Verify user has access to this document
+    const existingDocument = await prisma.document.findFirst({
+      where: {
+        id: documentId,
+        application: {
+          organization: {
+            users: {
+              some: { id: user.id },
+            },
+          },
+        },
+      },
+    });
+
+    if (!existingDocument) {
+      return NextResponse.json(
+        { error: "Document not found" },
+        { status: 404 }
+      );
+    }
+
+    // Delete document
+    await prisma.document.delete({
+      where: { id: documentId },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting document:", error);
+    return NextResponse.json(
+      { error: "Failed to delete document" },
       { status: 500 }
     );
   }
