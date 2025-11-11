@@ -168,7 +168,6 @@ model Application {
   submittedAt          DateTime?
   lastEditedAt         DateTime          @default(now())
   organizationId       String
-  checklist            Json?
   attachments_markdown String?
   aiChats              AiChat[]
   organization         Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
