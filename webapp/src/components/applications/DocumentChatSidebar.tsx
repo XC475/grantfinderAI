@@ -12,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { History, Plus, X } from "lucide-react";
-import { ChatForm } from "@/components/ui/chat";
 
 interface FileAttachment {
   id: string;
@@ -25,7 +24,6 @@ interface FileAttachment {
 
 interface DocumentChatSidebarProps {
   documentId: string;
-  onToggle: () => void;
 }
 
 interface ChatSession {
@@ -36,10 +34,17 @@ interface ChatSession {
   messageCount: number;
 }
 
-export function DocumentChatSidebar({
-  documentId,
-  onToggle,
-}: DocumentChatSidebarProps) {
+interface ChatMessageResponse {
+  id: string;
+  role: string;
+  content: string;
+  createdAt: string;
+  metadata?: {
+    attachments?: FileAttachment[] | null;
+  } | null;
+}
+
+export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
   const { documentTitle, documentContent } = useDocument();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -50,10 +55,76 @@ export function DocumentChatSidebar({
   const [loadingSessions, setLoadingSessions] = useState(false);
   const [editingTabId, setEditingTabId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState("");
-  const hasAutoSent = useRef(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const hasAutoLoaded = useRef(false);
   const editInputRef = useRef<HTMLInputElement>(null);
+
+  const loadChatSessions = useCallback(async () => {
+    try {
+      setLoadingSessions(true);
+      const response = await fetch(
+        `/api/chats/editor?documentId=${documentId}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setChatSessions(data.chats || []);
+      }
+    } catch (error) {
+      console.error("Error loading chat sessions:", error);
+    } finally {
+      setLoadingSessions(false);
+    }
+  }, [documentId]);
+
+  const loadChatSession = useCallback(
+    async (sessionId: string, skipAddingToTabs = false) => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`/api/chats/editor/${sessionId}`);
+        if (response.ok) {
+          const data = await response.json();
+          const loadedMessages: Message[] = data.chat.messages.map(
+            (msg: ChatMessageResponse) => ({
+              id: msg.id,
+              role: msg.role.toLowerCase() as "user" | "assistant",
+              content: msg.content,
+              createdAt: new Date(msg.createdAt),
+              experimental_attachments: msg.metadata?.attachments ?? undefined,
+            })
+          );
+          setMessages(loadedMessages);
+          setChatId(sessionId);
+
+          // Add to open tabs if not already there (and not in restore mode)
+          if (!skipAddingToTabs) {
+            setOpenTabs((currentTabs) => {
+              if (!currentTabs.includes(sessionId)) {
+                const newOpenTabs = [...currentTabs, sessionId];
+
+                // Save to localStorage
+                const openTabsKey = `openEditorTabs_${documentId}`;
+                localStorage.setItem(openTabsKey, JSON.stringify(newOpenTabs));
+
+                return newOpenTabs;
+              }
+              return currentTabs;
+            });
+          }
+
+          // Save to localStorage for persistence across refreshes
+          const lastChatKey = `lastEditorChat_${documentId}`;
+          localStorage.setItem(lastChatKey, sessionId);
+
+          console.log("💬 [DocumentChat] Loaded chat session:", sessionId);
+        }
+      } catch (error) {
+        console.error("Error loading chat session:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [documentId]
+  );
 
   // Load chat sessions on mount and auto-load most recent
   useEffect(() => {
@@ -108,80 +179,7 @@ export function DocumentChatSidebar({
     };
 
     loadAndRestoreSession();
-  }, [documentId]);
-
-  const loadChatSessions = async () => {
-    try {
-      setLoadingSessions(true);
-      const response = await fetch(
-        `/api/chats/editor?documentId=${documentId}`
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setChatSessions(data.chats || []);
-      }
-    } catch (error) {
-      console.error("Error loading chat sessions:", error);
-    } finally {
-      setLoadingSessions(false);
-    }
-  };
-
-  const loadChatSession = async (
-    sessionId: string,
-    skipAddingToTabs = false
-  ) => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(`/api/chats/editor/${sessionId}`);
-      if (response.ok) {
-        const data = await response.json();
-        const loadedMessages: Message[] = data.chat.messages.map(
-          (msg: {
-            id: string;
-            role: string;
-            content: string;
-            createdAt: string;
-            metadata?: any;
-          }) => ({
-            id: msg.id,
-            role: msg.role.toLowerCase() as "user" | "assistant",
-            content: msg.content,
-            createdAt: new Date(msg.createdAt),
-            experimental_attachments: msg.metadata?.attachments || undefined,
-          })
-        );
-        setMessages(loadedMessages);
-        setChatId(sessionId);
-
-        // Add to open tabs if not already there (and not in restore mode)
-        if (!skipAddingToTabs) {
-          setOpenTabs((currentTabs) => {
-            if (!currentTabs.includes(sessionId)) {
-              const newOpenTabs = [...currentTabs, sessionId];
-
-              // Save to localStorage
-              const openTabsKey = `openEditorTabs_${documentId}`;
-              localStorage.setItem(openTabsKey, JSON.stringify(newOpenTabs));
-
-              return newOpenTabs;
-            }
-            return currentTabs;
-          });
-        }
-
-        // Save to localStorage for persistence across refreshes
-        const lastChatKey = `lastEditorChat_${documentId}`;
-        localStorage.setItem(lastChatKey, sessionId);
-
-        console.log("💬 [DocumentChat] Loaded chat session:", sessionId);
-      }
-    } catch (error) {
-      console.error("Error loading chat session:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [documentId, loadChatSession]);
 
   const closeTab = (tabId: string) => {
     // Remove from open tabs

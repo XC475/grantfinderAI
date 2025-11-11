@@ -5,12 +5,10 @@ import { DocumentChatSidebar } from "@/components/applications/DocumentChatSideb
 
 interface DocumentAssistantPanelProps {
   documentId: string;
-  onToggle: () => void;
 }
 
 export function DocumentAssistantPanel({
   documentId,
-  onToggle,
 }: DocumentAssistantPanelProps) {
   return (
     <ResizablePanel defaultSize={40} minSize={25} maxSize={60}>
@@ -20,7 +18,7 @@ export function DocumentAssistantPanel({
           <h2 className="text-lg font-semibold">Assistant</h2>
         </div>
         <div className="flex-1 overflow-hidden">
-          <DocumentChatSidebar documentId={documentId} onToggle={onToggle} />
+          <DocumentChatSidebar documentId={documentId} />
         </div>
       </div>
     </ResizablePanel>

@@ -100,10 +100,7 @@ function DocumentEditorLayoutContent({
               <h2 className="text-lg font-semibold">Assistant</h2>
             </div>
             <div className="flex-1 overflow-hidden">
-              <DocumentChatSidebar
-                documentId={documentId}
-                onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-              />
+              <DocumentChatSidebar documentId={documentId} />
             </div>
           </div>
         </ResizablePanel>
