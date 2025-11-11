@@ -45,6 +45,7 @@ export async function GET(
             role: true,
             content: true,
             createdAt: true,
+            metadata: true,
           },
         },
       },
@@ -78,6 +79,7 @@ export async function GET(
         role: msg.role,
         content: msg.content,
         createdAt: msg.createdAt.toISOString(),
+        metadata: msg.metadata,
       })),
     };
 
@@ -90,4 +92,3 @@ export async function GET(
     );
   }
 }
-

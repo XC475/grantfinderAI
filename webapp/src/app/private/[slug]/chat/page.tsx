@@ -14,6 +14,17 @@ interface ChatData {
     role: "USER" | "ASSISTANT";
     content: string;
     createdAt: string;
+    metadata?: {
+      attachments?: {
+        id?: string;
+        name?: string;
+        type?: string;
+        size?: number;
+        url: string;
+        extractedText?: string;
+        contentType?: string;
+      }[];
+    } | null;
   }[];
 }
 
@@ -50,6 +61,18 @@ export default function ChatPage() {
             role: msg.role.toLowerCase() as "user" | "assistant",
             content: msg.content,
             createdAt: new Date(msg.createdAt),
+            experimental_attachments:
+              msg.metadata?.attachments && msg.metadata.attachments.length > 0
+                ? msg.metadata.attachments.map((attachment) => ({
+                    id: attachment.id,
+                    name: attachment.name,
+                    type: attachment.type,
+                    size: attachment.size,
+                    url: attachment.url,
+                    extractedText: attachment.extractedText,
+                    contentType: attachment.contentType,
+                  }))
+                : undefined,
           }));
           setInitialMessages(messages);
           setCurrentChatId(chat.id);
@@ -73,6 +96,19 @@ export default function ChatPage() {
                       role: msg.role.toLowerCase() as "user" | "assistant",
                       content: msg.content,
                       createdAt: new Date(msg.createdAt),
+                      experimental_attachments:
+                        msg.metadata?.attachments &&
+                        msg.metadata.attachments.length > 0
+                          ? msg.metadata.attachments.map((attachment) => ({
+                              id: attachment.id,
+                              name: attachment.name,
+                              type: attachment.type,
+                              size: attachment.size,
+                              url: attachment.url,
+                              extractedText: attachment.extractedText,
+                              contentType: attachment.contentType,
+                            }))
+                          : undefined,
                     })
                   );
 
