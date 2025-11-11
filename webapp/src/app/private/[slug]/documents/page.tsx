@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FileText, MoreHorizontal, Loader2, Trash2 } from "lucide-react";
+import { FileText, MoreHorizontal, Loader2, Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -253,7 +253,10 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
               View and manage all your grant application documents
             </p>
           </div>
-          <Button onClick={handleCreateClick}>New Document</Button>
+          <Button onClick={handleCreateClick}>
+            <Plus className="h-4 w-4 mr-1" />
+            New Document
+          </Button>
         </div>
         <div className="space-y-4">
           <div className="flex justify-between items-center">
@@ -262,7 +265,8 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
           <div className="text-center py-8 text-muted-foreground">
             <p>No documents yet. Create your first document to get started.</p>
             <Button className="mt-4" onClick={handleCreateClick}>
-              Create Document
+              <Plus className="h-4 w-4 mr-1" />
+              New Document
             </Button>
           </div>
         </div>
@@ -329,7 +333,10 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
             View and manage all your grant application documents
           </p>
         </div>
-        <Button onClick={handleCreateClick}>New Document</Button>
+        <Button onClick={handleCreateClick}>
+          <Plus className="h-4 w-4 mr-1" />
+          New Document
+        </Button>
       </div>
 
       {/* Documents List */}

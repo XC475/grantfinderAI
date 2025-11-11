@@ -31,7 +31,7 @@ export function CreateDocumentModal({
   applicationId,
   organizationSlug,
 }: CreateDocumentModalProps) {
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState("Untitled Document");
   const [isCreating, setIsCreating] = useState(false);
   const router = useRouter();
 
@@ -85,7 +85,7 @@ export function CreateDocumentModal({
 
   const handleClose = () => {
     if (!isCreating) {
-      setTitle("");
+      setTitle("Untitled Document");
       onClose();
     }
   };
@@ -103,7 +103,7 @@ export function CreateDocumentModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Document Title</Label>
+            <Label htmlFor="title">Title</Label>
             <Input
               id="title"
               value={title}
@@ -125,7 +125,7 @@ export function CreateDocumentModal({
             </Button>
             <Button type="submit" disabled={isCreating || !title.trim()}>
               {isCreating && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              {isCreating ? "Creating..." : "Create Document"}
+              {isCreating ? "Creating..." : "Create"}
             </Button>
           </DialogFooter>
         </form>
