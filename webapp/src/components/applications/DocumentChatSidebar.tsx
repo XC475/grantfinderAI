@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { History, Plus } from "lucide-react";
+import { History, Plus, X } from "lucide-react";
 
 interface DocumentChatSidebarProps {
   documentId: string;
@@ -359,17 +359,56 @@ export function DocumentChatSidebar({
 
   return (
     <div className="flex flex-col h-full bg-background">
-      {/* Header with session management */}
-      <div className="flex items-center justify-between px-4 py-2 border-b">
-        <div className="flex items-center gap-2">
+      {/* Header with tabs and icon buttons */}
+      <div className="flex items-center border-b bg-background">
+        {/* Tabs section - scrollable */}
+        <div className="flex-1 flex items-center overflow-x-auto scrollbar-thin scrollbar-thumb-muted">
+          {chatSessions.length === 0 ? (
+            <div className="px-4 py-2 text-sm text-muted-foreground">
+              No active chats
+            </div>
+          ) : (
+            chatSessions.slice(0, 5).map((session) => (
+              <button
+                key={session.id}
+                onClick={() => loadChatSession(session.id)}
+                className={`
+                  group flex items-center gap-2 px-3 py-2 border-r hover:bg-muted/50 transition-colors
+                  min-w-[120px] max-w-[200px] flex-shrink-0
+                  ${chatId === session.id ? "bg-muted" : ""}
+                `}
+              >
+                <span className="text-sm truncate flex-1 text-left">
+                  {session.title}
+                </span>
+                {chatId === session.id && (
+                  <X
+                    className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      startNewChat();
+                    }}
+                  />
+                )}
+              </button>
+            ))
+          )}
+        </div>
+
+        {/* Icon buttons on the right */}
+        <div className="flex items-center gap-1 px-2 border-l">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" disabled={loadingSessions}>
-                <History className="h-4 w-4 mr-2" />
-                History
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                disabled={loadingSessions}
+              >
+                <History className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-64">
+            <DropdownMenuContent align="end" className="w-64">
               {chatSessions.length === 0 ? (
                 <div className="px-2 py-4 text-sm text-muted-foreground text-center">
                   No previous sessions
@@ -394,9 +433,13 @@ export function DocumentChatSidebar({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button variant="outline" size="sm" onClick={startNewChat}>
-            <Plus className="h-4 w-4 mr-2" />
-            New Chat
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={startNewChat}
+          >
+            <Plus className="h-4 w-4" />
           </Button>
         </div>
       </div>
