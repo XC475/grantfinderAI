@@ -122,15 +122,25 @@ ${opportunity.raw_text}`;
       });
     }
 
+    // Get the last user message
+    const lastUserMessage = [...messages]
+      .filter((m: { role: string }) => m.role === "user")
+      .pop();
+    if (!lastUserMessage)
+      return new Response("No user message", { status: 400 });
+
     if (!chat) {
       // Determine organizationId - from application OR from user
       const organizationId =
         document.application?.organizationId || organization.id;
 
+      // Generate chat title from first user message (like normal chats)
+      const chatTitle = generateChatTitle(lastUserMessage.content);
+
       // Create new chat with DRAFTING context
       chat = await prisma.aiChat.create({
         data: {
-          title: `Document: ${document.title || documentTitle || "Untitled"}`,
+          title: chatTitle,
           context: "DRAFTING",
           userId: user.id,
           organizationId: organizationId,
@@ -144,13 +154,6 @@ ${opportunity.raw_text}`;
         },
       });
     }
-
-    // Get the last user message
-    const lastUserMessage = [...messages]
-      .filter((m: { role: string }) => m.role === "user")
-      .pop();
-    if (!lastUserMessage)
-      return new Response("No user message", { status: 400 });
 
     // Save user message
     await prisma.aiChatMessage.create({
@@ -323,4 +326,12 @@ Use **clean, well-structured markdown** with clear visual hierarchy.
     console.error("Error in editor chat API:", error);
     return new Response("Error processing request", { status: 500 });
   }
+}
+
+// Helper function to generate chat title from first message
+function generateChatTitle(firstMessage: string): string {
+  // Simple title generation - take first 50 chars
+  return firstMessage.length > 50
+    ? firstMessage.substring(0, 47) + "..."
+    : firstMessage;
 }
