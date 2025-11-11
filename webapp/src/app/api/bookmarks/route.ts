@@ -1,25 +1,92 @@
 import prisma from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
+import { NextRequest, NextResponse } from "next/server";
 
-// GET /api/bookmarks - list bookmarks for the authenticated user
-export async function GET() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-  if (error || !user) return new Response("Unauthorized", { status: 401 });
+/**
+ * Bookmarks API Endpoint
+ *
+ * Returns paginated list of bookmarked grants for the authenticated user
+ *
+ * Query Parameters:
+ * - limit (number): Number of results to return (default: 10, max: 100)
+ * - offset (number): Number of results to skip for pagination (default: 0)
+ *
+ * Response Format:
+ * {
+ *   data: Bookmark[],
+ *   pagination: {
+ *     total: number,
+ *     limit: number,
+ *     offset: number,
+ *     hasMore: boolean
+ *   },
+ *   meta: {
+ *     requestId: string,
+ *     timestamp: string,
+ *     processingTimeMs: number
+ *   }
+ * }
+ */
+export async function GET(req: NextRequest) {
+  const startTime = Date.now();
+  const requestId = Math.random().toString(36).substring(7);
 
   try {
+    console.log(`🔖 [${requestId}] Bookmarks API called`);
+
+    // Authenticate user
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Extract pagination parameters
+    const { searchParams } = new URL(req.url);
+    let limit = parseInt(searchParams.get("limit") || "10");
+    let offset = parseInt(searchParams.get("offset") || "0");
+
+    // Validate parameters
+    if (limit > 100) {
+      console.warn(`⚠️ [${requestId}] Limit too high, capping at 100`);
+      limit = 100;
+    }
+    if (offset < 0) {
+      console.warn(`⚠️ [${requestId}] Negative offset, setting to 0`);
+      offset = 0;
+    }
+
+    console.log(
+      `🔖 [${requestId}] Pagination: limit=${limit}, offset=${offset}`
+    );
+
+    // Get total count
+    const totalCount = await prisma.grantBookmark.count({
+      where: { userId: user.id },
+    });
+
+    // Fetch bookmarks with pagination
     const bookmarks = await prisma.grantBookmark.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: "desc" },
+      take: limit,
+      skip: offset,
     });
+
+    console.log(
+      `🔖 [${requestId}] Found ${bookmarks.length} of ${totalCount} total bookmarks`
+    );
 
     // Fetch opportunity details for each bookmark
     const bookmarksWithOpportunities = await Promise.all(
       bookmarks.map(async (bookmark) => {
-        const opportunity = await prisma.$queryRaw<Array<Record<string, unknown>>>`
+        const opportunity = await prisma.$queryRaw<
+          Array<Record<string, unknown>>
+        >`
           SELECT * FROM public.opportunities WHERE id = ${bookmark.opportunityId} LIMIT 1
         `;
         return {
@@ -29,9 +96,33 @@ export async function GET() {
       })
     );
 
-    return Response.json(bookmarksWithOpportunities);
+    return NextResponse.json({
+      data: bookmarksWithOpportunities,
+      pagination: {
+        total: totalCount,
+        limit,
+        offset,
+        hasMore: offset + limit < totalCount,
+      },
+      meta: {
+        requestId,
+        timestamp: new Date().toISOString(),
+        processingTimeMs: Date.now() - startTime,
+      },
+    });
   } catch (e) {
-    console.error("Error listing bookmarks:", e);
-    return new Response("Error listing bookmarks", { status: 500 });
+    const processingTime = Date.now() - startTime;
+    console.error(`❌ [${requestId}] Error listing bookmarks:`, e);
+    console.error(`❌ [${requestId}] Processing time: ${processingTime}ms`);
+
+    return NextResponse.json(
+      {
+        error: "Error listing bookmarks",
+        requestId,
+        timestamp: new Date().toISOString(),
+        processingTimeMs: processingTime,
+      },
+      { status: 500 }
+    );
   }
 }

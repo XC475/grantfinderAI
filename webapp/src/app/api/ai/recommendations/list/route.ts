@@ -2,9 +2,37 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 
+/**
+ * Recommendations List API Endpoint
+ *
+ * Returns paginated list of grant recommendations for the authenticated user's organization
+ *
+ * Query Parameters:
+ * - limit (number): Number of results to return (default: 10, max: 100)
+ * - offset (number): Number of results to skip for pagination (default: 0)
+ *
+ * Response Format:
+ * {
+ *   data: Recommendation[],
+ *   pagination: {
+ *     total: number,
+ *     limit: number,
+ *     offset: number,
+ *     hasMore: boolean
+ *   },
+ *   meta: {
+ *     requestId: string,
+ *     timestamp: string,
+ *     processingTimeMs: number
+ *   }
+ * }
+ */
 export async function GET(req: NextRequest) {
+  const startTime = Date.now();
+  const requestId = Math.random().toString(36).substring(7);
+
   try {
-    console.log("📋 [Recommendations List] Fetching recommendations...");
+    console.log(`📋 [${requestId}] Recommendations List API called`);
 
     // 1. Authenticate user
     const supabase = await createClient();
@@ -30,7 +58,33 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // 3. Fetch recommendations for this organization
+    // 3. Extract pagination parameters
+    const { searchParams } = new URL(req.url);
+    let limit = parseInt(searchParams.get("limit") || "10");
+    let offset = parseInt(searchParams.get("offset") || "0");
+
+    // Validate parameters
+    if (limit > 100) {
+      console.warn(`⚠️ [${requestId}] Limit too high, capping at 100`);
+      limit = 100;
+    }
+    if (offset < 0) {
+      console.warn(`⚠️ [${requestId}] Negative offset, setting to 0`);
+      offset = 0;
+    }
+
+    console.log(
+      `📋 [${requestId}] Pagination: limit=${limit}, offset=${offset}`
+    );
+
+    // 4. Get total count
+    const totalCount = await prisma.recommendation.count({
+      where: {
+        organizationId: dbUser.organizationId,
+      },
+    });
+
+    // 5. Fetch recommendations for this organization with pagination
     const recommendations = await prisma.recommendation.findMany({
       where: {
         organizationId: dbUser.organizationId,
@@ -39,26 +93,43 @@ export async function GET(req: NextRequest) {
         { fitScore: "desc" }, // Sort by fit score (highest first)
         { queryDate: "desc" }, // Then by query date (most recent first)
       ],
+      take: limit,
+      skip: offset,
     });
 
     console.log(
-      `✅ [Recommendations List] Found ${recommendations.length} recommendations`
+      `✅ [${requestId}] Found ${recommendations.length} of ${totalCount} total recommendations`
     );
 
-    // 4. Return recommendations
+    // 6. Return recommendations with pagination info
     return NextResponse.json({
-      success: true,
-      count: recommendations.length,
-      recommendations: recommendations,
+      data: recommendations,
+      pagination: {
+        total: totalCount,
+        limit,
+        offset,
+        hasMore: offset + limit < totalCount,
+      },
+      meta: {
+        requestId,
+        timestamp: new Date().toISOString(),
+        processingTimeMs: Date.now() - startTime,
+      },
     });
   } catch (error) {
-    console.error("❌ [Recommendations List] Error:", error);
+    const processingTime = Date.now() - startTime;
+    console.error(`❌ [${requestId}] Recommendations List Error:`, error);
+    console.error(`❌ [${requestId}] Processing time: ${processingTime}ms`);
+
     return NextResponse.json(
       {
         error:
           error instanceof Error
             ? error.message
             : "Failed to fetch recommendations",
+        requestId,
+        timestamp: new Date().toISOString(),
+        processingTimeMs: processingTime,
       },
       { status: 500 }
     );

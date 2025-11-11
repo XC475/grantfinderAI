@@ -180,10 +180,22 @@ function GrantsSearchPage() {
   const [loadingRecommendations, setLoadingRecommendations] = useState(false);
   const [runningRecommendations, setRunningRecommendations] = useState(false);
   const [organization, setOrganization] = useState<Organization | null>(null);
+  const [recommendationsPagination, setRecommendationsPagination] = useState({
+    total: 0,
+    limit: 10,
+    offset: 0,
+    hasMore: false,
+  });
 
   // Bookmarks state
   const [bookmarks, setBookmarks] = useState<BookmarkData[]>([]);
   const [loadingBookmarks, setLoadingBookmarks] = useState(false);
+  const [bookmarksPagination, setBookmarksPagination] = useState({
+    total: 0,
+    limit: 10,
+    offset: 0,
+    hasMore: false,
+  });
 
   // Cache state with timestamps (5 minute TTL)
   const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
@@ -270,6 +282,10 @@ function GrantsSearchPage() {
         params.append("closeDateFrom", format(closeDateFrom, "yyyy-MM-dd"));
       if (closeDateTo)
         params.append("closeDateTo", format(closeDateTo, "yyyy-MM-dd"));
+
+      // Pass organization slug so backend can fetch bookmarks/applications
+      params.append("organizationSlug", slug);
+
       params.append("limit", pagination.limit.toString());
       const offset = resetOffset
         ? 0
@@ -286,6 +302,7 @@ function GrantsSearchPage() {
 
       const data: SearchResponse = await response.json();
 
+      // Backend now handles deprioritization, so just use the data as-is
       if (resetOffset) {
         setGrants(data.data);
       } else {
@@ -486,11 +503,16 @@ function GrantsSearchPage() {
     return timestamp > 0 && Date.now() - timestamp < CACHE_TTL;
   };
 
-  // Fetch recommendations
-  const fetchRecommendations = async (force = false) => {
-    // Check cache validity
+  // Fetch recommendations with pagination
+  const fetchRecommendations = async (
+    resetOffset = true,
+    customOffset?: number,
+    force = false
+  ) => {
+    // Check cache validity (only if not paginating)
     if (
       !force &&
+      resetOffset &&
       isCacheValid("recommendations") &&
       recommendations.length > 0
     ) {
@@ -499,18 +521,30 @@ function GrantsSearchPage() {
     }
     setLoadingRecommendations(true);
     try {
-      // Fetch organization data
-      const orgResponse = await fetch("/api/organizations");
-      if (orgResponse.ok) {
-        const orgData = await orgResponse.json();
-        setOrganization(orgData);
+      // Fetch organization data (only if needed)
+      if (!organization) {
+        const orgResponse = await fetch("/api/organizations");
+        if (orgResponse.ok) {
+          const orgData = await orgResponse.json();
+          setOrganization(orgData);
+        }
       }
 
-      // Fetch existing recommendations
-      const recResponse = await fetch("/api/ai/recommendations/list");
+      // Build params for pagination
+      const params = new URLSearchParams();
+      params.append("limit", recommendationsPagination.limit.toString());
+      const offset = resetOffset
+        ? 0
+        : customOffset !== undefined
+          ? customOffset
+          : recommendationsPagination.offset;
+      params.append("offset", offset.toString());
+
+      // Fetch existing recommendations with pagination
+      const recResponse = await fetch(`/api/ai/recommendations/list?${params}`);
       if (recResponse.ok) {
         const recData = await recResponse.json();
-        const recs = recData.recommendations || [];
+        const recs = recData.data || [];
 
         // Fetch grant details for each recommendation
         const recsWithGrants = await Promise.all(
@@ -533,7 +567,14 @@ function GrantsSearchPage() {
           })
         );
 
-        setRecommendations(recsWithGrants);
+        // Update recommendations based on reset flag
+        if (resetOffset) {
+          setRecommendations(recsWithGrants);
+        } else {
+          setRecommendations((prev) => [...prev, ...recsWithGrants]);
+        }
+
+        setRecommendationsPagination(recData.pagination);
         cacheTimestamps.current.recommendations = Date.now();
         console.log("✅ Recommendations fetched and cached");
       }
@@ -581,18 +622,38 @@ function GrantsSearchPage() {
     }
   };
 
-  // Fetch bookmarks
-  const fetchBookmarks = async (force = false) => {
-    // Check cache validity
-    if (!force && isCacheValid("bookmarks") && bookmarks.length > 0) {
+  // Fetch bookmarks with pagination
+  const fetchBookmarks = async (
+    resetOffset = true,
+    customOffset?: number,
+    force = false
+  ) => {
+    // Check cache validity (only if not paginating)
+    if (
+      !force &&
+      resetOffset &&
+      isCacheValid("bookmarks") &&
+      bookmarks.length > 0
+    ) {
       console.log("📦 Using cached bookmarks");
       return;
     }
     setLoadingBookmarks(true);
     try {
-      const res = await fetch("/api/bookmarks");
+      // Build params for pagination
+      const params = new URLSearchParams();
+      params.append("limit", bookmarksPagination.limit.toString());
+      const offset = resetOffset
+        ? 0
+        : customOffset !== undefined
+          ? customOffset
+          : bookmarksPagination.offset;
+      params.append("offset", offset.toString());
+
+      const res = await fetch(`/api/bookmarks?${params}`);
       if (!res.ok) throw new Error(`Failed: ${res.status}`);
-      const data = await res.json();
+      const responseData = await res.json();
+      const data = responseData.data || [];
 
       // Filter out bookmarks with missing opportunities and log them
       const validBookmarks = data.filter((b: BookmarkData) => {
@@ -610,7 +671,14 @@ function GrantsSearchPage() {
         console.warn(`⚠️ ${invalidCount} bookmark(s) reference deleted grants`);
       }
 
-      setBookmarks(validBookmarks);
+      // Update bookmarks based on reset flag
+      if (resetOffset) {
+        setBookmarks(validBookmarks);
+      } else {
+        setBookmarks((prev) => [...prev, ...validBookmarks]);
+      }
+
+      setBookmarksPagination(responseData.pagination);
       cacheTimestamps.current.bookmarks = Date.now();
       console.log(
         `✅ Bookmarks fetched and cached (${validBookmarks.length} valid)`
@@ -767,9 +835,9 @@ function GrantsSearchPage() {
             >
               <Sparkles className="inline h-4 w-4 mr-2" />
               Recommendations
-              {recommendations.length > 0 && (
+              {recommendationsPagination.total > 0 && (
                 <span className="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
-                  {recommendations.length}
+                  {recommendationsPagination.total}
                 </span>
               )}
             </button>
@@ -788,9 +856,9 @@ function GrantsSearchPage() {
             >
               <Bookmark className="inline h-4 w-4 mr-2" />
               Bookmarks
-              {bookmarks.length > 0 && (
+              {bookmarksPagination.total > 0 && (
                 <span className="ml-2 text-xs bg-cyan-100 text-cyan-600 px-2 py-1 rounded-full">
-                  {bookmarks.length}
+                  {bookmarksPagination.total}
                 </span>
               )}
             </button>
@@ -1297,7 +1365,8 @@ function GrantsSearchPage() {
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <p className="text-sm text-muted-foreground">
-                        Showing {recommendations.length} personalized
+                        Showing {recommendations.length} of{" "}
+                        {recommendationsPagination.total} personalized
                         recommendations
                       </p>
                     </div>
@@ -1447,6 +1516,25 @@ function GrantsSearchPage() {
                       </Card>
                     ))}
                   </div>
+
+                  {/* Load More Button for Recommendations */}
+                  {recommendationsPagination.hasMore && (
+                    <div className="text-center mt-8">
+                      <Button
+                        onClick={() =>
+                          fetchRecommendations(
+                            false,
+                            recommendationsPagination.offset +
+                              recommendationsPagination.limit
+                          )
+                        }
+                        disabled={loadingRecommendations}
+                        variant="outline"
+                      >
+                        {loadingRecommendations ? "Loading..." : "Load More"}
+                      </Button>
+                    </div>
+                  )}
                 </>
               )}
             </>
@@ -1470,23 +1558,52 @@ function GrantsSearchPage() {
               </p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {bookmarks.map((b) => (
-                <GrantCard
-                  key={b.id}
-                  grant={b.opportunity!}
-                  organizationSlug={slug}
-                  isSaved={true}
-                  hasApplication={grantApplications.includes(b.opportunity!.id)}
-                  isCreatingApplication={
-                    creatingApplication === b.opportunity!.id
-                  }
-                  onToggleBookmark={removeBookmark}
-                  onCreateApplication={handleCreateApplication}
-                  fromBookmarks={true}
-                />
-              ))}
-            </div>
+            <>
+              <div className="mb-4">
+                <p className="text-sm text-muted-foreground">
+                  Showing {bookmarks.length} of {bookmarksPagination.total}{" "}
+                  bookmarked grants
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                {bookmarks.map((b) => (
+                  <GrantCard
+                    key={b.id}
+                    grant={b.opportunity!}
+                    organizationSlug={slug}
+                    isSaved={true}
+                    hasApplication={grantApplications.includes(
+                      b.opportunity!.id
+                    )}
+                    isCreatingApplication={
+                      creatingApplication === b.opportunity!.id
+                    }
+                    onToggleBookmark={removeBookmark}
+                    onCreateApplication={handleCreateApplication}
+                    fromBookmarks={true}
+                  />
+                ))}
+              </div>
+
+              {/* Load More Button for Bookmarks */}
+              {bookmarksPagination.hasMore && (
+                <div className="text-center mt-8">
+                  <Button
+                    onClick={() =>
+                      fetchBookmarks(
+                        false,
+                        bookmarksPagination.offset + bookmarksPagination.limit
+                      )
+                    }
+                    disabled={loadingBookmarks}
+                    variant="outline"
+                  >
+                    {loadingBookmarks ? "Loading..." : "Load More"}
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </>
       )}
