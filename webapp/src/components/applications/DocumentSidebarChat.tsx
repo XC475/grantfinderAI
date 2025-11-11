@@ -20,6 +20,9 @@ import {
 import { CopyButton } from "@/components/ui/copy-button";
 import { TypingIndicator } from "@/components/ui/typing-indicator";
 import { useAutosizeTextArea } from "@/hooks/use-autosize-textarea";
+import { ChatForm as BaseChatForm } from "@/components/ui/chat";
+import { FilePreview } from "@/components/ui/file-preview";
+import { Paperclip } from "lucide-react";
 
 interface DocumentSidebarChatProps {
   handleSubmit: (
@@ -167,19 +170,23 @@ export function DocumentSidebarChat({
       </div>
 
       <div className="flex-shrink-0">
-        <ChatForm
+        <BaseChatForm
           isPending={isGenerating || isTyping}
           handleSubmit={handleSubmit}
         >
-          <SidebarMessageInput
-            value={input}
-            onChange={handleInputChange}
-            stop={handleStop}
-            isGenerating={isGenerating}
-            isEmpty={isEmpty}
-            placeholder={placeholder}
-          />
-        </ChatForm>
+          {({ files, setFiles }) => (
+            <SidebarMessageInput
+              value={input}
+              onChange={handleInputChange}
+              stop={handleStop}
+              isGenerating={isGenerating}
+              isEmpty={isEmpty}
+              placeholder={placeholder}
+              files={files}
+              setFiles={setFiles}
+            />
+          )}
+        </BaseChatForm>
       </div>
     </ChatContainer>
   );
@@ -312,6 +319,8 @@ interface SidebarMessageInputProps
   stop?: () => void;
   isGenerating: boolean;
   isEmpty?: boolean;
+  files?: File[] | null;
+  setFiles?: React.Dispatch<React.SetStateAction<File[] | null>>;
 }
 
 function SidebarMessageInput({
@@ -322,8 +331,13 @@ function SidebarMessageInput({
   stop,
   isGenerating,
   isEmpty = false,
+  files,
+  setFiles,
   ...props
 }: SidebarMessageInputProps) {
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (submitOnEnter && event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
@@ -342,19 +356,98 @@ function SidebarMessageInput({
     dependencies: [props.value],
   });
 
+  // Handle file selection
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = event.target.files;
+    if (selectedFiles && selectedFiles.length > 0 && setFiles) {
+      setFiles((prevFiles) => [
+        ...(prevFiles || []),
+        ...Array.from(selectedFiles),
+      ]);
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  // Handle drag and drop
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    if (droppedFiles.length > 0 && setFiles) {
+      setFiles((prevFiles) => [...(prevFiles || []), ...droppedFiles]);
+    }
+  };
+
+  // Handle paste
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const pastedFiles = Array.from(e.clipboardData.files);
+    if (pastedFiles.length > 0 && setFiles) {
+      e.preventDefault();
+      setFiles((prevFiles) => [...(prevFiles || []), ...pastedFiles]);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    if (setFiles) {
+      setFiles((prevFiles) => prevFiles?.filter((_, i) => i !== index) || null);
+    }
+  };
+
+  const showFileList = files && files.length > 0;
+  const hasContent = props.value !== "" || showFileList;
+
   return (
     <div className="w-full px-3 py-3">
-      <div className="relative flex w-full">
+      <div
+        className="relative flex w-full"
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        {isDragging && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center rounded-xl border-2 border-dashed border-primary bg-primary/5">
+            <p className="text-sm font-medium text-primary">Drop files here</p>
+          </div>
+        )}
+
         <div className="relative flex w-full items-center">
           <div className="relative w-full">
+            {showFileList && (
+              <div className="mb-2 flex flex-wrap gap-2">
+                {files?.map((file, index) => (
+                  <FilePreview
+                    key={index}
+                    file={file}
+                    onRemove={() => removeFile(index)}
+                  />
+                ))}
+              </div>
+            )}
             <textarea
               aria-label="Write your prompt here"
               placeholder={placeholder || "Ask anything..."}
               ref={textAreaRef}
               onKeyDown={onKeyDown}
+              onPaste={handlePaste}
               className={cn(
                 "z-10 w-full grow resize-none rounded-xl border border-input bg-background text-sm ring-offset-background transition-[border] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
-                isEmpty ? "p-3 pr-12" : "p-3 pr-12",
+                "p-3 pr-20",
                 className
               )}
               {...props}
@@ -362,7 +455,30 @@ function SidebarMessageInput({
           </div>
         </div>
 
-        <div className="absolute right-3 top-3 z-20 flex gap-2">
+        <div className="absolute right-3 top-3 z-20 flex gap-1">
+          {setFiles && (
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                multiple
+                onChange={handleFileChange}
+                accept=".pdf,.docx,.txt,.csv"
+              />
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                className="h-8 w-8"
+                aria-label="Attach files"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isGenerating}
+              >
+                <Paperclip className="h-4 w-4" />
+              </Button>
+            </>
+          )}
           {isGenerating && stop ? (
             <Button
               type="button"
@@ -379,7 +495,7 @@ function SidebarMessageInput({
               size="icon"
               className="h-8 w-8 transition-opacity"
               aria-label="Send message"
-              disabled={props.value === "" || isGenerating}
+              disabled={!hasContent || isGenerating}
             >
               <ArrowUp className="h-5 w-5" />
             </Button>

@@ -148,6 +148,59 @@ When editing grant proposals, the assistant can:
 - Provide examples of strong proposal sections
 - Review against eligibility criteria
 
+### Document Attachments
+
+Upload additional documents to enrich your writing context:
+
+**Supported File Types:**
+
+- PDF documents (.pdf)
+- Word documents (.docx)
+- Text files (.txt)
+- CSV files (.csv)
+
+**Maximum File Size:** 40MB per file
+
+**How to Attach:**
+
+1. Click the paperclip icon (📎) in the input bar
+2. Drag and drop files onto the input area
+3. Copy a file and paste (Cmd+V / Ctrl+V)
+
+**Use Cases:**
+
+#### Reference Integration
+
+```
+User: *attaches research_paper.pdf*
+"Summarize the key findings and help me integrate them into my methods section"
+AI: [Reads PDF and provides relevant excerpts with integration suggestions]
+```
+
+#### Data-Driven Content
+
+```
+User: *attaches survey_results.csv*
+"Analyze this data and draft a results paragraph"
+AI: [Analyzes CSV and generates data-driven content]
+```
+
+#### Comparison and Improvement
+
+```
+User: *attaches successful_proposal_2023.pdf*
+"Compare this with my current draft and suggest improvements"
+AI: [Identifies strong elements from reference document]
+```
+
+#### Multiple File Analysis
+
+```
+User: *attaches budget_template.docx, guidelines.pdf*
+"Help me create a budget section that follows these guidelines"
+AI: [Uses both documents to guide budget creation]
+```
+
 ---
 
 ## Technical Architecture

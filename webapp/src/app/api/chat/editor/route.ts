@@ -3,6 +3,15 @@ import OpenAI from "openai";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 
+interface FileAttachment {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  url: string;
+  extractedText?: string;
+}
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -155,7 +164,7 @@ ${opportunity.raw_text}`;
       });
     }
 
-    // Save user message
+    // Save user message with attachments
     await prisma.aiChatMessage.create({
       data: {
         role: "USER",
@@ -164,9 +173,22 @@ ${opportunity.raw_text}`;
         metadata: {
           timestamp: Date.now(),
           source: "editor",
+          attachments: lastUserMessage.attachments || [],
         },
       },
     });
+
+    // Build attachment context if files are attached
+    let attachmentContext = "";
+    if (lastUserMessage.attachments && lastUserMessage.attachments.length > 0) {
+      attachmentContext = "\n\nATTACHED FILES:\n";
+      lastUserMessage.attachments.forEach((file: FileAttachment) => {
+        attachmentContext += `\n--- ${file.name} (${file.type}) ---\n`;
+        if (file.extractedText) {
+          attachmentContext += file.extractedText + "\n";
+        }
+      });
+    }
 
     // Build organization context for system prompt
     let organizationContext = "";
@@ -184,14 +206,14 @@ ${organization.annualOperatingBudget ? `\nAnnual Operating Budget: $${Number(org
 ${organization.fiscalYearEnd ? `Fiscal Year End: ${organization.fiscalYearEnd}` : ""}`;
     }
 
-    // Build system prompt with document context, organization info, and application context
+    // Build system prompt with document context, organization info, application context, and attachments
     const systemPrompt = `You are a helpful assistant for a grant writing application called GrantWare. 
 You are helping the user with their document titled "${documentTitle || document.title || "Untitled Document"}".
 ${organizationContext}
 ${applicationContext}
 
 CURRENT DOCUMENT CONTENT:
-${documentContent || "No content yet."}
+${documentContent || "No content yet."}${attachmentContext}
 
 Provide helpful, concise responses about the document content, suggest improvements, 
 answer questions, and help with grant writing tasks. Be specific and reference the 
@@ -208,14 +230,32 @@ Use **clean, well-structured markdown** with clear visual hierarchy.
 `;
 
     // Prepare messages for OpenAI
+    // Append attachment text to user messages (same as normal chat)
     const openAiMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       { role: "system", content: systemPrompt },
       ...messages.map(
-        (msg: { role: string; content: string }) =>
-          ({
+        (msg: { role: string; content: string; attachments?: FileAttachment[] }) => {
+          let content = msg.content;
+
+          // Append extracted text from attachments to user messages
+          if (msg.role === "user" && msg.attachments && msg.attachments.length > 0) {
+            const attachmentTexts = msg.attachments
+              .map((attachment) => {
+                if (attachment.extractedText) {
+                  return `\n\n[Attached: ${attachment.name}]\nFile contents:\n${attachment.extractedText}`;
+                }
+                return `\n\n[Attached: ${attachment.name}]`;
+              })
+              .join("\n");
+
+            content = content + attachmentTexts;
+          }
+
+          return {
             role: msg.role as "user" | "assistant",
-            content: msg.content,
-          }) satisfies OpenAI.Chat.ChatCompletionMessageParam
+            content: content,
+          } satisfies OpenAI.Chat.ChatCompletionMessageParam;
+        }
       ),
     ];
 
