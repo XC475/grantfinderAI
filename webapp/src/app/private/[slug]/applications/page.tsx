@@ -113,7 +113,11 @@ export default function ApplicationsPage({
         </p>
       </div>
 
-      <ApplicationsTable applications={applications} slug={slug} />
+      <ApplicationsTable
+        applications={applications}
+        slug={slug}
+        onRefresh={fetchApplications}
+      />
     </div>
   );
 }

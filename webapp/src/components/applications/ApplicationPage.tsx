@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { GrantInfoCard } from "./GrantInfoCard";
 import { DocumentList } from "./DocumentList";
-import { TodoChecklist, TodoItem } from "./TodoChecklist";
 
 interface Application {
   id: string;
@@ -57,10 +56,8 @@ export function ApplicationPage({
   const [application, setApplication] = useState<Application | null>(null);
   const [grant, setGrant] = useState<Grant | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
-  const [checklist, setChecklist] = useState<TodoItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isGeneratingChecklist, setIsGeneratingChecklist] = useState(false);
   const router = useRouter();
 
   const fetchApplication = useCallback(async () => {
@@ -113,55 +110,6 @@ export function ApplicationPage({
     }
   }, [applicationId]);
 
-  const fetchChecklist = useCallback(async () => {
-    try {
-      const response = await fetch(
-        `/api/applications/${applicationId}/checklist`
-      );
-      if (response.ok) {
-        const data = await response.json();
-        const fetchedChecklist = data.checklist || [];
-        setChecklist(fetchedChecklist);
-
-        // If checklist is now populated, stop generating state
-        if (fetchedChecklist.length > 0 && isGeneratingChecklist) {
-          setIsGeneratingChecklist(false);
-        }
-
-        return fetchedChecklist;
-      }
-    } catch (error) {
-      console.error("Error fetching checklist:", error);
-      // Don't show error toast for checklist as it's not critical
-    }
-    return [];
-  }, [applicationId, isGeneratingChecklist]);
-
-  const handleUpdateChecklist = async (updatedTodos: TodoItem[]) => {
-    try {
-      const response = await fetch(
-        `/api/applications/${applicationId}/checklist`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ checklist: updatedTodos }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update checklist");
-      }
-
-      const data = await response.json();
-      setChecklist(data.checklist || []);
-    } catch (error) {
-      console.error("Error updating checklist:", error);
-      throw error; // Re-throw to let TodoChecklist handle the error
-    }
-  };
-
   const handleEditDocument = (documentId: string) => {
     router.push(`/private/${organizationSlug}/editor/${documentId}`);
   };
@@ -211,23 +159,10 @@ export function ApplicationPage({
       try {
         const app = await fetchApplication();
         if (app) {
-          const fetchedChecklist = await Promise.all([
+          await Promise.all([
             fetchGrant(app.opportunityId),
             fetchDocuments(),
-            fetchChecklist(),
-          ]).then((results) => results[2]); // Get checklist result
-
-          // Check if app is new (created less than 2 minutes ago) and checklist is empty
-          const appCreatedAt = new Date(app.createdAt);
-          const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
-          const isNewApp = appCreatedAt > twoMinutesAgo;
-
-          if (
-            isNewApp &&
-            (!fetchedChecklist || fetchedChecklist.length === 0)
-          ) {
-            setIsGeneratingChecklist(true);
-          }
+          ]);
         }
       } finally {
         setLoading(false);
@@ -240,32 +175,7 @@ export function ApplicationPage({
     organizationSlug,
     fetchApplication,
     fetchDocuments,
-    fetchChecklist,
   ]);
-
-  // Poll for checklist updates while generating
-  useEffect(() => {
-    if (!isGeneratingChecklist) return;
-
-    const pollInterval = setInterval(async () => {
-      console.log("Polling for checklist updates...");
-      await fetchChecklist();
-    }, 3000); // Poll every 3 seconds
-
-    // Stop polling after 2 minutes even if not complete
-    const timeout = setTimeout(
-      () => {
-        setIsGeneratingChecklist(false);
-        clearInterval(pollInterval);
-      },
-      2 * 60 * 1000
-    );
-
-    return () => {
-      clearInterval(pollInterval);
-      clearTimeout(timeout);
-    };
-  }, [isGeneratingChecklist, fetchChecklist]);
 
   if (loading) {
     return (
@@ -310,14 +220,6 @@ export function ApplicationPage({
           }
         }
         organizationSlug={organizationSlug}
-      />
-
-      {/* Checklist */}
-      <TodoChecklist
-        applicationId={applicationId}
-        initialTodos={checklist}
-        onUpdate={handleUpdateChecklist}
-        isGenerating={isGeneratingChecklist}
       />
 
       {/* Documents */}

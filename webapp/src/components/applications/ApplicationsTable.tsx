@@ -18,6 +18,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { MoreHorizontal, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 interface Application {
   id: string;
@@ -41,6 +58,7 @@ interface Application {
 interface ApplicationsTableProps {
   applications: Application[];
   slug: string;
+  onRefresh?: () => void;
 }
 
 function getStatusColor(status: string): string {
@@ -83,9 +101,53 @@ function formatCurrency(amount: number | null | undefined): string {
 export function ApplicationsTable({
   applications,
   slug,
+  onRefresh,
 }: ApplicationsTableProps) {
   const router = useRouter();
   const [columnResizeMode] = useState<ColumnResizeMode>("onChange");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [applicationToDelete, setApplicationToDelete] = useState<{
+    id: string;
+    title: string | null;
+  } | null>(null);
+
+  const handleDeleteClick = (e: React.MouseEvent, application: Application) => {
+    e.stopPropagation(); // Prevent row click
+    setApplicationToDelete({ id: application.id, title: application.title });
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!applicationToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch(
+        `/api/applications/${applicationToDelete.id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete application");
+      }
+
+      toast.success("Application deleted successfully");
+      // Refresh the applications list
+      if (onRefresh) {
+        onRefresh();
+      }
+    } catch (error) {
+      console.error("Error deleting application:", error);
+      toast.error("Failed to delete application");
+    } finally {
+      setIsDeleting(false);
+      setDeleteDialogOpen(false);
+      setApplicationToDelete(null);
+    }
+  };
 
   // Define table columns with resizing support
   const columns: ColumnDef<Application>[] = [
@@ -171,6 +233,37 @@ export function ApplicationsTable({
       ),
       size: 140,
     },
+    {
+      id: "actions",
+      header: "",
+      cell: ({ row }) => (
+        <div className="flex justify-end">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={(e) => handleDeleteClick(e, row.original)}
+                className="text-destructive focus:text-destructive cursor-pointer"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
+      size: 60,
+      enableResizing: false,
+    },
   ];
 
   const table = useReactTable({
@@ -220,7 +313,7 @@ export function ApplicationsTable({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className="cursor-pointer"
+                  className="cursor-pointer group"
                   onClick={() =>
                     router.push(
                       `/private/${slug}/applications/${row.original.id}`
@@ -257,6 +350,37 @@ export function ApplicationsTable({
         💡 Drag column edges to resize. Click on any row to view application
         details.
       </p>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Application</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete &quot;
+              {applicationToDelete?.title || "this application"}&quot;? This
+              action cannot be undone. Associated documents will be preserved
+              and can be found in the Documents page.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setDeleteDialogOpen(false)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
