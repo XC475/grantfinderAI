@@ -471,9 +471,9 @@ function showFileUploadDialog() {
 
   input.type = "file";
   input.multiple = true;
-  // Accept file types that match the upload endpoint
+  // Accept only supported file types: PDF, Word, Text, CSV
   input.accept =
-    ".pdf,.docx,.txt,.csv,.xlsx,.xls,.png,.jpg,.jpeg,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/png,image/jpeg";
+    ".pdf,.docx,.txt,.csv,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv";
   input.click();
 
   return new Promise<File[] | null>((resolve) => {

@@ -171,8 +171,8 @@ model Application {
   checklist            Json?
   attachments_markdown String?
   aiChats              AiChat[]
-  documents            Document[]
   organization         Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  documents            Document[]
 
   @@unique([opportunityId, organizationId])
   @@index([organizationId, status])

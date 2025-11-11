@@ -18,12 +18,24 @@ const ALLOWED_TYPES = [
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   "text/plain",
   "text/csv",
+];
+
+// File types that are coming soon
+const COMING_SOON_TYPES = [
   "application/vnd.ms-excel",
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   "image/png",
   "image/jpeg",
   "image/jpg",
 ];
+
+const COMING_SOON_NAMES: Record<string, string> = {
+  "application/vnd.ms-excel": "Excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "Excel",
+  "image/png": "Image",
+  "image/jpeg": "Image",
+  "image/jpg": "Image",
+};
 
 interface FileAttachment {
   id: string;
@@ -64,20 +76,6 @@ async function extractTextFromFile(
       const documents = await loader.load();
       return documents.map((doc: Document) => doc.pageContent).join("\n\n");
     }
-    case "application/vnd.ms-excel":
-    case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
-      // For Excel files, treat as CSV for now
-      // In production, you might want to use a specialized Excel loader
-      const loader = new CSVLoader(filePath);
-      const documents = await loader.load();
-      return documents.map((doc: Document) => doc.pageContent).join("\n\n");
-    }
-    case "image/png":
-    case "image/jpeg":
-    case "image/jpg":
-      // Images: For now, return a placeholder
-      // To implement OCR, you would need additional libraries like tesseract.js
-      return "[Image file - OCR not yet implemented]";
     default:
       throw new Error(`Unsupported file type: ${mimeType}`);
   }
@@ -108,10 +106,23 @@ export async function POST(req: NextRequest) {
 
     // 3. Process each file
     for (const file of files) {
+      // Check if file type is coming soon
+      if (COMING_SOON_TYPES.includes(file.type)) {
+        const fileTypeName = COMING_SOON_NAMES[file.type] || file.type;
+        return NextResponse.json(
+          {
+            error: `${fileTypeName} file support is currently being developed. For now, please use PDF, Word (.docx), Text (.txt), or CSV files.`,
+          },
+          { status: 400 }
+        );
+      }
+
       // Validate file type
       if (!ALLOWED_TYPES.includes(file.type)) {
         return NextResponse.json(
-          { error: `File type ${file.type} is not allowed` },
+          {
+            error: `File type ${file.type} is not supported. Supported types: PDF, Word (.docx), Text (.txt), CSV.`,
+          },
           { status: 400 }
         );
       }
@@ -134,12 +145,16 @@ export async function POST(req: NextRequest) {
       try {
         // 5. Extract text from file
         extractedText = await extractTextFromFile(tempFilePath, file.type);
+        // 6. Clean extracted text - remove NULL bytes that PostgreSQL can't handle
+        if (extractedText) {
+          extractedText = extractedText.replace(/\0/g, "");
+        }
       } catch (error) {
         console.error("Error extracting text from file:", error);
         extractedText = "[Error extracting text from file]";
       }
 
-      // 6. Upload to Supabase Storage
+      // 7. Upload to Supabase Storage
       const fileId = randomUUID();
       const fileExtension = file.name.split(".").pop();
       const storagePath = `${user.id}/${fileId}.${fileExtension}`;
@@ -161,15 +176,15 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // 7. Get public URL
+      // 8. Get public URL
       const {
         data: { publicUrl },
       } = supabase.storage.from("chat-attachments").getPublicUrl(storagePath);
 
-      // 8. Clean up temp file
+      // 9. Clean up temp file
       await unlink(tempFilePath).catch(console.error);
 
-      // 9. Add to uploaded files list
+      // 10. Add to uploaded files list
       uploadedFiles.push({
         id: fileId,
         name: file.name,
@@ -180,7 +195,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 10. Return uploaded files metadata
+    // 11. Return uploaded files metadata
     return NextResponse.json({ files: uploadedFiles });
   } catch (error) {
     console.error("Error in upload endpoint:", error);

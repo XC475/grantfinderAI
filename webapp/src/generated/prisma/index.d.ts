@@ -10119,8 +10119,8 @@ export namespace Prisma {
     checklist?: boolean
     attachments_markdown?: boolean
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
-    documents?: boolean | Application$documentsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    documents?: boolean | Application$documentsArgs<ExtArgs>
     _count?: boolean | ApplicationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
 
@@ -10171,8 +10171,8 @@ export namespace Prisma {
   export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "title" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId" | "checklist" | "attachments_markdown", ExtArgs["result"]["application"]>
   export type ApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
-    documents?: boolean | Application$documentsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    documents?: boolean | Application$documentsArgs<ExtArgs>
     _count?: boolean | ApplicationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ApplicationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10186,8 +10186,8 @@ export namespace Prisma {
     name: "Application"
     objects: {
       aiChats: Prisma.$AiChatPayload<ExtArgs>[]
-      documents: Prisma.$DocumentPayload<ExtArgs>[]
       organization: Prisma.$OrganizationPayload<ExtArgs>
+      documents: Prisma.$DocumentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10596,8 +10596,8 @@ export namespace Prisma {
   export interface Prisma__ApplicationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     aiChats<T extends Application$aiChatsArgs<ExtArgs> = {}>(args?: Subset<T, Application$aiChatsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    documents<T extends Application$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Application$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    documents<T extends Application$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Application$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -18957,8 +18957,8 @@ export namespace Prisma {
     checklist?: JsonNullableFilter<"Application">
     attachments_markdown?: StringNullableFilter<"Application"> | string | null
     aiChats?: AiChatListRelationFilter
-    documents?: DocumentListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    documents?: DocumentListRelationFilter
   }
 
   export type ApplicationOrderByWithRelationInput = {
@@ -18974,8 +18974,8 @@ export namespace Prisma {
     checklist?: SortOrderInput | SortOrder
     attachments_markdown?: SortOrderInput | SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
-    documents?: DocumentOrderByRelationAggregateInput
     organization?: OrganizationOrderByWithRelationInput
+    documents?: DocumentOrderByRelationAggregateInput
   }
 
   export type ApplicationWhereUniqueInput = Prisma.AtLeast<{
@@ -18995,8 +18995,8 @@ export namespace Prisma {
     checklist?: JsonNullableFilter<"Application">
     attachments_markdown?: StringNullableFilter<"Application"> | string | null
     aiChats?: AiChatListRelationFilter
-    documents?: DocumentListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    documents?: DocumentListRelationFilter
   }, "id" | "opportunityId_organizationId">
 
   export type ApplicationOrderByWithAggregationInput = {
@@ -20245,8 +20245,8 @@ export namespace Prisma {
     checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: string | null
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
-    documents?: DocumentCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
+    documents?: DocumentCreateNestedManyWithoutApplicationInput
   }
 
   export type ApplicationUncheckedCreateInput = {
@@ -20277,8 +20277,8 @@ export namespace Prisma {
     checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
-    documents?: DocumentUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
+    documents?: DocumentUpdateManyWithoutApplicationNestedInput
   }
 
   export type ApplicationUncheckedUpdateInput = {
@@ -22547,17 +22547,17 @@ export namespace Prisma {
     connect?: AiChatWhereUniqueInput | AiChatWhereUniqueInput[]
   }
 
+  export type OrganizationCreateNestedOneWithoutApplicationsInput = {
+    create?: XOR<OrganizationCreateWithoutApplicationsInput, OrganizationUncheckedCreateWithoutApplicationsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutApplicationsInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
   export type DocumentCreateNestedManyWithoutApplicationInput = {
     create?: XOR<DocumentCreateWithoutApplicationInput, DocumentUncheckedCreateWithoutApplicationInput> | DocumentCreateWithoutApplicationInput[] | DocumentUncheckedCreateWithoutApplicationInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutApplicationInput | DocumentCreateOrConnectWithoutApplicationInput[]
     createMany?: DocumentCreateManyApplicationInputEnvelope
     connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
-  }
-
-  export type OrganizationCreateNestedOneWithoutApplicationsInput = {
-    create?: XOR<OrganizationCreateWithoutApplicationsInput, OrganizationUncheckedCreateWithoutApplicationsInput>
-    connectOrCreate?: OrganizationCreateOrConnectWithoutApplicationsInput
-    connect?: OrganizationWhereUniqueInput
   }
 
   export type AiChatUncheckedCreateNestedManyWithoutApplicationInput = {
@@ -22592,6 +22592,14 @@ export namespace Prisma {
     deleteMany?: AiChatScalarWhereInput | AiChatScalarWhereInput[]
   }
 
+  export type OrganizationUpdateOneRequiredWithoutApplicationsNestedInput = {
+    create?: XOR<OrganizationCreateWithoutApplicationsInput, OrganizationUncheckedCreateWithoutApplicationsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutApplicationsInput
+    upsert?: OrganizationUpsertWithoutApplicationsInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutApplicationsInput, OrganizationUpdateWithoutApplicationsInput>, OrganizationUncheckedUpdateWithoutApplicationsInput>
+  }
+
   export type DocumentUpdateManyWithoutApplicationNestedInput = {
     create?: XOR<DocumentCreateWithoutApplicationInput, DocumentUncheckedCreateWithoutApplicationInput> | DocumentCreateWithoutApplicationInput[] | DocumentUncheckedCreateWithoutApplicationInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutApplicationInput | DocumentCreateOrConnectWithoutApplicationInput[]
@@ -22604,14 +22612,6 @@ export namespace Prisma {
     update?: DocumentUpdateWithWhereUniqueWithoutApplicationInput | DocumentUpdateWithWhereUniqueWithoutApplicationInput[]
     updateMany?: DocumentUpdateManyWithWhereWithoutApplicationInput | DocumentUpdateManyWithWhereWithoutApplicationInput[]
     deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
-  }
-
-  export type OrganizationUpdateOneRequiredWithoutApplicationsNestedInput = {
-    create?: XOR<OrganizationCreateWithoutApplicationsInput, OrganizationUncheckedCreateWithoutApplicationsInput>
-    connectOrCreate?: OrganizationCreateOrConnectWithoutApplicationsInput
-    upsert?: OrganizationUpsertWithoutApplicationsInput
-    connect?: OrganizationWhereUniqueInput
-    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutApplicationsInput, OrganizationUpdateWithoutApplicationsInput>, OrganizationUncheckedUpdateWithoutApplicationsInput>
   }
 
   export type AiChatUncheckedUpdateManyWithoutApplicationNestedInput = {
@@ -24400,38 +24400,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type DocumentCreateWithoutApplicationInput = {
-    id?: string
-    title: string
-    content?: string | null
-    contentType?: string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    version?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type DocumentUncheckedCreateWithoutApplicationInput = {
-    id?: string
-    title: string
-    content?: string | null
-    contentType?: string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    version?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type DocumentCreateOrConnectWithoutApplicationInput = {
-    where: DocumentWhereUniqueInput
-    create: XOR<DocumentCreateWithoutApplicationInput, DocumentUncheckedCreateWithoutApplicationInput>
-  }
-
-  export type DocumentCreateManyApplicationInputEnvelope = {
-    data: DocumentCreateManyApplicationInput | DocumentCreateManyApplicationInput[]
-    skipDuplicates?: boolean
-  }
-
   export type OrganizationCreateWithoutApplicationsInput = {
     id?: string
     name: string
@@ -24511,6 +24479,38 @@ export namespace Prisma {
     create: XOR<OrganizationCreateWithoutApplicationsInput, OrganizationUncheckedCreateWithoutApplicationsInput>
   }
 
+  export type DocumentCreateWithoutApplicationInput = {
+    id?: string
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DocumentUncheckedCreateWithoutApplicationInput = {
+    id?: string
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DocumentCreateOrConnectWithoutApplicationInput = {
+    where: DocumentWhereUniqueInput
+    create: XOR<DocumentCreateWithoutApplicationInput, DocumentUncheckedCreateWithoutApplicationInput>
+  }
+
+  export type DocumentCreateManyApplicationInputEnvelope = {
+    data: DocumentCreateManyApplicationInput | DocumentCreateManyApplicationInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AiChatUpsertWithWhereUniqueWithoutApplicationInput = {
     where: AiChatWhereUniqueInput
     update: XOR<AiChatUpdateWithoutApplicationInput, AiChatUncheckedUpdateWithoutApplicationInput>
@@ -24525,37 +24525,6 @@ export namespace Prisma {
   export type AiChatUpdateManyWithWhereWithoutApplicationInput = {
     where: AiChatScalarWhereInput
     data: XOR<AiChatUpdateManyMutationInput, AiChatUncheckedUpdateManyWithoutApplicationInput>
-  }
-
-  export type DocumentUpsertWithWhereUniqueWithoutApplicationInput = {
-    where: DocumentWhereUniqueInput
-    update: XOR<DocumentUpdateWithoutApplicationInput, DocumentUncheckedUpdateWithoutApplicationInput>
-    create: XOR<DocumentCreateWithoutApplicationInput, DocumentUncheckedCreateWithoutApplicationInput>
-  }
-
-  export type DocumentUpdateWithWhereUniqueWithoutApplicationInput = {
-    where: DocumentWhereUniqueInput
-    data: XOR<DocumentUpdateWithoutApplicationInput, DocumentUncheckedUpdateWithoutApplicationInput>
-  }
-
-  export type DocumentUpdateManyWithWhereWithoutApplicationInput = {
-    where: DocumentScalarWhereInput
-    data: XOR<DocumentUpdateManyMutationInput, DocumentUncheckedUpdateManyWithoutApplicationInput>
-  }
-
-  export type DocumentScalarWhereInput = {
-    AND?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
-    OR?: DocumentScalarWhereInput[]
-    NOT?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
-    id?: StringFilter<"Document"> | string
-    applicationId?: StringNullableFilter<"Document"> | string | null
-    title?: StringFilter<"Document"> | string
-    content?: StringNullableFilter<"Document"> | string | null
-    contentType?: StringFilter<"Document"> | string
-    metadata?: JsonNullableFilter<"Document">
-    version?: IntFilter<"Document"> | number
-    createdAt?: DateTimeFilter<"Document"> | Date | string
-    updatedAt?: DateTimeFilter<"Document"> | Date | string
   }
 
   export type OrganizationUpsertWithoutApplicationsInput = {
@@ -24643,6 +24612,37 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
+  export type DocumentUpsertWithWhereUniqueWithoutApplicationInput = {
+    where: DocumentWhereUniqueInput
+    update: XOR<DocumentUpdateWithoutApplicationInput, DocumentUncheckedUpdateWithoutApplicationInput>
+    create: XOR<DocumentCreateWithoutApplicationInput, DocumentUncheckedCreateWithoutApplicationInput>
+  }
+
+  export type DocumentUpdateWithWhereUniqueWithoutApplicationInput = {
+    where: DocumentWhereUniqueInput
+    data: XOR<DocumentUpdateWithoutApplicationInput, DocumentUncheckedUpdateWithoutApplicationInput>
+  }
+
+  export type DocumentUpdateManyWithWhereWithoutApplicationInput = {
+    where: DocumentScalarWhereInput
+    data: XOR<DocumentUpdateManyMutationInput, DocumentUncheckedUpdateManyWithoutApplicationInput>
+  }
+
+  export type DocumentScalarWhereInput = {
+    AND?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
+    OR?: DocumentScalarWhereInput[]
+    NOT?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
+    id?: StringFilter<"Document"> | string
+    applicationId?: StringNullableFilter<"Document"> | string | null
+    title?: StringFilter<"Document"> | string
+    content?: StringNullableFilter<"Document"> | string | null
+    contentType?: StringFilter<"Document"> | string
+    metadata?: JsonNullableFilter<"Document">
+    version?: IntFilter<"Document"> | number
+    createdAt?: DateTimeFilter<"Document"> | Date | string
+    updatedAt?: DateTimeFilter<"Document"> | Date | string
+  }
+
   export type AiChatMessageCreateWithoutChatInput = {
     id?: string
     role: $Enums.MessageRole
@@ -24680,8 +24680,8 @@ export namespace Prisma {
     lastEditedAt?: Date | string
     checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: string | null
-    documents?: DocumentCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
+    documents?: DocumentCreateNestedManyWithoutApplicationInput
   }
 
   export type ApplicationUncheckedCreateWithoutAiChatsInput = {
@@ -24870,8 +24870,8 @@ export namespace Prisma {
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
-    documents?: DocumentUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
+    documents?: DocumentUpdateManyWithoutApplicationNestedInput
   }
 
   export type ApplicationUncheckedUpdateWithoutAiChatsInput = {
