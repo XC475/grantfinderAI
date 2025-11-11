@@ -240,7 +240,6 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   submittedAt: 'submittedAt',
   lastEditedAt: 'lastEditedAt',
   organizationId: 'organizationId',
-  checklist: 'checklist',
   attachments_markdown: 'attachments_markdown'
 };
 
@@ -252,7 +251,8 @@ exports.Prisma.AiChatScalarFieldEnum = {
   updatedAt: 'updatedAt',
   userId: 'userId',
   applicationId: 'applicationId',
-  organizationId: 'organizationId'
+  organizationId: 'organizationId',
+  metadata: 'metadata'
 };
 
 exports.Prisma.AiChatMessageScalarFieldEnum = {

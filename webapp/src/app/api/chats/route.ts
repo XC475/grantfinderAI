@@ -14,8 +14,41 @@ export async function GET() {
   }
 
   try {
+    // Fetch all chats excluding editor assistant chats
+    // Editor chats have context='DRAFTING' AND metadata.chatType='editor_assistant'
     const chats = await prisma.aiChat.findMany({
-      where: { userId: user.id },
+      where: {
+        userId: user.id,
+        OR: [
+          // Include all non-DRAFTING contexts
+          {
+            context: {
+              in: ["GENERAL", "APPLICATION", "GRANT_ANALYSIS", "ELIGIBILITY"],
+            },
+          },
+          // Include DRAFTING chats that are NOT editor assistants
+          {
+            AND: [
+              { context: "DRAFTING" },
+              {
+                OR: [
+                  // Chats without metadata (backward compatibility)
+                  { metadata: { equals: null } },
+                  // Chats with metadata but no chatType
+                  {
+                    NOT: {
+                      metadata: {
+                        path: ["chatType"],
+                        equals: "editor_assistant",
+                      },
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
       select: {
         id: true,
         title: true,

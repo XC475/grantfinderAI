@@ -4,10 +4,26 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { DocumentSidebarChat } from "./DocumentSidebarChat";
 import { Message } from "@/components/ui/chat-message";
 import { useDocument } from "@/contexts/DocumentContext";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { History, Plus } from "lucide-react";
 
 interface DocumentChatSidebarProps {
   documentId: string;
   onToggle: () => void;
+}
+
+interface ChatSession {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  messageCount: number;
 }
 
 export function DocumentChatSidebar({
@@ -18,8 +34,69 @@ export function DocumentChatSidebar({
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [chatId, setChatId] = useState<string | null>(null);
+  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
+  const [loadingSessions, setLoadingSessions] = useState(false);
   const hasAutoSent = useRef(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Load chat sessions on mount
+  useEffect(() => {
+    loadChatSessions();
+  }, [documentId]);
+
+  const loadChatSessions = async () => {
+    try {
+      setLoadingSessions(true);
+      const response = await fetch(
+        `/api/chats/editor?documentId=${documentId}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setChatSessions(data.chats || []);
+      }
+    } catch (error) {
+      console.error("Error loading chat sessions:", error);
+    } finally {
+      setLoadingSessions(false);
+    }
+  };
+
+  const loadChatSession = async (sessionId: string) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/chats/editor/${sessionId}`);
+      if (response.ok) {
+        const data = await response.json();
+        const loadedMessages: Message[] = data.chat.messages.map(
+          (msg: {
+            id: string;
+            role: string;
+            content: string;
+            createdAt: string;
+          }) => ({
+            id: msg.id,
+            role: msg.role.toLowerCase() as "user" | "assistant",
+            content: msg.content,
+            createdAt: new Date(msg.createdAt),
+          })
+        );
+        setMessages(loadedMessages);
+        setChatId(sessionId);
+        console.log("💬 [DocumentChat] Loaded chat session:", sessionId);
+      }
+    } catch (error) {
+      console.error("Error loading chat session:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const startNewChat = () => {
+    setMessages([]);
+    setChatId(null);
+    console.log("💬 [DocumentChat] Starting new chat session");
+  };
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -70,9 +147,21 @@ export function DocumentChatSidebar({
             documentId,
             documentTitle,
             documentContent,
+            chatId,
           }),
           signal: abortController.signal,
         });
+
+        // Extract chatId from response header if this is a new chat
+        if (!chatId) {
+          const newChatId = response.headers.get("X-Chat-Id");
+          if (newChatId) {
+            setChatId(newChatId);
+            console.log("💬 [DocumentChat] New chat created with ID:", newChatId);
+            // Reload sessions to include new chat
+            loadChatSessions();
+          }
+        }
 
         if (!response.ok) {
           throw new Error(`API responded with status: ${response.status}`);
@@ -214,6 +303,48 @@ export function DocumentChatSidebar({
 
   return (
     <div className="flex flex-col h-full bg-background">
+      {/* Header with session management */}
+      <div className="flex items-center justify-between px-4 py-2 border-b">
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" disabled={loadingSessions}>
+                <History className="h-4 w-4 mr-2" />
+                History
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-64">
+              {chatSessions.length === 0 ? (
+                <div className="px-2 py-4 text-sm text-muted-foreground text-center">
+                  No previous sessions
+                </div>
+              ) : (
+                chatSessions.map((session) => (
+                  <DropdownMenuItem
+                    key={session.id}
+                    onClick={() => loadChatSession(session.id)}
+                    className="flex flex-col items-start py-2"
+                  >
+                    <div className="font-medium text-sm truncate w-full">
+                      {session.title}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(session.createdAt).toLocaleDateString()} •{" "}
+                      {session.messageCount} messages
+                    </div>
+                  </DropdownMenuItem>
+                ))
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button variant="outline" size="sm" onClick={startNewChat}>
+            <Plus className="h-4 w-4 mr-2" />
+            New Chat
+          </Button>
+        </div>
+      </div>
+
       {/* Main content area */}
       <div className="flex-1 flex flex-col overflow-hidden min-h-0 p-1 pt-2">
         {isEmpty && (

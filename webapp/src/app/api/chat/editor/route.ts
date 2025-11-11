@@ -20,14 +20,18 @@ export async function POST(req: NextRequest) {
       return new Response("Unauthorized", { status: 401 });
     }
 
-    const { messages, documentId, documentTitle, documentContent } =
+    const { messages, documentId, documentTitle, documentContent, chatId } =
       await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       return new Response("Messages are required", { status: 400 });
     }
 
-    // Get user's organization and document's application for context
+    if (!documentId) {
+      return new Response("Document ID is required", { status: 400 });
+    }
+
+    // Get user's organization
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
       select: {
@@ -55,36 +59,50 @@ export async function POST(req: NextRequest) {
 
     const organization = dbUser?.organization;
 
+    if (!organization) {
+      return new Response("Organization not found", { status: 404 });
+    }
+
+    // Get the document with application relationship
+    const document = await prisma.document.findUnique({
+      where: { id: documentId },
+      select: {
+        id: true,
+        title: true,
+        applicationId: true,
+        application: {
+          select: {
+            id: true,
+            title: true,
+            organizationId: true,
+            opportunityId: true,
+          },
+        },
+      },
+    });
+
+    if (!document) {
+      return new Response("Document not found", { status: 404 });
+    }
+
     // Get the document's application and associated opportunity
     let applicationContext = "";
-    if (documentId) {
-      const document = await prisma.document.findUnique({
-        where: { id: documentId },
+    let opportunityId: number | null = null;
+
+    if (document.application?.opportunityId) {
+      opportunityId = document.application.opportunityId;
+      // Fetch the opportunity's raw_text from the public schema
+      const opportunity = await prisma.opportunities.findUnique({
+        where: { id: opportunityId },
         select: {
-          applicationId: true,
-          application: {
-            select: {
-              id: true,
-              title: true,
-              opportunityId: true,
-            },
-          },
+          title: true,
+          agency: true,
+          raw_text: true,
         },
       });
 
-      if (document?.application?.opportunityId) {
-        // Fetch the opportunity's raw_text from the public schema
-        const opportunity = await prisma.opportunities.findUnique({
-          where: { id: document.application.opportunityId },
-          select: {
-            title: true,
-            agency: true,
-            raw_text: true,
-          },
-        });
-
-        if (opportunity?.raw_text) {
-          applicationContext = `
+      if (opportunity?.raw_text) {
+        applicationContext = `
 
 APPLICATION CONTEXT:
 This document is part of a grant application for: ${opportunity.title}
@@ -92,9 +110,60 @@ Agency: ${opportunity.agency || "N/A"}
 
 GRANT OPPORTUNITY DETAILS:
 ${opportunity.raw_text}`;
-        }
       }
     }
+
+    // Find or create chat
+    let chat;
+    if (chatId) {
+      chat = await prisma.aiChat.findUnique({
+        where: { id: chatId },
+        include: { messages: true },
+      });
+    }
+
+    if (!chat) {
+      // Determine organizationId - from application OR from user
+      const organizationId =
+        document.application?.organizationId || organization.id;
+
+      // Create new chat with DRAFTING context
+      chat = await prisma.aiChat.create({
+        data: {
+          title: `Document: ${document.title || documentTitle || "Untitled"}`,
+          context: "DRAFTING",
+          userId: user.id,
+          organizationId: organizationId,
+          applicationId: document.applicationId, // Optional - null if standalone
+          metadata: {
+            documentId: documentId,
+            documentTitle: document.title || documentTitle || "Untitled",
+            chatType: "editor_assistant",
+            opportunityId: opportunityId,
+          },
+        },
+      });
+    }
+
+    // Get the last user message
+    const lastUserMessage = [...messages]
+      .filter((m: { role: string }) => m.role === "user")
+      .pop();
+    if (!lastUserMessage)
+      return new Response("No user message", { status: 400 });
+
+    // Save user message
+    await prisma.aiChatMessage.create({
+      data: {
+        role: "USER",
+        content: lastUserMessage.content,
+        chatId: chat.id,
+        metadata: {
+          timestamp: Date.now(),
+          source: "editor",
+        },
+      },
+    });
 
     // Build organization context for system prompt
     let organizationContext = "";
@@ -114,7 +183,7 @@ ${organization.fiscalYearEnd ? `Fiscal Year End: ${organization.fiscalYearEnd}` 
 
     // Build system prompt with document context, organization info, and application context
     const systemPrompt = `You are a helpful assistant for a grant writing application called GrantWare. 
-You are helping the user with their document titled "${documentTitle || "Untitled Document"}".
+You are helping the user with their document titled "${documentTitle || document.title || "Untitled Document"}".
 ${organizationContext}
 ${applicationContext}
 
@@ -158,30 +227,95 @@ Use **clean, well-structured markdown** with clear visual hierarchy.
 
     // Create a readable stream for the response
     const encoder = new TextEncoder();
+    let fullText = "";
+    let clientDisconnected = false;
+
+    // Save response to database after stream completes
+    const saveToDatabase = async () => {
+      try {
+        console.log("📝 [Editor Chat] Saving assistant response to database");
+
+        // Save assistant response
+        await prisma.aiChatMessage.create({
+          data: {
+            role: "ASSISTANT",
+            content: fullText,
+            chatId: chat.id,
+            metadata: {
+              timestamp: Date.now(),
+              model: "gpt-4o-mini",
+              source: "editor",
+              clientDisconnected,
+            },
+          },
+        });
+
+        // Update chat's updatedAt
+        await prisma.aiChat.update({
+          where: { id: chat.id },
+          data: { updatedAt: new Date() },
+        });
+
+        console.log(
+          `✅ [Editor Chat] Saved response to DB${clientDisconnected ? " (client disconnected)" : ""}`
+        );
+      } catch (error) {
+        console.error("❌ [Editor Chat] Error saving to database:", error);
+      }
+    };
+
     const readableStream = new ReadableStream({
       async start(controller) {
         try {
           for await (const chunk of stream) {
             const content = chunk.choices[0]?.delta?.content || "";
             if (content) {
-              controller.enqueue(encoder.encode(content));
+              fullText += content;
+              try {
+                controller.enqueue(encoder.encode(content));
+              } catch {
+                if (!clientDisconnected) {
+                  clientDisconnected = true;
+                  console.log(
+                    "ℹ️ [Editor Chat] Client disconnected, continuing in background"
+                  );
+                }
+              }
             }
           }
-          controller.close();
+
+          // Close the stream if still connected
+          try {
+            controller.close();
+          } catch {
+            clientDisconnected = true;
+          }
+
+          // Save to database
+          await saveToDatabase();
         } catch (error) {
-          console.error("Error streaming from OpenAI:", error);
+          clientDisconnected = true;
+          console.log(
+            "ℹ️ [Editor Chat] Stream error (likely client disconnect):",
+            error
+          );
+          // Still save to database even on error
+          await saveToDatabase();
           controller.error(error);
         }
       },
+      cancel() {
+        clientDisconnected = true;
+        console.log(
+          "ℹ️ [Editor Chat] Client cancelled stream, will save to DB when complete"
+        );
+      },
     });
-
-    // Generate a chat ID (for future use if we want to persist)
-    const chatId = `editor_${documentId}_${Date.now()}`;
 
     return new Response(readableStream, {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
-        "X-Chat-Id": chatId,
+        "X-Chat-Id": chat.id,
         "Transfer-Encoding": "chunked",
       },
     });

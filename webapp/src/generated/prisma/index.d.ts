@@ -9932,7 +9932,6 @@ export namespace Prisma {
     submittedAt: number
     lastEditedAt: number
     organizationId: number
-    checklist: number
     attachments_markdown: number
     _all: number
   }
@@ -9982,7 +9981,6 @@ export namespace Prisma {
     submittedAt?: true
     lastEditedAt?: true
     organizationId?: true
-    checklist?: true
     attachments_markdown?: true
     _all?: true
   }
@@ -10083,7 +10081,6 @@ export namespace Prisma {
     submittedAt: Date | null
     lastEditedAt: Date
     organizationId: string
-    checklist: JsonValue | null
     attachments_markdown: string | null
     _count: ApplicationCountAggregateOutputType | null
     _avg: ApplicationAvgAggregateOutputType | null
@@ -10116,7 +10113,6 @@ export namespace Prisma {
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
-    checklist?: boolean
     attachments_markdown?: boolean
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -10134,7 +10130,6 @@ export namespace Prisma {
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
-    checklist?: boolean
     attachments_markdown?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
@@ -10149,7 +10144,6 @@ export namespace Prisma {
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
-    checklist?: boolean
     attachments_markdown?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
@@ -10164,11 +10158,10 @@ export namespace Prisma {
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
-    checklist?: boolean
     attachments_markdown?: boolean
   }
 
-  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "title" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId" | "checklist" | "attachments_markdown", ExtArgs["result"]["application"]>
+  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "title" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId" | "attachments_markdown", ExtArgs["result"]["application"]>
   export type ApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -10199,7 +10192,6 @@ export namespace Prisma {
       submittedAt: Date | null
       lastEditedAt: Date
       organizationId: string
-      checklist: Prisma.JsonValue | null
       attachments_markdown: string | null
     }, ExtArgs["result"]["application"]>
     composites: {}
@@ -10636,7 +10628,6 @@ export namespace Prisma {
     readonly submittedAt: FieldRef<"Application", 'DateTime'>
     readonly lastEditedAt: FieldRef<"Application", 'DateTime'>
     readonly organizationId: FieldRef<"Application", 'String'>
-    readonly checklist: FieldRef<"Application", 'Json'>
     readonly attachments_markdown: FieldRef<"Application", 'String'>
   }
     
@@ -11141,6 +11132,7 @@ export namespace Prisma {
     userId: number
     applicationId: number
     organizationId: number
+    metadata: number
     _all: number
   }
 
@@ -11176,6 +11168,7 @@ export namespace Prisma {
     userId?: true
     applicationId?: true
     organizationId?: true
+    metadata?: true
     _all?: true
   }
 
@@ -11260,6 +11253,7 @@ export namespace Prisma {
     userId: string
     applicationId: string | null
     organizationId: string
+    metadata: JsonValue | null
     _count: AiChatCountAggregateOutputType | null
     _min: AiChatMinAggregateOutputType | null
     _max: AiChatMaxAggregateOutputType | null
@@ -11288,6 +11282,7 @@ export namespace Prisma {
     userId?: boolean
     applicationId?: boolean
     organizationId?: boolean
+    metadata?: boolean
     messages?: boolean | AiChat$messagesArgs<ExtArgs>
     application?: boolean | AiChat$applicationArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -11304,6 +11299,7 @@ export namespace Prisma {
     userId?: boolean
     applicationId?: boolean
     organizationId?: boolean
+    metadata?: boolean
     application?: boolean | AiChat$applicationArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -11318,6 +11314,7 @@ export namespace Prisma {
     userId?: boolean
     applicationId?: boolean
     organizationId?: boolean
+    metadata?: boolean
     application?: boolean | AiChat$applicationArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -11332,9 +11329,10 @@ export namespace Prisma {
     userId?: boolean
     applicationId?: boolean
     organizationId?: boolean
+    metadata?: boolean
   }
 
-  export type AiChatOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "context" | "createdAt" | "updatedAt" | "userId" | "applicationId" | "organizationId", ExtArgs["result"]["aiChat"]>
+  export type AiChatOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "context" | "createdAt" | "updatedAt" | "userId" | "applicationId" | "organizationId" | "metadata", ExtArgs["result"]["aiChat"]>
   export type AiChatInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     messages?: boolean | AiChat$messagesArgs<ExtArgs>
     application?: boolean | AiChat$applicationArgs<ExtArgs>
@@ -11370,6 +11368,7 @@ export namespace Prisma {
       userId: string
       applicationId: string | null
       organizationId: string
+      metadata: Prisma.JsonValue | null
     }, ExtArgs["result"]["aiChat"]>
     composites: {}
   }
@@ -11805,6 +11804,7 @@ export namespace Prisma {
     readonly userId: FieldRef<"AiChat", 'String'>
     readonly applicationId: FieldRef<"AiChat", 'String'>
     readonly organizationId: FieldRef<"AiChat", 'String'>
+    readonly metadata: FieldRef<"AiChat", 'Json'>
   }
     
 
@@ -17892,7 +17892,6 @@ export namespace Prisma {
     submittedAt: 'submittedAt',
     lastEditedAt: 'lastEditedAt',
     organizationId: 'organizationId',
-    checklist: 'checklist',
     attachments_markdown: 'attachments_markdown'
   };
 
@@ -17907,7 +17906,8 @@ export namespace Prisma {
     updatedAt: 'updatedAt',
     userId: 'userId',
     applicationId: 'applicationId',
-    organizationId: 'organizationId'
+    organizationId: 'organizationId',
+    metadata: 'metadata'
   };
 
   export type AiChatScalarFieldEnum = (typeof AiChatScalarFieldEnum)[keyof typeof AiChatScalarFieldEnum]
@@ -18954,7 +18954,6 @@ export namespace Prisma {
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
     organizationId?: StringFilter<"Application"> | string
-    checklist?: JsonNullableFilter<"Application">
     attachments_markdown?: StringNullableFilter<"Application"> | string | null
     aiChats?: AiChatListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
@@ -18971,7 +18970,6 @@ export namespace Prisma {
     submittedAt?: SortOrderInput | SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
-    checklist?: SortOrderInput | SortOrder
     attachments_markdown?: SortOrderInput | SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     organization?: OrganizationOrderByWithRelationInput
@@ -18992,7 +18990,6 @@ export namespace Prisma {
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
     organizationId?: StringFilter<"Application"> | string
-    checklist?: JsonNullableFilter<"Application">
     attachments_markdown?: StringNullableFilter<"Application"> | string | null
     aiChats?: AiChatListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
@@ -19009,7 +19006,6 @@ export namespace Prisma {
     submittedAt?: SortOrderInput | SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
-    checklist?: SortOrderInput | SortOrder
     attachments_markdown?: SortOrderInput | SortOrder
     _count?: ApplicationCountOrderByAggregateInput
     _avg?: ApplicationAvgOrderByAggregateInput
@@ -19031,7 +19027,6 @@ export namespace Prisma {
     submittedAt?: DateTimeNullableWithAggregatesFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
     organizationId?: StringWithAggregatesFilter<"Application"> | string
-    checklist?: JsonNullableWithAggregatesFilter<"Application">
     attachments_markdown?: StringNullableWithAggregatesFilter<"Application"> | string | null
   }
 
@@ -19047,6 +19042,7 @@ export namespace Prisma {
     userId?: UuidFilter<"AiChat"> | string
     applicationId?: StringNullableFilter<"AiChat"> | string | null
     organizationId?: StringFilter<"AiChat"> | string
+    metadata?: JsonNullableFilter<"AiChat">
     messages?: AiChatMessageListRelationFilter
     application?: XOR<ApplicationNullableScalarRelationFilter, ApplicationWhereInput> | null
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
@@ -19062,6 +19058,7 @@ export namespace Prisma {
     userId?: SortOrder
     applicationId?: SortOrderInput | SortOrder
     organizationId?: SortOrder
+    metadata?: SortOrderInput | SortOrder
     messages?: AiChatMessageOrderByRelationAggregateInput
     application?: ApplicationOrderByWithRelationInput
     organization?: OrganizationOrderByWithRelationInput
@@ -19080,6 +19077,7 @@ export namespace Prisma {
     userId?: UuidFilter<"AiChat"> | string
     applicationId?: StringNullableFilter<"AiChat"> | string | null
     organizationId?: StringFilter<"AiChat"> | string
+    metadata?: JsonNullableFilter<"AiChat">
     messages?: AiChatMessageListRelationFilter
     application?: XOR<ApplicationNullableScalarRelationFilter, ApplicationWhereInput> | null
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
@@ -19095,6 +19093,7 @@ export namespace Prisma {
     userId?: SortOrder
     applicationId?: SortOrderInput | SortOrder
     organizationId?: SortOrder
+    metadata?: SortOrderInput | SortOrder
     _count?: AiChatCountOrderByAggregateInput
     _max?: AiChatMaxOrderByAggregateInput
     _min?: AiChatMinOrderByAggregateInput
@@ -19112,6 +19111,7 @@ export namespace Prisma {
     userId?: UuidWithAggregatesFilter<"AiChat"> | string
     applicationId?: StringNullableWithAggregatesFilter<"AiChat"> | string | null
     organizationId?: StringWithAggregatesFilter<"AiChat"> | string
+    metadata?: JsonNullableWithAggregatesFilter<"AiChat">
   }
 
   export type AiChatMessageWhereInput = {
@@ -20242,7 +20242,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: string | null
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
@@ -20259,7 +20258,6 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
@@ -20274,7 +20272,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
@@ -20291,7 +20288,6 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
@@ -20307,7 +20303,6 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: string | null
   }
 
@@ -20320,7 +20315,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -20334,7 +20328,6 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -20344,6 +20337,7 @@ export namespace Prisma {
     context: $Enums.AiChatContext
     createdAt?: Date | string
     updatedAt?: Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageCreateNestedManyWithoutChatInput
     application?: ApplicationCreateNestedOneWithoutAiChatsInput
     organization: OrganizationCreateNestedOneWithoutAiChatsInput
@@ -20359,6 +20353,7 @@ export namespace Prisma {
     userId: string
     applicationId?: string | null
     organizationId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageUncheckedCreateNestedManyWithoutChatInput
   }
 
@@ -20368,6 +20363,7 @@ export namespace Prisma {
     context?: EnumAiChatContextFieldUpdateOperationsInput | $Enums.AiChatContext
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageUpdateManyWithoutChatNestedInput
     application?: ApplicationUpdateOneWithoutAiChatsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutAiChatsNestedInput
@@ -20383,6 +20379,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     applicationId?: NullableStringFieldUpdateOperationsInput | string | null
     organizationId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageUncheckedUpdateManyWithoutChatNestedInput
   }
 
@@ -20395,6 +20392,7 @@ export namespace Prisma {
     userId: string
     applicationId?: string | null
     organizationId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type AiChatUpdateManyMutationInput = {
@@ -20403,6 +20401,7 @@ export namespace Prisma {
     context?: EnumAiChatContextFieldUpdateOperationsInput | $Enums.AiChatContext
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type AiChatUncheckedUpdateManyInput = {
@@ -20414,6 +20413,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     applicationId?: NullableStringFieldUpdateOperationsInput | string | null
     organizationId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type AiChatMessageCreateInput = {
@@ -21669,7 +21669,6 @@ export namespace Prisma {
     submittedAt?: SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
-    checklist?: SortOrder
     attachments_markdown?: SortOrder
   }
 
@@ -21748,6 +21747,7 @@ export namespace Prisma {
     userId?: SortOrder
     applicationId?: SortOrder
     organizationId?: SortOrder
+    metadata?: SortOrder
   }
 
   export type AiChatMaxOrderByAggregateInput = {
@@ -23321,6 +23321,7 @@ export namespace Prisma {
     context: $Enums.AiChatContext
     createdAt?: Date | string
     updatedAt?: Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageCreateNestedManyWithoutChatInput
     application?: ApplicationCreateNestedOneWithoutAiChatsInput
     organization: OrganizationCreateNestedOneWithoutAiChatsInput
@@ -23334,6 +23335,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     applicationId?: string | null
     organizationId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageUncheckedCreateNestedManyWithoutChatInput
   }
 
@@ -23480,6 +23482,7 @@ export namespace Prisma {
     userId?: UuidFilter<"AiChat"> | string
     applicationId?: StringNullableFilter<"AiChat"> | string | null
     organizationId?: StringFilter<"AiChat"> | string
+    metadata?: JsonNullableFilter<"AiChat">
   }
 
   export type GrantBookmarkUpsertWithWhereUniqueWithoutUserInput = {
@@ -23601,6 +23604,7 @@ export namespace Prisma {
     context: $Enums.AiChatContext
     createdAt?: Date | string
     updatedAt?: Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageCreateNestedManyWithoutChatInput
     application?: ApplicationCreateNestedOneWithoutAiChatsInput
     user: UserCreateNestedOneWithoutAiChatsInput
@@ -23614,6 +23618,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     userId: string
     applicationId?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageUncheckedCreateNestedManyWithoutChatInput
   }
 
@@ -23636,7 +23641,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: string | null
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
@@ -23651,7 +23655,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
@@ -23844,7 +23847,6 @@ export namespace Prisma {
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
     organizationId?: StringFilter<"Application"> | string
-    checklist?: JsonNullableFilter<"Application">
     attachments_markdown?: StringNullableFilter<"Application"> | string | null
   }
 
@@ -24374,6 +24376,7 @@ export namespace Prisma {
     context: $Enums.AiChatContext
     createdAt?: Date | string
     updatedAt?: Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageCreateNestedManyWithoutChatInput
     organization: OrganizationCreateNestedOneWithoutAiChatsInput
     user: UserCreateNestedOneWithoutAiChatsInput
@@ -24387,6 +24390,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     userId: string
     organizationId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageUncheckedCreateNestedManyWithoutChatInput
   }
 
@@ -24678,7 +24682,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: string | null
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
@@ -24694,7 +24697,6 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: string | null
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
   }
@@ -24868,7 +24870,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
@@ -24884,7 +24885,6 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
   }
@@ -25023,6 +25023,7 @@ export namespace Prisma {
     context: $Enums.AiChatContext
     createdAt?: Date | string
     updatedAt?: Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     application?: ApplicationCreateNestedOneWithoutAiChatsInput
     organization: OrganizationCreateNestedOneWithoutAiChatsInput
     user: UserCreateNestedOneWithoutAiChatsInput
@@ -25037,6 +25038,7 @@ export namespace Prisma {
     userId: string
     applicationId?: string | null
     organizationId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type AiChatCreateOrConnectWithoutMessagesInput = {
@@ -25061,6 +25063,7 @@ export namespace Prisma {
     context?: EnumAiChatContextFieldUpdateOperationsInput | $Enums.AiChatContext
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     application?: ApplicationUpdateOneWithoutAiChatsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutAiChatsNestedInput
     user?: UserUpdateOneRequiredWithoutAiChatsNestedInput
@@ -25075,6 +25078,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     applicationId?: NullableStringFieldUpdateOperationsInput | string | null
     organizationId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type OrganizationCreateWithoutRecommendationsInput = {
@@ -25250,7 +25254,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: string | null
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
@@ -25266,7 +25269,6 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
   }
@@ -25296,7 +25298,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
@@ -25312,7 +25313,6 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
   }
@@ -25522,6 +25522,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     applicationId?: string | null
     organizationId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type GrantBookmarkCreateManyUserInput = {
@@ -25538,6 +25539,7 @@ export namespace Prisma {
     context?: EnumAiChatContextFieldUpdateOperationsInput | $Enums.AiChatContext
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageUpdateManyWithoutChatNestedInput
     application?: ApplicationUpdateOneWithoutAiChatsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutAiChatsNestedInput
@@ -25551,6 +25553,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     applicationId?: NullableStringFieldUpdateOperationsInput | string | null
     organizationId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageUncheckedUpdateManyWithoutChatNestedInput
   }
 
@@ -25562,6 +25565,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     applicationId?: NullableStringFieldUpdateOperationsInput | string | null
     organizationId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type GrantBookmarkUpdateWithoutUserInput = {
@@ -25596,6 +25600,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     userId: string
     applicationId?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type ApplicationCreateManyOrganizationInput = {
@@ -25607,7 +25612,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: string | null
   }
 
@@ -25661,6 +25665,7 @@ export namespace Prisma {
     context?: EnumAiChatContextFieldUpdateOperationsInput | $Enums.AiChatContext
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageUpdateManyWithoutChatNestedInput
     application?: ApplicationUpdateOneWithoutAiChatsNestedInput
     user?: UserUpdateOneRequiredWithoutAiChatsNestedInput
@@ -25674,6 +25679,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
     applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageUncheckedUpdateManyWithoutChatNestedInput
   }
 
@@ -25685,6 +25691,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
     applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type ApplicationUpdateWithoutOrganizationInput = {
@@ -25696,7 +25703,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
@@ -25711,7 +25717,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
@@ -25726,7 +25731,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    checklist?: NullableJsonNullValueInput | InputJsonValue
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -25874,6 +25878,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     userId: string
     organizationId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type DocumentCreateManyApplicationInput = {
@@ -25893,6 +25898,7 @@ export namespace Prisma {
     context?: EnumAiChatContextFieldUpdateOperationsInput | $Enums.AiChatContext
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageUpdateManyWithoutChatNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutAiChatsNestedInput
     user?: UserUpdateOneRequiredWithoutAiChatsNestedInput
@@ -25906,6 +25912,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
     organizationId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     messages?: AiChatMessageUncheckedUpdateManyWithoutChatNestedInput
   }
 
@@ -25917,6 +25924,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
     organizationId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type DocumentUpdateWithoutApplicationInput = {
