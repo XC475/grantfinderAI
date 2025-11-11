@@ -38,9 +38,12 @@ export function DocumentChatSidebar({
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const [openTabs, setOpenTabs] = useState<string[]>([]); // Track which chats are open in tabs
   const [loadingSessions, setLoadingSessions] = useState(false);
+  const [editingTabId, setEditingTabId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState("");
   const hasAutoSent = useRef(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const hasAutoLoaded = useRef(false);
+  const editInputRef = useRef<HTMLInputElement>(null);
 
   // Load chat sessions on mount and auto-load most recent
   useEffect(() => {
@@ -192,6 +195,54 @@ export function DocumentChatSidebar({
     }
 
     console.log("💬 [DocumentChat] Closed tab:", tabId);
+  };
+
+  const startEditingTab = (tabId: string, currentTitle: string) => {
+    setEditingTabId(tabId);
+    setEditingTitle(currentTitle);
+    // Focus the input after state updates
+    setTimeout(() => {
+      editInputRef.current?.focus();
+      editInputRef.current?.select();
+    }, 0);
+  };
+
+  const saveTabTitle = async (tabId: string) => {
+    if (!editingTitle.trim()) {
+      cancelEditingTab();
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/chats/editor/${tabId}/title`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title: editingTitle.trim() }),
+      });
+
+      if (response.ok) {
+        // Update local state
+        setChatSessions((prev) =>
+          prev.map((session) =>
+            session.id === tabId
+              ? { ...session, title: editingTitle.trim() }
+              : session
+          )
+        );
+        console.log("💬 [DocumentChat] Renamed tab:", tabId);
+      }
+    } catch (error) {
+      console.error("Error renaming tab:", error);
+    } finally {
+      cancelEditingTab();
+    }
+  };
+
+  const cancelEditingTab = () => {
+    setEditingTabId(null);
+    setEditingTitle("");
   };
 
   const startNewChat = () => {
@@ -438,31 +489,59 @@ export function DocumentChatSidebar({
               const session = chatSessions.find((s) => s.id === tabId);
               if (!session) return null;
 
+              const isEditing = editingTabId === session.id;
+
               return (
-                <button
+                <div
                   key={session.id}
-                  onClick={() => loadChatSession(session.id)}
                   className={`
                     group flex items-center gap-2 px-3 py-2 border-r hover:bg-muted/50 transition-colors
                     min-w-[120px] max-w-[200px] flex-shrink-0
                     ${chatId === session.id ? "bg-muted" : ""}
                   `}
                 >
-                  <span className="text-sm truncate flex-1 text-left">
-                    {session.title}
-                  </span>
-                  <X
-                    className={`h-3 w-3 transition-opacity ${
-                      chatId === session.id
-                        ? "opacity-0 group-hover:opacity-100"
-                        : "opacity-0"
-                    }`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      closeTab(session.id);
-                    }}
-                  />
-                </button>
+                  {isEditing ? (
+                    <input
+                      ref={editInputRef}
+                      type="text"
+                      value={editingTitle}
+                      onChange={(e) => setEditingTitle(e.target.value)}
+                      onBlur={() => saveTabTitle(session.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          saveTabTitle(session.id);
+                        } else if (e.key === "Escape") {
+                          cancelEditingTab();
+                        }
+                      }}
+                      className="text-sm flex-1 bg-background border-none outline-none focus:ring-1 focus:ring-primary rounded px-1"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  ) : (
+                    <span
+                      className="text-sm truncate flex-1 text-left cursor-pointer"
+                      onClick={() => loadChatSession(session.id)}
+                      onDoubleClick={() =>
+                        startEditingTab(session.id, session.title || "")
+                      }
+                    >
+                      {session.title}
+                    </span>
+                  )}
+                  {!isEditing && (
+                    <X
+                      className={`h-3 w-3 transition-opacity ${
+                        chatId === session.id
+                          ? "opacity-0 group-hover:opacity-100"
+                          : "opacity-0"
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        closeTab(session.id);
+                      }}
+                    />
+                  )}
+                </div>
               );
             })
           )}
