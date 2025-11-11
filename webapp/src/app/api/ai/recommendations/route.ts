@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 import { ChatOpenAI } from "@langchain/openai";
 import { ToolMessage } from "@langchain/core/messages";
+import type { ToolCall } from "@langchain/core/messages/tool";
 import { createGrantSearchTool } from "@/lib/ai/tools/grant-search-tool";
 import { DistrictInfo } from "@/lib/ai/prompts/grants-assistant";
 
@@ -17,7 +18,7 @@ interface RecommendationResult {
   query_date: string;
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   try {
     console.log("🎯 [Recommendations] Starting recommendation generation...");
 
@@ -139,7 +140,7 @@ export async function POST(req: NextRequest) {
 
     // 10. Execute the model with the system prompt
     let fullResponse = "";
-    let toolCalls: any[] = [];
+    let toolCalls: ToolCall[] = [];
 
     // First invocation - model decides what tools to call
     const initialResponse = await modelWithTools.invoke([
@@ -162,7 +163,7 @@ export async function POST(req: NextRequest) {
 
       // Execute each tool call
       const toolResults = await Promise.all(
-        toolCalls.map(async (toolCall: any) => {
+        toolCalls.map(async (toolCall: ToolCall) => {
           console.log(`🔧 [Recommendations] Executing tool: ${toolCall.name}`);
           console.log(
             `   Args: ${JSON.stringify(toolCall.args, null, 2).substring(0, 200)}`
@@ -170,7 +171,9 @@ export async function POST(req: NextRequest) {
 
           try {
             // Execute the tool
-            const result = await grantSearchTool.invoke(toolCall.args);
+            const result = await grantSearchTool.invoke(
+              toolCall.args as { query: string; stateCode?: string }
+            );
             console.log(
               `✅ [Recommendations] Tool ${toolCall.name} completed successfully`
             );
@@ -178,8 +181,8 @@ export async function POST(req: NextRequest) {
             return new ToolMessage({
               content:
                 typeof result === "string" ? result : JSON.stringify(result),
-              tool_call_id: toolCall.id,
-              name: toolCall.name,
+              tool_call_id: toolCall.id || "",
+              name: toolCall.name || "search_grants",
             });
           } catch (error) {
             console.error(
@@ -193,8 +196,8 @@ export async function POST(req: NextRequest) {
                     ? error.message
                     : "Tool execution failed",
               }),
-              tool_call_id: toolCall.id,
-              name: toolCall.name,
+              tool_call_id: toolCall.id || "",
+              name: toolCall.name || "search_grants",
             });
           }
         })

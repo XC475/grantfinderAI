@@ -6,6 +6,15 @@ import { cn } from "@/lib/utils";
 import { Chat } from "@/components/ui/chat";
 import { Message } from "@/components/ui/chat-message";
 
+interface FileAttachment {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  url: string;
+  extractedText?: string;
+}
+
 type ChatDemoProps = {
   initialMessages?: Message[];
   chatId?: string;
@@ -69,7 +78,7 @@ export function ChatDemo(props: ChatDemoProps) {
       console.log("🔄 [Chat] Upload started - loading state enabled");
 
       // Handle file attachments if present
-      let attachments: any[] | undefined;
+      let attachments: FileAttachment[] | undefined;
       if (
         options?.experimental_attachments &&
         options.experimental_attachments.length > 0
