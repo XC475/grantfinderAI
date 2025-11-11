@@ -120,9 +120,9 @@ function GrantsSearchPage() {
   const searchParams = useSearchParams();
   const slug = params.slug as string;
 
-  // Tab state - default to recommendations as it's now the primary tab
+  // Tab state - default to search
   const [activeTab, setActiveTab] = useState<TabView>(
-    (searchParams.get("tab") as TabView) || "recommendations"
+    (searchParams.get("tab") as TabView) || "search"
   );
   const [grants, setGrants] = useState<Grant[]>([]);
   const [loading, setLoading] = useState(true);
@@ -184,8 +184,6 @@ function GrantsSearchPage() {
   // Bookmarks state
   const [bookmarks, setBookmarks] = useState<BookmarkData[]>([]);
   const [loadingBookmarks, setLoadingBookmarks] = useState(false);
-  const [bookmarksInitiallyFetched, setBookmarksInitiallyFetched] =
-    useState(false);
 
   // Cache state with timestamps (5 minute TTL)
   const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
@@ -233,18 +231,6 @@ function GrantsSearchPage() {
   useEffect(() => {
     fetchBookmarks();
   }, []);
-
-  // Switch to bookmarks tab if bookmarks exist and no tab was specified in URL
-  useEffect(() => {
-    if (bookmarksInitiallyFetched && !searchParams.get("tab")) {
-      if (bookmarks.length > 0) {
-        setActiveTab("bookmarks");
-        console.log(
-          "📌 Auto-switching to Bookmarks tab (you have saved grants)"
-        );
-      }
-    }
-  }, [bookmarksInitiallyFetched, bookmarks.length, searchParams]);
 
   // Fetch filter options
   useEffect(() => {
@@ -629,18 +615,9 @@ function GrantsSearchPage() {
       console.log(
         `✅ Bookmarks fetched and cached (${validBookmarks.length} valid)`
       );
-
-      // Mark as initially fetched for tab switching logic
-      if (!bookmarksInitiallyFetched) {
-        setBookmarksInitiallyFetched(true);
-      }
     } catch (e) {
       console.error(e);
       toast.error("Failed to load bookmarks");
-      // Still mark as fetched even on error
-      if (!bookmarksInitiallyFetched) {
-        setBookmarksInitiallyFetched(true);
-      }
     } finally {
       setLoadingBookmarks(false);
     }
@@ -754,58 +731,16 @@ function GrantsSearchPage() {
       {/* Tab Navigation */}
       <div className="mb-6">
         <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
-            {/* Bookmarks first if any exist */}
-            {bookmarks.length > 0 && (
-              <button
-                onClick={() => handleTabChange("bookmarks")}
-                className={`
-                  py-4 px-1 border-b-2 font-medium text-sm transition-colors
-                  ${
-                    activeTab === "bookmarks"
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                  }
-                `}
-              >
-                <Bookmark className="inline h-4 w-4 mr-2" />
-                Bookmarks
-                <span className="ml-2 text-xs bg-cyan-100 text-cyan-600 px-2 py-1 rounded-full">
-                  {bookmarks.length}
-                </span>
-              </button>
-            )}
-
-            {/* Recommendations */}
-            <button
-              onClick={() => handleTabChange("recommendations")}
-              className={`
-                py-4 px-1 border-b-2 font-medium text-sm transition-colors
-                ${
-                  activeTab === "recommendations"
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                }
-              `}
-            >
-              <Sparkles className="inline h-4 w-4 mr-2" />
-              Recommendations
-              {recommendations.length > 0 && (
-                <span className="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
-                  {recommendations.length}
-                </span>
-              )}
-            </button>
-
+          <nav className="-mb-px flex space-x-2">
             {/* Search Grants */}
             <button
               onClick={() => handleTabChange("search")}
               className={`
-                py-4 px-1 border-b-2 font-medium text-sm transition-colors
+                py-3 px-4 font-medium text-sm transition-all rounded-t-lg
                 ${
                   activeTab === "search"
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
+                    ? "bg-background text-primary border border-b-0 border-gray-200"
+                    : "text-muted-foreground hover:text-foreground hover:bg-gray-50"
                 }
               `}
             >
@@ -818,23 +753,47 @@ function GrantsSearchPage() {
               )}
             </button>
 
-            {/* Bookmarks last if none exist */}
-            {bookmarks.length === 0 && (
-              <button
-                onClick={() => handleTabChange("bookmarks")}
-                className={`
-                  py-4 px-1 border-b-2 font-medium text-sm transition-colors
-                  ${
-                    activeTab === "bookmarks"
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300"
-                  }
-                `}
-              >
-                <Bookmark className="inline h-4 w-4 mr-2" />
-                Bookmarks
-              </button>
-            )}
+            {/* Recommendations */}
+            <button
+              onClick={() => handleTabChange("recommendations")}
+              className={`
+                py-3 px-4 font-medium text-sm transition-all rounded-t-lg
+                ${
+                  activeTab === "recommendations"
+                    ? "bg-background text-primary border border-b-0 border-gray-200"
+                    : "text-muted-foreground hover:text-foreground hover:bg-gray-50"
+                }
+              `}
+            >
+              <Sparkles className="inline h-4 w-4 mr-2" />
+              Recommendations
+              {recommendations.length > 0 && (
+                <span className="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+                  {recommendations.length}
+                </span>
+              )}
+            </button>
+
+            {/* Bookmarks */}
+            <button
+              onClick={() => handleTabChange("bookmarks")}
+              className={`
+                py-3 px-4 font-medium text-sm transition-all rounded-t-lg
+                ${
+                  activeTab === "bookmarks"
+                    ? "bg-background text-primary border border-b-0 border-gray-200"
+                    : "text-muted-foreground hover:text-foreground hover:bg-gray-50"
+                }
+              `}
+            >
+              <Bookmark className="inline h-4 w-4 mr-2" />
+              Bookmarks
+              {bookmarks.length > 0 && (
+                <span className="ml-2 text-xs bg-cyan-100 text-cyan-600 px-2 py-1 rounded-full">
+                  {bookmarks.length}
+                </span>
+              )}
+            </button>
           </nav>
         </div>
       </div>
