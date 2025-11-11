@@ -234,11 +234,19 @@ Use **clean, well-structured markdown** with clear visual hierarchy.
     const openAiMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       { role: "system", content: systemPrompt },
       ...messages.map(
-        (msg: { role: string; content: string; attachments?: FileAttachment[] }) => {
+        (msg: {
+          role: string;
+          content: string;
+          attachments?: FileAttachment[];
+        }) => {
           let content = msg.content;
 
           // Append extracted text from attachments to user messages
-          if (msg.role === "user" && msg.attachments && msg.attachments.length > 0) {
+          if (
+            msg.role === "user" &&
+            msg.attachments &&
+            msg.attachments.length > 0
+          ) {
             const attachmentTexts = msg.attachments
               .map((attachment) => {
                 if (attachment.extractedText) {

@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  forwardRef,
-  useCallback,
-  useRef,
-  useState,
-  type ReactElement,
-} from "react";
+import { forwardRef, useCallback, useRef, useState } from "react";
 import { ArrowDown, Square, ArrowUp } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -248,30 +242,8 @@ export const ChatContainer = forwardRef<
 });
 ChatContainer.displayName = "ChatContainer";
 
-interface ChatFormProps {
-  className?: string;
-  isPending: boolean;
-  handleSubmit: (
-    event?: { preventDefault?: () => void },
-    options?: { experimental_attachments?: FileList }
-  ) => void;
-  children: ReactElement;
-}
-
-export const ChatForm = forwardRef<HTMLFormElement, ChatFormProps>(
-  ({ children, handleSubmit, className }, ref) => {
-    const onSubmit = (event: React.FormEvent) => {
-      handleSubmit(event);
-    };
-
-    return (
-      <form ref={ref} onSubmit={onSubmit} className={className}>
-        {children}
-      </form>
-    );
-  }
-);
-ChatForm.displayName = "ChatForm";
+// Removed local ChatForm and ChatFormProps - now using BaseChatForm from @/components/ui/chat
+// which properly manages file state and clears files after submission
 
 type AdditionalMessageOptions = Omit<ChatMessageProps, keyof Message>;
 
@@ -336,7 +308,6 @@ function SidebarMessageInput({
   ...props
 }: SidebarMessageInputProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (submitOnEnter && event.key === "Enter" && !event.shiftKey) {
@@ -356,18 +327,26 @@ function SidebarMessageInput({
     dependencies: [props.value],
   });
 
-  // Handle file selection
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = event.target.files;
-    if (selectedFiles && selectedFiles.length > 0 && setFiles) {
-      setFiles((prevFiles) => [
-        ...(prevFiles || []),
-        ...Array.from(selectedFiles),
-      ]);
-    }
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+  // Handle file selection - create new input each time (same as MessageInput)
+  const handleFileButtonClick = () => {
+    if (!setFiles) return;
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.multiple = true;
+    input.accept = ".pdf,.docx,.txt,.csv";
+
+    input.onchange = (e) => {
+      const selectedFiles = (e.currentTarget as HTMLInputElement).files;
+      if (selectedFiles && selectedFiles.length > 0) {
+        setFiles((prevFiles) => [
+          ...(prevFiles || []),
+          ...Array.from(selectedFiles),
+        ]);
+      }
+    };
+
+    input.click();
   };
 
   // Handle drag and drop
@@ -457,27 +436,17 @@ function SidebarMessageInput({
 
         <div className="absolute right-3 top-3 z-20 flex gap-1">
           {setFiles && (
-            <>
-              <input
-                ref={fileInputRef}
-                type="file"
-                className="hidden"
-                multiple
-                onChange={handleFileChange}
-                accept=".pdf,.docx,.txt,.csv"
-              />
-              <Button
-                type="button"
-                size="icon"
-                variant="ghost"
-                className="h-8 w-8"
-                aria-label="Attach files"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isGenerating}
-              >
-                <Paperclip className="h-4 w-4" />
-              </Button>
-            </>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8"
+              aria-label="Attach files"
+              onClick={handleFileButtonClick}
+              disabled={isGenerating}
+            >
+              <Paperclip className="h-4 w-4" />
+            </Button>
           )}
           {isGenerating && stop ? (
             <Button
