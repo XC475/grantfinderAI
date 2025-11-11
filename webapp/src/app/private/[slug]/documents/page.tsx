@@ -103,15 +103,9 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
     fetchDocuments(false, pagination.offset + pagination.limit);
   };
 
-  const handleEdit = (documentId: string, applicationId?: string | null) => {
-    if (applicationId) {
-      router.push(
-        `/private/${slug}/applications/${applicationId}/documents/${documentId}`
-      );
-    } else {
-      // For standalone documents, navigate to a standalone editor (if you create one)
-      toast.info("Standalone document editor coming soon");
-    }
+  const handleEdit = (documentId: string) => {
+    // Route to the editor page for all documents
+    router.push(`/private/${slug}/editor/${documentId}`);
   };
 
   const handleDeleteClick = (
@@ -247,9 +241,7 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
                 <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 <span
                   className="font-medium hover:underline cursor-pointer truncate"
-                  onClick={() =>
-                    handleEdit(document.id, document.applicationId)
-                  }
+                  onClick={() => handleEdit(document.id)}
                 >
                   {document.title}
                 </span>
