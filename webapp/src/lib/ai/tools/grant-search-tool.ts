@@ -9,6 +9,7 @@ export function createGrantSearchTool(districtInfo: DistrictInfo | null) {
     description: `Search for grant funding opportunities in the database. 
 Use this when the user asks to find, search for, or get recommendations on grants.
 The search uses semantic similarity to find relevant opportunities based on the query meaning.
+Status: posted (only returns currently open grants).
 ${districtInfo?.state ? `The district is located in ${districtInfo.state}.` : ""}
 ${districtInfo?.enrollment ? `The district has ${districtInfo.enrollment} students enrolled.` : ""}`,
 
@@ -28,25 +29,18 @@ ${districtInfo?.enrollment ? `The district has ${districtInfo.enrollment} studen
           "Two-letter state code to filter grants (e.g., 'MA', 'NY', 'CA'). Use 'US' for federal grants. " +
             "If the district has a state, prefer that state's grants unless user specifies otherwise."
         ),
-      status: z
-        .enum(["posted", "forecasted", "closed"])
-        .optional()
-        .describe(
-          "Grant status filter. Use 'posted' for currently open grants (default), " +
-            "'forecasted' for upcoming opportunities, 'closed' for past grants."
-        ),
     }),
 
-    func: async ({ query, stateCode, status }) => {
+    func: async ({ query, stateCode }) => {
       console.log(`🔧 Tool invoked: search_grants`);
       console.log(`   Query: "${query}"`);
       console.log(`   State: ${stateCode || districtInfo?.state || "any"}`);
-      console.log(`   Status: ${status || "posted"}`);
+      console.log(`   Status: posted`);
 
       try {
         const results = await searchGrants(query, {
           stateCode: stateCode || districtInfo?.state || undefined,
-          status: status || "posted",
+          status: "posted",
         });
 
         if (results.length === 0) {

@@ -521,7 +521,7 @@ function GrantsSearchPage() {
       }
 
       // Fetch existing recommendations
-      const recResponse = await fetch("/api/recommendations/list");
+      const recResponse = await fetch("/api/ai/recommendations/list");
       if (recResponse.ok) {
         const recData = await recResponse.json();
         const recs = recData.recommendations || [];
@@ -562,26 +562,34 @@ function GrantsSearchPage() {
   const handleRunRecommendations = async () => {
     setRunningRecommendations(true);
     try {
-      const response = await fetch("/api/recommendations", {
+      const response = await fetch("/api/ai/recommendations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          message: "Generate grant recommendations for our organization",
-        }),
+        body: JSON.stringify({}),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to generate recommendations");
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || "Failed to generate recommendations"
+        );
       }
 
-      toast.success("Recommendations generated successfully!");
+      const data = await response.json();
+      toast.success(
+        `Recommendations generated successfully! Found ${data.count} grant${data.count !== 1 ? "s" : ""}.`
+      );
       // Force refresh after generating new recommendations
       await fetchRecommendations(true);
     } catch (error) {
       console.error("Error generating recommendations:", error);
-      toast.error("Failed to generate recommendations. Please try again.");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to generate recommendations. Please try again."
+      );
     } finally {
       setRunningRecommendations(false);
     }

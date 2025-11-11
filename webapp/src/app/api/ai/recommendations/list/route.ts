@@ -4,7 +4,9 @@ import prisma from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
   try {
-    // Get authenticated user
+    console.log("📋 [Recommendations List] Fetching recommendations...");
+
+    // 1. Authenticate user
     const supabase = await createClient();
     const {
       data: { user },
@@ -15,39 +17,49 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's organization
-    const userRecord = await prisma.user.findUnique({
+    // 2. Get user's organization
+    const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
       select: { organizationId: true },
     });
 
-    if (!userRecord?.organizationId) {
+    if (!dbUser?.organizationId) {
       return NextResponse.json(
-        { error: "Organization not found" },
+        { error: "User organization not found" },
         { status: 404 }
       );
     }
 
-    // Fetch recommendations for this organization
+    // 3. Fetch recommendations for this organization
     const recommendations = await prisma.recommendation.findMany({
       where: {
-        organizationId: userRecord.organizationId,
+        organizationId: dbUser.organizationId,
       },
       orderBy: [
-        { fitScore: "desc" }, // Sort by fit score descending
-        { createdAt: "desc" }, // Then by creation date
+        { fitScore: "desc" }, // Sort by fit score (highest first)
+        { queryDate: "desc" }, // Then by query date (most recent first)
       ],
     });
 
+    console.log(
+      `✅ [Recommendations List] Found ${recommendations.length} recommendations`
+    );
+
+    // 4. Return recommendations
     return NextResponse.json({
       success: true,
-      recommendations,
       count: recommendations.length,
+      recommendations: recommendations,
     });
   } catch (error) {
-    console.error("❌ [Recommendations List API] Error:", error);
+    console.error("❌ [Recommendations List] Error:", error);
     return NextResponse.json(
-      { error: "Failed to fetch recommendations" },
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch recommendations",
+      },
       { status: 500 }
     );
   }
