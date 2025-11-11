@@ -30,20 +30,14 @@ export async function GET() {
           {
             AND: [
               { context: "DRAFTING" },
+              // Exclude only chats that specifically have chatType='editor_assistant'
               {
-                OR: [
-                  // Chats without metadata (backward compatibility)
-                  { metadata: { equals: null } },
-                  // Chats with metadata but no chatType
-                  {
-                    NOT: {
-                      metadata: {
-                        path: ["chatType"],
-                        equals: "editor_assistant",
-                      },
-                    },
+                NOT: {
+                  metadata: {
+                    path: ["chatType"],
+                    equals: "editor_assistant",
                   },
-                ],
+                },
               },
             ],
           },
