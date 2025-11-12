@@ -92,7 +92,8 @@ export function ApplicationPage({
       if (response.ok) {
         const data = await response.json();
         const appFolder = data.folders.find(
-          (f: any) => f.applicationId === applicationId
+          (f: { id: string; applicationId: string | null }) =>
+            f.applicationId === applicationId
         );
         if (appFolder) {
           setApplicationFolderId(appFolder.id);

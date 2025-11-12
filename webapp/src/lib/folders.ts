@@ -106,7 +106,12 @@ export async function getFolderPath(
   let currentId: string | null = folderId;
 
   while (currentId) {
-    const folder = await prisma.folder.findUnique({
+    const folder: {
+      id: string;
+      name: string;
+      parentFolderId: string | null;
+      applicationId: string | null;
+    } | null = await prisma.folder.findUnique({
       where: { id: currentId },
       select: {
         id: true,

@@ -27,9 +27,10 @@ export function FolderBreadcrumb({
         variant="ghost"
         size="sm"
         onClick={() => onNavigate(null)}
-        className="h-auto p-0 hover:bg-transparent font-bold text-2xl flex-shrink-0"
+        className="h-auto p-0 hover:bg-transparent font-bold text-2xl truncate max-w-[200px]"
+        title={rootLabel}
       >
-        {rootLabel}
+        <span className="truncate">{rootLabel}</span>
       </Button>
 
       {folderPath.map((folder, index) => (

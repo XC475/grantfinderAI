@@ -88,7 +88,6 @@ function DraggableFolder({
           </div>
         </div>
       </td>
-      <td className="py-3 px-4 text-sm text-muted-foreground">—</td>
       <td className="py-3 px-4 text-sm text-muted-foreground">
         {format(new Date(folder.updatedAt), "MMM d, yyyy")}
       </td>
@@ -165,7 +164,6 @@ function DraggableDocument({
           </div>
         </div>
       </td>
-      <td className="py-3 px-4 text-sm text-muted-foreground">me</td>
       <td className="py-3 px-4 text-sm text-muted-foreground">
         {format(new Date(document.updatedAt), "MMM d, yyyy")}
       </td>
@@ -230,20 +228,17 @@ export function FolderList({
     <div
       ref={setRootDropRef}
       className={cn(
-        "border rounded-lg overflow-hidden",
+        "overflow-hidden",
         isRootOver && "ring-2 ring-primary ring-offset-2"
       )}
     >
       <table className="w-full">
-        <thead className="bg-muted/50 border-b">
+        <thead className="border-b">
           <tr>
-            <th className="py-3 px-4 text-left text-sm font-medium text-muted-foreground">
+            <th className="py-3 px-4 text-left text-sm font-medium text-muted-foreground hover:bg-muted/30 cursor-pointer transition-colors">
               Name
             </th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-muted-foreground">
-              Owner
-            </th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-muted-foreground">
+            <th className="py-3 px-4 text-left text-sm font-medium text-muted-foreground hover:bg-muted/30 cursor-pointer transition-colors">
               Date modified
             </th>
             <th className="py-3 px-4 text-right w-12"></th>

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
-import { getFolderMetadata } from "@/lib/folders";
 
 // GET /api/folders - List folders for organization
 export async function GET(req: NextRequest) {
@@ -30,7 +29,11 @@ export async function GET(req: NextRequest) {
     const applicationId = searchParams.get("applicationId");
 
     // Build where clause
-    const where: any = {
+    const where: {
+      organizationId: string;
+      applicationId?: string;
+      parentFolderId?: string | null;
+    } = {
       organizationId: dbUser.organizationId,
     };
 

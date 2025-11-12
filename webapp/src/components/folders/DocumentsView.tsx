@@ -23,6 +23,7 @@ interface Document {
   title: string;
   updatedAt: string;
   applicationId?: string | null;
+  folderId?: string | null;
 }
 
 interface FolderPathItem {
@@ -89,7 +90,7 @@ export function DocumentsView({
 
           // Filter documents that don't have a folderId (root level only)
           const rootDocuments = (documentsData.data || []).filter(
-            (doc: any) => !doc.folderId
+            (doc: Document) => !doc.folderId
           );
 
           setFolders(foldersData.folders || []);
@@ -169,7 +170,7 @@ export function DocumentsView({
 
       const data = await response.json();
       toast.success("Document created successfully");
-      router.push(`/${organizationSlug}/editor/${data.document.id}`);
+      router.push(`/private/${organizationSlug}/editor/${data.document.id}`);
     } catch (error) {
       console.error("Error creating document:", error);
       toast.error("Failed to create document");
