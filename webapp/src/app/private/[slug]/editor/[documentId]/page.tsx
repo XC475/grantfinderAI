@@ -12,7 +12,7 @@ interface Document {
   content?: string;
   contentType: string;
   version: number;
-  applicationId: string;
+  applicationId: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -39,14 +39,14 @@ export default function EditorPage({ params }: DocumentPageProps) {
         setDocument(data.document);
       } else if (response.status === 404) {
         toast.error("Document not found");
-        router.push(`/private/${organizationSlug}/applications`);
+        router.push(`/private/${organizationSlug}/documents`);
       } else {
         throw new Error("Failed to fetch document");
       }
     } catch (error) {
       console.error("Error fetching document:", error);
       toast.error("Failed to load document");
-      router.push(`/private/${organizationSlug}/applications`);
+      router.push(`/private/${organizationSlug}/documents`);
     } finally {
       setLoading(false);
     }
@@ -57,24 +57,24 @@ export default function EditorPage({ params }: DocumentPageProps) {
 
     setSaving(true);
     try {
-      // Use the applicationId from the document data
-      const response = await fetch(
-        `/api/applications/${document.applicationId}/documents/${documentId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            content,
-            contentType: "html",
-          }),
-        }
-      );
+      const endpoint = document.applicationId
+        ? `/api/applications/${document.applicationId}/documents/${documentId}`
+        : `/api/documents/${documentId}`;
+
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content,
+          contentType: "html",
+        }),
+      });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to save document");
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Failed to save document");
       }
 
       const { document: updatedDocument } = await response.json();
@@ -114,12 +114,6 @@ export default function EditorPage({ params }: DocumentPageProps) {
   }
 
   return (
-    <DocumentEditor
-      document={document}
-      applicationId={document.applicationId}
-      organizationSlug={organizationSlug}
-      onSave={handleSave}
-      isSaving={saving}
-    />
+    <DocumentEditor document={document} onSave={handleSave} isSaving={saving} />
   );
 }

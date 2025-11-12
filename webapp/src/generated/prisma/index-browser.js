@@ -291,6 +291,18 @@ exports.Prisma.DocumentScalarFieldEnum = {
   metadata: 'metadata',
   version: 'version',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  organizationId: 'organizationId',
+  folderId: 'folderId'
+};
+
+exports.Prisma.FolderScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  organizationId: 'organizationId',
+  parentFolderId: 'parentFolderId',
+  applicationId: 'applicationId',
+  createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
@@ -468,6 +480,7 @@ exports.Prisma.ModelName = {
   Recommendation: 'Recommendation',
   VectorDocument: 'VectorDocument',
   Document: 'Document',
+  Folder: 'Folder',
   k12_education_opportunities: 'k12_education_opportunities'
 };
 

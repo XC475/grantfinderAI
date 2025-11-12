@@ -74,6 +74,11 @@ export type VectorDocument = $Result.DefaultSelection<Prisma.$VectorDocumentPayl
  */
 export type Document = $Result.DefaultSelection<Prisma.$DocumentPayload>
 /**
+ * Model Folder
+ * 
+ */
+export type Folder = $Result.DefaultSelection<Prisma.$FolderPayload>
+/**
  * Model k12_education_opportunities
  * This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
  */
@@ -518,6 +523,16 @@ export class PrismaClient<
     * ```
     */
   get document(): Prisma.DocumentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.folder`: Exposes CRUD operations for the **Folder** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Folders
+    * const folders = await prisma.folder.findMany()
+    * ```
+    */
+  get folder(): Prisma.FolderDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.k12_education_opportunities`: Exposes CRUD operations for the **k12_education_opportunities** model.
@@ -980,6 +995,7 @@ export namespace Prisma {
     Recommendation: 'Recommendation',
     VectorDocument: 'VectorDocument',
     Document: 'Document',
+    Folder: 'Folder',
     k12_education_opportunities: 'k12_education_opportunities'
   };
 
@@ -999,7 +1015,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "vectorDocument" | "document" | "k12_education_opportunities"
+      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "vectorDocument" | "document" | "folder" | "k12_education_opportunities"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1891,6 +1907,80 @@ export namespace Prisma {
           }
         }
       }
+      Folder: {
+        payload: Prisma.$FolderPayload<ExtArgs>
+        fields: Prisma.FolderFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FolderFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FolderPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FolderFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FolderPayload>
+          }
+          findFirst: {
+            args: Prisma.FolderFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FolderPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FolderFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FolderPayload>
+          }
+          findMany: {
+            args: Prisma.FolderFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FolderPayload>[]
+          }
+          create: {
+            args: Prisma.FolderCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FolderPayload>
+          }
+          createMany: {
+            args: Prisma.FolderCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FolderCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FolderPayload>[]
+          }
+          delete: {
+            args: Prisma.FolderDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FolderPayload>
+          }
+          update: {
+            args: Prisma.FolderUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FolderPayload>
+          }
+          deleteMany: {
+            args: Prisma.FolderDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FolderUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FolderUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FolderPayload>[]
+          }
+          upsert: {
+            args: Prisma.FolderUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FolderPayload>
+          }
+          aggregate: {
+            args: Prisma.FolderAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFolder>
+          }
+          groupBy: {
+            args: Prisma.FolderGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FolderGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FolderCountArgs<ExtArgs>
+            result: $Utils.Optional<FolderCountAggregateOutputType> | number
+          }
+        }
+      }
       k12_education_opportunities: {
         payload: Prisma.$k12_education_opportunitiesPayload<ExtArgs>
         fields: Prisma.k12_education_opportunitiesFieldRefs
@@ -2073,6 +2163,7 @@ export namespace Prisma {
     recommendation?: RecommendationOmit
     vectorDocument?: VectorDocumentOmit
     document?: DocumentOmit
+    folder?: FolderOmit
     k12_education_opportunities?: k12_education_opportunitiesOmit
   }
 
@@ -2227,6 +2318,8 @@ export namespace Prisma {
   export type OrganizationCountOutputType = {
     aiChats: number
     applications: number
+    documents: number
+    folders: number
     grantBookmarks: number
     eligibilityAnalyses: number
     recommendations: number
@@ -2236,6 +2329,8 @@ export namespace Prisma {
   export type OrganizationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | OrganizationCountOutputTypeCountAiChatsArgs
     applications?: boolean | OrganizationCountOutputTypeCountApplicationsArgs
+    documents?: boolean | OrganizationCountOutputTypeCountDocumentsArgs
+    folders?: boolean | OrganizationCountOutputTypeCountFoldersArgs
     grantBookmarks?: boolean | OrganizationCountOutputTypeCountGrantBookmarksArgs
     eligibilityAnalyses?: boolean | OrganizationCountOutputTypeCountEligibilityAnalysesArgs
     recommendations?: boolean | OrganizationCountOutputTypeCountRecommendationsArgs
@@ -2265,6 +2360,20 @@ export namespace Prisma {
    */
   export type OrganizationCountOutputTypeCountApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ApplicationWhereInput
+  }
+
+  /**
+   * OrganizationCountOutputType without action
+   */
+  export type OrganizationCountOutputTypeCountDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DocumentWhereInput
+  }
+
+  /**
+   * OrganizationCountOutputType without action
+   */
+  export type OrganizationCountOutputTypeCountFoldersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FolderWhereInput
   }
 
   /**
@@ -2364,6 +2473,46 @@ export namespace Prisma {
    */
   export type AiChatCountOutputTypeCountMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AiChatMessageWhereInput
+  }
+
+
+  /**
+   * Count Type FolderCountOutputType
+   */
+
+  export type FolderCountOutputType = {
+    documents: number
+    children: number
+  }
+
+  export type FolderCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    documents?: boolean | FolderCountOutputTypeCountDocumentsArgs
+    children?: boolean | FolderCountOutputTypeCountChildrenArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * FolderCountOutputType without action
+   */
+  export type FolderCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FolderCountOutputType
+     */
+    select?: FolderCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * FolderCountOutputType without action
+   */
+  export type FolderCountOutputTypeCountDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DocumentWhereInput
+  }
+
+  /**
+   * FolderCountOutputType without action
+   */
+  export type FolderCountOutputTypeCountChildrenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FolderWhereInput
   }
 
 
@@ -6447,6 +6596,8 @@ export namespace Prisma {
     logoUrl?: boolean
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
+    documents?: boolean | Organization$documentsArgs<ExtArgs>
+    folders?: boolean | Organization$foldersArgs<ExtArgs>
     grantBookmarks?: boolean | Organization$grantBookmarksArgs<ExtArgs>
     eligibilityAnalyses?: boolean | Organization$eligibilityAnalysesArgs<ExtArgs>
     recommendations?: boolean | Organization$recommendationsArgs<ExtArgs>
@@ -6554,6 +6705,8 @@ export namespace Prisma {
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
+    documents?: boolean | Organization$documentsArgs<ExtArgs>
+    folders?: boolean | Organization$foldersArgs<ExtArgs>
     grantBookmarks?: boolean | Organization$grantBookmarksArgs<ExtArgs>
     eligibilityAnalyses?: boolean | Organization$eligibilityAnalysesArgs<ExtArgs>
     recommendations?: boolean | Organization$recommendationsArgs<ExtArgs>
@@ -6568,6 +6721,8 @@ export namespace Prisma {
     objects: {
       aiChats: Prisma.$AiChatPayload<ExtArgs>[]
       applications: Prisma.$ApplicationPayload<ExtArgs>[]
+      documents: Prisma.$DocumentPayload<ExtArgs>[]
+      folders: Prisma.$FolderPayload<ExtArgs>[]
       grantBookmarks: Prisma.$GrantBookmarkPayload<ExtArgs>[]
       eligibilityAnalyses: Prisma.$GrantEligibilityAnalysisPayload<ExtArgs>[]
       recommendations: Prisma.$RecommendationPayload<ExtArgs>[]
@@ -6999,6 +7154,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     aiChats<T extends Organization$aiChatsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$aiChatsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     applications<T extends Organization$applicationsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$applicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    documents<T extends Organization$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    folders<T extends Organization$foldersArgs<ExtArgs> = {}>(args?: Subset<T, Organization$foldersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     grantBookmarks<T extends Organization$grantBookmarksArgs<ExtArgs> = {}>(args?: Subset<T, Organization$grantBookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GrantBookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     eligibilityAnalyses<T extends Organization$eligibilityAnalysesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$eligibilityAnalysesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GrantEligibilityAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     recommendations<T extends Organization$recommendationsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$recommendationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecommendationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -7494,6 +7651,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ApplicationScalarFieldEnum | ApplicationScalarFieldEnum[]
+  }
+
+  /**
+   * Organization.documents
+   */
+  export type Organization$documentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Document
+     */
+    select?: DocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Document
+     */
+    omit?: DocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentInclude<ExtArgs> | null
+    where?: DocumentWhereInput
+    orderBy?: DocumentOrderByWithRelationInput | DocumentOrderByWithRelationInput[]
+    cursor?: DocumentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DocumentScalarFieldEnum | DocumentScalarFieldEnum[]
+  }
+
+  /**
+   * Organization.folders
+   */
+  export type Organization$foldersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    where?: FolderWhereInput
+    orderBy?: FolderOrderByWithRelationInput | FolderOrderByWithRelationInput[]
+    cursor?: FolderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FolderScalarFieldEnum | FolderScalarFieldEnum[]
   }
 
   /**
@@ -10117,6 +10322,7 @@ export namespace Prisma {
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     documents?: boolean | Application$documentsArgs<ExtArgs>
+    folder?: boolean | Application$folderArgs<ExtArgs>
     _count?: boolean | ApplicationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
 
@@ -10166,6 +10372,7 @@ export namespace Prisma {
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     documents?: boolean | Application$documentsArgs<ExtArgs>
+    folder?: boolean | Application$folderArgs<ExtArgs>
     _count?: boolean | ApplicationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ApplicationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10181,6 +10388,7 @@ export namespace Prisma {
       aiChats: Prisma.$AiChatPayload<ExtArgs>[]
       organization: Prisma.$OrganizationPayload<ExtArgs>
       documents: Prisma.$DocumentPayload<ExtArgs>[]
+      folder: Prisma.$FolderPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10590,6 +10798,7 @@ export namespace Prisma {
     aiChats<T extends Application$aiChatsArgs<ExtArgs> = {}>(args?: Subset<T, Application$aiChatsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     documents<T extends Application$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Application$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    folder<T extends Application$folderArgs<ExtArgs> = {}>(args?: Subset<T, Application$folderArgs<ExtArgs>>): Prisma__FolderClient<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11070,6 +11279,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DocumentScalarFieldEnum | DocumentScalarFieldEnum[]
+  }
+
+  /**
+   * Application.folder
+   */
+  export type Application$folderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    where?: FolderWhereInput
   }
 
   /**
@@ -15501,6 +15729,8 @@ export namespace Prisma {
     version: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    organizationId: string | null
+    folderId: string | null
   }
 
   export type DocumentMaxAggregateOutputType = {
@@ -15512,6 +15742,8 @@ export namespace Prisma {
     version: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    organizationId: string | null
+    folderId: string | null
   }
 
   export type DocumentCountAggregateOutputType = {
@@ -15524,6 +15756,8 @@ export namespace Prisma {
     version: number
     createdAt: number
     updatedAt: number
+    organizationId: number
+    folderId: number
     _all: number
   }
 
@@ -15545,6 +15779,8 @@ export namespace Prisma {
     version?: true
     createdAt?: true
     updatedAt?: true
+    organizationId?: true
+    folderId?: true
   }
 
   export type DocumentMaxAggregateInputType = {
@@ -15556,6 +15792,8 @@ export namespace Prisma {
     version?: true
     createdAt?: true
     updatedAt?: true
+    organizationId?: true
+    folderId?: true
   }
 
   export type DocumentCountAggregateInputType = {
@@ -15568,6 +15806,8 @@ export namespace Prisma {
     version?: true
     createdAt?: true
     updatedAt?: true
+    organizationId?: true
+    folderId?: true
     _all?: true
   }
 
@@ -15667,6 +15907,8 @@ export namespace Prisma {
     version: number
     createdAt: Date
     updatedAt: Date
+    organizationId: string
+    folderId: string | null
     _count: DocumentCountAggregateOutputType | null
     _avg: DocumentAvgAggregateOutputType | null
     _sum: DocumentSumAggregateOutputType | null
@@ -15698,7 +15940,11 @@ export namespace Prisma {
     version?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    organizationId?: boolean
+    folderId?: boolean
     application?: boolean | Document$applicationArgs<ExtArgs>
+    folder?: boolean | Document$folderArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["document"]>
 
   export type DocumentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -15711,7 +15957,11 @@ export namespace Prisma {
     version?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    organizationId?: boolean
+    folderId?: boolean
     application?: boolean | Document$applicationArgs<ExtArgs>
+    folder?: boolean | Document$folderArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["document"]>
 
   export type DocumentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -15724,7 +15974,11 @@ export namespace Prisma {
     version?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    organizationId?: boolean
+    folderId?: boolean
     application?: boolean | Document$applicationArgs<ExtArgs>
+    folder?: boolean | Document$folderArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["document"]>
 
   export type DocumentSelectScalar = {
@@ -15737,23 +15991,33 @@ export namespace Prisma {
     version?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    organizationId?: boolean
+    folderId?: boolean
   }
 
-  export type DocumentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicationId" | "title" | "content" | "contentType" | "metadata" | "version" | "createdAt" | "updatedAt", ExtArgs["result"]["document"]>
+  export type DocumentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicationId" | "title" | "content" | "contentType" | "metadata" | "version" | "createdAt" | "updatedAt" | "organizationId" | "folderId", ExtArgs["result"]["document"]>
   export type DocumentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     application?: boolean | Document$applicationArgs<ExtArgs>
+    folder?: boolean | Document$folderArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }
   export type DocumentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     application?: boolean | Document$applicationArgs<ExtArgs>
+    folder?: boolean | Document$folderArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }
   export type DocumentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     application?: boolean | Document$applicationArgs<ExtArgs>
+    folder?: boolean | Document$folderArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }
 
   export type $DocumentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Document"
     objects: {
       application: Prisma.$ApplicationPayload<ExtArgs> | null
+      folder: Prisma.$FolderPayload<ExtArgs> | null
+      organization: Prisma.$OrganizationPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -15765,6 +16029,8 @@ export namespace Prisma {
       version: number
       createdAt: Date
       updatedAt: Date
+      organizationId: string
+      folderId: string | null
     }, ExtArgs["result"]["document"]>
     composites: {}
   }
@@ -16160,6 +16426,8 @@ export namespace Prisma {
   export interface Prisma__DocumentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     application<T extends Document$applicationArgs<ExtArgs> = {}>(args?: Subset<T, Document$applicationArgs<ExtArgs>>): Prisma__ApplicationClient<$Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    folder<T extends Document$folderArgs<ExtArgs> = {}>(args?: Subset<T, Document$folderArgs<ExtArgs>>): Prisma__FolderClient<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -16198,6 +16466,8 @@ export namespace Prisma {
     readonly version: FieldRef<"Document", 'Int'>
     readonly createdAt: FieldRef<"Document", 'DateTime'>
     readonly updatedAt: FieldRef<"Document", 'DateTime'>
+    readonly organizationId: FieldRef<"Document", 'String'>
+    readonly folderId: FieldRef<"Document", 'String'>
   }
     
 
@@ -16613,6 +16883,25 @@ export namespace Prisma {
   }
 
   /**
+   * Document.folder
+   */
+  export type Document$folderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    where?: FolderWhereInput
+  }
+
+  /**
    * Document without action
    */
   export type DocumentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -16628,6 +16917,1202 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: DocumentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Folder
+   */
+
+  export type AggregateFolder = {
+    _count: FolderCountAggregateOutputType | null
+    _min: FolderMinAggregateOutputType | null
+    _max: FolderMaxAggregateOutputType | null
+  }
+
+  export type FolderMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    organizationId: string | null
+    parentFolderId: string | null
+    applicationId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FolderMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    organizationId: string | null
+    parentFolderId: string | null
+    applicationId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FolderCountAggregateOutputType = {
+    id: number
+    name: number
+    organizationId: number
+    parentFolderId: number
+    applicationId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type FolderMinAggregateInputType = {
+    id?: true
+    name?: true
+    organizationId?: true
+    parentFolderId?: true
+    applicationId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FolderMaxAggregateInputType = {
+    id?: true
+    name?: true
+    organizationId?: true
+    parentFolderId?: true
+    applicationId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FolderCountAggregateInputType = {
+    id?: true
+    name?: true
+    organizationId?: true
+    parentFolderId?: true
+    applicationId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type FolderAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Folder to aggregate.
+     */
+    where?: FolderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Folders to fetch.
+     */
+    orderBy?: FolderOrderByWithRelationInput | FolderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FolderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Folders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Folders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Folders
+    **/
+    _count?: true | FolderCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FolderMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FolderMaxAggregateInputType
+  }
+
+  export type GetFolderAggregateType<T extends FolderAggregateArgs> = {
+        [P in keyof T & keyof AggregateFolder]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFolder[P]>
+      : GetScalarType<T[P], AggregateFolder[P]>
+  }
+
+
+
+
+  export type FolderGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FolderWhereInput
+    orderBy?: FolderOrderByWithAggregationInput | FolderOrderByWithAggregationInput[]
+    by: FolderScalarFieldEnum[] | FolderScalarFieldEnum
+    having?: FolderScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FolderCountAggregateInputType | true
+    _min?: FolderMinAggregateInputType
+    _max?: FolderMaxAggregateInputType
+  }
+
+  export type FolderGroupByOutputType = {
+    id: string
+    name: string
+    organizationId: string
+    parentFolderId: string | null
+    applicationId: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: FolderCountAggregateOutputType | null
+    _min: FolderMinAggregateOutputType | null
+    _max: FolderMaxAggregateOutputType | null
+  }
+
+  type GetFolderGroupByPayload<T extends FolderGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FolderGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FolderGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FolderGroupByOutputType[P]>
+            : GetScalarType<T[P], FolderGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FolderSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    organizationId?: boolean
+    parentFolderId?: boolean
+    applicationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    documents?: boolean | Folder$documentsArgs<ExtArgs>
+    application?: boolean | Folder$applicationArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    parent?: boolean | Folder$parentArgs<ExtArgs>
+    children?: boolean | Folder$childrenArgs<ExtArgs>
+    _count?: boolean | FolderCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["folder"]>
+
+  export type FolderSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    organizationId?: boolean
+    parentFolderId?: boolean
+    applicationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    application?: boolean | Folder$applicationArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    parent?: boolean | Folder$parentArgs<ExtArgs>
+  }, ExtArgs["result"]["folder"]>
+
+  export type FolderSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    organizationId?: boolean
+    parentFolderId?: boolean
+    applicationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    application?: boolean | Folder$applicationArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    parent?: boolean | Folder$parentArgs<ExtArgs>
+  }, ExtArgs["result"]["folder"]>
+
+  export type FolderSelectScalar = {
+    id?: boolean
+    name?: boolean
+    organizationId?: boolean
+    parentFolderId?: boolean
+    applicationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type FolderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "organizationId" | "parentFolderId" | "applicationId" | "createdAt" | "updatedAt", ExtArgs["result"]["folder"]>
+  export type FolderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    documents?: boolean | Folder$documentsArgs<ExtArgs>
+    application?: boolean | Folder$applicationArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    parent?: boolean | Folder$parentArgs<ExtArgs>
+    children?: boolean | Folder$childrenArgs<ExtArgs>
+    _count?: boolean | FolderCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type FolderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    application?: boolean | Folder$applicationArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    parent?: boolean | Folder$parentArgs<ExtArgs>
+  }
+  export type FolderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    application?: boolean | Folder$applicationArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    parent?: boolean | Folder$parentArgs<ExtArgs>
+  }
+
+  export type $FolderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Folder"
+    objects: {
+      documents: Prisma.$DocumentPayload<ExtArgs>[]
+      application: Prisma.$ApplicationPayload<ExtArgs> | null
+      organization: Prisma.$OrganizationPayload<ExtArgs>
+      parent: Prisma.$FolderPayload<ExtArgs> | null
+      children: Prisma.$FolderPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      organizationId: string
+      parentFolderId: string | null
+      applicationId: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["folder"]>
+    composites: {}
+  }
+
+  type FolderGetPayload<S extends boolean | null | undefined | FolderDefaultArgs> = $Result.GetResult<Prisma.$FolderPayload, S>
+
+  type FolderCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FolderFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FolderCountAggregateInputType | true
+    }
+
+  export interface FolderDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Folder'], meta: { name: 'Folder' } }
+    /**
+     * Find zero or one Folder that matches the filter.
+     * @param {FolderFindUniqueArgs} args - Arguments to find a Folder
+     * @example
+     * // Get one Folder
+     * const folder = await prisma.folder.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FolderFindUniqueArgs>(args: SelectSubset<T, FolderFindUniqueArgs<ExtArgs>>): Prisma__FolderClient<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Folder that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {FolderFindUniqueOrThrowArgs} args - Arguments to find a Folder
+     * @example
+     * // Get one Folder
+     * const folder = await prisma.folder.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FolderFindUniqueOrThrowArgs>(args: SelectSubset<T, FolderFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FolderClient<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Folder that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FolderFindFirstArgs} args - Arguments to find a Folder
+     * @example
+     * // Get one Folder
+     * const folder = await prisma.folder.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FolderFindFirstArgs>(args?: SelectSubset<T, FolderFindFirstArgs<ExtArgs>>): Prisma__FolderClient<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Folder that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FolderFindFirstOrThrowArgs} args - Arguments to find a Folder
+     * @example
+     * // Get one Folder
+     * const folder = await prisma.folder.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FolderFindFirstOrThrowArgs>(args?: SelectSubset<T, FolderFindFirstOrThrowArgs<ExtArgs>>): Prisma__FolderClient<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Folders that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FolderFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Folders
+     * const folders = await prisma.folder.findMany()
+     * 
+     * // Get first 10 Folders
+     * const folders = await prisma.folder.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const folderWithIdOnly = await prisma.folder.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FolderFindManyArgs>(args?: SelectSubset<T, FolderFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Folder.
+     * @param {FolderCreateArgs} args - Arguments to create a Folder.
+     * @example
+     * // Create one Folder
+     * const Folder = await prisma.folder.create({
+     *   data: {
+     *     // ... data to create a Folder
+     *   }
+     * })
+     * 
+     */
+    create<T extends FolderCreateArgs>(args: SelectSubset<T, FolderCreateArgs<ExtArgs>>): Prisma__FolderClient<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Folders.
+     * @param {FolderCreateManyArgs} args - Arguments to create many Folders.
+     * @example
+     * // Create many Folders
+     * const folder = await prisma.folder.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FolderCreateManyArgs>(args?: SelectSubset<T, FolderCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Folders and returns the data saved in the database.
+     * @param {FolderCreateManyAndReturnArgs} args - Arguments to create many Folders.
+     * @example
+     * // Create many Folders
+     * const folder = await prisma.folder.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Folders and only return the `id`
+     * const folderWithIdOnly = await prisma.folder.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FolderCreateManyAndReturnArgs>(args?: SelectSubset<T, FolderCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Folder.
+     * @param {FolderDeleteArgs} args - Arguments to delete one Folder.
+     * @example
+     * // Delete one Folder
+     * const Folder = await prisma.folder.delete({
+     *   where: {
+     *     // ... filter to delete one Folder
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FolderDeleteArgs>(args: SelectSubset<T, FolderDeleteArgs<ExtArgs>>): Prisma__FolderClient<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Folder.
+     * @param {FolderUpdateArgs} args - Arguments to update one Folder.
+     * @example
+     * // Update one Folder
+     * const folder = await prisma.folder.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FolderUpdateArgs>(args: SelectSubset<T, FolderUpdateArgs<ExtArgs>>): Prisma__FolderClient<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Folders.
+     * @param {FolderDeleteManyArgs} args - Arguments to filter Folders to delete.
+     * @example
+     * // Delete a few Folders
+     * const { count } = await prisma.folder.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FolderDeleteManyArgs>(args?: SelectSubset<T, FolderDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Folders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FolderUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Folders
+     * const folder = await prisma.folder.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FolderUpdateManyArgs>(args: SelectSubset<T, FolderUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Folders and returns the data updated in the database.
+     * @param {FolderUpdateManyAndReturnArgs} args - Arguments to update many Folders.
+     * @example
+     * // Update many Folders
+     * const folder = await prisma.folder.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Folders and only return the `id`
+     * const folderWithIdOnly = await prisma.folder.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FolderUpdateManyAndReturnArgs>(args: SelectSubset<T, FolderUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Folder.
+     * @param {FolderUpsertArgs} args - Arguments to update or create a Folder.
+     * @example
+     * // Update or create a Folder
+     * const folder = await prisma.folder.upsert({
+     *   create: {
+     *     // ... data to create a Folder
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Folder we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FolderUpsertArgs>(args: SelectSubset<T, FolderUpsertArgs<ExtArgs>>): Prisma__FolderClient<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Folders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FolderCountArgs} args - Arguments to filter Folders to count.
+     * @example
+     * // Count the number of Folders
+     * const count = await prisma.folder.count({
+     *   where: {
+     *     // ... the filter for the Folders we want to count
+     *   }
+     * })
+    **/
+    count<T extends FolderCountArgs>(
+      args?: Subset<T, FolderCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FolderCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Folder.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FolderAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FolderAggregateArgs>(args: Subset<T, FolderAggregateArgs>): Prisma.PrismaPromise<GetFolderAggregateType<T>>
+
+    /**
+     * Group by Folder.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FolderGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FolderGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FolderGroupByArgs['orderBy'] }
+        : { orderBy?: FolderGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FolderGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFolderGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Folder model
+   */
+  readonly fields: FolderFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Folder.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FolderClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    documents<T extends Folder$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Folder$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    application<T extends Folder$applicationArgs<ExtArgs> = {}>(args?: Subset<T, Folder$applicationArgs<ExtArgs>>): Prisma__ApplicationClient<$Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    parent<T extends Folder$parentArgs<ExtArgs> = {}>(args?: Subset<T, Folder$parentArgs<ExtArgs>>): Prisma__FolderClient<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    children<T extends Folder$childrenArgs<ExtArgs> = {}>(args?: Subset<T, Folder$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Folder model
+   */
+  interface FolderFieldRefs {
+    readonly id: FieldRef<"Folder", 'String'>
+    readonly name: FieldRef<"Folder", 'String'>
+    readonly organizationId: FieldRef<"Folder", 'String'>
+    readonly parentFolderId: FieldRef<"Folder", 'String'>
+    readonly applicationId: FieldRef<"Folder", 'String'>
+    readonly createdAt: FieldRef<"Folder", 'DateTime'>
+    readonly updatedAt: FieldRef<"Folder", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Folder findUnique
+   */
+  export type FolderFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    /**
+     * Filter, which Folder to fetch.
+     */
+    where: FolderWhereUniqueInput
+  }
+
+  /**
+   * Folder findUniqueOrThrow
+   */
+  export type FolderFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    /**
+     * Filter, which Folder to fetch.
+     */
+    where: FolderWhereUniqueInput
+  }
+
+  /**
+   * Folder findFirst
+   */
+  export type FolderFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    /**
+     * Filter, which Folder to fetch.
+     */
+    where?: FolderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Folders to fetch.
+     */
+    orderBy?: FolderOrderByWithRelationInput | FolderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Folders.
+     */
+    cursor?: FolderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Folders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Folders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Folders.
+     */
+    distinct?: FolderScalarFieldEnum | FolderScalarFieldEnum[]
+  }
+
+  /**
+   * Folder findFirstOrThrow
+   */
+  export type FolderFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    /**
+     * Filter, which Folder to fetch.
+     */
+    where?: FolderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Folders to fetch.
+     */
+    orderBy?: FolderOrderByWithRelationInput | FolderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Folders.
+     */
+    cursor?: FolderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Folders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Folders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Folders.
+     */
+    distinct?: FolderScalarFieldEnum | FolderScalarFieldEnum[]
+  }
+
+  /**
+   * Folder findMany
+   */
+  export type FolderFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    /**
+     * Filter, which Folders to fetch.
+     */
+    where?: FolderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Folders to fetch.
+     */
+    orderBy?: FolderOrderByWithRelationInput | FolderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Folders.
+     */
+    cursor?: FolderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Folders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Folders.
+     */
+    skip?: number
+    distinct?: FolderScalarFieldEnum | FolderScalarFieldEnum[]
+  }
+
+  /**
+   * Folder create
+   */
+  export type FolderCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Folder.
+     */
+    data: XOR<FolderCreateInput, FolderUncheckedCreateInput>
+  }
+
+  /**
+   * Folder createMany
+   */
+  export type FolderCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Folders.
+     */
+    data: FolderCreateManyInput | FolderCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Folder createManyAndReturn
+   */
+  export type FolderCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * The data used to create many Folders.
+     */
+    data: FolderCreateManyInput | FolderCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Folder update
+   */
+  export type FolderUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Folder.
+     */
+    data: XOR<FolderUpdateInput, FolderUncheckedUpdateInput>
+    /**
+     * Choose, which Folder to update.
+     */
+    where: FolderWhereUniqueInput
+  }
+
+  /**
+   * Folder updateMany
+   */
+  export type FolderUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Folders.
+     */
+    data: XOR<FolderUpdateManyMutationInput, FolderUncheckedUpdateManyInput>
+    /**
+     * Filter which Folders to update
+     */
+    where?: FolderWhereInput
+    /**
+     * Limit how many Folders to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Folder updateManyAndReturn
+   */
+  export type FolderUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * The data used to update Folders.
+     */
+    data: XOR<FolderUpdateManyMutationInput, FolderUncheckedUpdateManyInput>
+    /**
+     * Filter which Folders to update
+     */
+    where?: FolderWhereInput
+    /**
+     * Limit how many Folders to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Folder upsert
+   */
+  export type FolderUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Folder to update in case it exists.
+     */
+    where: FolderWhereUniqueInput
+    /**
+     * In case the Folder found by the `where` argument doesn't exist, create a new Folder with this data.
+     */
+    create: XOR<FolderCreateInput, FolderUncheckedCreateInput>
+    /**
+     * In case the Folder was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FolderUpdateInput, FolderUncheckedUpdateInput>
+  }
+
+  /**
+   * Folder delete
+   */
+  export type FolderDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    /**
+     * Filter which Folder to delete.
+     */
+    where: FolderWhereUniqueInput
+  }
+
+  /**
+   * Folder deleteMany
+   */
+  export type FolderDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Folders to delete
+     */
+    where?: FolderWhereInput
+    /**
+     * Limit how many Folders to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Folder.documents
+   */
+  export type Folder$documentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Document
+     */
+    select?: DocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Document
+     */
+    omit?: DocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentInclude<ExtArgs> | null
+    where?: DocumentWhereInput
+    orderBy?: DocumentOrderByWithRelationInput | DocumentOrderByWithRelationInput[]
+    cursor?: DocumentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DocumentScalarFieldEnum | DocumentScalarFieldEnum[]
+  }
+
+  /**
+   * Folder.application
+   */
+  export type Folder$applicationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Application
+     */
+    select?: ApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Application
+     */
+    omit?: ApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationInclude<ExtArgs> | null
+    where?: ApplicationWhereInput
+  }
+
+  /**
+   * Folder.parent
+   */
+  export type Folder$parentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    where?: FolderWhereInput
+  }
+
+  /**
+   * Folder.children
+   */
+  export type Folder$childrenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    where?: FolderWhereInput
+    orderBy?: FolderOrderByWithRelationInput | FolderOrderByWithRelationInput[]
+    cursor?: FolderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FolderScalarFieldEnum | FolderScalarFieldEnum[]
+  }
+
+  /**
+   * Folder without action
+   */
+  export type FolderDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
   }
 
 
@@ -17958,10 +19443,25 @@ export namespace Prisma {
     metadata: 'metadata',
     version: 'version',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    organizationId: 'organizationId',
+    folderId: 'folderId'
   };
 
   export type DocumentScalarFieldEnum = (typeof DocumentScalarFieldEnum)[keyof typeof DocumentScalarFieldEnum]
+
+
+  export const FolderScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    organizationId: 'organizationId',
+    parentFolderId: 'parentFolderId',
+    applicationId: 'applicationId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type FolderScalarFieldEnum = (typeof FolderScalarFieldEnum)[keyof typeof FolderScalarFieldEnum]
 
 
   export const K12_education_opportunitiesScalarFieldEnum: {
@@ -18640,6 +20140,8 @@ export namespace Prisma {
     logoUrl?: StringNullableFilter<"Organization"> | string | null
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
+    documents?: DocumentListRelationFilter
+    folders?: FolderListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
     eligibilityAnalyses?: GrantEligibilityAnalysisListRelationFilter
     recommendations?: RecommendationListRelationFilter
@@ -18678,6 +20180,8 @@ export namespace Prisma {
     logoUrl?: SortOrderInput | SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     applications?: ApplicationOrderByRelationAggregateInput
+    documents?: DocumentOrderByRelationAggregateInput
+    folders?: FolderOrderByRelationAggregateInput
     grantBookmarks?: GrantBookmarkOrderByRelationAggregateInput
     eligibilityAnalyses?: GrantEligibilityAnalysisOrderByRelationAggregateInput
     recommendations?: RecommendationOrderByRelationAggregateInput
@@ -18719,6 +20223,8 @@ export namespace Prisma {
     logoUrl?: StringNullableFilter<"Organization"> | string | null
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
+    documents?: DocumentListRelationFilter
+    folders?: FolderListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
     eligibilityAnalyses?: GrantEligibilityAnalysisListRelationFilter
     recommendations?: RecommendationListRelationFilter
@@ -18958,6 +20464,7 @@ export namespace Prisma {
     aiChats?: AiChatListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     documents?: DocumentListRelationFilter
+    folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
   }
 
   export type ApplicationOrderByWithRelationInput = {
@@ -18974,6 +20481,7 @@ export namespace Prisma {
     aiChats?: AiChatOrderByRelationAggregateInput
     organization?: OrganizationOrderByWithRelationInput
     documents?: DocumentOrderByRelationAggregateInput
+    folder?: FolderOrderByWithRelationInput
   }
 
   export type ApplicationWhereUniqueInput = Prisma.AtLeast<{
@@ -18994,6 +20502,7 @@ export namespace Prisma {
     aiChats?: AiChatListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     documents?: DocumentListRelationFilter
+    folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
   }, "id" | "opportunityId_organizationId">
 
   export type ApplicationOrderByWithAggregationInput = {
@@ -19308,7 +20817,11 @@ export namespace Prisma {
     version?: IntFilter<"Document"> | number
     createdAt?: DateTimeFilter<"Document"> | Date | string
     updatedAt?: DateTimeFilter<"Document"> | Date | string
+    organizationId?: StringFilter<"Document"> | string
+    folderId?: StringNullableFilter<"Document"> | string | null
     application?: XOR<ApplicationNullableScalarRelationFilter, ApplicationWhereInput> | null
+    folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
   }
 
   export type DocumentOrderByWithRelationInput = {
@@ -19321,7 +20834,11 @@ export namespace Prisma {
     version?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    organizationId?: SortOrder
+    folderId?: SortOrderInput | SortOrder
     application?: ApplicationOrderByWithRelationInput
+    folder?: FolderOrderByWithRelationInput
+    organization?: OrganizationOrderByWithRelationInput
   }
 
   export type DocumentWhereUniqueInput = Prisma.AtLeast<{
@@ -19337,7 +20854,11 @@ export namespace Prisma {
     version?: IntFilter<"Document"> | number
     createdAt?: DateTimeFilter<"Document"> | Date | string
     updatedAt?: DateTimeFilter<"Document"> | Date | string
+    organizationId?: StringFilter<"Document"> | string
+    folderId?: StringNullableFilter<"Document"> | string | null
     application?: XOR<ApplicationNullableScalarRelationFilter, ApplicationWhereInput> | null
+    folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
   }, "id">
 
   export type DocumentOrderByWithAggregationInput = {
@@ -19350,6 +20871,8 @@ export namespace Prisma {
     version?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    organizationId?: SortOrder
+    folderId?: SortOrderInput | SortOrder
     _count?: DocumentCountOrderByAggregateInput
     _avg?: DocumentAvgOrderByAggregateInput
     _max?: DocumentMaxOrderByAggregateInput
@@ -19370,6 +20893,85 @@ export namespace Prisma {
     version?: IntWithAggregatesFilter<"Document"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Document"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Document"> | Date | string
+    organizationId?: StringWithAggregatesFilter<"Document"> | string
+    folderId?: StringNullableWithAggregatesFilter<"Document"> | string | null
+  }
+
+  export type FolderWhereInput = {
+    AND?: FolderWhereInput | FolderWhereInput[]
+    OR?: FolderWhereInput[]
+    NOT?: FolderWhereInput | FolderWhereInput[]
+    id?: StringFilter<"Folder"> | string
+    name?: StringFilter<"Folder"> | string
+    organizationId?: StringFilter<"Folder"> | string
+    parentFolderId?: StringNullableFilter<"Folder"> | string | null
+    applicationId?: StringNullableFilter<"Folder"> | string | null
+    createdAt?: DateTimeFilter<"Folder"> | Date | string
+    updatedAt?: DateTimeFilter<"Folder"> | Date | string
+    documents?: DocumentListRelationFilter
+    application?: XOR<ApplicationNullableScalarRelationFilter, ApplicationWhereInput> | null
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    parent?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
+    children?: FolderListRelationFilter
+  }
+
+  export type FolderOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    organizationId?: SortOrder
+    parentFolderId?: SortOrderInput | SortOrder
+    applicationId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    documents?: DocumentOrderByRelationAggregateInput
+    application?: ApplicationOrderByWithRelationInput
+    organization?: OrganizationOrderByWithRelationInput
+    parent?: FolderOrderByWithRelationInput
+    children?: FolderOrderByRelationAggregateInput
+  }
+
+  export type FolderWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    applicationId?: string
+    AND?: FolderWhereInput | FolderWhereInput[]
+    OR?: FolderWhereInput[]
+    NOT?: FolderWhereInput | FolderWhereInput[]
+    name?: StringFilter<"Folder"> | string
+    organizationId?: StringFilter<"Folder"> | string
+    parentFolderId?: StringNullableFilter<"Folder"> | string | null
+    createdAt?: DateTimeFilter<"Folder"> | Date | string
+    updatedAt?: DateTimeFilter<"Folder"> | Date | string
+    documents?: DocumentListRelationFilter
+    application?: XOR<ApplicationNullableScalarRelationFilter, ApplicationWhereInput> | null
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    parent?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
+    children?: FolderListRelationFilter
+  }, "id" | "applicationId">
+
+  export type FolderOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    organizationId?: SortOrder
+    parentFolderId?: SortOrderInput | SortOrder
+    applicationId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: FolderCountOrderByAggregateInput
+    _max?: FolderMaxOrderByAggregateInput
+    _min?: FolderMinOrderByAggregateInput
+  }
+
+  export type FolderScalarWhereWithAggregatesInput = {
+    AND?: FolderScalarWhereWithAggregatesInput | FolderScalarWhereWithAggregatesInput[]
+    OR?: FolderScalarWhereWithAggregatesInput[]
+    NOT?: FolderScalarWhereWithAggregatesInput | FolderScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Folder"> | string
+    name?: StringWithAggregatesFilter<"Folder"> | string
+    organizationId?: StringWithAggregatesFilter<"Folder"> | string
+    parentFolderId?: StringNullableWithAggregatesFilter<"Folder"> | string | null
+    applicationId?: StringNullableWithAggregatesFilter<"Folder"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Folder"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Folder"> | Date | string
   }
 
   export type k12_education_opportunitiesWhereInput = {
@@ -19873,6 +21475,8 @@ export namespace Prisma {
     logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentCreateNestedManyWithoutOrganizationInput
+    folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
@@ -19911,6 +21515,8 @@ export namespace Prisma {
     logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
+    folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19949,6 +21555,8 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
@@ -19987,6 +21595,8 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20246,6 +21856,7 @@ export namespace Prisma {
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
+    folder?: FolderCreateNestedOneWithoutApplicationInput
   }
 
   export type ApplicationUncheckedCreateInput = {
@@ -20261,6 +21872,7 @@ export namespace Prisma {
     attachments_markdown?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
+    folder?: FolderUncheckedCreateNestedOneWithoutApplicationInput
   }
 
   export type ApplicationUpdateInput = {
@@ -20276,6 +21888,7 @@ export namespace Prisma {
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
+    folder?: FolderUpdateOneWithoutApplicationNestedInput
   }
 
   export type ApplicationUncheckedUpdateInput = {
@@ -20291,6 +21904,7 @@ export namespace Prisma {
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
+    folder?: FolderUncheckedUpdateOneWithoutApplicationNestedInput
   }
 
   export type ApplicationCreateManyInput = {
@@ -20613,6 +22227,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     application?: ApplicationCreateNestedOneWithoutDocumentsInput
+    folder?: FolderCreateNestedOneWithoutDocumentsInput
+    organization: OrganizationCreateNestedOneWithoutDocumentsInput
   }
 
   export type DocumentUncheckedCreateInput = {
@@ -20625,6 +22241,8 @@ export namespace Prisma {
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    organizationId: string
+    folderId?: string | null
   }
 
   export type DocumentUpdateInput = {
@@ -20637,6 +22255,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     application?: ApplicationUpdateOneWithoutDocumentsNestedInput
+    folder?: FolderUpdateOneWithoutDocumentsNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutDocumentsNestedInput
   }
 
   export type DocumentUncheckedUpdateInput = {
@@ -20649,6 +22269,8 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DocumentCreateManyInput = {
@@ -20661,6 +22283,8 @@ export namespace Prisma {
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    organizationId: string
+    folderId?: string | null
   }
 
   export type DocumentUpdateManyMutationInput = {
@@ -20682,6 +22306,83 @@ export namespace Prisma {
     contentType?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type FolderCreateInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    documents?: DocumentCreateNestedManyWithoutFolderInput
+    application?: ApplicationCreateNestedOneWithoutFolderInput
+    organization: OrganizationCreateNestedOneWithoutFoldersInput
+    parent?: FolderCreateNestedOneWithoutChildrenInput
+    children?: FolderCreateNestedManyWithoutParentInput
+  }
+
+  export type FolderUncheckedCreateInput = {
+    id?: string
+    name: string
+    organizationId: string
+    parentFolderId?: string | null
+    applicationId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    documents?: DocumentUncheckedCreateNestedManyWithoutFolderInput
+    children?: FolderUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type FolderUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUpdateManyWithoutFolderNestedInput
+    application?: ApplicationUpdateOneWithoutFolderNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutFoldersNestedInput
+    parent?: FolderUpdateOneWithoutChildrenNestedInput
+    children?: FolderUpdateManyWithoutParentNestedInput
+  }
+
+  export type FolderUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    parentFolderId?: NullableStringFieldUpdateOperationsInput | string | null
+    applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUncheckedUpdateManyWithoutFolderNestedInput
+    children?: FolderUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type FolderCreateManyInput = {
+    id?: string
+    name: string
+    organizationId: string
+    parentFolderId?: string | null
+    applicationId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FolderUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FolderUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    parentFolderId?: NullableStringFieldUpdateOperationsInput | string | null
+    applicationId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -21335,6 +23036,18 @@ export namespace Prisma {
     none?: ApplicationWhereInput
   }
 
+  export type DocumentListRelationFilter = {
+    every?: DocumentWhereInput
+    some?: DocumentWhereInput
+    none?: DocumentWhereInput
+  }
+
+  export type FolderListRelationFilter = {
+    every?: FolderWhereInput
+    some?: FolderWhereInput
+    none?: FolderWhereInput
+  }
+
   export type GrantEligibilityAnalysisListRelationFilter = {
     every?: GrantEligibilityAnalysisWhereInput
     some?: GrantEligibilityAnalysisWhereInput
@@ -21354,6 +23067,14 @@ export namespace Prisma {
   }
 
   export type ApplicationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DocumentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FolderOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -21644,14 +23365,9 @@ export namespace Prisma {
     not?: NestedEnumApplicationStatusFilter<$PrismaModel> | $Enums.ApplicationStatus
   }
 
-  export type DocumentListRelationFilter = {
-    every?: DocumentWhereInput
-    some?: DocumentWhereInput
-    none?: DocumentWhereInput
-  }
-
-  export type DocumentOrderByRelationAggregateInput = {
-    _count?: SortOrder
+  export type FolderNullableScalarRelationFilter = {
+    is?: FolderWhereInput | null
+    isNot?: FolderWhereInput | null
   }
 
   export type ApplicationOpportunityIdOrganizationIdCompoundUniqueInput = {
@@ -21934,6 +23650,8 @@ export namespace Prisma {
     version?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    organizationId?: SortOrder
+    folderId?: SortOrder
   }
 
   export type DocumentAvgOrderByAggregateInput = {
@@ -21949,6 +23667,8 @@ export namespace Prisma {
     version?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    organizationId?: SortOrder
+    folderId?: SortOrder
   }
 
   export type DocumentMinOrderByAggregateInput = {
@@ -21960,10 +23680,42 @@ export namespace Prisma {
     version?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    organizationId?: SortOrder
+    folderId?: SortOrder
   }
 
   export type DocumentSumOrderByAggregateInput = {
     version?: SortOrder
+  }
+
+  export type FolderCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    organizationId?: SortOrder
+    parentFolderId?: SortOrder
+    applicationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FolderMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    organizationId?: SortOrder
+    parentFolderId?: SortOrder
+    applicationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FolderMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    organizationId?: SortOrder
+    parentFolderId?: SortOrder
+    applicationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type Enumk12_education_opportunity_category_enumNullableListFilter<$PrismaModel = never> = {
@@ -22240,6 +23992,20 @@ export namespace Prisma {
     connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
   }
 
+  export type DocumentCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<DocumentCreateWithoutOrganizationInput, DocumentUncheckedCreateWithoutOrganizationInput> | DocumentCreateWithoutOrganizationInput[] | DocumentUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutOrganizationInput | DocumentCreateOrConnectWithoutOrganizationInput[]
+    createMany?: DocumentCreateManyOrganizationInputEnvelope
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+  }
+
+  export type FolderCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<FolderCreateWithoutOrganizationInput, FolderUncheckedCreateWithoutOrganizationInput> | FolderCreateWithoutOrganizationInput[] | FolderUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: FolderCreateOrConnectWithoutOrganizationInput | FolderCreateOrConnectWithoutOrganizationInput[]
+    createMany?: FolderCreateManyOrganizationInputEnvelope
+    connect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+  }
+
   export type GrantBookmarkCreateNestedManyWithoutOrganizationInput = {
     create?: XOR<GrantBookmarkCreateWithoutOrganizationInput, GrantBookmarkUncheckedCreateWithoutOrganizationInput> | GrantBookmarkCreateWithoutOrganizationInput[] | GrantBookmarkUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: GrantBookmarkCreateOrConnectWithoutOrganizationInput | GrantBookmarkCreateOrConnectWithoutOrganizationInput[]
@@ -22280,6 +24046,20 @@ export namespace Prisma {
     connectOrCreate?: ApplicationCreateOrConnectWithoutOrganizationInput | ApplicationCreateOrConnectWithoutOrganizationInput[]
     createMany?: ApplicationCreateManyOrganizationInputEnvelope
     connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+  }
+
+  export type DocumentUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<DocumentCreateWithoutOrganizationInput, DocumentUncheckedCreateWithoutOrganizationInput> | DocumentCreateWithoutOrganizationInput[] | DocumentUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutOrganizationInput | DocumentCreateOrConnectWithoutOrganizationInput[]
+    createMany?: DocumentCreateManyOrganizationInputEnvelope
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+  }
+
+  export type FolderUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<FolderCreateWithoutOrganizationInput, FolderUncheckedCreateWithoutOrganizationInput> | FolderCreateWithoutOrganizationInput[] | FolderUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: FolderCreateOrConnectWithoutOrganizationInput | FolderCreateOrConnectWithoutOrganizationInput[]
+    createMany?: FolderCreateManyOrganizationInputEnvelope
+    connect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
   }
 
   export type GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput = {
@@ -22352,6 +24132,34 @@ export namespace Prisma {
     update?: ApplicationUpdateWithWhereUniqueWithoutOrganizationInput | ApplicationUpdateWithWhereUniqueWithoutOrganizationInput[]
     updateMany?: ApplicationUpdateManyWithWhereWithoutOrganizationInput | ApplicationUpdateManyWithWhereWithoutOrganizationInput[]
     deleteMany?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
+  }
+
+  export type DocumentUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<DocumentCreateWithoutOrganizationInput, DocumentUncheckedCreateWithoutOrganizationInput> | DocumentCreateWithoutOrganizationInput[] | DocumentUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutOrganizationInput | DocumentCreateOrConnectWithoutOrganizationInput[]
+    upsert?: DocumentUpsertWithWhereUniqueWithoutOrganizationInput | DocumentUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: DocumentCreateManyOrganizationInputEnvelope
+    set?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    disconnect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    delete?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    update?: DocumentUpdateWithWhereUniqueWithoutOrganizationInput | DocumentUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: DocumentUpdateManyWithWhereWithoutOrganizationInput | DocumentUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
+  }
+
+  export type FolderUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<FolderCreateWithoutOrganizationInput, FolderUncheckedCreateWithoutOrganizationInput> | FolderCreateWithoutOrganizationInput[] | FolderUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: FolderCreateOrConnectWithoutOrganizationInput | FolderCreateOrConnectWithoutOrganizationInput[]
+    upsert?: FolderUpsertWithWhereUniqueWithoutOrganizationInput | FolderUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: FolderCreateManyOrganizationInputEnvelope
+    set?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    disconnect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    delete?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    connect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    update?: FolderUpdateWithWhereUniqueWithoutOrganizationInput | FolderUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: FolderUpdateManyWithWhereWithoutOrganizationInput | FolderUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: FolderScalarWhereInput | FolderScalarWhereInput[]
   }
 
   export type GrantBookmarkUpdateManyWithoutOrganizationNestedInput = {
@@ -22436,6 +24244,34 @@ export namespace Prisma {
     update?: ApplicationUpdateWithWhereUniqueWithoutOrganizationInput | ApplicationUpdateWithWhereUniqueWithoutOrganizationInput[]
     updateMany?: ApplicationUpdateManyWithWhereWithoutOrganizationInput | ApplicationUpdateManyWithWhereWithoutOrganizationInput[]
     deleteMany?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
+  }
+
+  export type DocumentUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<DocumentCreateWithoutOrganizationInput, DocumentUncheckedCreateWithoutOrganizationInput> | DocumentCreateWithoutOrganizationInput[] | DocumentUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutOrganizationInput | DocumentCreateOrConnectWithoutOrganizationInput[]
+    upsert?: DocumentUpsertWithWhereUniqueWithoutOrganizationInput | DocumentUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: DocumentCreateManyOrganizationInputEnvelope
+    set?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    disconnect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    delete?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    update?: DocumentUpdateWithWhereUniqueWithoutOrganizationInput | DocumentUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: DocumentUpdateManyWithWhereWithoutOrganizationInput | DocumentUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
+  }
+
+  export type FolderUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<FolderCreateWithoutOrganizationInput, FolderUncheckedCreateWithoutOrganizationInput> | FolderCreateWithoutOrganizationInput[] | FolderUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: FolderCreateOrConnectWithoutOrganizationInput | FolderCreateOrConnectWithoutOrganizationInput[]
+    upsert?: FolderUpsertWithWhereUniqueWithoutOrganizationInput | FolderUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: FolderCreateManyOrganizationInputEnvelope
+    set?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    disconnect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    delete?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    connect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    update?: FolderUpdateWithWhereUniqueWithoutOrganizationInput | FolderUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: FolderUpdateManyWithWhereWithoutOrganizationInput | FolderUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: FolderScalarWhereInput | FolderScalarWhereInput[]
   }
 
   export type GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput = {
@@ -22560,6 +24396,12 @@ export namespace Prisma {
     connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
   }
 
+  export type FolderCreateNestedOneWithoutApplicationInput = {
+    create?: XOR<FolderCreateWithoutApplicationInput, FolderUncheckedCreateWithoutApplicationInput>
+    connectOrCreate?: FolderCreateOrConnectWithoutApplicationInput
+    connect?: FolderWhereUniqueInput
+  }
+
   export type AiChatUncheckedCreateNestedManyWithoutApplicationInput = {
     create?: XOR<AiChatCreateWithoutApplicationInput, AiChatUncheckedCreateWithoutApplicationInput> | AiChatCreateWithoutApplicationInput[] | AiChatUncheckedCreateWithoutApplicationInput[]
     connectOrCreate?: AiChatCreateOrConnectWithoutApplicationInput | AiChatCreateOrConnectWithoutApplicationInput[]
@@ -22572,6 +24414,12 @@ export namespace Prisma {
     connectOrCreate?: DocumentCreateOrConnectWithoutApplicationInput | DocumentCreateOrConnectWithoutApplicationInput[]
     createMany?: DocumentCreateManyApplicationInputEnvelope
     connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+  }
+
+  export type FolderUncheckedCreateNestedOneWithoutApplicationInput = {
+    create?: XOR<FolderCreateWithoutApplicationInput, FolderUncheckedCreateWithoutApplicationInput>
+    connectOrCreate?: FolderCreateOrConnectWithoutApplicationInput
+    connect?: FolderWhereUniqueInput
   }
 
   export type EnumApplicationStatusFieldUpdateOperationsInput = {
@@ -22614,6 +24462,16 @@ export namespace Prisma {
     deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
   }
 
+  export type FolderUpdateOneWithoutApplicationNestedInput = {
+    create?: XOR<FolderCreateWithoutApplicationInput, FolderUncheckedCreateWithoutApplicationInput>
+    connectOrCreate?: FolderCreateOrConnectWithoutApplicationInput
+    upsert?: FolderUpsertWithoutApplicationInput
+    disconnect?: FolderWhereInput | boolean
+    delete?: FolderWhereInput | boolean
+    connect?: FolderWhereUniqueInput
+    update?: XOR<XOR<FolderUpdateToOneWithWhereWithoutApplicationInput, FolderUpdateWithoutApplicationInput>, FolderUncheckedUpdateWithoutApplicationInput>
+  }
+
   export type AiChatUncheckedUpdateManyWithoutApplicationNestedInput = {
     create?: XOR<AiChatCreateWithoutApplicationInput, AiChatUncheckedCreateWithoutApplicationInput> | AiChatCreateWithoutApplicationInput[] | AiChatUncheckedCreateWithoutApplicationInput[]
     connectOrCreate?: AiChatCreateOrConnectWithoutApplicationInput | AiChatCreateOrConnectWithoutApplicationInput[]
@@ -22640,6 +24498,16 @@ export namespace Prisma {
     update?: DocumentUpdateWithWhereUniqueWithoutApplicationInput | DocumentUpdateWithWhereUniqueWithoutApplicationInput[]
     updateMany?: DocumentUpdateManyWithWhereWithoutApplicationInput | DocumentUpdateManyWithWhereWithoutApplicationInput[]
     deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
+  }
+
+  export type FolderUncheckedUpdateOneWithoutApplicationNestedInput = {
+    create?: XOR<FolderCreateWithoutApplicationInput, FolderUncheckedCreateWithoutApplicationInput>
+    connectOrCreate?: FolderCreateOrConnectWithoutApplicationInput
+    upsert?: FolderUpsertWithoutApplicationInput
+    disconnect?: FolderWhereInput | boolean
+    delete?: FolderWhereInput | boolean
+    connect?: FolderWhereUniqueInput
+    update?: XOR<XOR<FolderUpdateToOneWithWhereWithoutApplicationInput, FolderUpdateWithoutApplicationInput>, FolderUncheckedUpdateWithoutApplicationInput>
   }
 
   export type AiChatMessageCreateNestedManyWithoutChatInput = {
@@ -22778,6 +24646,18 @@ export namespace Prisma {
     connect?: ApplicationWhereUniqueInput
   }
 
+  export type FolderCreateNestedOneWithoutDocumentsInput = {
+    create?: XOR<FolderCreateWithoutDocumentsInput, FolderUncheckedCreateWithoutDocumentsInput>
+    connectOrCreate?: FolderCreateOrConnectWithoutDocumentsInput
+    connect?: FolderWhereUniqueInput
+  }
+
+  export type OrganizationCreateNestedOneWithoutDocumentsInput = {
+    create?: XOR<OrganizationCreateWithoutDocumentsInput, OrganizationUncheckedCreateWithoutDocumentsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutDocumentsInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
   export type ApplicationUpdateOneWithoutDocumentsNestedInput = {
     create?: XOR<ApplicationCreateWithoutDocumentsInput, ApplicationUncheckedCreateWithoutDocumentsInput>
     connectOrCreate?: ApplicationCreateOrConnectWithoutDocumentsInput
@@ -22786,6 +24666,154 @@ export namespace Prisma {
     delete?: ApplicationWhereInput | boolean
     connect?: ApplicationWhereUniqueInput
     update?: XOR<XOR<ApplicationUpdateToOneWithWhereWithoutDocumentsInput, ApplicationUpdateWithoutDocumentsInput>, ApplicationUncheckedUpdateWithoutDocumentsInput>
+  }
+
+  export type FolderUpdateOneWithoutDocumentsNestedInput = {
+    create?: XOR<FolderCreateWithoutDocumentsInput, FolderUncheckedCreateWithoutDocumentsInput>
+    connectOrCreate?: FolderCreateOrConnectWithoutDocumentsInput
+    upsert?: FolderUpsertWithoutDocumentsInput
+    disconnect?: FolderWhereInput | boolean
+    delete?: FolderWhereInput | boolean
+    connect?: FolderWhereUniqueInput
+    update?: XOR<XOR<FolderUpdateToOneWithWhereWithoutDocumentsInput, FolderUpdateWithoutDocumentsInput>, FolderUncheckedUpdateWithoutDocumentsInput>
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutDocumentsNestedInput = {
+    create?: XOR<OrganizationCreateWithoutDocumentsInput, OrganizationUncheckedCreateWithoutDocumentsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutDocumentsInput
+    upsert?: OrganizationUpsertWithoutDocumentsInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutDocumentsInput, OrganizationUpdateWithoutDocumentsInput>, OrganizationUncheckedUpdateWithoutDocumentsInput>
+  }
+
+  export type DocumentCreateNestedManyWithoutFolderInput = {
+    create?: XOR<DocumentCreateWithoutFolderInput, DocumentUncheckedCreateWithoutFolderInput> | DocumentCreateWithoutFolderInput[] | DocumentUncheckedCreateWithoutFolderInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutFolderInput | DocumentCreateOrConnectWithoutFolderInput[]
+    createMany?: DocumentCreateManyFolderInputEnvelope
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+  }
+
+  export type ApplicationCreateNestedOneWithoutFolderInput = {
+    create?: XOR<ApplicationCreateWithoutFolderInput, ApplicationUncheckedCreateWithoutFolderInput>
+    connectOrCreate?: ApplicationCreateOrConnectWithoutFolderInput
+    connect?: ApplicationWhereUniqueInput
+  }
+
+  export type OrganizationCreateNestedOneWithoutFoldersInput = {
+    create?: XOR<OrganizationCreateWithoutFoldersInput, OrganizationUncheckedCreateWithoutFoldersInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutFoldersInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
+  export type FolderCreateNestedOneWithoutChildrenInput = {
+    create?: XOR<FolderCreateWithoutChildrenInput, FolderUncheckedCreateWithoutChildrenInput>
+    connectOrCreate?: FolderCreateOrConnectWithoutChildrenInput
+    connect?: FolderWhereUniqueInput
+  }
+
+  export type FolderCreateNestedManyWithoutParentInput = {
+    create?: XOR<FolderCreateWithoutParentInput, FolderUncheckedCreateWithoutParentInput> | FolderCreateWithoutParentInput[] | FolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: FolderCreateOrConnectWithoutParentInput | FolderCreateOrConnectWithoutParentInput[]
+    createMany?: FolderCreateManyParentInputEnvelope
+    connect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+  }
+
+  export type DocumentUncheckedCreateNestedManyWithoutFolderInput = {
+    create?: XOR<DocumentCreateWithoutFolderInput, DocumentUncheckedCreateWithoutFolderInput> | DocumentCreateWithoutFolderInput[] | DocumentUncheckedCreateWithoutFolderInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutFolderInput | DocumentCreateOrConnectWithoutFolderInput[]
+    createMany?: DocumentCreateManyFolderInputEnvelope
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+  }
+
+  export type FolderUncheckedCreateNestedManyWithoutParentInput = {
+    create?: XOR<FolderCreateWithoutParentInput, FolderUncheckedCreateWithoutParentInput> | FolderCreateWithoutParentInput[] | FolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: FolderCreateOrConnectWithoutParentInput | FolderCreateOrConnectWithoutParentInput[]
+    createMany?: FolderCreateManyParentInputEnvelope
+    connect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+  }
+
+  export type DocumentUpdateManyWithoutFolderNestedInput = {
+    create?: XOR<DocumentCreateWithoutFolderInput, DocumentUncheckedCreateWithoutFolderInput> | DocumentCreateWithoutFolderInput[] | DocumentUncheckedCreateWithoutFolderInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutFolderInput | DocumentCreateOrConnectWithoutFolderInput[]
+    upsert?: DocumentUpsertWithWhereUniqueWithoutFolderInput | DocumentUpsertWithWhereUniqueWithoutFolderInput[]
+    createMany?: DocumentCreateManyFolderInputEnvelope
+    set?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    disconnect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    delete?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    update?: DocumentUpdateWithWhereUniqueWithoutFolderInput | DocumentUpdateWithWhereUniqueWithoutFolderInput[]
+    updateMany?: DocumentUpdateManyWithWhereWithoutFolderInput | DocumentUpdateManyWithWhereWithoutFolderInput[]
+    deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
+  }
+
+  export type ApplicationUpdateOneWithoutFolderNestedInput = {
+    create?: XOR<ApplicationCreateWithoutFolderInput, ApplicationUncheckedCreateWithoutFolderInput>
+    connectOrCreate?: ApplicationCreateOrConnectWithoutFolderInput
+    upsert?: ApplicationUpsertWithoutFolderInput
+    disconnect?: ApplicationWhereInput | boolean
+    delete?: ApplicationWhereInput | boolean
+    connect?: ApplicationWhereUniqueInput
+    update?: XOR<XOR<ApplicationUpdateToOneWithWhereWithoutFolderInput, ApplicationUpdateWithoutFolderInput>, ApplicationUncheckedUpdateWithoutFolderInput>
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutFoldersNestedInput = {
+    create?: XOR<OrganizationCreateWithoutFoldersInput, OrganizationUncheckedCreateWithoutFoldersInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutFoldersInput
+    upsert?: OrganizationUpsertWithoutFoldersInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutFoldersInput, OrganizationUpdateWithoutFoldersInput>, OrganizationUncheckedUpdateWithoutFoldersInput>
+  }
+
+  export type FolderUpdateOneWithoutChildrenNestedInput = {
+    create?: XOR<FolderCreateWithoutChildrenInput, FolderUncheckedCreateWithoutChildrenInput>
+    connectOrCreate?: FolderCreateOrConnectWithoutChildrenInput
+    upsert?: FolderUpsertWithoutChildrenInput
+    disconnect?: FolderWhereInput | boolean
+    delete?: FolderWhereInput | boolean
+    connect?: FolderWhereUniqueInput
+    update?: XOR<XOR<FolderUpdateToOneWithWhereWithoutChildrenInput, FolderUpdateWithoutChildrenInput>, FolderUncheckedUpdateWithoutChildrenInput>
+  }
+
+  export type FolderUpdateManyWithoutParentNestedInput = {
+    create?: XOR<FolderCreateWithoutParentInput, FolderUncheckedCreateWithoutParentInput> | FolderCreateWithoutParentInput[] | FolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: FolderCreateOrConnectWithoutParentInput | FolderCreateOrConnectWithoutParentInput[]
+    upsert?: FolderUpsertWithWhereUniqueWithoutParentInput | FolderUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: FolderCreateManyParentInputEnvelope
+    set?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    disconnect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    delete?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    connect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    update?: FolderUpdateWithWhereUniqueWithoutParentInput | FolderUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: FolderUpdateManyWithWhereWithoutParentInput | FolderUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: FolderScalarWhereInput | FolderScalarWhereInput[]
+  }
+
+  export type DocumentUncheckedUpdateManyWithoutFolderNestedInput = {
+    create?: XOR<DocumentCreateWithoutFolderInput, DocumentUncheckedCreateWithoutFolderInput> | DocumentCreateWithoutFolderInput[] | DocumentUncheckedCreateWithoutFolderInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutFolderInput | DocumentCreateOrConnectWithoutFolderInput[]
+    upsert?: DocumentUpsertWithWhereUniqueWithoutFolderInput | DocumentUpsertWithWhereUniqueWithoutFolderInput[]
+    createMany?: DocumentCreateManyFolderInputEnvelope
+    set?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    disconnect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    delete?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    update?: DocumentUpdateWithWhereUniqueWithoutFolderInput | DocumentUpdateWithWhereUniqueWithoutFolderInput[]
+    updateMany?: DocumentUpdateManyWithWhereWithoutFolderInput | DocumentUpdateManyWithWhereWithoutFolderInput[]
+    deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
+  }
+
+  export type FolderUncheckedUpdateManyWithoutParentNestedInput = {
+    create?: XOR<FolderCreateWithoutParentInput, FolderUncheckedCreateWithoutParentInput> | FolderCreateWithoutParentInput[] | FolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: FolderCreateOrConnectWithoutParentInput | FolderCreateOrConnectWithoutParentInput[]
+    upsert?: FolderUpsertWithWhereUniqueWithoutParentInput | FolderUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: FolderCreateManyParentInputEnvelope
+    set?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    disconnect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    delete?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    connect?: FolderWhereUniqueInput | FolderWhereUniqueInput[]
+    update?: FolderUpdateWithWhereUniqueWithoutParentInput | FolderUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: FolderUpdateManyWithWhereWithoutParentInput | FolderUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: FolderScalarWhereInput | FolderScalarWhereInput[]
   }
 
   export type k12_education_opportunitiesCreatecategoryInput = {
@@ -23407,6 +25435,8 @@ export namespace Prisma {
     logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentCreateNestedManyWithoutOrganizationInput
+    folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
@@ -23444,6 +25474,8 @@ export namespace Prisma {
     logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
+    folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -23556,6 +25588,8 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
@@ -23593,6 +25627,8 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -23644,6 +25680,7 @@ export namespace Prisma {
     attachments_markdown?: string | null
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
+    folder?: FolderCreateNestedOneWithoutApplicationInput
   }
 
   export type ApplicationUncheckedCreateWithoutOrganizationInput = {
@@ -23658,6 +25695,7 @@ export namespace Prisma {
     attachments_markdown?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
+    folder?: FolderUncheckedCreateNestedOneWithoutApplicationInput
   }
 
   export type ApplicationCreateOrConnectWithoutOrganizationInput = {
@@ -23667,6 +25705,74 @@ export namespace Prisma {
 
   export type ApplicationCreateManyOrganizationInputEnvelope = {
     data: ApplicationCreateManyOrganizationInput | ApplicationCreateManyOrganizationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DocumentCreateWithoutOrganizationInput = {
+    id?: string
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    application?: ApplicationCreateNestedOneWithoutDocumentsInput
+    folder?: FolderCreateNestedOneWithoutDocumentsInput
+  }
+
+  export type DocumentUncheckedCreateWithoutOrganizationInput = {
+    id?: string
+    applicationId?: string | null
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    folderId?: string | null
+  }
+
+  export type DocumentCreateOrConnectWithoutOrganizationInput = {
+    where: DocumentWhereUniqueInput
+    create: XOR<DocumentCreateWithoutOrganizationInput, DocumentUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type DocumentCreateManyOrganizationInputEnvelope = {
+    data: DocumentCreateManyOrganizationInput | DocumentCreateManyOrganizationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FolderCreateWithoutOrganizationInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    documents?: DocumentCreateNestedManyWithoutFolderInput
+    application?: ApplicationCreateNestedOneWithoutFolderInput
+    parent?: FolderCreateNestedOneWithoutChildrenInput
+    children?: FolderCreateNestedManyWithoutParentInput
+  }
+
+  export type FolderUncheckedCreateWithoutOrganizationInput = {
+    id?: string
+    name: string
+    parentFolderId?: string | null
+    applicationId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    documents?: DocumentUncheckedCreateNestedManyWithoutFolderInput
+    children?: FolderUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type FolderCreateOrConnectWithoutOrganizationInput = {
+    where: FolderWhereUniqueInput
+    create: XOR<FolderCreateWithoutOrganizationInput, FolderUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type FolderCreateManyOrganizationInputEnvelope = {
+    data: FolderCreateManyOrganizationInput | FolderCreateManyOrganizationInput[]
     skipDuplicates?: boolean
   }
 
@@ -23850,6 +25956,68 @@ export namespace Prisma {
     attachments_markdown?: StringNullableFilter<"Application"> | string | null
   }
 
+  export type DocumentUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: DocumentWhereUniqueInput
+    update: XOR<DocumentUpdateWithoutOrganizationInput, DocumentUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<DocumentCreateWithoutOrganizationInput, DocumentUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type DocumentUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: DocumentWhereUniqueInput
+    data: XOR<DocumentUpdateWithoutOrganizationInput, DocumentUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type DocumentUpdateManyWithWhereWithoutOrganizationInput = {
+    where: DocumentScalarWhereInput
+    data: XOR<DocumentUpdateManyMutationInput, DocumentUncheckedUpdateManyWithoutOrganizationInput>
+  }
+
+  export type DocumentScalarWhereInput = {
+    AND?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
+    OR?: DocumentScalarWhereInput[]
+    NOT?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
+    id?: StringFilter<"Document"> | string
+    applicationId?: StringNullableFilter<"Document"> | string | null
+    title?: StringFilter<"Document"> | string
+    content?: StringNullableFilter<"Document"> | string | null
+    contentType?: StringFilter<"Document"> | string
+    metadata?: JsonNullableFilter<"Document">
+    version?: IntFilter<"Document"> | number
+    createdAt?: DateTimeFilter<"Document"> | Date | string
+    updatedAt?: DateTimeFilter<"Document"> | Date | string
+    organizationId?: StringFilter<"Document"> | string
+    folderId?: StringNullableFilter<"Document"> | string | null
+  }
+
+  export type FolderUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: FolderWhereUniqueInput
+    update: XOR<FolderUpdateWithoutOrganizationInput, FolderUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<FolderCreateWithoutOrganizationInput, FolderUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type FolderUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: FolderWhereUniqueInput
+    data: XOR<FolderUpdateWithoutOrganizationInput, FolderUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type FolderUpdateManyWithWhereWithoutOrganizationInput = {
+    where: FolderScalarWhereInput
+    data: XOR<FolderUpdateManyMutationInput, FolderUncheckedUpdateManyWithoutOrganizationInput>
+  }
+
+  export type FolderScalarWhereInput = {
+    AND?: FolderScalarWhereInput | FolderScalarWhereInput[]
+    OR?: FolderScalarWhereInput[]
+    NOT?: FolderScalarWhereInput | FolderScalarWhereInput[]
+    id?: StringFilter<"Folder"> | string
+    name?: StringFilter<"Folder"> | string
+    organizationId?: StringFilter<"Folder"> | string
+    parentFolderId?: StringNullableFilter<"Folder"> | string | null
+    applicationId?: StringNullableFilter<"Folder"> | string | null
+    createdAt?: DateTimeFilter<"Folder"> | Date | string
+    updatedAt?: DateTimeFilter<"Folder"> | Date | string
+  }
+
   export type GrantBookmarkUpsertWithWhereUniqueWithoutOrganizationInput = {
     where: GrantBookmarkWhereUniqueInput
     update: XOR<GrantBookmarkUpdateWithoutOrganizationInput, GrantBookmarkUncheckedUpdateWithoutOrganizationInput>
@@ -23994,6 +26162,8 @@ export namespace Prisma {
     logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentCreateNestedManyWithoutOrganizationInput
+    folders?: FolderCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
@@ -24031,6 +26201,8 @@ export namespace Prisma {
     logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
+    folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24121,6 +26293,8 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
@@ -24158,6 +26332,8 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24238,6 +26414,8 @@ export namespace Prisma {
     logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentCreateNestedManyWithoutOrganizationInput
+    folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
@@ -24275,6 +26453,8 @@ export namespace Prisma {
     logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
+    folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24328,6 +26508,8 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
@@ -24365,6 +26547,8 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24435,6 +26619,8 @@ export namespace Prisma {
     urbanCentricLocale?: number | null
     logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentCreateNestedManyWithoutOrganizationInput
+    folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
@@ -24472,6 +26658,8 @@ export namespace Prisma {
     urbanCentricLocale?: number | null
     logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
+    folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24492,6 +26680,8 @@ export namespace Prisma {
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    folder?: FolderCreateNestedOneWithoutDocumentsInput
+    organization: OrganizationCreateNestedOneWithoutDocumentsInput
   }
 
   export type DocumentUncheckedCreateWithoutApplicationInput = {
@@ -24503,6 +26693,8 @@ export namespace Prisma {
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    organizationId: string
+    folderId?: string | null
   }
 
   export type DocumentCreateOrConnectWithoutApplicationInput = {
@@ -24513,6 +26705,33 @@ export namespace Prisma {
   export type DocumentCreateManyApplicationInputEnvelope = {
     data: DocumentCreateManyApplicationInput | DocumentCreateManyApplicationInput[]
     skipDuplicates?: boolean
+  }
+
+  export type FolderCreateWithoutApplicationInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    documents?: DocumentCreateNestedManyWithoutFolderInput
+    organization: OrganizationCreateNestedOneWithoutFoldersInput
+    parent?: FolderCreateNestedOneWithoutChildrenInput
+    children?: FolderCreateNestedManyWithoutParentInput
+  }
+
+  export type FolderUncheckedCreateWithoutApplicationInput = {
+    id?: string
+    name: string
+    organizationId: string
+    parentFolderId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    documents?: DocumentUncheckedCreateNestedManyWithoutFolderInput
+    children?: FolderUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type FolderCreateOrConnectWithoutApplicationInput = {
+    where: FolderWhereUniqueInput
+    create: XOR<FolderCreateWithoutApplicationInput, FolderUncheckedCreateWithoutApplicationInput>
   }
 
   export type AiChatUpsertWithWhereUniqueWithoutApplicationInput = {
@@ -24573,6 +26792,8 @@ export namespace Prisma {
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
@@ -24610,6 +26831,8 @@ export namespace Prisma {
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24632,19 +26855,37 @@ export namespace Prisma {
     data: XOR<DocumentUpdateManyMutationInput, DocumentUncheckedUpdateManyWithoutApplicationInput>
   }
 
-  export type DocumentScalarWhereInput = {
-    AND?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
-    OR?: DocumentScalarWhereInput[]
-    NOT?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
-    id?: StringFilter<"Document"> | string
-    applicationId?: StringNullableFilter<"Document"> | string | null
-    title?: StringFilter<"Document"> | string
-    content?: StringNullableFilter<"Document"> | string | null
-    contentType?: StringFilter<"Document"> | string
-    metadata?: JsonNullableFilter<"Document">
-    version?: IntFilter<"Document"> | number
-    createdAt?: DateTimeFilter<"Document"> | Date | string
-    updatedAt?: DateTimeFilter<"Document"> | Date | string
+  export type FolderUpsertWithoutApplicationInput = {
+    update: XOR<FolderUpdateWithoutApplicationInput, FolderUncheckedUpdateWithoutApplicationInput>
+    create: XOR<FolderCreateWithoutApplicationInput, FolderUncheckedCreateWithoutApplicationInput>
+    where?: FolderWhereInput
+  }
+
+  export type FolderUpdateToOneWithWhereWithoutApplicationInput = {
+    where?: FolderWhereInput
+    data: XOR<FolderUpdateWithoutApplicationInput, FolderUncheckedUpdateWithoutApplicationInput>
+  }
+
+  export type FolderUpdateWithoutApplicationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUpdateManyWithoutFolderNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutFoldersNestedInput
+    parent?: FolderUpdateOneWithoutChildrenNestedInput
+    children?: FolderUpdateManyWithoutParentNestedInput
+  }
+
+  export type FolderUncheckedUpdateWithoutApplicationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    parentFolderId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUncheckedUpdateManyWithoutFolderNestedInput
+    children?: FolderUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type AiChatMessageCreateWithoutChatInput = {
@@ -24685,6 +26926,7 @@ export namespace Prisma {
     attachments_markdown?: string | null
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
+    folder?: FolderCreateNestedOneWithoutApplicationInput
   }
 
   export type ApplicationUncheckedCreateWithoutAiChatsInput = {
@@ -24699,6 +26941,7 @@ export namespace Prisma {
     organizationId: string
     attachments_markdown?: string | null
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
+    folder?: FolderUncheckedCreateNestedOneWithoutApplicationInput
   }
 
   export type ApplicationCreateOrConnectWithoutAiChatsInput = {
@@ -24737,6 +26980,8 @@ export namespace Prisma {
     urbanCentricLocale?: number | null
     logoUrl?: string | null
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentCreateNestedManyWithoutOrganizationInput
+    folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
@@ -24774,6 +27019,8 @@ export namespace Prisma {
     urbanCentricLocale?: number | null
     logoUrl?: string | null
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
+    folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24873,6 +27120,7 @@ export namespace Prisma {
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
+    folder?: FolderUpdateOneWithoutApplicationNestedInput
   }
 
   export type ApplicationUncheckedUpdateWithoutAiChatsInput = {
@@ -24887,6 +27135,7 @@ export namespace Prisma {
     organizationId?: StringFieldUpdateOperationsInput | string
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
+    folder?: FolderUncheckedUpdateOneWithoutApplicationNestedInput
   }
 
   export type OrganizationUpsertWithoutAiChatsInput = {
@@ -24931,6 +27180,8 @@ export namespace Prisma {
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
@@ -24968,6 +27219,8 @@ export namespace Prisma {
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25113,6 +27366,8 @@ export namespace Prisma {
     logoUrl?: string | null
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentCreateNestedManyWithoutOrganizationInput
+    folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
@@ -25150,6 +27405,8 @@ export namespace Prisma {
     logoUrl?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
+    folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25203,6 +27460,8 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
@@ -25240,6 +27499,8 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25257,6 +27518,7 @@ export namespace Prisma {
     attachments_markdown?: string | null
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
+    folder?: FolderCreateNestedOneWithoutApplicationInput
   }
 
   export type ApplicationUncheckedCreateWithoutDocumentsInput = {
@@ -25271,11 +27533,122 @@ export namespace Prisma {
     organizationId: string
     attachments_markdown?: string | null
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
+    folder?: FolderUncheckedCreateNestedOneWithoutApplicationInput
   }
 
   export type ApplicationCreateOrConnectWithoutDocumentsInput = {
     where: ApplicationWhereUniqueInput
     create: XOR<ApplicationCreateWithoutDocumentsInput, ApplicationUncheckedCreateWithoutDocumentsInput>
+  }
+
+  export type FolderCreateWithoutDocumentsInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    application?: ApplicationCreateNestedOneWithoutFolderInput
+    organization: OrganizationCreateNestedOneWithoutFoldersInput
+    parent?: FolderCreateNestedOneWithoutChildrenInput
+    children?: FolderCreateNestedManyWithoutParentInput
+  }
+
+  export type FolderUncheckedCreateWithoutDocumentsInput = {
+    id?: string
+    name: string
+    organizationId: string
+    parentFolderId?: string | null
+    applicationId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    children?: FolderUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type FolderCreateOrConnectWithoutDocumentsInput = {
+    where: FolderWhereUniqueInput
+    create: XOR<FolderCreateWithoutDocumentsInput, FolderUncheckedCreateWithoutDocumentsInput>
+  }
+
+  export type OrganizationCreateWithoutDocumentsInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    slug: string
+    address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    phone?: string | null
+    state?: string | null
+    website?: string | null
+    zipCode?: string | null
+    strategicPlan?: string | null
+    countyName?: string | null
+    districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
+    logoUrl?: string | null
+    aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
+    applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    folders?: FolderCreateNestedManyWithoutOrganizationInput
+    grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
+    recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
+    users?: UserCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutDocumentsInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    slug: string
+    address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    phone?: string | null
+    state?: string | null
+    website?: string | null
+    zipCode?: string | null
+    strategicPlan?: string | null
+    countyName?: string | null
+    districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
+    logoUrl?: string | null
+    aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
+    applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
+    grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
+    recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
+    users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutDocumentsInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutDocumentsInput, OrganizationUncheckedCreateWithoutDocumentsInput>
   }
 
   export type ApplicationUpsertWithoutDocumentsInput = {
@@ -25301,6 +27674,7 @@ export namespace Prisma {
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
+    folder?: FolderUpdateOneWithoutApplicationNestedInput
   }
 
   export type ApplicationUncheckedUpdateWithoutDocumentsInput = {
@@ -25315,6 +27689,537 @@ export namespace Prisma {
     organizationId?: StringFieldUpdateOperationsInput | string
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
+    folder?: FolderUncheckedUpdateOneWithoutApplicationNestedInput
+  }
+
+  export type FolderUpsertWithoutDocumentsInput = {
+    update: XOR<FolderUpdateWithoutDocumentsInput, FolderUncheckedUpdateWithoutDocumentsInput>
+    create: XOR<FolderCreateWithoutDocumentsInput, FolderUncheckedCreateWithoutDocumentsInput>
+    where?: FolderWhereInput
+  }
+
+  export type FolderUpdateToOneWithWhereWithoutDocumentsInput = {
+    where?: FolderWhereInput
+    data: XOR<FolderUpdateWithoutDocumentsInput, FolderUncheckedUpdateWithoutDocumentsInput>
+  }
+
+  export type FolderUpdateWithoutDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    application?: ApplicationUpdateOneWithoutFolderNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutFoldersNestedInput
+    parent?: FolderUpdateOneWithoutChildrenNestedInput
+    children?: FolderUpdateManyWithoutParentNestedInput
+  }
+
+  export type FolderUncheckedUpdateWithoutDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    parentFolderId?: NullableStringFieldUpdateOperationsInput | string | null
+    applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    children?: FolderUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type OrganizationUpsertWithoutDocumentsInput = {
+    update: XOR<OrganizationUpdateWithoutDocumentsInput, OrganizationUncheckedUpdateWithoutDocumentsInput>
+    create: XOR<OrganizationCreateWithoutDocumentsInput, OrganizationUncheckedCreateWithoutDocumentsInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutDocumentsInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutDocumentsInput, OrganizationUncheckedUpdateWithoutDocumentsInput>
+  }
+
+  export type OrganizationUpdateWithoutDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slug?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
+    applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUpdateManyWithoutOrganizationNestedInput
+    grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
+    recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
+    users?: UserUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slug?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
+    applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
+    grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
+    recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
+    users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type DocumentCreateWithoutFolderInput = {
+    id?: string
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    application?: ApplicationCreateNestedOneWithoutDocumentsInput
+    organization: OrganizationCreateNestedOneWithoutDocumentsInput
+  }
+
+  export type DocumentUncheckedCreateWithoutFolderInput = {
+    id?: string
+    applicationId?: string | null
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organizationId: string
+  }
+
+  export type DocumentCreateOrConnectWithoutFolderInput = {
+    where: DocumentWhereUniqueInput
+    create: XOR<DocumentCreateWithoutFolderInput, DocumentUncheckedCreateWithoutFolderInput>
+  }
+
+  export type DocumentCreateManyFolderInputEnvelope = {
+    data: DocumentCreateManyFolderInput | DocumentCreateManyFolderInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ApplicationCreateWithoutFolderInput = {
+    id?: string
+    opportunityId: number
+    status?: $Enums.ApplicationStatus
+    title?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedAt?: Date | string | null
+    lastEditedAt?: Date | string
+    attachments_markdown?: string | null
+    aiChats?: AiChatCreateNestedManyWithoutApplicationInput
+    organization: OrganizationCreateNestedOneWithoutApplicationsInput
+    documents?: DocumentCreateNestedManyWithoutApplicationInput
+  }
+
+  export type ApplicationUncheckedCreateWithoutFolderInput = {
+    id?: string
+    opportunityId: number
+    status?: $Enums.ApplicationStatus
+    title?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedAt?: Date | string | null
+    lastEditedAt?: Date | string
+    organizationId: string
+    attachments_markdown?: string | null
+    aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
+  }
+
+  export type ApplicationCreateOrConnectWithoutFolderInput = {
+    where: ApplicationWhereUniqueInput
+    create: XOR<ApplicationCreateWithoutFolderInput, ApplicationUncheckedCreateWithoutFolderInput>
+  }
+
+  export type OrganizationCreateWithoutFoldersInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    slug: string
+    address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    phone?: string | null
+    state?: string | null
+    website?: string | null
+    zipCode?: string | null
+    strategicPlan?: string | null
+    countyName?: string | null
+    districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
+    logoUrl?: string | null
+    aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
+    applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentCreateNestedManyWithoutOrganizationInput
+    grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
+    recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
+    users?: UserCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutFoldersInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    slug: string
+    address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    phone?: string | null
+    state?: string | null
+    website?: string | null
+    zipCode?: string | null
+    strategicPlan?: string | null
+    countyName?: string | null
+    districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
+    logoUrl?: string | null
+    aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
+    applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
+    grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
+    recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
+    users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutFoldersInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutFoldersInput, OrganizationUncheckedCreateWithoutFoldersInput>
+  }
+
+  export type FolderCreateWithoutChildrenInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    documents?: DocumentCreateNestedManyWithoutFolderInput
+    application?: ApplicationCreateNestedOneWithoutFolderInput
+    organization: OrganizationCreateNestedOneWithoutFoldersInput
+    parent?: FolderCreateNestedOneWithoutChildrenInput
+  }
+
+  export type FolderUncheckedCreateWithoutChildrenInput = {
+    id?: string
+    name: string
+    organizationId: string
+    parentFolderId?: string | null
+    applicationId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    documents?: DocumentUncheckedCreateNestedManyWithoutFolderInput
+  }
+
+  export type FolderCreateOrConnectWithoutChildrenInput = {
+    where: FolderWhereUniqueInput
+    create: XOR<FolderCreateWithoutChildrenInput, FolderUncheckedCreateWithoutChildrenInput>
+  }
+
+  export type FolderCreateWithoutParentInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    documents?: DocumentCreateNestedManyWithoutFolderInput
+    application?: ApplicationCreateNestedOneWithoutFolderInput
+    organization: OrganizationCreateNestedOneWithoutFoldersInput
+    children?: FolderCreateNestedManyWithoutParentInput
+  }
+
+  export type FolderUncheckedCreateWithoutParentInput = {
+    id?: string
+    name: string
+    organizationId: string
+    applicationId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    documents?: DocumentUncheckedCreateNestedManyWithoutFolderInput
+    children?: FolderUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type FolderCreateOrConnectWithoutParentInput = {
+    where: FolderWhereUniqueInput
+    create: XOR<FolderCreateWithoutParentInput, FolderUncheckedCreateWithoutParentInput>
+  }
+
+  export type FolderCreateManyParentInputEnvelope = {
+    data: FolderCreateManyParentInput | FolderCreateManyParentInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DocumentUpsertWithWhereUniqueWithoutFolderInput = {
+    where: DocumentWhereUniqueInput
+    update: XOR<DocumentUpdateWithoutFolderInput, DocumentUncheckedUpdateWithoutFolderInput>
+    create: XOR<DocumentCreateWithoutFolderInput, DocumentUncheckedCreateWithoutFolderInput>
+  }
+
+  export type DocumentUpdateWithWhereUniqueWithoutFolderInput = {
+    where: DocumentWhereUniqueInput
+    data: XOR<DocumentUpdateWithoutFolderInput, DocumentUncheckedUpdateWithoutFolderInput>
+  }
+
+  export type DocumentUpdateManyWithWhereWithoutFolderInput = {
+    where: DocumentScalarWhereInput
+    data: XOR<DocumentUpdateManyMutationInput, DocumentUncheckedUpdateManyWithoutFolderInput>
+  }
+
+  export type ApplicationUpsertWithoutFolderInput = {
+    update: XOR<ApplicationUpdateWithoutFolderInput, ApplicationUncheckedUpdateWithoutFolderInput>
+    create: XOR<ApplicationCreateWithoutFolderInput, ApplicationUncheckedCreateWithoutFolderInput>
+    where?: ApplicationWhereInput
+  }
+
+  export type ApplicationUpdateToOneWithWhereWithoutFolderInput = {
+    where?: ApplicationWhereInput
+    data: XOR<ApplicationUpdateWithoutFolderInput, ApplicationUncheckedUpdateWithoutFolderInput>
+  }
+
+  export type ApplicationUpdateWithoutFolderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    opportunityId?: IntFieldUpdateOperationsInput | number
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+    aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
+    documents?: DocumentUpdateManyWithoutApplicationNestedInput
+  }
+
+  export type ApplicationUncheckedUpdateWithoutFolderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    opportunityId?: IntFieldUpdateOperationsInput | number
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+    aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
+  }
+
+  export type OrganizationUpsertWithoutFoldersInput = {
+    update: XOR<OrganizationUpdateWithoutFoldersInput, OrganizationUncheckedUpdateWithoutFoldersInput>
+    create: XOR<OrganizationCreateWithoutFoldersInput, OrganizationUncheckedCreateWithoutFoldersInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutFoldersInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutFoldersInput, OrganizationUncheckedUpdateWithoutFoldersInput>
+  }
+
+  export type OrganizationUpdateWithoutFoldersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slug?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
+    applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUpdateManyWithoutOrganizationNestedInput
+    grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
+    recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
+    users?: UserUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutFoldersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slug?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
+    applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+    grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
+    recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
+    users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type FolderUpsertWithoutChildrenInput = {
+    update: XOR<FolderUpdateWithoutChildrenInput, FolderUncheckedUpdateWithoutChildrenInput>
+    create: XOR<FolderCreateWithoutChildrenInput, FolderUncheckedCreateWithoutChildrenInput>
+    where?: FolderWhereInput
+  }
+
+  export type FolderUpdateToOneWithWhereWithoutChildrenInput = {
+    where?: FolderWhereInput
+    data: XOR<FolderUpdateWithoutChildrenInput, FolderUncheckedUpdateWithoutChildrenInput>
+  }
+
+  export type FolderUpdateWithoutChildrenInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUpdateManyWithoutFolderNestedInput
+    application?: ApplicationUpdateOneWithoutFolderNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutFoldersNestedInput
+    parent?: FolderUpdateOneWithoutChildrenNestedInput
+  }
+
+  export type FolderUncheckedUpdateWithoutChildrenInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    parentFolderId?: NullableStringFieldUpdateOperationsInput | string | null
+    applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUncheckedUpdateManyWithoutFolderNestedInput
+  }
+
+  export type FolderUpsertWithWhereUniqueWithoutParentInput = {
+    where: FolderWhereUniqueInput
+    update: XOR<FolderUpdateWithoutParentInput, FolderUncheckedUpdateWithoutParentInput>
+    create: XOR<FolderCreateWithoutParentInput, FolderUncheckedCreateWithoutParentInput>
+  }
+
+  export type FolderUpdateWithWhereUniqueWithoutParentInput = {
+    where: FolderWhereUniqueInput
+    data: XOR<FolderUpdateWithoutParentInput, FolderUncheckedUpdateWithoutParentInput>
+  }
+
+  export type FolderUpdateManyWithWhereWithoutParentInput = {
+    where: FolderScalarWhereInput
+    data: XOR<FolderUpdateManyMutationInput, FolderUncheckedUpdateManyWithoutParentInput>
   }
 
   export type opportunitiesCreateWithoutK12_education_opportunitiesInput = {
@@ -25615,6 +28520,28 @@ export namespace Prisma {
     attachments_markdown?: string | null
   }
 
+  export type DocumentCreateManyOrganizationInput = {
+    id?: string
+    applicationId?: string | null
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    folderId?: string | null
+  }
+
+  export type FolderCreateManyOrganizationInput = {
+    id?: string
+    name: string
+    parentFolderId?: string | null
+    applicationId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type GrantBookmarkCreateManyOrganizationInput = {
     id?: string
     notes?: string | null
@@ -25706,6 +28633,7 @@ export namespace Prisma {
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
+    folder?: FolderUpdateOneWithoutApplicationNestedInput
   }
 
   export type ApplicationUncheckedUpdateWithoutOrganizationInput = {
@@ -25720,6 +28648,7 @@ export namespace Prisma {
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
+    folder?: FolderUncheckedUpdateOneWithoutApplicationNestedInput
   }
 
   export type ApplicationUncheckedUpdateManyWithoutOrganizationInput = {
@@ -25732,6 +28661,76 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type DocumentUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    application?: ApplicationUpdateOneWithoutDocumentsNestedInput
+    folder?: FolderUpdateOneWithoutDocumentsNestedInput
+  }
+
+  export type DocumentUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type DocumentUncheckedUpdateManyWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type FolderUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUpdateManyWithoutFolderNestedInput
+    application?: ApplicationUpdateOneWithoutFolderNestedInput
+    parent?: FolderUpdateOneWithoutChildrenNestedInput
+    children?: FolderUpdateManyWithoutParentNestedInput
+  }
+
+  export type FolderUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    parentFolderId?: NullableStringFieldUpdateOperationsInput | string | null
+    applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUncheckedUpdateManyWithoutFolderNestedInput
+    children?: FolderUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type FolderUncheckedUpdateManyWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    parentFolderId?: NullableStringFieldUpdateOperationsInput | string | null
+    applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GrantBookmarkUpdateWithoutOrganizationInput = {
@@ -25890,6 +28889,8 @@ export namespace Prisma {
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    organizationId: string
+    folderId?: string | null
   }
 
   export type AiChatUpdateWithoutApplicationInput = {
@@ -25936,6 +28937,8 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    folder?: FolderUpdateOneWithoutDocumentsNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutDocumentsNestedInput
   }
 
   export type DocumentUncheckedUpdateWithoutApplicationInput = {
@@ -25947,6 +28950,8 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DocumentUncheckedUpdateManyWithoutApplicationInput = {
@@ -25958,6 +28963,8 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AiChatMessageCreateManyChatInput = {
@@ -25990,6 +28997,98 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DocumentCreateManyFolderInput = {
+    id?: string
+    applicationId?: string | null
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organizationId: string
+  }
+
+  export type FolderCreateManyParentInput = {
+    id?: string
+    name: string
+    organizationId: string
+    applicationId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DocumentUpdateWithoutFolderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    application?: ApplicationUpdateOneWithoutDocumentsNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutDocumentsNestedInput
+  }
+
+  export type DocumentUncheckedUpdateWithoutFolderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DocumentUncheckedUpdateManyWithoutFolderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type FolderUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUpdateManyWithoutFolderNestedInput
+    application?: ApplicationUpdateOneWithoutFolderNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutFoldersNestedInput
+    children?: FolderUpdateManyWithoutParentNestedInput
+  }
+
+  export type FolderUncheckedUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUncheckedUpdateManyWithoutFolderNestedInput
+    children?: FolderUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type FolderUncheckedUpdateManyWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

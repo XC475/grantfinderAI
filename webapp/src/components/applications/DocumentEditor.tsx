@@ -18,16 +18,12 @@ interface Document {
 
 interface DocumentEditorProps {
   document: Document;
-  applicationId: string;
-  organizationSlug: string;
   onSave: (content: string) => Promise<void>;
   isSaving: boolean;
 }
 
 export function DocumentEditor({
   document,
-  applicationId,
-  organizationSlug,
   onSave,
   isSaving,
 }: DocumentEditorProps) {

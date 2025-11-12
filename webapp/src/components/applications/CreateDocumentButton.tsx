@@ -35,7 +35,7 @@ export function CreateDocumentButton({
     <>
       <Button onClick={handleCreate} disabled={isCreating} className="h-8 px-3">
         <Plus className="h-4 w-4 mr-1" />
-        {isCreating ? "Creating..." : "Create Document"}
+        {isCreating ? "Creating..." : "New Document"}
       </Button>
 
       <CreateDocumentModal
