@@ -74,6 +74,16 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Create folder for the application
+    await prisma.folder.create({
+      data: {
+        name: application.title || "Untitled Application",
+        organizationId: organization.id,
+        applicationId: application.id,
+        parentFolderId: null, // Root level
+      },
+    });
+
     // Also bookmark if requested
     if (alsoBookmark) {
       await prisma.grantBookmark.upsert({

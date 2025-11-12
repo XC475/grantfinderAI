@@ -104,11 +104,19 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { title, content, contentType = "html" } = body;
+    const { title, content, contentType = "html", folderId } = body;
 
     if (!title) {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
     }
+
+    // Get the application's folder
+    const applicationFolder = await prisma.folder.findUnique({
+      where: { applicationId: applicationId },
+    });
+
+    // Use provided folderId or default to application's root folder
+    const targetFolderId = folderId || applicationFolder?.id || null;
 
     // Create new document with getting started content if no content provided
     const gettingStartedContent =
@@ -137,6 +145,7 @@ export async function POST(
       data: {
         applicationId: applicationId,
         organizationId: application.organizationId,
+        folderId: targetFolderId,
         title,
         content: gettingStartedContent,
         contentType,

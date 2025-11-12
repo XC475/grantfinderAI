@@ -115,10 +115,11 @@ model Organization {
   logoUrl                String?
   aiChats                AiChat[]
   applications           Application[]
+  documents              Document[]                 @relation("OrganizationDocuments")
+  folders                Folder[]                   @relation("OrganizationFolders")
   grantBookmarks         GrantBookmark[]
   eligibilityAnalyses    GrantEligibilityAnalysis[]
   recommendations        Recommendation[]
-  documents              Document[]                 @relation("OrganizationDocuments")
   users                  User[]                     @relation("UserOrganization")
 
   @@index([leaId])
@@ -173,6 +174,7 @@ model Application {
   aiChats              AiChat[]
   organization         Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   documents            Document[]
+  folder               Folder?
 
   @@unique([opportunityId, organizationId])
   @@index([organizationId, status])
@@ -244,7 +246,6 @@ model VectorDocument {
 model Document {
   id             String       @id @default(cuid())
   applicationId  String?
-  organizationId String
   title          String
   content        String?
   contentType    String       @default("html")
@@ -252,13 +253,38 @@ model Document {
   version        Int          @default(1)
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+  organizationId String
+  folderId       String?
   application    Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  folder         Folder?      @relation(fields: [folderId], references: [id])
   organization   Organization @relation("OrganizationDocuments", fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([applicationId])
   @@index([updatedAt])
   @@index([applicationId, createdAt])
+  @@index([folderId])
   @@map("documents")
+  @@schema("app")
+}
+
+model Folder {
+  id             String       @id @default(cuid())
+  name           String
+  organizationId String
+  parentFolderId String?
+  applicationId  String?      @unique
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  documents      Document[]
+  application    Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  organization   Organization @relation("OrganizationFolders", fields: [organizationId], references: [id], onDelete: Cascade)
+  parent         Folder?      @relation("FolderHierarchy", fields: [parentFolderId], references: [id], onDelete: Cascade)
+  children       Folder[]     @relation("FolderHierarchy")
+
+  @@index([organizationId])
+  @@index([parentFolderId])
+  @@index([applicationId])
+  @@map("folders")
   @@schema("app")
 }
 

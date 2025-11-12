@@ -159,7 +159,39 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { title, content, contentType } = body;
+    const { title, content, contentType, folderId } = body;
+
+    // If folderId is being updated, verify it belongs to the organization
+    if (folderId !== undefined && folderId !== null) {
+      const folder = await prisma.folder.findFirst({
+        where: {
+          id: folderId,
+          organizationId: dbUser.organizationId,
+        },
+      });
+
+      if (!folder) {
+        return NextResponse.json(
+          { error: "Folder not found or access denied" },
+          { status: 404 }
+        );
+      }
+    }
+
+    // Auto-unlink logic: if document has applicationId and folderId is being changed
+    let newApplicationId = existingDocument.applicationId;
+
+    if (folderId !== undefined && existingDocument.applicationId) {
+      const { getApplicationFolderTree } = await import("@/lib/folders");
+      const applicationFolderTree = await getApplicationFolderTree(
+        existingDocument.applicationId
+      );
+
+      // If moving to null (root) or to a folder not in the application's tree, unlink
+      if (!folderId || !applicationFolderTree.has(folderId)) {
+        newApplicationId = null;
+      }
+    }
 
     const document = await prisma.document.update({
       where: { id: documentId },
@@ -167,8 +199,27 @@ export async function PUT(
         ...(title && { title }),
         ...(content !== undefined && { content }),
         ...(contentType && { contentType }),
+        ...(folderId !== undefined && { folderId }),
+        ...(newApplicationId !== existingDocument.applicationId && {
+          applicationId: newApplicationId,
+        }),
         version: existingDocument.version + 1,
         updatedAt: new Date(),
+      },
+      include: {
+        application: {
+          select: {
+            id: true,
+            title: true,
+            opportunityId: true,
+          },
+        },
+        folder: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
 

@@ -185,10 +185,27 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { title, content, contentType = "html" } = body;
+    const { title, content, contentType = "html", folderId } = body;
 
     if (!title || typeof title !== "string") {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
+    }
+
+    // If folderId is provided, verify it belongs to the organization
+    if (folderId) {
+      const folder = await prisma.folder.findFirst({
+        where: {
+          id: folderId,
+          organizationId: dbUser.organizationId,
+        },
+      });
+
+      if (!folder) {
+        return NextResponse.json(
+          { error: "Folder not found or access denied" },
+          { status: 404 }
+        );
+      }
     }
 
     const document = await prisma.document.create({
@@ -197,6 +214,7 @@ export async function POST(req: NextRequest) {
         content: content || DEFAULT_DOCUMENT_CONTENT,
         contentType,
         organizationId: dbUser.organizationId,
+        folderId: folderId || null,
         version: 1,
       },
       include: {
@@ -205,6 +223,12 @@ export async function POST(req: NextRequest) {
             id: true,
             title: true,
             opportunityId: true,
+          },
+        },
+        folder: {
+          select: {
+            id: true,
+            name: true,
           },
         },
       },

@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { GrantInfoCard } from "./GrantInfoCard";
-import { DocumentList } from "./DocumentList";
+import { DocumentsView } from "@/components/folders/DocumentsView";
 
 interface Application {
   id: string;
@@ -34,16 +33,6 @@ interface Grant {
   attachments?: Array<{ url?: string; title?: string; name?: string }>;
 }
 
-interface Document {
-  id: string;
-  title: string;
-  content?: string;
-  contentType: string;
-  version: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
 interface ApplicationPageProps {
   applicationId: string;
   organizationSlug: string;
@@ -55,10 +44,10 @@ export function ApplicationPage({
 }: ApplicationPageProps) {
   const [application, setApplication] = useState<Application | null>(null);
   const [grant, setGrant] = useState<Grant | null>(null);
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [applicationFolderId, setApplicationFolderId] = useState<string | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const router = useRouter();
 
   const fetchApplication = useCallback(async () => {
     try {
@@ -95,63 +84,24 @@ export function ApplicationPage({
     }
   };
 
-  const fetchDocuments = useCallback(async () => {
+  const fetchApplicationFolder = useCallback(async () => {
     try {
       const response = await fetch(
-        `/api/applications/${applicationId}/documents`
+        `/api/folders?applicationId=${applicationId}`
       );
       if (response.ok) {
         const data = await response.json();
-        setDocuments(data.documents);
+        const appFolder = data.folders.find(
+          (f: any) => f.applicationId === applicationId
+        );
+        if (appFolder) {
+          setApplicationFolderId(appFolder.id);
+        }
       }
     } catch (error) {
-      console.error("Error fetching documents:", error);
-      toast.error("Failed to load documents");
+      console.error("Error fetching application folder:", error);
     }
   }, [applicationId]);
-
-  const handleEditDocument = (documentId: string) => {
-    router.push(`/private/${organizationSlug}/editor/${documentId}`);
-  };
-
-  const handleDeleteDocument = async (documentId: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this document? This action cannot be undone."
-      )
-    ) {
-      return;
-    }
-
-    setIsDeleting(true);
-    try {
-      const response = await fetch(
-        `/api/applications/${applicationId}/documents/${documentId}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (response.ok) {
-        toast.success("Document deleted successfully");
-        fetchDocuments(); // Refresh the list
-      } else {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to delete document");
-      }
-    } catch (error) {
-      console.error("Error deleting document:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to delete document"
-      );
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  const handleRefreshDocuments = () => {
-    fetchDocuments();
-  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -161,7 +111,7 @@ export function ApplicationPage({
         if (app) {
           await Promise.all([
             fetchGrant(app.opportunityId),
-            fetchDocuments(),
+            fetchApplicationFolder(),
           ]);
         }
       } finally {
@@ -174,7 +124,7 @@ export function ApplicationPage({
     applicationId,
     organizationSlug,
     fetchApplication,
-    fetchDocuments,
+    fetchApplicationFolder,
   ]);
 
   if (loading) {
@@ -222,16 +172,15 @@ export function ApplicationPage({
         organizationSlug={organizationSlug}
       />
 
-      {/* Documents */}
-      <DocumentList
-        documents={documents}
-        applicationId={applicationId}
-        organizationSlug={organizationSlug}
-        onEdit={handleEditDocument}
-        onDelete={handleDeleteDocument}
-        onRefresh={handleRefreshDocuments}
-        isDeleting={isDeleting}
-      />
+      {/* Documents Section */}
+      {applicationFolderId && (
+        <DocumentsView
+          organizationSlug={organizationSlug}
+          rootFolderId={applicationFolderId}
+          rootLabel={application.title || "Documents"}
+          applicationId={applicationId}
+        />
+      )}
     </div>
   );
 }
