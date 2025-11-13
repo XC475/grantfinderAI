@@ -1,24 +1,26 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  BotMessageSquare,
-  FileText,
-  Sparkles,
-  Clock,
-  Loader2,
-} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Clock, ChevronRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ApplicationsTable } from "@/components/applications/ApplicationsTable";
+import { TypewriterText } from "@/components/ui/typewriter-text";
+import { useHeaderContent } from "@/contexts/HeaderContentContext";
+import {
+  AIAssistantCard,
+  GrantsCard,
+  RecommendationsCard,
+  OrgProfileCard,
+} from "@/components/dashboard/FeatureCards";
 
 interface Application {
   id: string;
@@ -39,41 +41,71 @@ interface Application {
   };
 }
 
-interface CachedAction {
+interface RecentActivity {
   id: string;
-  name: string;
-  lastAccessed: string;
+  title: string;
+  timestamp: string;
+  type: string;
+  link: string;
 }
 
 export default function DashboardPage() {
   const params = useParams();
+  const router = useRouter();
   const organizationSlug = params.slug as string;
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState<string>("");
+  const { setHeaderContent } = useHeaderContent();
 
-  // Dummy data for "Jump back in"
-  const cachedActions: CachedAction[] = [
+  // Recent activities data (mock data for now)
+  const recentActivities: RecentActivity[] = [
     {
       id: "1",
-      name: "STEM Education Grant Draft",
-      lastAccessed: "2 minutes ago",
+      title: "STEM Education Grant Draft",
+      timestamp: "2 minutes ago",
+      type: "draft",
+      link: `/private/${organizationSlug}/applications`,
     },
     {
       id: "2",
-      name: "Search: Special Education",
-      lastAccessed: "1 hour ago",
+      title: "Search: Special Education",
+      timestamp: "1 hour ago",
+      type: "search",
+      link: `/private/${organizationSlug}/grants?search=special+education`,
     },
     {
       id: "3",
-      name: "Technology Infrastructure Proposal",
-      lastAccessed: "3 hours ago",
+      title: "Technology Infrastructure Proposal",
+      timestamp: "3 hours ago",
+      type: "draft",
+      link: `/private/${organizationSlug}/applications`,
     },
     {
       id: "4",
-      name: "Chat: Grant Requirements",
-      lastAccessed: "Yesterday",
+      title: "Chat: Grant Requirements",
+      timestamp: "Yesterday",
+      type: "chat",
+      link: `/private/${organizationSlug}/chat`,
     },
   ];
+
+  const handleActivityClick = (activity: RecentActivity) => {
+    router.push(activity.link);
+  };
+
+  // Fetch user data
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch("/api/user/me");
+      if (response.ok) {
+        const data = await response.json();
+        setUserName(data.name || "");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
 
   // Fetch applications
   const fetchApplications = async () => {
@@ -83,7 +115,7 @@ export default function DashboardPage() {
       );
       if (response.ok) {
         const data = await response.json();
-        setApplications(data.applications.slice(0, 5)); // Show only first 5
+        setApplications(data.applications);
       } else {
         toast.error("Failed to load applications");
       }
@@ -96,127 +128,94 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
+    fetchUserData();
     fetchApplications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [organizationSlug]);
 
+  // Set header content with welcome message
+  useEffect(() => {
+    setHeaderContent(
+      <div className="text-sm text-muted-foreground font-medium">
+        <TypewriterText 
+          text={`Welcome back${userName ? `, ${userName}` : ""}`}
+          speed={60}
+        />
+      </div>
+    );
+    
+    // Cleanup: reset header content when component unmounts
+    return () => setHeaderContent(null);
+  }, [userName, setHeaderContent]);
+
   return (
-    <div className="space-y-6 p-4">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+    <div className="flex flex-col h-full overflow-hidden p-6 gap-4">
+      {/* Feature Cards - 4 Columns */}
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 flex-shrink-0">
+        <AIAssistantCard slug={organizationSlug} />
+        <GrantsCard slug={organizationSlug} />
+        <RecommendationsCard slug={organizationSlug} />
+        <OrgProfileCard slug={organizationSlug} />
       </div>
 
-      {/* Top 3 Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Link href={`/private/${organizationSlug}/chat`}>
-          <Card className="hover:shadow-md transition-all hover:border-primary/50 cursor-pointer h-full">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-blue-50">
-                  <BotMessageSquare className="h-6 w-6 text-blue-500" />
-                </div>
-                <CardTitle className="text-lg">AI Assistant</CardTitle>
-              </div>
-              <CardDescription className="pt-2">
-                Get help with the entire grants lifecycle—from discovery and
-                eligibility analysis to writing and submission support
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        </Link>
-
-        <Link href={`/private/${organizationSlug}/grants?tab=search`}>
-          <Card className="hover:shadow-md transition-all hover:border-primary/50 cursor-pointer h-full">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-green-50">
-                  <FileText className="h-6 w-6 text-green-500" />
-                </div>
-                <CardTitle className="text-lg">Grants</CardTitle>
-              </div>
-              <CardDescription className="pt-2">
-                Search, discover, and bookmark funding opportunities from
-                federal, state, and private sources with advanced filters
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        </Link>
-
-        <Link href={`/private/${organizationSlug}/grants?tab=recommendations`}>
-          <Card className="hover:shadow-md transition-all hover:border-primary/50 cursor-pointer h-full">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-purple-50">
-                  <Sparkles className="h-6 w-6 text-purple-500" />
-                </div>
-                <CardTitle className="text-lg">Recommendations</CardTitle>
-              </div>
-              <CardDescription className="pt-2">
-                AI-powered grant matches tailored to your district&apos;s
-                profile, priorities, and strategic goals
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        </Link>
-      </div>
-
-      {/* Two Column Layout */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Left: Jump Back In */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+      {/* Jump Back In (1/4) + Applications (3/4) */}
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-4 flex-1 min-h-0 overflow-hidden">
+        {/* Jump Back In - Left Side (1 column) */}
+        <Card className="md:col-span-1 flex flex-col overflow-hidden">
+          <CardHeader className="flex-shrink-0">
+            <CardTitle className="flex items-center gap-2 text-lg">
               <Clock className="h-5 w-5" />
               Jump Back In
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {cachedActions.map((action) => (
-                <div
-                  key={action.id}
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-muted cursor-pointer transition-colors"
-                >
-                  <div className="font-medium text-sm">{action.name}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {action.lastAccessed}
-                  </div>
+          <CardContent className="flex-1 overflow-auto space-y-2">
+            {recentActivities.map((activity) => (
+              <div
+                key={activity.id}
+                className="flex items-start justify-between p-3 rounded-lg hover:bg-muted cursor-pointer transition-colors border border-transparent hover:border-border"
+                onClick={() => handleActivityClick(activity)}
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{activity.title}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {activity.timestamp}
+                  </p>
                 </div>
-              ))}
-            </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 ml-2" />
+              </div>
+            ))}
           </CardContent>
         </Card>
 
-        {/* Right: Applications Table */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Applications</CardTitle>
-              <Link
-                href={`/private/${organizationSlug}/applications`}
-                className="text-sm text-primary hover:underline"
-              >
-                View all
+        {/* Applications - Right Side (3 columns) - NO CARD WRAPPER */}
+        <div className="md:col-span-3 flex flex-col overflow-hidden">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-bold">Recent Applications</h3>
+            <Button variant="outline" asChild>
+              <Link href={`/private/${organizationSlug}/applications`}>
+                View All
               </Link>
-            </div>
-          </CardHeader>
-          <CardContent>
+            </Button>
+          </div>
+          <div className="flex-1 overflow-auto">
             {loading ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-8 w-8 animate-spin" />
               </div>
             ) : applications.length === 0 ? (
-              <div className="text-center py-8 text-sm text-muted-foreground">
+              <div className="text-center py-8 text-sm text-muted-foreground border rounded-lg">
                 No applications yet
               </div>
             ) : (
               <ApplicationsTable
-                applications={applications}
+                applications={applications.slice(0, 5)}
                 slug={organizationSlug}
+                onRefresh={fetchApplications}
+                variant="dashboard"
               />
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

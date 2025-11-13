@@ -117,6 +117,7 @@ export default function ApplicationsPage({
         applications={applications}
         slug={slug}
         onRefresh={fetchApplications}
+        variant="full"
       />
     </div>
   );
