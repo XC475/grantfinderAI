@@ -80,6 +80,150 @@ function formatCurrency(amount: number | null | undefined): string {
   }).format(amount);
 }
 
+export function createSimpleColumns(actions: ColumnActions): ColumnDef<Application>[] {
+  return [
+    // Application Name Column (no sorting)
+    {
+      accessorKey: "title",
+      header: "Application Name",
+      cell: ({ row }) => {
+        return (
+          <div className="space-y-1 max-w-[300px]">
+            <div className="font-medium truncate">
+              {row.original.title || `Grant #${row.original.opportunityId}`}
+            </div>
+            <div className="text-sm text-muted-foreground truncate">
+              Opportunity ID: {row.original.opportunityId}
+            </div>
+          </div>
+        );
+      },
+      size: 300,
+    },
+
+    // Status Column (no sorting)
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.getValue("status") as string;
+        return (
+          <Badge className={getStatusVariant(status)}>
+            {formatStatus(status)}
+          </Badge>
+        );
+      },
+      size: 150,
+    },
+
+    // Funding Amount Column (no sorting)
+    {
+      accessorKey: "funding",
+      header: () => <div className="text-right">Funding Amount</div>,
+      cell: ({ row }) => {
+        const amount = row.original.opportunity?.total_funding_amount;
+        return (
+          <div className="text-right font-medium">
+            {formatCurrency(amount)}
+          </div>
+        );
+      },
+      size: 180,
+    },
+
+    // Deadline Column (no sorting)
+    {
+      accessorKey: "deadline",
+      header: "Deadline",
+      cell: ({ row }) => {
+        const closeDate = row.original.opportunity?.close_date;
+        if (!closeDate) {
+          return <span className="text-muted-foreground">No deadline</span>;
+        }
+        return (
+          <div>
+            {new Date(closeDate).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </div>
+        );
+      },
+      size: 150,
+    },
+
+    // Actions Column (dropdown)
+    {
+      id: "actions",
+      header: "",
+      cell: ({ row }) => {
+        const application = row.original;
+
+        return (
+          <div className="flex justify-end">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="h-8 w-8 p-0"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <span className="sr-only">Open menu</span>
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    actions.onView(application.id);
+                  }}
+                >
+                  <Eye className="mr-2 h-4 w-4" />
+                  View Details
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    actions.onEdit(application.id);
+                  }}
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    actions.onDuplicate(application.id);
+                  }}
+                >
+                  <Copy className="mr-2 h-4 w-4" />
+                  Duplicate
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    actions.onDelete(application.id, application.title);
+                  }}
+                  className="text-red-600 focus:text-red-600"
+                >
+                  <Trash className="mr-2 h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        );
+      },
+      enableSorting: false,
+      enableResizing: false,
+      size: 60,
+    },
+  ];
+}
+
 export function createColumns(actions: ColumnActions): ColumnDef<Application>[] {
   return [
     // Select Column (checkbox)

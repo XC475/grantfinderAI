@@ -10,7 +10,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, ChevronRight, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Clock, ChevronRight, Loader2, Settings2, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { ApplicationsTable } from "@/components/applications/ApplicationsTable";
 import { TypewriterText } from "@/components/ui/typewriter-text";
@@ -56,6 +65,7 @@ export default function DashboardPage() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string>("");
+  const [searchFilter, setSearchFilter] = useState("");
   const { setHeaderContent } = useHeaderContent();
 
   // Recent activities data (mock data for now)
@@ -133,10 +143,21 @@ export default function DashboardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [organizationSlug]);
 
+  // Filter applications based on search
+  const filteredApplications = applications.filter((app) => {
+    if (!searchFilter) return true;
+    const searchLower = searchFilter.toLowerCase();
+    return (
+      app.title?.toLowerCase().includes(searchLower) ||
+      app.opportunityId.toString().includes(searchLower) ||
+      app.status.toLowerCase().includes(searchLower)
+    );
+  });
+
   // Set header content with welcome message
   useEffect(() => {
     setHeaderContent(
-      <div className="text-sm text-muted-foreground font-medium">
+      <div className="text-base text-muted-foreground font-medium">
         <TypewriterText 
           text={`Welcome back${userName ? `, ${userName}` : ""}`}
           speed={60}
@@ -189,26 +210,47 @@ export default function DashboardPage() {
 
         {/* Applications - Right Side (3 columns) - NO CARD WRAPPER */}
         <div className="md:col-span-3 flex flex-col overflow-hidden">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 gap-2">
             <h3 className="text-xl font-bold">Recent Applications</h3>
-            <Button variant="outline" asChild>
-              <Link href={`/private/${organizationSlug}/applications`}>
-                View All
-              </Link>
-            </Button>
+            
+            <div className="flex items-center gap-2">
+              {/* Search Input */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search..."
+                  value={searchFilter}
+                  onChange={(e) => setSearchFilter(e.target.value)}
+                  className="w-[200px] pl-9"
+                />
+              </div>
+
+              {/* Add Application Button */}
+              <Button size="sm" onClick={() => router.push(`/private/${organizationSlug}/applications/new`)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add
+              </Button>
+
+              {/* View All Button */}
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/private/${organizationSlug}/applications`}>
+                  View All
+                </Link>
+              </Button>
+            </div>
           </div>
           <div className="flex-1 overflow-auto">
             {loading ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-8 w-8 animate-spin" />
               </div>
-            ) : applications.length === 0 ? (
+            ) : filteredApplications.length === 0 ? (
               <div className="text-center py-8 text-sm text-muted-foreground border rounded-lg">
-                No applications yet
+                {searchFilter ? "No applications match your search" : "No applications yet"}
               </div>
             ) : (
               <ApplicationsTable
-                applications={applications.slice(0, 5)}
+                applications={filteredApplications.slice(0, 5)}
                 slug={organizationSlug}
                 onRefresh={fetchApplications}
                 variant="dashboard"

@@ -42,7 +42,7 @@ import {
 } from "@/components/ui/dialog";
 import { Settings2, Plus } from "lucide-react";
 import { toast } from "sonner";
-import { createColumns, type Application } from "./columns";
+import { createColumns, createSimpleColumns, type Application } from "./columns";
 
 interface ApplicationsTableProps {
   applications: Application[];
@@ -90,7 +90,7 @@ export function ApplicationsTable({
     },
     onDelete: (id: string, title: string | null) => {
       setApplicationToDelete({ id, title });
-      setDeleteDialogOpen(true);
+    setDeleteDialogOpen(true);
     },
   };
 
@@ -124,7 +124,10 @@ export function ApplicationsTable({
     }
   };
 
-  const columns = useMemo(() => createColumns(actions), [slug]);
+  const columns = useMemo(
+    () => variant === "dashboard" ? createSimpleColumns(actions) : createColumns(actions),
+    [slug, variant]
+  );
 
   // Filter applications by tab
   const filteredApplications = useMemo(() => {
@@ -181,7 +184,7 @@ export function ApplicationsTable({
       <div className="space-y-4">
         <div className="rounded-md border">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-muted/50">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers
@@ -236,7 +239,7 @@ export function ApplicationsTable({
             </TableBody>
           </Table>
         </div>
-      </div>
+        </div>
     );
   }
 
@@ -285,13 +288,13 @@ export function ApplicationsTable({
             />
 
             {/* Customize Columns */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm">
                   <Settings2 className="mr-2 h-4 w-4" />
                   Columns
-                </Button>
-              </DropdownMenuTrigger>
+              </Button>
+            </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[200px]">
                 <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -324,8 +327,8 @@ export function ApplicationsTable({
                       </DropdownMenuCheckboxItem>
                     );
                   })}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
             {/* Add Application Button */}
             <Button size="sm">
@@ -338,56 +341,56 @@ export function ApplicationsTable({
         <TabsContent value={activeTab} className="mt-0">
           <div className="rounded-md border">
             <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
+              <TableHeader className="bg-muted/50">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
                       <TableHead key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
                 ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
                       data-state={row.getIsSelected() && "selected"}
                       className="cursor-pointer hover:bg-muted/50"
-                      onClick={() =>
+                  onClick={() =>
                         router.push(`/private/${slug}/applications/${row.original.id}`)
-                      }
-                    >
-                      {row.getVisibleCells().map((cell) => (
+                  }
+                >
+                  {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
-                      No applications found.
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                      colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No applications found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
           {/* Row count info */}
           <div className="flex items-center justify-between px-2 py-4">
