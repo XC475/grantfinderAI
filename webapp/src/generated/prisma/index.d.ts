@@ -3487,9 +3487,9 @@ export namespace Prisma {
   export type OpportunitiesSumAggregateOutputType = {
     id: number | null
     fiscal_year: number | null
-    award_max: number | null
-    award_min: number | null
-    total_funding_amount: number | null
+    award_max: bigint | null
+    award_min: bigint | null
+    total_funding_amount: bigint | null
     relevance_score: number | null
   }
 
@@ -3509,9 +3509,9 @@ export namespace Prisma {
     close_date: Date | null
     archive_date: Date | null
     cost_sharing: boolean | null
-    award_max: number | null
-    award_min: number | null
-    total_funding_amount: number | null
+    award_max: bigint | null
+    award_min: bigint | null
+    total_funding_amount: bigint | null
     eligibility: string | null
     eligibility_summary: string | null
     last_updated: Date | null
@@ -3544,9 +3544,9 @@ export namespace Prisma {
     close_date: Date | null
     archive_date: Date | null
     cost_sharing: boolean | null
-    award_max: number | null
-    award_min: number | null
-    total_funding_amount: number | null
+    award_max: bigint | null
+    award_min: bigint | null
+    total_funding_amount: bigint | null
     eligibility: string | null
     eligibility_summary: string | null
     last_updated: Date | null
@@ -3832,9 +3832,9 @@ export namespace Prisma {
     close_date: Date | null
     archive_date: Date | null
     cost_sharing: boolean | null
-    award_max: number | null
-    award_min: number | null
-    total_funding_amount: number | null
+    award_max: bigint | null
+    award_min: bigint | null
+    total_funding_amount: bigint | null
     eligibility: string | null
     eligibility_summary: string | null
     last_updated: Date | null
@@ -4056,9 +4056,9 @@ export namespace Prisma {
       close_date: Date | null
       archive_date: Date | null
       cost_sharing: boolean | null
-      award_max: number | null
-      award_min: number | null
-      total_funding_amount: number | null
+      award_max: bigint | null
+      award_min: bigint | null
+      total_funding_amount: bigint | null
       eligibility: string | null
       eligibility_summary: string | null
       last_updated: Date | null
@@ -4515,9 +4515,9 @@ export namespace Prisma {
     readonly close_date: FieldRef<"opportunities", 'DateTime'>
     readonly archive_date: FieldRef<"opportunities", 'DateTime'>
     readonly cost_sharing: FieldRef<"opportunities", 'Boolean'>
-    readonly award_max: FieldRef<"opportunities", 'Int'>
-    readonly award_min: FieldRef<"opportunities", 'Int'>
-    readonly total_funding_amount: FieldRef<"opportunities", 'Int'>
+    readonly award_max: FieldRef<"opportunities", 'BigInt'>
+    readonly award_min: FieldRef<"opportunities", 'BigInt'>
+    readonly total_funding_amount: FieldRef<"opportunities", 'BigInt'>
     readonly eligibility: FieldRef<"opportunities", 'String'>
     readonly eligibility_summary: FieldRef<"opportunities", 'String'>
     readonly last_updated: FieldRef<"opportunities", 'DateTime'>
@@ -19586,6 +19586,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'BigInt'
+   */
+  export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
+    
+
+
+  /**
+   * Reference to a field of type 'BigInt[]'
+   */
+  export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Json'
    */
   export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -19740,20 +19754,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'BigInt'
-   */
-  export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
-    
-
-
-  /**
-   * Reference to a field of type 'BigInt[]'
-   */
-  export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
-    
-
-
-  /**
    * Reference to a field of type 'k12_education_opportunity_category_enum[]'
    */
   export type ListEnumk12_education_opportunity_category_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'k12_education_opportunity_category_enum[]'>
@@ -19821,9 +19821,9 @@ export namespace Prisma {
     close_date?: DateTimeNullableFilter<"opportunities"> | Date | string | null
     archive_date?: DateTimeNullableFilter<"opportunities"> | Date | string | null
     cost_sharing?: BoolNullableFilter<"opportunities"> | boolean | null
-    award_max?: IntNullableFilter<"opportunities"> | number | null
-    award_min?: IntNullableFilter<"opportunities"> | number | null
-    total_funding_amount?: IntNullableFilter<"opportunities"> | number | null
+    award_max?: BigIntNullableFilter<"opportunities"> | bigint | number | null
+    award_min?: BigIntNullableFilter<"opportunities"> | bigint | number | null
+    total_funding_amount?: BigIntNullableFilter<"opportunities"> | bigint | number | null
     eligibility?: StringNullableFilter<"opportunities"> | string | null
     eligibility_summary?: StringNullableFilter<"opportunities"> | string | null
     last_updated?: DateTimeNullableFilter<"opportunities"> | Date | string | null
@@ -19902,9 +19902,9 @@ export namespace Prisma {
     close_date?: DateTimeNullableFilter<"opportunities"> | Date | string | null
     archive_date?: DateTimeNullableFilter<"opportunities"> | Date | string | null
     cost_sharing?: BoolNullableFilter<"opportunities"> | boolean | null
-    award_max?: IntNullableFilter<"opportunities"> | number | null
-    award_min?: IntNullableFilter<"opportunities"> | number | null
-    total_funding_amount?: IntNullableFilter<"opportunities"> | number | null
+    award_max?: BigIntNullableFilter<"opportunities"> | bigint | number | null
+    award_min?: BigIntNullableFilter<"opportunities"> | bigint | number | null
+    total_funding_amount?: BigIntNullableFilter<"opportunities"> | bigint | number | null
     eligibility?: StringNullableFilter<"opportunities"> | string | null
     eligibility_summary?: StringNullableFilter<"opportunities"> | string | null
     last_updated?: DateTimeNullableFilter<"opportunities"> | Date | string | null
@@ -19987,9 +19987,9 @@ export namespace Prisma {
     close_date?: DateTimeNullableWithAggregatesFilter<"opportunities"> | Date | string | null
     archive_date?: DateTimeNullableWithAggregatesFilter<"opportunities"> | Date | string | null
     cost_sharing?: BoolNullableWithAggregatesFilter<"opportunities"> | boolean | null
-    award_max?: IntNullableWithAggregatesFilter<"opportunities"> | number | null
-    award_min?: IntNullableWithAggregatesFilter<"opportunities"> | number | null
-    total_funding_amount?: IntNullableWithAggregatesFilter<"opportunities"> | number | null
+    award_max?: BigIntNullableWithAggregatesFilter<"opportunities"> | bigint | number | null
+    award_min?: BigIntNullableWithAggregatesFilter<"opportunities"> | bigint | number | null
+    total_funding_amount?: BigIntNullableWithAggregatesFilter<"opportunities"> | bigint | number | null
     eligibility?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
     eligibility_summary?: StringNullableWithAggregatesFilter<"opportunities"> | string | null
     last_updated?: DateTimeNullableWithAggregatesFilter<"opportunities"> | Date | string | null
@@ -21079,9 +21079,9 @@ export namespace Prisma {
     close_date?: Date | string | null
     archive_date?: Date | string | null
     cost_sharing?: boolean | null
-    award_max?: number | null
-    award_min?: number | null
-    total_funding_amount?: number | null
+    award_max?: bigint | number | null
+    award_min?: bigint | number | null
+    total_funding_amount?: bigint | number | null
     eligibility?: string | null
     eligibility_summary?: string | null
     last_updated?: Date | string | null
@@ -21118,9 +21118,9 @@ export namespace Prisma {
     close_date?: Date | string | null
     archive_date?: Date | string | null
     cost_sharing?: boolean | null
-    award_max?: number | null
-    award_min?: number | null
-    total_funding_amount?: number | null
+    award_max?: bigint | number | null
+    award_min?: bigint | number | null
+    total_funding_amount?: bigint | number | null
     eligibility?: string | null
     eligibility_summary?: string | null
     last_updated?: Date | string | null
@@ -21156,9 +21156,9 @@ export namespace Prisma {
     close_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     archive_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost_sharing?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    award_max?: NullableIntFieldUpdateOperationsInput | number | null
-    award_min?: NullableIntFieldUpdateOperationsInput | number | null
-    total_funding_amount?: NullableIntFieldUpdateOperationsInput | number | null
+    award_max?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    award_min?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    total_funding_amount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     eligibility?: NullableStringFieldUpdateOperationsInput | string | null
     eligibility_summary?: NullableStringFieldUpdateOperationsInput | string | null
     last_updated?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -21195,9 +21195,9 @@ export namespace Prisma {
     close_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     archive_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost_sharing?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    award_max?: NullableIntFieldUpdateOperationsInput | number | null
-    award_min?: NullableIntFieldUpdateOperationsInput | number | null
-    total_funding_amount?: NullableIntFieldUpdateOperationsInput | number | null
+    award_max?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    award_min?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    total_funding_amount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     eligibility?: NullableStringFieldUpdateOperationsInput | string | null
     eligibility_summary?: NullableStringFieldUpdateOperationsInput | string | null
     last_updated?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -21234,9 +21234,9 @@ export namespace Prisma {
     close_date?: Date | string | null
     archive_date?: Date | string | null
     cost_sharing?: boolean | null
-    award_max?: number | null
-    award_min?: number | null
-    total_funding_amount?: number | null
+    award_max?: bigint | number | null
+    award_min?: bigint | number | null
+    total_funding_amount?: bigint | number | null
     eligibility?: string | null
     eligibility_summary?: string | null
     last_updated?: Date | string | null
@@ -21271,9 +21271,9 @@ export namespace Prisma {
     close_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     archive_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost_sharing?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    award_max?: NullableIntFieldUpdateOperationsInput | number | null
-    award_min?: NullableIntFieldUpdateOperationsInput | number | null
-    total_funding_amount?: NullableIntFieldUpdateOperationsInput | number | null
+    award_max?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    award_min?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    total_funding_amount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     eligibility?: NullableStringFieldUpdateOperationsInput | string | null
     eligibility_summary?: NullableStringFieldUpdateOperationsInput | string | null
     last_updated?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -21309,9 +21309,9 @@ export namespace Prisma {
     close_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     archive_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost_sharing?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    award_max?: NullableIntFieldUpdateOperationsInput | number | null
-    award_min?: NullableIntFieldUpdateOperationsInput | number | null
-    total_funding_amount?: NullableIntFieldUpdateOperationsInput | number | null
+    award_max?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    award_min?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    total_funding_amount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     eligibility?: NullableStringFieldUpdateOperationsInput | string | null
     eligibility_summary?: NullableStringFieldUpdateOperationsInput | string | null
     last_updated?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22550,6 +22550,17 @@ export namespace Prisma {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
     not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
   }
+
+  export type BigIntNullableFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel> | null
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntNullableFilter<$PrismaModel> | bigint | number | null
+  }
   export type JsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
@@ -22818,6 +22829,22 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedBoolNullableFilter<$PrismaModel>
     _max?: NestedBoolNullableFilter<$PrismaModel>
+  }
+
+  export type BigIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel> | null
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntNullableWithAggregatesFilter<$PrismaModel> | bigint | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedBigIntNullableFilter<$PrismaModel>
+    _min?: NestedBigIntNullableFilter<$PrismaModel>
+    _max?: NestedBigIntNullableFilter<$PrismaModel>
   }
   export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -23816,6 +23843,14 @@ export namespace Prisma {
 
   export type NullableBoolFieldUpdateOperationsInput = {
     set?: boolean | null
+  }
+
+  export type NullableBigIntFieldUpdateOperationsInput = {
+    set?: bigint | number | null
+    increment?: bigint | number
+    decrement?: bigint | number
+    multiply?: bigint | number
+    divide?: bigint | number
   }
 
   export type NullableEnumfunding_type_enumFieldUpdateOperationsInput = {
@@ -24929,6 +24964,17 @@ export namespace Prisma {
     not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
   }
 
+  export type NestedBigIntNullableFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel> | null
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntNullableFilter<$PrismaModel> | bigint | number | null
+  }
+
   export type NestedEnumfunding_type_enumNullableFilter<$PrismaModel = never> = {
     equals?: $Enums.funding_type_enum | Enumfunding_type_enumFieldRefInput<$PrismaModel> | null
     in?: $Enums.funding_type_enum[] | ListEnumfunding_type_enumFieldRefInput<$PrismaModel> | null
@@ -25037,6 +25083,22 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedBoolNullableFilter<$PrismaModel>
     _max?: NestedBoolNullableFilter<$PrismaModel>
+  }
+
+  export type NestedBigIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel> | null
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel> | null
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntNullableWithAggregatesFilter<$PrismaModel> | bigint | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedBigIntNullableFilter<$PrismaModel>
+    _min?: NestedBigIntNullableFilter<$PrismaModel>
+    _max?: NestedBigIntNullableFilter<$PrismaModel>
   }
   export type NestedJsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -28237,9 +28299,9 @@ export namespace Prisma {
     close_date?: Date | string | null
     archive_date?: Date | string | null
     cost_sharing?: boolean | null
-    award_max?: number | null
-    award_min?: number | null
-    total_funding_amount?: number | null
+    award_max?: bigint | number | null
+    award_min?: bigint | number | null
+    total_funding_amount?: bigint | number | null
     eligibility?: string | null
     eligibility_summary?: string | null
     last_updated?: Date | string | null
@@ -28275,9 +28337,9 @@ export namespace Prisma {
     close_date?: Date | string | null
     archive_date?: Date | string | null
     cost_sharing?: boolean | null
-    award_max?: number | null
-    award_min?: number | null
-    total_funding_amount?: number | null
+    award_max?: bigint | number | null
+    award_min?: bigint | number | null
+    total_funding_amount?: bigint | number | null
     eligibility?: string | null
     eligibility_summary?: string | null
     last_updated?: Date | string | null
@@ -28328,9 +28390,9 @@ export namespace Prisma {
     close_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     archive_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost_sharing?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    award_max?: NullableIntFieldUpdateOperationsInput | number | null
-    award_min?: NullableIntFieldUpdateOperationsInput | number | null
-    total_funding_amount?: NullableIntFieldUpdateOperationsInput | number | null
+    award_max?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    award_min?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    total_funding_amount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     eligibility?: NullableStringFieldUpdateOperationsInput | string | null
     eligibility_summary?: NullableStringFieldUpdateOperationsInput | string | null
     last_updated?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -28366,9 +28428,9 @@ export namespace Prisma {
     close_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     archive_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost_sharing?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    award_max?: NullableIntFieldUpdateOperationsInput | number | null
-    award_min?: NullableIntFieldUpdateOperationsInput | number | null
-    total_funding_amount?: NullableIntFieldUpdateOperationsInput | number | null
+    award_max?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    award_min?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    total_funding_amount?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     eligibility?: NullableStringFieldUpdateOperationsInput | string | null
     eligibility_summary?: NullableStringFieldUpdateOperationsInput | string | null
     last_updated?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

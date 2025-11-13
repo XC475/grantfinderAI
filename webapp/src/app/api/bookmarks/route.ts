@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
+import { supabaseServer } from "@/lib/supabaseServer";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -81,20 +82,31 @@ export async function GET(req: NextRequest) {
       `🔖 [${requestId}] Found ${bookmarks.length} of ${totalCount} total bookmarks`
     );
 
-    // Fetch opportunity details for each bookmark
-    const bookmarksWithOpportunities = await Promise.all(
-      bookmarks.map(async (bookmark) => {
-        const opportunity = await prisma.$queryRaw<
-          Array<Record<string, unknown>>
-        >`
-          SELECT * FROM public.opportunities WHERE id = ${bookmark.opportunityId} LIMIT 1
-        `;
-        return {
-          ...bookmark,
-          opportunity: opportunity[0] || null,
-        };
-      })
+    // Fetch opportunity details for all bookmarks in one query (efficient!)
+    const opportunityIds = bookmarks.map((b) => b.opportunityId);
+
+    const { data: opportunities, error: oppError } = await supabaseServer
+      .from("opportunities")
+      .select("*")
+      .in("id", opportunityIds);
+
+    if (oppError) {
+      console.error(
+        `❌ [${requestId}] Error fetching opportunities:`,
+        oppError
+      );
+    }
+
+    // Create a map for quick lookup
+    const opportunityMap = new Map(
+      opportunities?.map((opp) => [opp.id, opp]) || []
     );
+
+    // Merge opportunity data with bookmarks
+    const bookmarksWithOpportunities = bookmarks.map((bookmark) => ({
+      ...bookmark,
+      opportunity: opportunityMap.get(bookmark.opportunityId) || null,
+    }));
 
     return NextResponse.json({
       data: bookmarksWithOpportunities,

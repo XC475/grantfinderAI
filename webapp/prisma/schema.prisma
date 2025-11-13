@@ -35,9 +35,9 @@ model opportunities {
   close_date                  DateTime?                     @db.Date
   archive_date                DateTime?                     @db.Date
   cost_sharing                Boolean?
-  award_max                   Int?
-  award_min                   Int?
-  total_funding_amount        Int?
+  award_max                   BigInt?
+  award_min                   BigInt?
+  total_funding_amount        BigInt?
   eligibility                 String?
   eligibility_summary         String?                       @db.VarChar
   last_updated                DateTime?                     @db.Timestamp(6)
