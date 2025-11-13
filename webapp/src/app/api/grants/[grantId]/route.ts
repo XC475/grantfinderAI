@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { supabaseServer } from "@/lib/supabaseServer";
 
 // GET /api/grants/[grantId] - Get a single grant by ID
 export async function GET(
@@ -14,16 +14,18 @@ export async function GET(
       return NextResponse.json({ error: "Invalid grant ID" }, { status: 400 });
     }
 
-    // Fetch the grant from public.opportunities
-    const grant = await prisma.$queryRaw<Array<Record<string, unknown>>>`
-      SELECT * FROM public.opportunities WHERE id = ${opportunityId} LIMIT 1
-    `;
+    // Fetch the grant from public.opportunities using Supabase (handles BigInt serialization)
+    const { data: grant, error } = await supabaseServer
+      .from("opportunities")
+      .select("*")
+      .eq("id", opportunityId)
+      .single();
 
-    if (!grant || grant.length === 0) {
+    if (error || !grant) {
       return NextResponse.json({ error: "Grant not found" }, { status: 404 });
     }
 
-    return NextResponse.json(grant[0]);
+    return NextResponse.json(grant);
   } catch (error) {
     console.error("Error fetching grant:", error);
     return NextResponse.json(
