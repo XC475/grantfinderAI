@@ -15,6 +15,7 @@ import { Superscript } from "@tiptap/extension-superscript";
 import { Selection } from "@tiptap/extensions";
 import { Markdown } from "@tiptap/markdown";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
+import { Fragment, Slice } from "@tiptap/pm/model";
 import { Extension } from "@tiptap/core";
 
 // --- UI Primitives ---
@@ -217,17 +218,17 @@ const MarkdownPaste = Extension.create({
                     if (json && json.content && json.content.length > 0) {
                       const { state } = view;
                       const { tr } = state;
-                      const { from } = state.selection;
+                      const { from, to } = state.selection;
 
                       // Create nodes from the parsed JSON
-                      const fragment = json.content.map((nodeJSON: any) =>
+                      const nodes = json.content.map((nodeJSON: any) =>
                         state.schema.nodeFromJSON(nodeJSON)
                       );
 
-                      // Insert the nodes
-                      fragment.forEach((node: any, index: number) => {
-                        tr.insert(from + index, node);
-                      });
+                      // Create a fragment from the nodes and replace the selection with a slice
+                      const fragment = Fragment.from(nodes);
+                      const slice = new Slice(fragment, 0, 0);
+                      tr.replaceSelection(slice);
 
                       view.dispatch(tr);
 
