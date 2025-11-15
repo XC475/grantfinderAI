@@ -1,7 +1,7 @@
 "use client";
 
 import { useDraggable, useDroppable } from "@dnd-kit/core";
-import { FileText, MoreHorizontal, Trash2, GripVertical } from "lucide-react";
+import { FileText, MoreHorizontal, Trash2, GripVertical, Edit, Copy, FolderInput } from "lucide-react";
 import { FolderIcon } from "./FolderIcon";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,6 +36,12 @@ interface FolderListProps {
   onDocumentClick: (documentId: string) => void;
   onDeleteFolder?: (folderId: string) => void;
   onDeleteDocument?: (documentId: string) => void;
+  onRenameFolder?: (folderId: string, newName: string) => void;
+  onRenameDocument?: (documentId: string, newTitle: string) => void;
+  onCopyFolder?: (folderId: string) => void;
+  onCopyDocument?: (documentId: string) => void;
+  onMoveFolder?: (folderId: string) => void;
+  onMoveDocument?: (documentId: string) => void;
   organizationSlug: string;
 }
 
@@ -43,10 +49,16 @@ function DraggableFolder({
   folder,
   onClick,
   onDelete,
+  onRename,
+  onCopy,
+  onMove,
 }: {
   folder: Folder;
   onClick: () => void;
   onDelete?: () => void;
+  onRename?: () => void;
+  onCopy?: () => void;
+  onMove?: () => void;
 }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: folder.id,
@@ -92,7 +104,7 @@ function DraggableFolder({
         {format(new Date(folder.updatedAt), "MMM d, yyyy")}
       </td>
       <td className="py-3 px-4 text-right">
-        {!folder.applicationId && onDelete && (
+        {(onRename || onCopy || onMove || onDelete) && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -104,16 +116,51 @@ function DraggableFolder({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete();
-                }}
-                className="text-destructive"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete
-              </DropdownMenuItem>
+              {!folder.applicationId && onRename && (
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRename();
+                  }}
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Rename
+                </DropdownMenuItem>
+              )}
+              {onCopy && (
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCopy();
+                  }}
+                >
+                  <Copy className="h-4 w-4 mr-2" />
+                  Make a Copy
+                </DropdownMenuItem>
+              )}
+              {onMove && (
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onMove();
+                  }}
+                >
+                  <FolderInput className="h-4 w-4 mr-2" />
+                  Move
+                </DropdownMenuItem>
+              )}
+              {!folder.applicationId && onDelete && (
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete();
+                  }}
+                  className="text-destructive"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         )}
@@ -126,11 +173,17 @@ function DraggableDocument({
   document,
   onClick,
   onDelete,
+  onRename,
+  onCopy,
+  onMove,
   organizationSlug,
 }: {
   document: Document;
   onClick: () => void;
   onDelete?: () => void;
+  onRename?: () => void;
+  onCopy?: () => void;
+  onMove?: () => void;
   organizationSlug: string;
 }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
@@ -168,7 +221,7 @@ function DraggableDocument({
         {format(new Date(document.updatedAt), "MMM d, yyyy")}
       </td>
       <td className="py-3 px-4 text-right">
-        {onDelete && (
+        {(onRename || onCopy || onMove || onDelete) && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -180,16 +233,51 @@ function DraggableDocument({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete();
-                }}
-                className="text-destructive"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete
-              </DropdownMenuItem>
+              {onRename && (
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRename();
+                  }}
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Rename
+                </DropdownMenuItem>
+              )}
+              {onCopy && (
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCopy();
+                  }}
+                >
+                  <Copy className="h-4 w-4 mr-2" />
+                  Make a Copy
+                </DropdownMenuItem>
+              )}
+              {onMove && (
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onMove();
+                  }}
+                >
+                  <FolderInput className="h-4 w-4 mr-2" />
+                  Move
+                </DropdownMenuItem>
+              )}
+              {onDelete && (
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete();
+                  }}
+                  className="text-destructive"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         )}
@@ -205,6 +293,12 @@ export function FolderList({
   onDocumentClick,
   onDeleteFolder,
   onDeleteDocument,
+  onRenameFolder,
+  onRenameDocument,
+  onCopyFolder,
+  onCopyDocument,
+  onMoveFolder,
+  onMoveDocument,
   organizationSlug,
 }: FolderListProps) {
   // Root level droppable zone
@@ -253,6 +347,17 @@ export function FolderList({
               onDelete={
                 onDeleteFolder ? () => onDeleteFolder(folder.id) : undefined
               }
+              onRename={
+                onRenameFolder
+                  ? () => onRenameFolder(folder.id, folder.name)
+                  : undefined
+              }
+              onCopy={
+                onCopyFolder ? () => onCopyFolder(folder.id) : undefined
+              }
+              onMove={
+                onMoveFolder ? () => onMoveFolder(folder.id) : undefined
+              }
             />
           ))}
 
@@ -265,6 +370,17 @@ export function FolderList({
                 onDeleteDocument
                   ? () => onDeleteDocument(document.id)
                   : undefined
+              }
+              onRename={
+                onRenameDocument
+                  ? () => onRenameDocument(document.id, document.title)
+                  : undefined
+              }
+              onCopy={
+                onCopyDocument ? () => onCopyDocument(document.id) : undefined
+              }
+              onMove={
+                onMoveDocument ? () => onMoveDocument(document.id) : undefined
               }
               organizationSlug={organizationSlug}
             />
