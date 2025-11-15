@@ -2,16 +2,20 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUp, Info, Loader2, Mic, Paperclip, Square } from "lucide-react";
+import { ArrowUp, Paperclip, Square, Plus, FolderOpen } from "lucide-react";
 import { omit } from "remeda";
 
 import { cn } from "@/lib/utils";
-import { useAudioRecording } from "@/hooks/use-audio-recording";
 import { useAutosizeTextArea } from "@/hooks/use-autosize-textarea";
-import { AudioVisualizer } from "@/components/ui/audio-visualizer";
 import { Button } from "@/components/ui/button";
 import { FilePreview } from "@/components/ui/file-preview";
 import { InterruptPrompt } from "@/components/ui/interrupt-prompt";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface MessageInputBaseProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -20,7 +24,6 @@ interface MessageInputBaseProps
   stop?: () => void;
   isGenerating: boolean;
   enableInterrupt?: boolean;
-  transcribeAudio?: (blob: Blob) => Promise<string>;
   isEmpty?: boolean;
 }
 
@@ -54,7 +57,6 @@ export function MessageInput({
   stop,
   isGenerating,
   enableInterrupt = true,
-  transcribeAudio,
   isEmpty = false,
   ...props
 }: MessageInputProps) {
@@ -63,23 +65,6 @@ export function MessageInput({
   const [currentPlaceholder, setCurrentPlaceholder] = useState(
     placeholder || placeholderTexts[0]
   );
-
-  const {
-    isListening,
-    isSpeechSupported,
-    isRecording,
-    isTranscribing,
-    audioStream,
-    toggleListening,
-    stopRecording,
-  } = useAudioRecording({
-    transcribeAudio,
-    onTranscriptionComplete: (text) => {
-      props.onChange?.({
-        target: { value: text },
-      } as React.ChangeEvent<HTMLTextAreaElement>);
-    },
-  });
 
   useEffect(() => {
     if (!isGenerating) {
@@ -232,7 +217,7 @@ export function MessageInput({
 
   useAutosizeTextArea({
     ref: textAreaRef,
-    maxHeight: manualHeight || 240,
+    maxHeight: manualHeight || 180,
     borderWidth: 1,
     dependencies: [props.value, showFileList],
   });
@@ -288,154 +273,149 @@ export function MessageInput({
   }, [isResizing]);
 
   return (
-    <div className="w-full px-8 md:px-16 lg:px-24">
-      <div
-        className="relative flex w-full"
-        onDragOver={onDragOver}
-        onDragLeave={onDragLeave}
-        onDrop={onDrop}
-      >
-        {enableInterrupt && (
-          <InterruptPrompt
-            isOpen={showInterruptPrompt}
-            close={() => setShowInterruptPrompt(false)}
-          />
+    <div className="w-full flex justify-center px-4">
+      {enableInterrupt && (
+        <InterruptPrompt
+          isOpen={showInterruptPrompt}
+          close={() => setShowInterruptPrompt(false)}
+        />
+      )}
+      
+      <div className="w-full max-w-2xl">
+        {/* File Attachments Preview */}
+        {props.allowAttachments && props.files && props.files.length > 0 && (
+          <div className="mb-3 flex flex-wrap gap-2">
+            <AnimatePresence mode="popLayout">
+              {props.files.map((file) => (
+                <FilePreview
+                  key={file.name + String(file.lastModified)}
+                  file={file}
+                  onRemove={() => {
+                    props.setFiles((files) => {
+                      if (!files) return null;
+                      const filtered = Array.from(files).filter((f) => f !== file);
+                      if (filtered.length === 0) return null;
+                      return filtered;
+                    });
+                  }}
+                />
+              ))}
+            </AnimatePresence>
+          </div>
         )}
 
-        <RecordingPrompt
-          isVisible={isRecording}
-          onStopRecording={stopRecording}
-        />
+        {/* Main Input Container */}
+        <div
+          className={cn(
+            "relative flex flex-col rounded-3xl border-2 bg-background transition-all min-h-[100px]",
+            isDragging
+              ? "border-primary bg-primary/5"
+              : "border-border focus-within:border-primary/50"
+          )}
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
+          onDrop={onDrop}
+        >
+          {/* Resize handle - only show when not empty */}
+          {!isEmpty && (
+            <div
+              className="absolute left-0 right-0 top-0 z-30 flex h-3 cursor-ns-resize items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
+              onMouseDown={(e) => handleResizeStart(e.clientY)}
+              onTouchStart={(e) => handleResizeStart(e.touches[0].clientY)}
+            >
+              <div className="h-1 w-12 rounded-full bg-border" />
+            </div>
+          )}
 
-        <div className="relative flex w-full items-center">
-          <div className="relative w-full">
-            {/* Resize handle - only show when not empty */}
-            {!isEmpty && (
-              <div
-                className="absolute left-0 right-0 top-0 z-30 flex h-3 cursor-ns-resize items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
-                onMouseDown={(e) => handleResizeStart(e.clientY)}
-                onTouchStart={(e) => handleResizeStart(e.touches[0].clientY)}
-              >
-                <div className="h-1 w-12 rounded-full bg-border" />
-              </div>
+          {/* Textarea - Top section */}
+          <textarea
+            aria-label="Write your prompt here"
+            placeholder={currentPlaceholder}
+            ref={textAreaRef}
+            onPaste={onPaste}
+            onKeyDown={onKeyDown}
+            className="flex-1 resize-none border-0 bg-transparent px-4 pt-4 pb-2 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0 min-h-[60px]"
+            style={{ maxHeight: manualHeight || 180 }}
+            {...(props.allowAttachments
+              ? omit(props, ["allowAttachments", "files", "setFiles"])
+              : omit(props, ["allowAttachments"]))}
+          />
+
+          {/* Buttons Row - Bottom section */}
+          <div className="flex items-center justify-between px-4 pb-3 pt-1">
+            {/* Plus Button - Bottom left */}
+            {props.allowAttachments ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  >
+                    <Plus className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  <DropdownMenuItem
+                    onClick={async () => {
+                      const files = await showFileUploadDialog();
+                      addFiles(files);
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <Paperclip className="mr-2 h-4 w-4" />
+                    <span>Attach files</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem disabled className="cursor-not-allowed opacity-50">
+                    <FolderOpen className="mr-2 h-4 w-4" />
+                    <span>Google Drive (Coming Soon)</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="h-9 w-9" />
             )}
-            <textarea
-              aria-label="Write your prompt here"
-              placeholder={currentPlaceholder}
-              ref={textAreaRef}
-              onPaste={onPaste}
-              onKeyDown={onKeyDown}
-              className={cn(
-                "mb-2 z-10 w-full grow resize-none rounded-xl border border-input bg-background text-sm ring-offset-background transition-[border] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
-                isEmpty ? "p-3 pr-24" : "p-3 pr-24",
-                showFileList && "pb-16",
-                className
-              )}
-              {...(props.allowAttachments
-                ? omit(props, ["allowAttachments", "files", "setFiles"])
-                : omit(props, ["allowAttachments"]))}
-            />
 
-            {props.allowAttachments && (
-              <div className="absolute inset-x-3 bottom-0 z-20 overflow-x-scroll py-3">
-                <div className="flex space-x-3">
-                  <AnimatePresence mode="popLayout">
-                    {props.files?.map((file) => {
-                      return (
-                        <FilePreview
-                          key={file.name + String(file.lastModified)}
-                          file={file}
-                          onRemove={() => {
-                            props.setFiles((files) => {
-                              if (!files) return null;
-
-                              const filtered = Array.from(files).filter(
-                                (f) => f !== file
-                              );
-                              if (filtered.length === 0) return null;
-                              return filtered;
-                            });
-                          }}
-                        />
-                      );
-                    })}
-                  </AnimatePresence>
-                </div>
-              </div>
+            {/* Send/Stop Button - Bottom right */}
+            {isGenerating && stop ? (
+              <Button
+                type="button"
+                size="icon"
+                className="h-9 w-9 rounded-full"
+                aria-label="Stop generating"
+                onClick={stop}
+              >
+                <Square className="h-4 w-4 animate-pulse" fill="currentColor" />
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                className={cn(
+                  "h-9 w-9 rounded-lg bg-[#5a8bf2] hover:bg-[#4a7bd9] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0 flex items-center justify-center",
+                  "dark:bg-[#d4917c] dark:hover:bg-[#c27d68]"
+                )}
+                aria-label="Send message"
+                disabled={
+                  (props.value === "" &&
+                    !(
+                      props.allowAttachments &&
+                      props.files &&
+                      props.files.length > 0
+                    )) ||
+                  isGenerating
+                }
+              >
+                <ArrowUp className="h-5 w-5 text-white" />
+              </Button>
             )}
           </div>
-        </div>
 
-        <div className="absolute right-3 top-3 z-20 flex gap-2">
+          {/* Drag & Drop Overlay */}
           {props.allowAttachments && (
-            <Button
-              type="button"
-              size="icon"
-              variant="outline"
-              className="h-8 w-8"
-              aria-label="Attach a file"
-              onClick={async () => {
-                const files = await showFileUploadDialog();
-                addFiles(files);
-              }}
-            >
-              <Paperclip className="h-4 w-4" />
-            </Button>
-          )}
-          {isSpeechSupported && (
-            <Button
-              type="button"
-              variant="outline"
-              className={cn("h-8 w-8", isListening && "text-primary")}
-              aria-label="Voice input"
-              size="icon"
-              onClick={toggleListening}
-            >
-              <Mic className="h-4 w-4" />
-            </Button>
-          )}
-          {isGenerating && stop ? (
-            <Button
-              type="button"
-              size="icon"
-              className="h-8 w-8"
-              aria-label="Stop generating"
-              onClick={stop}
-            >
-              <Square className="h-3 w-3 animate-pulse" fill="currentColor" />
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              size="icon"
-              className="h-8 w-8 transition-opacity"
-              aria-label="Send message"
-              disabled={
-                (props.value === "" &&
-                  !(
-                    props.allowAttachments &&
-                    props.files &&
-                    props.files.length > 0
-                  )) ||
-                isGenerating
-              }
-            >
-              <ArrowUp className="h-5 w-5" />
-            </Button>
+            <FileUploadOverlay isDragging={isDragging} />
           )}
         </div>
-
-        {props.allowAttachments && (
-          <FileUploadOverlay isDragging={isDragging} />
-        )}
-
-        <RecordingControls
-          isRecording={isRecording}
-          isTranscribing={isTranscribing}
-          audioStream={audioStream}
-          textAreaHeight={textAreaHeight}
-          onStopRecording={stopRecording}
-        />
       </div>
     </div>
   );
@@ -488,111 +468,4 @@ function showFileUploadDialog() {
       resolve(null);
     };
   });
-}
-
-function TranscribingOverlay() {
-  return (
-    <motion.div
-      className="flex h-full w-full flex-col items-center justify-center rounded-xl bg-background/80 backdrop-blur-sm"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-    >
-      <div className="relative">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <motion.div
-          className="absolute inset-0 h-8 w-8 animate-pulse rounded-full bg-primary/20"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1.2, opacity: 1 }}
-          transition={{
-            duration: 1,
-            repeat: Infinity,
-            repeatType: "reverse",
-            ease: "easeInOut",
-          }}
-        />
-      </div>
-      <p className="mt-4 text-sm font-medium text-muted-foreground">
-        Transcribing audio...
-      </p>
-    </motion.div>
-  );
-}
-
-interface RecordingPromptProps {
-  isVisible: boolean;
-  onStopRecording: () => void;
-}
-
-function RecordingPrompt({ isVisible, onStopRecording }: RecordingPromptProps) {
-  return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ top: 0, filter: "blur(5px)" }}
-          animate={{
-            top: -40,
-            filter: "blur(0px)",
-            transition: {
-              type: "spring",
-              filter: { type: "tween" },
-            },
-          }}
-          exit={{ top: 0, filter: "blur(5px)" }}
-          className="absolute left-1/2 flex -translate-x-1/2 cursor-pointer overflow-hidden whitespace-nowrap rounded-full border bg-background py-1 text-center text-sm text-muted-foreground"
-          onClick={onStopRecording}
-        >
-          <span className="mx-2.5 flex items-center">
-            <Info className="mr-2 h-3 w-3" />
-            Click to finish recording
-          </span>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
-interface RecordingControlsProps {
-  isRecording: boolean;
-  isTranscribing: boolean;
-  audioStream: MediaStream | null;
-  textAreaHeight: number;
-  onStopRecording: () => void;
-}
-
-function RecordingControls({
-  isRecording,
-  isTranscribing,
-  audioStream,
-  textAreaHeight,
-  onStopRecording,
-}: RecordingControlsProps) {
-  if (isRecording) {
-    return (
-      <div
-        className="absolute inset-[1px] z-50 overflow-hidden rounded-xl"
-        style={{ height: textAreaHeight - 2 }}
-      >
-        <AudioVisualizer
-          stream={audioStream}
-          isRecording={isRecording}
-          onClick={onStopRecording}
-        />
-      </div>
-    );
-  }
-
-  if (isTranscribing) {
-    return (
-      <div
-        className="absolute inset-[1px] z-50 overflow-hidden rounded-xl"
-        style={{ height: textAreaHeight - 2 }}
-      >
-        <TranscribingOverlay />
-      </div>
-    );
-  }
-
-  return null;
 }

@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
-  type ColumnDef,
-  type ColumnResizeMode,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
   useReactTable,
+  type ColumnFiltersState,
+  type SortingState,
+  type VisibilityState,
 } from "@tanstack/react-table";
 import {
   Table,
@@ -17,15 +20,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -34,77 +40,36 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Settings2, Plus } from "lucide-react";
 import { toast } from "sonner";
-
-interface Application {
-  id: string;
-  opportunityId: number;
-  status: string;
-  title: string | null;
-  createdAt: string;
-  updatedAt: string;
-  submittedAt: string | null;
-  lastEditedAt: string;
-  organization: {
-    slug: string;
-    name: string;
-  };
-  opportunity?: {
-    total_funding_amount: number | null;
-    close_date: string | null;
-  };
-}
+import { createColumns, createSimpleColumns, type Application } from "./columns";
 
 interface ApplicationsTableProps {
   applications: Application[];
   slug: string;
   onRefresh?: () => void;
-}
-
-function getStatusColor(status: string): string {
-  switch (status) {
-    case "DRAFT":
-      return "bg-gray-100 text-gray-800";
-    case "IN_PROGRESS":
-      return "bg-blue-100 text-blue-800";
-    case "READY_TO_SUBMIT":
-      return "bg-purple-100 text-purple-800";
-    case "SUBMITTED":
-      return "bg-green-100 text-green-800";
-    case "UNDER_REVIEW":
-      return "bg-yellow-100 text-yellow-800";
-    case "AWARDED":
-      return "bg-emerald-100 text-emerald-800";
-    case "REJECTED":
-      return "bg-red-100 text-red-800";
-    case "WITHDRAWN":
-      return "bg-orange-100 text-orange-800";
-    default:
-      return "bg-gray-100 text-gray-800";
-  }
-}
-
-function formatStatus(status: string): string {
-  return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-}
-
-function formatCurrency(amount: number | null | undefined): string {
-  if (!amount) return "N/A";
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
+  variant?: "dashboard" | "full";
 }
 
 export function ApplicationsTable({
   applications,
   slug,
   onRefresh,
+  variant = "full",
 }: ApplicationsTableProps) {
   const router = useRouter();
-  const [columnResizeMode] = useState<ColumnResizeMode>("onChange");
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    select: variant === "full",
+    dragHandle: false,
+    lastEditedAt: false,
+  });
+  const [rowSelection, setRowSelection] = useState({});
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [activeTab, setActiveTab] = useState("all");
+
+  // Delete dialog state
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [applicationToDelete, setApplicationToDelete] = useState<{
@@ -112,10 +77,21 @@ export function ApplicationsTable({
     title: string | null;
   } | null>(null);
 
-  const handleDeleteClick = (e: React.MouseEvent, application: Application) => {
-    e.stopPropagation(); // Prevent row click
-    setApplicationToDelete({ id: application.id, title: application.title });
+  // Column actions
+  const actions = {
+    onView: (id: string) => {
+      router.push(`/private/${slug}/applications/${id}`);
+    },
+    onEdit: (id: string) => {
+      router.push(`/private/${slug}/applications/${id}`);
+    },
+    onDuplicate: (id: string) => {
+      toast.info("Duplicate feature coming soon!");
+    },
+    onDelete: (id: string, title: string | null) => {
+      setApplicationToDelete({ id, title });
     setDeleteDialogOpen(true);
+    },
   };
 
   const confirmDelete = async () => {
@@ -135,7 +111,6 @@ export function ApplicationsTable({
       }
 
       toast.success("Application deleted successfully");
-      // Refresh the applications list
       if (onRefresh) {
         onRefresh();
       }
@@ -149,160 +124,234 @@ export function ApplicationsTable({
     }
   };
 
-  // Define table columns with resizing support
-  const columns: ColumnDef<Application>[] = [
-    {
-      accessorKey: "title",
-      header: "Application Name",
-      cell: ({ row }) => (
-        <div className="cursor-pointer">
-          <div className="font-medium hover:underline line-clamp-1">
-            {row.original.title || `Grant #${row.original.opportunityId}`}
-          </div>
-          <div className="text-sm text-muted-foreground">
-            Opportunity ID: {row.original.opportunityId}
-          </div>
-        </div>
-      ),
-      size: 250,
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => (
-        <Badge className={getStatusColor(row.original.status)}>
-          {formatStatus(row.original.status)}
-        </Badge>
-      ),
-      size: 150,
-    },
-    {
-      accessorKey: "funding",
-      header: "Funding Amount",
-      cell: ({ row }) => (
-        <div className="font-medium">
-          {formatCurrency(row.original.opportunity?.total_funding_amount)}
-        </div>
-      ),
-      size: 150,
-    },
-    {
-      accessorKey: "deadline",
-      header: "Deadline",
-      cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground">
-          {row.original.opportunity?.close_date
-            ? new Date(row.original.opportunity.close_date).toLocaleDateString(
-                "en-US",
-                {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                }
-              )
-            : "No deadline"}
-        </div>
-      ),
-      size: 140,
-    },
-    {
-      accessorKey: "lastEditedAt",
-      header: "Last Edited",
-      cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground">
-          {new Date(row.original.lastEditedAt).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })}
-        </div>
-      ),
-      size: 140,
-    },
-    {
-      accessorKey: "createdAt",
-      header: "Created",
-      cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground">
-          {new Date(row.original.createdAt).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })}
-        </div>
-      ),
-      size: 140,
-    },
-    {
-      id: "actions",
-      header: "",
-      cell: ({ row }) => (
-        <div className="flex justify-end">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={(e) => handleDeleteClick(e, row.original)}
-                className="text-destructive focus:text-destructive cursor-pointer"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      ),
-      size: 60,
-      enableResizing: false,
-    },
-  ];
+  const columns = useMemo(
+    () => variant === "dashboard" ? createSimpleColumns(actions) : createColumns(actions),
+    [slug, variant]
+  );
+
+  // Filter applications by tab
+  const filteredApplications = useMemo(() => {
+    if (activeTab === "all") return applications;
+    if (activeTab === "draft") {
+      return applications.filter((app) => app.status === "DRAFT");
+    }
+    if (activeTab === "submitted") {
+      return applications.filter(
+        (app) => app.status === "SUBMITTED" || app.status === "UNDER_REVIEW"
+      );
+    }
+    if (activeTab === "approved") {
+      return applications.filter(
+        (app) => app.status === "APPROVED" || app.status === "AWARDED"
+      );
+    }
+    return applications;
+  }, [applications, activeTab]);
+
+  // Count for badges
+  const draftCount = applications.filter((app) => app.status === "DRAFT").length;
+  const submittedCount = applications.filter(
+    (app) => app.status === "SUBMITTED" || app.status === "UNDER_REVIEW"
+  ).length;
+  const approvedCount = applications.filter(
+    (app) => app.status === "APPROVED" || app.status === "AWARDED"
+  ).length;
 
   const table = useReactTable({
-    data: applications,
+    data: filteredApplications,
     columns,
-    columnResizeMode,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+      globalFilter,
+    },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
-    enableColumnResizing: true,
-    columnResizeDirection: "ltr",
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    enableRowSelection: variant === "full",
   });
 
+  // Dashboard variant (simplified - no tabs, no controls)
+  if (variant === "dashboard") {
+    return (
+      <div className="space-y-4">
+        <div className="rounded-xl border border-muted-foreground/20 overflow-hidden bg-card/40 backdrop-blur-sm">
+          <Table>
+            <TableHeader className="bg-muted/30 border-b border-muted-foreground/10">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id} className="hover:bg-transparent border-none">
+                  {headerGroup.headers
+                    .filter((header) => header.column.id !== "select" && header.column.id !== "dragHandle")
+                    .map((header) => (
+                      <TableHead key={header.id} className="text-foreground/70 font-medium">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className="cursor-pointer hover:bg-foreground/5 border-b border-muted-foreground/5 transition-colors last:border-none"
+                    onClick={() =>
+                      router.push(`/private/${slug}/applications/${row.original.id}`)
+                    }
+                  >
+                    {row
+                      .getVisibleCells()
+                      .filter((cell) => cell.column.id !== "select" && cell.column.id !== "dragHandle")
+                      .map((cell) => (
+                        <TableCell key={cell.id} className="font-light text-foreground/80">
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length - 2}
+                    className="h-24 text-center text-foreground/60 font-light"
+                  >
+                    No applications found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        </div>
+    );
+  }
+
+  // Full variant with tabs and all features
   return (
-    <div className="overflow-hidden rounded-md border bg-background">
-      <div className="overflow-x-auto">
-        <Table style={{ width: table.getTotalSize(), tableLayout: "fixed" }}>
-          <TableHeader>
+    <div className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <div className="flex items-center justify-between mb-4">
+          <TabsList>
+            <TabsTrigger value="all">
+              All Applications
+            </TabsTrigger>
+            <TabsTrigger value="draft">
+              Draft
+              {draftCount > 0 && (
+                <Badge variant="secondary" className="ml-2 px-1.5 py-0.5 text-xs">
+                  {draftCount}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="submitted">
+              Submitted
+              {submittedCount > 0 && (
+                <Badge variant="secondary" className="ml-2 px-1.5 py-0.5 text-xs">
+                  {submittedCount}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="approved">
+              Approved
+              {approvedCount > 0 && (
+                <Badge variant="secondary" className="ml-2 px-1.5 py-0.5 text-xs">
+                  {approvedCount}
+                </Badge>
+              )}
+            </TabsTrigger>
+          </TabsList>
+
+          <div className="flex items-center gap-2">
+            {/* Search Input */}
+            <Input
+              placeholder="Search applications..."
+              value={globalFilter ?? ""}
+              onChange={(event) => setGlobalFilter(event.target.value)}
+              className="w-[250px]"
+            />
+
+            {/* Customize Columns */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Settings2 className="mr-2 h-4 w-4" />
+                  Columns
+              </Button>
+            </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[200px]">
+                <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {table
+                  .getAllColumns()
+                  .filter(
+                    (column) =>
+                      column.getCanHide() && column.id !== "select"
+                  )
+                  .map((column) => {
+                    const columnNames: Record<string, string> = {
+                      dragHandle: "Drag Handle",
+                      title: "Application Name",
+                      status: "Status",
+                      funding: "Funding Amount",
+                      deadline: "Deadline",
+                      lastEditedAt: "Last Edited",
+                      actions: "Actions",
+                    };
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {columnNames[column.id] || column.id}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+            {/* Add Application Button */}
+            <Button size="sm">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Application
+            </Button>
+          </div>
+        </div>
+
+        <TabsContent value={activeTab} className="mt-0">
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader className="bg-muted/50">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead
-                    className="relative"
-                    key={header.id}
-                    style={{ width: header.getSize() }}
-                  >
+                      <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
                           header.getContext()
                         )}
-                    <div
-                      onMouseDown={header.getResizeHandler()}
-                      onTouchStart={header.getResizeHandler()}
-                      className={`absolute top-0 right-0 h-full w-1 cursor-col-resize touch-none select-none bg-border opacity-0 hover:opacity-100 ${
-                        header.column.getIsResizing()
-                          ? "bg-primary opacity-100"
-                          : ""
-                      }`}
-                    />
                   </TableHead>
                 ))}
               </TableRow>
@@ -313,18 +362,14 @@ export function ApplicationsTable({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className="cursor-pointer group"
+                      data-state={row.getIsSelected() && "selected"}
+                      className="cursor-pointer hover:bg-muted/50"
                   onClick={() =>
-                    router.push(
-                      `/private/${slug}/applications/${row.original.id}`
-                    )
+                        router.push(`/private/${slug}/applications/${row.original.id}`)
                   }
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      style={{ width: cell.column.getSize() }}
-                    >
+                        <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -336,8 +381,8 @@ export function ApplicationsTable({
             ) : (
               <TableRow>
                 <TableCell
+                      colSpan={columns.length}
                   className="h-24 text-center"
-                  colSpan={columns.length}
                 >
                   No applications found.
                 </TableCell>
@@ -346,10 +391,17 @@ export function ApplicationsTable({
           </TableBody>
         </Table>
       </div>
-      <p className="p-4 text-muted-foreground text-sm border-t">
-        💡 Drag column edges to resize. Click on any row to view application
-        details.
-      </p>
+
+          {/* Row count info */}
+          <div className="flex items-center justify-between px-2 py-4">
+            <div className="text-sm text-muted-foreground">
+              {table.getFilteredRowModel().rows.length} application(s)
+              {table.getFilteredSelectedRowModel().rows.length > 0 &&
+                ` · ${table.getFilteredSelectedRowModel().rows.length} selected`}
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

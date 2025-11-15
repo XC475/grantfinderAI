@@ -23,23 +23,25 @@ export function MessageList({
   messageOptions,
 }: MessageListProps) {
   return (
-    <div className="space-y-6 overflow-visible px-8 md:px-16 lg:px-24">
-      {messages.map((message, index) => {
-        const additionalOptions =
-          typeof messageOptions === "function"
-            ? messageOptions(message)
-            : messageOptions;
+    <div className="w-full flex justify-center px-4">
+      <div className="w-full max-w-3xl space-y-6 overflow-visible">
+        {messages.map((message, index) => {
+          const additionalOptions =
+            typeof messageOptions === "function"
+              ? messageOptions(message)
+              : messageOptions;
 
-        return (
-          <ChatMessage
-            key={index}
-            showTimeStamp={showTimeStamps}
-            {...message}
-            {...additionalOptions}
-          />
-        );
-      })}
-      {isTyping && <TypingIndicator />}
+          return (
+            <ChatMessage
+              key={index}
+              showTimeStamp={showTimeStamps}
+              {...message}
+              {...additionalOptions}
+            />
+          );
+        })}
+        {isTyping && <TypingIndicator />}
+      </div>
     </div>
   );
 }

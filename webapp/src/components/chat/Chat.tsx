@@ -21,6 +21,7 @@ type ChatDemoProps = {
   onChatIdChange?: (chatId: string) => void;
   initialMessageToSend?: string | null;
   onMessageSent?: () => void;
+  userName?: string;
 };
 
 export function ChatDemo(props: ChatDemoProps) {
@@ -335,7 +336,7 @@ export function ChatDemo(props: ChatDemoProps) {
         "flex",
         "flex-col",
         isEmpty
-          ? "h-[50vh] w-full max-w-5xl mx-auto"
+          ? "min-h-[80vh] w-full"
           : "h-[calc(100vh-80px)] w-full"
       )}
     >
@@ -350,6 +351,7 @@ export function ChatDemo(props: ChatDemoProps) {
         append={append}
         setMessages={setMessages}
         isEmpty={isEmpty}
+        userName={props.userName}
         suggestions={[
           "Find grants for improving student achievement in our district",
           "Help me find grants for teacher professional development",

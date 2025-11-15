@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/resizable";
 import { DocumentChatSidebar } from "@/components/applications/DocumentChatSidebar";
 import { DocumentProvider, useDocument } from "@/contexts/DocumentContext";
+import { HeaderContentProvider, useHeaderContent } from "@/contexts/HeaderContentContext";
 
 interface ConditionalLayoutProps {
   children: React.ReactNode;
@@ -109,6 +110,31 @@ function DocumentEditorLayoutContent({
   );
 }
 
+function NormalLayoutContent({
+  children,
+  organizationSlug,
+}: {
+  children: React.ReactNode;
+  organizationSlug: string;
+}) {
+  const { headerContent } = useHeaderContent();
+
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2 px-4">
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            {headerContent || <DynamicBreadcrumb organizationSlug={organizationSlug} />}
+          </div>
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-hidden h-full">{children}</div>
+      </SidebarInset>
+    </SidebarProvider>
+  );
+}
+
 export function ConditionalLayout({
   children,
   organizationSlug,
@@ -141,19 +167,12 @@ export function ConditionalLayout({
     );
   }
 
-  // Normal layout for other pages
+  // Normal layout for other pages - wrapped with HeaderContentProvider
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <DynamicBreadcrumb organizationSlug={organizationSlug} />
-          </div>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
-      </SidebarInset>
-    </SidebarProvider>
+    <HeaderContentProvider>
+      <NormalLayoutContent organizationSlug={organizationSlug}>
+        {children}
+      </NormalLayoutContent>
+    </HeaderContentProvider>
   );
 }
