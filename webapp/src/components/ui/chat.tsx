@@ -15,8 +15,10 @@ import { Button } from "@/components/ui/button";
 import { type Message } from "@/components/ui/chat-message";
 import { CopyButton } from "@/components/ui/copy-button";
 import { MessageInput } from "@/components/ui/message-input";
+import { HeroChatInput } from "@/components/ui/hero-chat-input";
 import { MessageList } from "@/components/ui/message-list";
 import { PromptSuggestions } from "@/components/ui/prompt-suggestions";
+import { ChatGreeting } from "@/components/chat/ChatGreeting";
 
 interface ChatPropsBase {
   handleSubmit: (
@@ -34,9 +36,9 @@ interface ChatPropsBase {
     rating: "thumbs-up" | "thumbs-down"
   ) => void;
   setMessages?: (messages: Message[]) => void;
-  transcribeAudio?: (blob: Blob) => Promise<string>;
   isEmpty?: boolean;
   placeholder?: string;
+  userName?: string;
 }
 
 interface ChatPropsWithoutSuggestions extends ChatPropsBase {
@@ -63,9 +65,9 @@ export function Chat({
   className,
   onRateResponse,
   setMessages,
-  transcribeAudio,
   isEmpty: isEmptyProp,
   placeholder,
+  userName,
 }: ChatProps) {
   const lastMessage = messages.at(-1);
   const isEmpty = isEmptyProp ?? messages.length === 0;
@@ -195,16 +197,48 @@ export function Chat({
     [onRateResponse]
   );
 
+  // Handler for category pill selection
+  const handleCategorySelect = useCallback(
+    (category: string, starterPrompt: string) => {
+      // Pre-fill input with starter prompt
+      handleInputChange({
+        target: { value: starterPrompt },
+      } as React.ChangeEvent<HTMLTextAreaElement>);
+    },
+    [handleInputChange]
+  );
+
+  // Empty state: centered layout with greeting, hero input, and prompts
+  if (isEmpty && append && suggestions) {
+    return (
+      <div className={cn("flex flex-col items-center justify-center min-h-[80vh] space-y-8 px-4", className)}>
+        <ChatGreeting userName={userName || ""} />
+        
+        <HeroChatInput
+          value={input}
+          onChange={handleInputChange}
+          onSubmit={(files) => {
+            if (files && files.length > 0) {
+              // Handle file upload
+              const fileList = createFileList(files);
+              handleSubmit(undefined, { experimental_attachments: fileList });
+            } else {
+              handleSubmit();
+            }
+          }}
+          placeholder={placeholder || "Ask anything..."}
+        />
+        
+        <PromptSuggestions
+          onCategorySelect={handleCategorySelect}
+        />
+      </div>
+    );
+  }
+
+  // Conversation state: existing layout with messages and bottom input
   return (
     <ChatContainer className={className}>
-      {isEmpty && append && suggestions ? (
-        <PromptSuggestions
-          label="Try these prompts ✨"
-          append={append}
-          suggestions={suggestions}
-        />
-      ) : null}
-
       {messages.length > 0 ? (
         <ChatMessages messages={messages}>
           <MessageList
@@ -229,7 +263,6 @@ export function Chat({
             setFiles={setFiles}
             stop={handleStop}
             isGenerating={isGenerating}
-            transcribeAudio={transcribeAudio}
             isEmpty={isEmpty}
             placeholder={placeholder}
           />

@@ -41,6 +41,26 @@ export default function ChatPage() {
   const [messageToSend, setMessageToSend] = useState<string | null>(
     initialMessage
   );
+  const [userName, setUserName] = useState<string>("");
+
+  // Fetch user data for personalized greeting
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch("/api/user/me");
+        if (response.ok) {
+          const data = await response.json();
+          // Extract first name from full name
+          const firstName = data.name ? data.name.split(" ")[0] : "";
+          setUserName(firstName);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     let pollInterval: NodeJS.Timeout | null = null;
@@ -177,6 +197,7 @@ export default function ChatPage() {
         onChatIdChange={handleChatIdChange}
         initialMessageToSend={messageToSend}
         onMessageSent={() => setMessageToSend(null)}
+        userName={userName}
       />
     </div>
   );

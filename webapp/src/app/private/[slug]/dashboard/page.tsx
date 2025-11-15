@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Card,
@@ -22,7 +22,7 @@ import {
 import { Clock, ChevronRight, Loader2, Settings2, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { ApplicationsTable } from "@/components/applications/ApplicationsTable";
-import { TypewriterText } from "@/components/ui/typewriter-text";
+import { TextAnimate } from "@/components/ui/text-animate";
 import { useHeaderContent } from "@/contexts/HeaderContentContext";
 import {
   AIAssistantCard,
@@ -67,6 +67,7 @@ export default function DashboardPage() {
   const [userName, setUserName] = useState<string>("");
   const [searchFilter, setSearchFilter] = useState("");
   const { setHeaderContent } = useHeaderContent();
+  const hasSetHeaderRef = useRef(false);
 
   // Recent activities data (mock data for now)
   const recentActivities: RecentActivity[] = [
@@ -110,7 +111,9 @@ export default function DashboardPage() {
       const response = await fetch("/api/user/me");
       if (response.ok) {
         const data = await response.json();
-        setUserName(data.name || "");
+        // Extract first name from full name
+        const firstName = data.name ? data.name.split(" ")[0] : "";
+        setUserName(firstName);
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -156,23 +159,30 @@ export default function DashboardPage() {
 
   // Set header content with welcome message
   useEffect(() => {
-    setHeaderContent(
-      <div className="text-base text-muted-foreground font-medium">
-        <TypewriterText 
-          text={`Welcome back${userName ? `, ${userName}` : ""}`}
-          speed={60}
-        />
-      </div>
-    );
+    // Only set header content once when userName is available and hasn't been set before
+    if (userName && !hasSetHeaderRef.current) {
+      hasSetHeaderRef.current = true;
+      setHeaderContent(
+        <div className="text-base text-muted-foreground font-medium">
+          <TextAnimate 
+            animation="blurInUp"
+            by="character"
+            once
+          >
+            {`Welcome back, ${userName}`}
+          </TextAnimate>
+        </div>
+      );
+    }
     
     // Cleanup: reset header content when component unmounts
     return () => setHeaderContent(null);
   }, [userName, setHeaderContent]);
 
   return (
-    <div className="flex flex-col h-full overflow-hidden p-6 gap-4">
+    <div className="flex flex-col h-full overflow-hidden p-8 gap-6">
       {/* Feature Cards - 4 Columns */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 flex-shrink-0">
+      <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 flex-shrink-0">
         <AIAssistantCard slug={organizationSlug} />
         <GrantsCard slug={organizationSlug} />
         <RecommendationsCard slug={organizationSlug} />
@@ -180,29 +190,33 @@ export default function DashboardPage() {
       </div>
 
       {/* Jump Back In (1/4) + Applications (3/4) */}
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-4 flex-1 min-h-0 overflow-hidden">
-        {/* Jump Back In - Left Side (1 column) */}
-        <Card className="md:col-span-1 flex flex-col overflow-hidden">
-          <CardHeader className="flex-shrink-0">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Clock className="h-5 w-5" />
+      <div className="grid gap-5 grid-cols-1 md:grid-cols-4 flex-1 min-h-0 overflow-hidden">
+        {/* Jump Back In - Left Side (1 column) - Claude-inspired styling */}
+        <Card className="md:col-span-1 flex flex-col overflow-hidden bg-card/60 border-muted-foreground/20 backdrop-blur-sm">
+          <CardHeader className="flex-shrink-0 pb-4">
+            <CardTitle className="flex items-center gap-3 text-lg font-normal text-foreground/90">
+              <div className="w-8 h-8 rounded-lg bg-foreground/5 flex items-center justify-center">
+                <Clock className="h-4 w-4 text-foreground/70" strokeWidth={1.5} />
+              </div>
               Jump Back In
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex-1 overflow-auto space-y-2">
+          <CardContent className="flex-1 overflow-auto space-y-1.5 px-4">
             {recentActivities.map((activity) => (
               <div
                 key={activity.id}
-                className="flex items-start justify-between p-3 rounded-lg hover:bg-muted cursor-pointer transition-colors border border-transparent hover:border-border"
+                className="group flex items-start justify-between p-3 rounded-xl hover:bg-foreground/5 cursor-pointer transition-all duration-300 border border-transparent hover:border-foreground/10"
                 onClick={() => handleActivityClick(activity)}
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{activity.title}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-sm font-normal text-foreground/80 truncate group-hover:text-foreground transition-colors">
+                    {activity.title}
+                  </p>
+                  <p className="text-xs text-foreground/50 mt-1 font-light">
                     {activity.timestamp}
                   </p>
                 </div>
-                <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 ml-2" />
+                <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 ml-2 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5" strokeWidth={1.5} />
               </div>
             ))}
           </CardContent>
@@ -210,8 +224,8 @@ export default function DashboardPage() {
 
         {/* Applications - Right Side (3 columns) - NO CARD WRAPPER */}
         <div className="md:col-span-3 flex flex-col overflow-hidden">
-          <div className="flex items-center justify-between mb-4 gap-2">
-            <h3 className="text-xl font-bold">Recent Applications</h3>
+          <div className="flex items-center justify-between mb-5 gap-2">
+            <h3 className="text-2xl font-normal text-foreground/90">Recent Applications</h3>
             
             <div className="flex items-center gap-2">
               {/* Search Input */}
@@ -221,18 +235,22 @@ export default function DashboardPage() {
                   placeholder="Search..."
                   value={searchFilter}
                   onChange={(e) => setSearchFilter(e.target.value)}
-                  className="w-[200px] pl-9"
+                  className="w-[200px] pl-9 bg-card/60 border-muted-foreground/20 focus-visible:border-foreground/40 transition-colors"
                 />
               </div>
 
               {/* Add Application Button */}
-              <Button size="sm" onClick={() => router.push(`/private/${organizationSlug}/applications/new`)}>
+              <Button 
+                size="sm" 
+                onClick={() => router.push(`/private/${organizationSlug}/applications/new`)}
+                className="font-medium"
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Add
               </Button>
 
               {/* View All Button */}
-              <Button variant="outline" size="sm" asChild>
+              <Button variant="outline" size="sm" asChild className="border-muted-foreground/20 hover:border-foreground/30 font-medium">
                 <Link href={`/private/${organizationSlug}/applications`}>
                   View All
                 </Link>
@@ -241,11 +259,11 @@ export default function DashboardPage() {
           </div>
           <div className="flex-1 overflow-auto">
             {loading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin" />
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-foreground/40" />
               </div>
             ) : filteredApplications.length === 0 ? (
-              <div className="text-center py-8 text-sm text-muted-foreground border rounded-lg">
+              <div className="text-center py-12 text-sm text-foreground/60 border border-muted-foreground/20 rounded-xl bg-card/40 font-light">
                 {searchFilter ? "No applications match your search" : "No applications yet"}
               </div>
             ) : (

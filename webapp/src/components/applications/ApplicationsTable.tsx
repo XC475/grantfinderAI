@@ -182,15 +182,15 @@ export function ApplicationsTable({
   if (variant === "dashboard") {
     return (
       <div className="space-y-4">
-        <div className="rounded-md border">
+        <div className="rounded-xl border border-muted-foreground/20 overflow-hidden bg-card/40 backdrop-blur-sm">
           <Table>
-            <TableHeader className="bg-muted/50">
+            <TableHeader className="bg-muted/30 border-b border-muted-foreground/10">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow key={headerGroup.id} className="hover:bg-transparent border-none">
                   {headerGroup.headers
                     .filter((header) => header.column.id !== "select" && header.column.id !== "dragHandle")
                     .map((header) => (
-                      <TableHead key={header.id}>
+                      <TableHead key={header.id} className="text-foreground/70 font-medium">
                         {header.isPlaceholder
                           ? null
                           : flexRender(
@@ -208,7 +208,7 @@ export function ApplicationsTable({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    className="cursor-pointer hover:bg-muted/50"
+                    className="cursor-pointer hover:bg-foreground/5 border-b border-muted-foreground/5 transition-colors last:border-none"
                     onClick={() =>
                       router.push(`/private/${slug}/applications/${row.original.id}`)
                     }
@@ -217,7 +217,7 @@ export function ApplicationsTable({
                       .getVisibleCells()
                       .filter((cell) => cell.column.id !== "select" && cell.column.id !== "dragHandle")
                       .map((cell) => (
-                        <TableCell key={cell.id}>
+                        <TableCell key={cell.id} className="font-light text-foreground/80">
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()
@@ -230,7 +230,7 @@ export function ApplicationsTable({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length - 2}
-                    className="h-24 text-center"
+                    className="h-24 text-center text-foreground/60 font-light"
                   >
                     No applications found.
                   </TableCell>
