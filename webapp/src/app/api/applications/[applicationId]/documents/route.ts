@@ -104,7 +104,7 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { title, content, contentType = "html", folderId } = body;
+    const { title, content, contentType = "json", folderId } = body;
 
     if (!title) {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
@@ -121,25 +121,161 @@ export async function POST(
     // Create new document with getting started content if no content provided
     const gettingStartedContent =
       content ||
-      `
-      <h1>Welcome to Grantware AI</h1>
-      <p>This is your document workspace. Start writing your grant application here.</p>
-      <h2>Getting Started</h2>
-      <ul>
-        <li>Use the toolbar above to format your text</li>
-        <li>Add headings, lists, and other formatting as needed</li>
-        <li>Your work is automatically saved as you type</li>
-        <li>Use the save button to manually save your progress</li>
-      </ul>
-      <h2>Tips for Grant Writing</h2>
-      <ul>
-        <li>Clearly state your project objectives</li>
-        <li>Provide detailed budget information</li>
-        <li>Include measurable outcomes and timelines</li>
-        <li>Address all requirements from the grant guidelines</li>
-      </ul>
-      <p>Happy writing!</p>
-    `;
+      JSON.stringify({
+        type: "doc",
+        content: [
+          {
+            type: "heading",
+            attrs: { level: 1 },
+            content: [{ type: "text", text: "Welcome to Grantware AI" }],
+          },
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "This is your document workspace. Start writing your grant application here.",
+              },
+            ],
+          },
+          {
+            type: "heading",
+            attrs: { level: 2 },
+            content: [{ type: "text", text: "Getting Started" }],
+          },
+          {
+            type: "bulletList",
+            content: [
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "text",
+                        text: "Use the toolbar above to format your text",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "text",
+                        text: "Add headings, lists, and other formatting as needed",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "text",
+                        text: "Your work is automatically saved as you type",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "text",
+                        text: "Use the save button to manually save your progress",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "heading",
+            attrs: { level: 2 },
+            content: [{ type: "text", text: "Tips for Grant Writing" }],
+          },
+          {
+            type: "bulletList",
+            content: [
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "text",
+                        text: "Clearly state your project objectives",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "text",
+                        text: "Provide detailed budget information",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "text",
+                        text: "Include measurable outcomes and timelines",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [
+                      {
+                        type: "text",
+                        text: "Address all requirements from the grant guidelines",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "paragraph",
+            content: [{ type: "text", text: "Happy writing!" }],
+          },
+        ],
+      });
 
     const document = await prisma.document.create({
       data: {

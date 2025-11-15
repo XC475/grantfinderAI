@@ -159,7 +159,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { title, content, contentType, folderId } = body;
+    const { title, content, contentType = "json", folderId } = body;
 
     // If folderId is being updated, verify it belongs to the organization
     if (folderId !== undefined && folderId !== null) {

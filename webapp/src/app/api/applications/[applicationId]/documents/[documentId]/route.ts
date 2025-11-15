@@ -91,7 +91,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { title, content, contentType } = body;
+    const { title, content, contentType = "json" } = body;
 
     // Update document
     const document = await prisma.document.update({
@@ -99,7 +99,7 @@ export async function PUT(
       data: {
         ...(title && { title }),
         ...(content !== undefined && { content }),
-        ...(contentType && { contentType }),
+        contentType,
         version: existingDocument.version + 1,
         updatedAt: new Date(),
       },
