@@ -76,8 +76,6 @@ import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss";
 
-import content from "@/components/tiptap-templates/simple/data/content.json";
-
 const MainToolbarContent = ({
   onHighlighterClick,
   onLinkClick,
@@ -210,7 +208,13 @@ const MarkdownPaste = Extension.create({
                 if (editor) {
                   // Use the editor's markdown manager to parse the text
                   // The markdown extension adds a 'markdown' property to the editor
-                  const markdownManager = (editor as any).markdown;
+                  const markdownManager = (
+                    editor as {
+                      markdown?: {
+                        parse: (text: string) => { content: unknown[] };
+                      };
+                    }
+                  ).markdown;
 
                   if (markdownManager && markdownManager.parse) {
                     const json = markdownManager.parse(text);
@@ -218,10 +222,9 @@ const MarkdownPaste = Extension.create({
                     if (json && json.content && json.content.length > 0) {
                       const { state } = view;
                       const { tr } = state;
-                      const { from, to } = state.selection;
 
                       // Create nodes from the parsed JSON
-                      const nodes = json.content.map((nodeJSON: any) =>
+                      const nodes = json.content.map((nodeJSON: unknown) =>
                         state.schema.nodeFromJSON(nodeJSON)
                       );
 
