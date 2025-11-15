@@ -256,7 +256,7 @@ model Document {
   organizationId String
   folderId       String?
   application    Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  folder         Folder?      @relation(fields: [folderId], references: [id])
+  folder         Folder?      @relation(fields: [folderId], references: [id], onDelete: Cascade)
   organization   Organization @relation("OrganizationDocuments", fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([applicationId])
