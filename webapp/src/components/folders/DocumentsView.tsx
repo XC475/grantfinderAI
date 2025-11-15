@@ -27,6 +27,8 @@ interface Document {
   updatedAt: string;
   applicationId?: string | null;
   folderId?: string | null;
+  fileUrl?: string | null;
+  fileType?: string | null;
 }
 
 interface FolderPathItem {
@@ -71,7 +73,13 @@ export function DocumentsView({
     id: string;
     name: string;
     currentFolderId: string | null;
-  }>({ open: false, type: "document", id: "", name: "", currentFolderId: null });
+  }>({
+    open: false,
+    type: "document",
+    id: "",
+    name: "",
+    currentFolderId: null,
+  });
 
   const [copyDialog, setCopyDialog] = useState<{
     open: boolean;
@@ -79,7 +87,13 @@ export function DocumentsView({
     id: string;
     originalName: string;
     currentFolderId: string | null;
-  }>({ open: false, type: "document", id: "", originalName: "", currentFolderId: null });
+  }>({
+    open: false,
+    type: "document",
+    id: "",
+    originalName: "",
+    currentFolderId: null,
+  });
 
   const [allFolders, setAllFolders] = useState<Folder[]>([]);
 
@@ -149,7 +163,16 @@ export function DocumentsView({
   };
 
   const handleDocumentClick = (documentId: string) => {
-    router.push(`/private/${organizationSlug}/editor/${documentId}`);
+    // Find the document to check if it's a file upload
+    const document = documents.find((doc) => doc.id === documentId);
+
+    if (document?.fileUrl) {
+      // Route to file viewer for uploaded files
+      router.push(`/private/${organizationSlug}/file-viewer/${documentId}`);
+    } else {
+      // Route to editor for regular documents
+      router.push(`/private/${organizationSlug}/editor/${documentId}`);
+    }
   };
 
   const handleCreateFolder = async (
@@ -355,7 +378,10 @@ export function DocumentsView({
   };
 
   // Handle actual copy submission from dialog
-  const handleCopySubmit = async (newName: string, targetFolderId: string | null) => {
+  const handleCopySubmit = async (
+    newName: string,
+    targetFolderId: string | null
+  ) => {
     try {
       if (copyDialog.type === "folder") {
         const response = await fetch(`/api/folders/${copyDialog.id}/copy`, {
@@ -464,6 +490,39 @@ export function DocumentsView({
     }
   };
 
+  // File upload handler
+  const handleFileUpload = async (file: File) => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folderId", currentFolderId || "null");
+    if (applicationId) formData.append("applicationId", applicationId);
+
+    const uploadPromise = fetch("/api/documents/upload", {
+      method: "POST",
+      body: formData,
+    }).then(async (response) => {
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to upload file");
+      }
+      return response.json();
+    });
+
+    toast.promise(uploadPromise, {
+      loading: "Uploading file...",
+      success: (data) => {
+        fetchFolderContents(currentFolderId); // Refresh list
+        router.push(
+          `/private/${organizationSlug}/file-viewer/${data.document.id}`
+        );
+        return "File uploaded successfully!";
+      },
+      error: (err) => err.message || "Failed to upload file",
+    });
+  };
+
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -538,6 +597,7 @@ export function DocumentsView({
           applicationId={applicationId}
           onCreateFolder={handleCreateFolder}
           onCreateDocument={handleCreateDocument}
+          onFileUpload={handleFileUpload}
         />
       </div>
 
@@ -562,9 +622,7 @@ export function DocumentsView({
       {/* Rename Dialog */}
       <RenameDialog
         open={renameDialog.open}
-        onOpenChange={(open) =>
-          setRenameDialog({ ...renameDialog, open })
-        }
+        onOpenChange={(open) => setRenameDialog({ ...renameDialog, open })}
         itemType={renameDialog.type}
         currentName={renameDialog.currentName}
         onRename={handleRenameSubmit}
@@ -573,9 +631,7 @@ export function DocumentsView({
       {/* Move Modal */}
       <MoveModal
         open={moveModal.open}
-        onOpenChange={(open) =>
-          setMoveModal({ ...moveModal, open })
-        }
+        onOpenChange={(open) => setMoveModal({ ...moveModal, open })}
         itemType={moveModal.type}
         itemName={moveModal.name}
         currentFolderId={moveModal.currentFolderId}
@@ -585,9 +641,7 @@ export function DocumentsView({
       {/* Copy Dialog */}
       <CopyDialog
         open={copyDialog.open}
-        onOpenChange={(open) =>
-          setCopyDialog({ ...copyDialog, open })
-        }
+        onOpenChange={(open) => setCopyDialog({ ...copyDialog, open })}
         itemType={copyDialog.type}
         originalName={copyDialog.originalName}
         currentFolderId={copyDialog.currentFolderId}

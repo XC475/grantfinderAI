@@ -15714,10 +15714,12 @@ export namespace Prisma {
 
   export type DocumentAvgAggregateOutputType = {
     version: number | null
+    fileSize: number | null
   }
 
   export type DocumentSumAggregateOutputType = {
     version: number | null
+    fileSize: number | null
   }
 
   export type DocumentMinAggregateOutputType = {
@@ -15731,6 +15733,9 @@ export namespace Prisma {
     updatedAt: Date | null
     organizationId: string | null
     folderId: string | null
+    fileUrl: string | null
+    fileType: string | null
+    fileSize: number | null
   }
 
   export type DocumentMaxAggregateOutputType = {
@@ -15744,6 +15749,9 @@ export namespace Prisma {
     updatedAt: Date | null
     organizationId: string | null
     folderId: string | null
+    fileUrl: string | null
+    fileType: string | null
+    fileSize: number | null
   }
 
   export type DocumentCountAggregateOutputType = {
@@ -15758,16 +15766,21 @@ export namespace Prisma {
     updatedAt: number
     organizationId: number
     folderId: number
+    fileUrl: number
+    fileType: number
+    fileSize: number
     _all: number
   }
 
 
   export type DocumentAvgAggregateInputType = {
     version?: true
+    fileSize?: true
   }
 
   export type DocumentSumAggregateInputType = {
     version?: true
+    fileSize?: true
   }
 
   export type DocumentMinAggregateInputType = {
@@ -15781,6 +15794,9 @@ export namespace Prisma {
     updatedAt?: true
     organizationId?: true
     folderId?: true
+    fileUrl?: true
+    fileType?: true
+    fileSize?: true
   }
 
   export type DocumentMaxAggregateInputType = {
@@ -15794,6 +15810,9 @@ export namespace Prisma {
     updatedAt?: true
     organizationId?: true
     folderId?: true
+    fileUrl?: true
+    fileType?: true
+    fileSize?: true
   }
 
   export type DocumentCountAggregateInputType = {
@@ -15808,6 +15827,9 @@ export namespace Prisma {
     updatedAt?: true
     organizationId?: true
     folderId?: true
+    fileUrl?: true
+    fileType?: true
+    fileSize?: true
     _all?: true
   }
 
@@ -15909,6 +15931,9 @@ export namespace Prisma {
     updatedAt: Date
     organizationId: string
     folderId: string | null
+    fileUrl: string | null
+    fileType: string | null
+    fileSize: number | null
     _count: DocumentCountAggregateOutputType | null
     _avg: DocumentAvgAggregateOutputType | null
     _sum: DocumentSumAggregateOutputType | null
@@ -15942,6 +15967,9 @@ export namespace Prisma {
     updatedAt?: boolean
     organizationId?: boolean
     folderId?: boolean
+    fileUrl?: boolean
+    fileType?: boolean
+    fileSize?: boolean
     application?: boolean | Document$applicationArgs<ExtArgs>
     folder?: boolean | Document$folderArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -15959,6 +15987,9 @@ export namespace Prisma {
     updatedAt?: boolean
     organizationId?: boolean
     folderId?: boolean
+    fileUrl?: boolean
+    fileType?: boolean
+    fileSize?: boolean
     application?: boolean | Document$applicationArgs<ExtArgs>
     folder?: boolean | Document$folderArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -15976,6 +16007,9 @@ export namespace Prisma {
     updatedAt?: boolean
     organizationId?: boolean
     folderId?: boolean
+    fileUrl?: boolean
+    fileType?: boolean
+    fileSize?: boolean
     application?: boolean | Document$applicationArgs<ExtArgs>
     folder?: boolean | Document$folderArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -15993,9 +16027,12 @@ export namespace Prisma {
     updatedAt?: boolean
     organizationId?: boolean
     folderId?: boolean
+    fileUrl?: boolean
+    fileType?: boolean
+    fileSize?: boolean
   }
 
-  export type DocumentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicationId" | "title" | "content" | "contentType" | "metadata" | "version" | "createdAt" | "updatedAt" | "organizationId" | "folderId", ExtArgs["result"]["document"]>
+  export type DocumentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicationId" | "title" | "content" | "contentType" | "metadata" | "version" | "createdAt" | "updatedAt" | "organizationId" | "folderId" | "fileUrl" | "fileType" | "fileSize", ExtArgs["result"]["document"]>
   export type DocumentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     application?: boolean | Document$applicationArgs<ExtArgs>
     folder?: boolean | Document$folderArgs<ExtArgs>
@@ -16031,6 +16068,9 @@ export namespace Prisma {
       updatedAt: Date
       organizationId: string
       folderId: string | null
+      fileUrl: string | null
+      fileType: string | null
+      fileSize: number | null
     }, ExtArgs["result"]["document"]>
     composites: {}
   }
@@ -16468,6 +16508,9 @@ export namespace Prisma {
     readonly updatedAt: FieldRef<"Document", 'DateTime'>
     readonly organizationId: FieldRef<"Document", 'String'>
     readonly folderId: FieldRef<"Document", 'String'>
+    readonly fileUrl: FieldRef<"Document", 'String'>
+    readonly fileType: FieldRef<"Document", 'String'>
+    readonly fileSize: FieldRef<"Document", 'Int'>
   }
     
 
@@ -19445,7 +19488,10 @@ export namespace Prisma {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     organizationId: 'organizationId',
-    folderId: 'folderId'
+    folderId: 'folderId',
+    fileUrl: 'fileUrl',
+    fileType: 'fileType',
+    fileSize: 'fileSize'
   };
 
   export type DocumentScalarFieldEnum = (typeof DocumentScalarFieldEnum)[keyof typeof DocumentScalarFieldEnum]
@@ -20819,6 +20865,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Document"> | Date | string
     organizationId?: StringFilter<"Document"> | string
     folderId?: StringNullableFilter<"Document"> | string | null
+    fileUrl?: StringNullableFilter<"Document"> | string | null
+    fileType?: StringNullableFilter<"Document"> | string | null
+    fileSize?: IntNullableFilter<"Document"> | number | null
     application?: XOR<ApplicationNullableScalarRelationFilter, ApplicationWhereInput> | null
     folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
@@ -20836,6 +20885,9 @@ export namespace Prisma {
     updatedAt?: SortOrder
     organizationId?: SortOrder
     folderId?: SortOrderInput | SortOrder
+    fileUrl?: SortOrderInput | SortOrder
+    fileType?: SortOrderInput | SortOrder
+    fileSize?: SortOrderInput | SortOrder
     application?: ApplicationOrderByWithRelationInput
     folder?: FolderOrderByWithRelationInput
     organization?: OrganizationOrderByWithRelationInput
@@ -20856,6 +20908,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Document"> | Date | string
     organizationId?: StringFilter<"Document"> | string
     folderId?: StringNullableFilter<"Document"> | string | null
+    fileUrl?: StringNullableFilter<"Document"> | string | null
+    fileType?: StringNullableFilter<"Document"> | string | null
+    fileSize?: IntNullableFilter<"Document"> | number | null
     application?: XOR<ApplicationNullableScalarRelationFilter, ApplicationWhereInput> | null
     folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
@@ -20873,6 +20928,9 @@ export namespace Prisma {
     updatedAt?: SortOrder
     organizationId?: SortOrder
     folderId?: SortOrderInput | SortOrder
+    fileUrl?: SortOrderInput | SortOrder
+    fileType?: SortOrderInput | SortOrder
+    fileSize?: SortOrderInput | SortOrder
     _count?: DocumentCountOrderByAggregateInput
     _avg?: DocumentAvgOrderByAggregateInput
     _max?: DocumentMaxOrderByAggregateInput
@@ -20895,6 +20953,9 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Document"> | Date | string
     organizationId?: StringWithAggregatesFilter<"Document"> | string
     folderId?: StringNullableWithAggregatesFilter<"Document"> | string | null
+    fileUrl?: StringNullableWithAggregatesFilter<"Document"> | string | null
+    fileType?: StringNullableWithAggregatesFilter<"Document"> | string | null
+    fileSize?: IntNullableWithAggregatesFilter<"Document"> | number | null
   }
 
   export type FolderWhereInput = {
@@ -22226,6 +22287,9 @@ export namespace Prisma {
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    fileUrl?: string | null
+    fileType?: string | null
+    fileSize?: number | null
     application?: ApplicationCreateNestedOneWithoutDocumentsInput
     folder?: FolderCreateNestedOneWithoutDocumentsInput
     organization: OrganizationCreateNestedOneWithoutDocumentsInput
@@ -22243,6 +22307,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     organizationId: string
     folderId?: string | null
+    fileUrl?: string | null
+    fileType?: string | null
+    fileSize?: number | null
   }
 
   export type DocumentUpdateInput = {
@@ -22254,6 +22321,9 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     application?: ApplicationUpdateOneWithoutDocumentsNestedInput
     folder?: FolderUpdateOneWithoutDocumentsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutDocumentsNestedInput
@@ -22271,6 +22341,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type DocumentCreateManyInput = {
@@ -22285,6 +22358,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     organizationId: string
     folderId?: string | null
+    fileUrl?: string | null
+    fileType?: string | null
+    fileSize?: number | null
   }
 
   export type DocumentUpdateManyMutationInput = {
@@ -22296,6 +22372,9 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type DocumentUncheckedUpdateManyInput = {
@@ -22310,6 +22389,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type FolderCreateInput = {
@@ -23679,10 +23761,14 @@ export namespace Prisma {
     updatedAt?: SortOrder
     organizationId?: SortOrder
     folderId?: SortOrder
+    fileUrl?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
   }
 
   export type DocumentAvgOrderByAggregateInput = {
     version?: SortOrder
+    fileSize?: SortOrder
   }
 
   export type DocumentMaxOrderByAggregateInput = {
@@ -23696,6 +23782,9 @@ export namespace Prisma {
     updatedAt?: SortOrder
     organizationId?: SortOrder
     folderId?: SortOrder
+    fileUrl?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
   }
 
   export type DocumentMinOrderByAggregateInput = {
@@ -23709,10 +23798,14 @@ export namespace Prisma {
     updatedAt?: SortOrder
     organizationId?: SortOrder
     folderId?: SortOrder
+    fileUrl?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
   }
 
   export type DocumentSumOrderByAggregateInput = {
     version?: SortOrder
+    fileSize?: SortOrder
   }
 
   export type FolderCountOrderByAggregateInput = {
@@ -25779,6 +25872,9 @@ export namespace Prisma {
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    fileUrl?: string | null
+    fileType?: string | null
+    fileSize?: number | null
     application?: ApplicationCreateNestedOneWithoutDocumentsInput
     folder?: FolderCreateNestedOneWithoutDocumentsInput
   }
@@ -25794,6 +25890,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     folderId?: string | null
+    fileUrl?: string | null
+    fileType?: string | null
+    fileSize?: number | null
   }
 
   export type DocumentCreateOrConnectWithoutOrganizationInput = {
@@ -26049,6 +26148,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Document"> | Date | string
     organizationId?: StringFilter<"Document"> | string
     folderId?: StringNullableFilter<"Document"> | string | null
+    fileUrl?: StringNullableFilter<"Document"> | string | null
+    fileType?: StringNullableFilter<"Document"> | string | null
+    fileSize?: IntNullableFilter<"Document"> | number | null
   }
 
   export type FolderUpsertWithWhereUniqueWithoutOrganizationInput = {
@@ -26742,6 +26844,9 @@ export namespace Prisma {
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    fileUrl?: string | null
+    fileType?: string | null
+    fileSize?: number | null
     folder?: FolderCreateNestedOneWithoutDocumentsInput
     organization: OrganizationCreateNestedOneWithoutDocumentsInput
   }
@@ -26757,6 +26862,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     organizationId: string
     folderId?: string | null
+    fileUrl?: string | null
+    fileType?: string | null
+    fileSize?: number | null
   }
 
   export type DocumentCreateOrConnectWithoutApplicationInput = {
@@ -27885,6 +27993,9 @@ export namespace Prisma {
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    fileUrl?: string | null
+    fileType?: string | null
+    fileSize?: number | null
     application?: ApplicationCreateNestedOneWithoutDocumentsInput
     organization: OrganizationCreateNestedOneWithoutDocumentsInput
   }
@@ -27900,6 +28011,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     organizationId: string
+    fileUrl?: string | null
+    fileType?: string | null
+    fileSize?: number | null
   }
 
   export type DocumentCreateOrConnectWithoutFolderInput = {
@@ -28593,6 +28707,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     folderId?: string | null
+    fileUrl?: string | null
+    fileType?: string | null
+    fileSize?: number | null
   }
 
   export type FolderCreateManyOrganizationInput = {
@@ -28734,6 +28851,9 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     application?: ApplicationUpdateOneWithoutDocumentsNestedInput
     folder?: FolderUpdateOneWithoutDocumentsNestedInput
   }
@@ -28749,6 +28869,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type DocumentUncheckedUpdateManyWithoutOrganizationInput = {
@@ -28762,6 +28885,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type FolderUpdateWithoutOrganizationInput = {
@@ -28953,6 +29079,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     organizationId: string
     folderId?: string | null
+    fileUrl?: string | null
+    fileType?: string | null
+    fileSize?: number | null
   }
 
   export type AiChatUpdateWithoutApplicationInput = {
@@ -28999,6 +29128,9 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     folder?: FolderUpdateOneWithoutDocumentsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutDocumentsNestedInput
   }
@@ -29014,6 +29146,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type DocumentUncheckedUpdateManyWithoutApplicationInput = {
@@ -29027,6 +29162,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
     folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type AiChatMessageCreateManyChatInput = {
@@ -29072,6 +29210,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     organizationId: string
+    fileUrl?: string | null
+    fileType?: string | null
+    fileSize?: number | null
   }
 
   export type FolderCreateManyParentInput = {
@@ -29092,6 +29233,9 @@ export namespace Prisma {
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     application?: ApplicationUpdateOneWithoutDocumentsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutDocumentsNestedInput
   }
@@ -29107,6 +29251,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type DocumentUncheckedUpdateManyWithoutFolderInput = {
@@ -29120,6 +29267,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type FolderUpdateWithoutParentInput = {

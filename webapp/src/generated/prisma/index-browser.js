@@ -293,7 +293,10 @@ exports.Prisma.DocumentScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   organizationId: 'organizationId',
-  folderId: 'folderId'
+  folderId: 'folderId',
+  fileUrl: 'fileUrl',
+  fileType: 'fileType',
+  fileSize: 'fileSize'
 };
 
 exports.Prisma.FolderScalarFieldEnum = {

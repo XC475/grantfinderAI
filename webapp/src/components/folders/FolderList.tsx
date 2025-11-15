@@ -1,7 +1,7 @@
 "use client";
 
 import { useDraggable, useDroppable } from "@dnd-kit/core";
-import { FileText, MoreHorizontal, Trash2, GripVertical, Edit, Copy, FolderInput } from "lucide-react";
+import { FileText, MoreHorizontal, Trash2, GripVertical, Edit, Copy, FolderInput, File, Table } from "lucide-react";
 import { FolderIcon } from "./FolderIcon";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +27,36 @@ interface Document {
   title: string;
   updatedAt: string;
   applicationId?: string | null;
+  fileUrl?: string | null;
+  fileType?: string | null;
+}
+
+// Helper function to get the appropriate icon for a document
+function getDocumentIcon(document: Document) {
+  if (!document.fileType) {
+    // Regular editable document
+    return <FileText className="h-4 w-4 text-blue-500 flex-shrink-0" />;
+  }
+
+  // File uploads - different icons based on type
+  if (document.fileType === "application/pdf") {
+    return <FileText className="h-4 w-4 text-red-500 flex-shrink-0" />;
+  }
+  if (
+    document.fileType ===
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ) {
+    return <FileText className="h-4 w-4 text-blue-600 flex-shrink-0" />;
+  }
+  if (document.fileType === "text/csv") {
+    return <Table className="h-4 w-4 text-green-600 flex-shrink-0" />;
+  }
+  if (document.fileType === "text/plain") {
+    return <File className="h-4 w-4 text-gray-600 flex-shrink-0" />;
+  }
+
+  // Default file icon
+  return <File className="h-4 w-4 text-muted-foreground flex-shrink-0" />;
 }
 
 interface FolderListProps {
@@ -212,7 +242,7 @@ function DraggableDocument({
             className="flex items-center gap-3 flex-1 cursor-pointer"
             onClick={onClick}
           >
-            <FileText className="h-4 w-4 text-blue-500 flex-shrink-0" />
+            {getDocumentIcon(document)}
             <span className="font-medium">{document.title}</span>
           </div>
         </div>

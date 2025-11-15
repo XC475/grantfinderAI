@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Folder, FileText } from "lucide-react";
+import { useState, useRef } from "react";
+import { Plus, Folder, FileText, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -25,6 +25,7 @@ interface CreateMenuProps {
   applicationId?: string;
   onCreateFolder: (name: string, parentFolderId: string | null) => Promise<void>;
   onCreateDocument: (title: string, folderId: string | null) => Promise<void>;
+  onFileUpload?: (file: File) => void;
 }
 
 export function CreateMenu({
@@ -32,12 +33,14 @@ export function CreateMenu({
   applicationId,
   onCreateFolder,
   onCreateDocument,
+  onFileUpload,
 }: CreateMenuProps) {
   const [folderDialogOpen, setFolderDialogOpen] = useState(false);
   const [documentDialogOpen, setDocumentDialogOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [documentTitle, setDocumentTitle] = useState("Untitled Document");
   const [isCreating, setIsCreating] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleCreateFolder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +74,17 @@ export function CreateMenu({
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && onFileUpload) {
+      onFileUpload(file);
+    }
+    // Reset input so the same file can be uploaded again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   return (
     <>
       <DropdownMenu>
@@ -89,8 +103,23 @@ export function CreateMenu({
             <FileText className="h-4 w-4 mr-2" />
             Document
           </DropdownMenuItem>
+          {onFileUpload && (
+            <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
+              <Upload className="h-4 w-4 mr-2" />
+              Upload
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".pdf,.docx,.txt,.csv"
+        onChange={handleFileChange}
+        className="hidden"
+      />
 
       {/* Create Folder Dialog */}
       <Dialog open={folderDialogOpen} onOpenChange={setFolderDialogOpen}>

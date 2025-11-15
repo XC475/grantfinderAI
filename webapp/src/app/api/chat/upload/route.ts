@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
-import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
-import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
-import { writeFile, unlink, readFile } from "fs/promises";
+import { writeFile, unlink } from "fs/promises";
 import { join } from "path";
 import { tmpdir } from "os";
 import { randomUUID } from "crypto";
-import type { Document } from "@langchain/core/documents";
-import { extractText } from "unpdf";
+import { extractTextFromFile, cleanExtractedText } from "@/lib/fileExtraction";
 
 // Maximum file size: 40MB
 const MAX_FILE_SIZE = 40 * 1024 * 1024;
@@ -44,41 +41,6 @@ interface FileAttachment {
   size: number;
   url: string;
   extractedText?: string;
-}
-
-async function extractTextFromFile(
-  filePath: string,
-  mimeType: string
-): Promise<string> {
-  switch (mimeType) {
-    case "application/pdf": {
-      // Use unpdf instead of pdf-parse (more reliable in serverless environments)
-      const fileBuffer = await readFile(filePath);
-      // Convert Buffer to Uint8Array (required by unpdf)
-      const uint8Array = new Uint8Array(fileBuffer);
-      const { text } = await extractText(uint8Array);
-      // unpdf returns an array of text strings (one per page)
-      const extractedText = Array.isArray(text) ? text.join("\n\n") : text;
-      return extractedText || "[PDF contains no extractable text]";
-    }
-    case "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
-      const loader = new DocxLoader(filePath);
-      const documents = await loader.load();
-      return documents.map((doc: Document) => doc.pageContent).join("\n\n");
-    }
-    case "text/plain": {
-      // For plain text files, just read the content directly
-      const content = await readFile(filePath, "utf-8");
-      return content;
-    }
-    case "text/csv": {
-      const loader = new CSVLoader(filePath);
-      const documents = await loader.load();
-      return documents.map((doc: Document) => doc.pageContent).join("\n\n");
-    }
-    default:
-      throw new Error(`Unsupported file type: ${mimeType}`);
-  }
 }
 
 export async function POST(req: NextRequest) {
@@ -143,11 +105,11 @@ export async function POST(req: NextRequest) {
       let extractedText: string | undefined;
 
       try {
-        // 5. Extract text from file
+        // 5. Extract text from file using shared utility
         extractedText = await extractTextFromFile(tempFilePath, file.type);
-        // 6. Clean extracted text - remove NULL bytes that PostgreSQL can't handle
+        // 6. Clean extracted text using shared utility
         if (extractedText) {
-          extractedText = extractedText.replace(/\0/g, "");
+          extractedText = cleanExtractedText(extractedText);
         }
       } catch (error) {
         console.error("Error extracting text from file:", error);
