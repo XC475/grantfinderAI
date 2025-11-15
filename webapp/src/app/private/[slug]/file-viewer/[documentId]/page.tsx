@@ -12,6 +12,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
+import { useDocumentOptional } from "@/contexts/DocumentContext";
 
 interface Document {
   id: string;
@@ -57,8 +58,11 @@ export default function FileViewerPage({ params }: FileViewerPageProps) {
   const [loading, setLoading] = useState(true);
   const [extractedTextOpen, setExtractedTextOpen] = useState(false);
   const router = useRouter();
-
+  
   const { slug: organizationSlug, documentId } = use(params);
+  
+  // Get document context if available - will be provided by ConditionalLayout for /file-viewer/ routes
+  const documentContext = useDocumentOptional();
 
   useEffect(() => {
     const fetchDocument = async () => {
@@ -85,6 +89,16 @@ export default function FileViewerPage({ params }: FileViewerPageProps) {
 
     fetchDocument();
   }, [documentId, organizationSlug, router]);
+
+  // Populate document context for AI assistant (if provider is available)
+  useEffect(() => {
+    if (document && documentContext) {
+      documentContext.setDocumentTitle(document.title);
+      // Pass extracted text as content for AI context
+      const extractedText = document.metadata?.extractedText || "";
+      documentContext.setDocumentContent(extractedText);
+    }
+  }, [document, documentContext]);
 
   if (loading) {
     return (
@@ -131,10 +145,11 @@ export default function FileViewerPage({ params }: FileViewerPageProps) {
   const extractedText = (document.metadata as any)?.extractedText;
   const pageCount = (document.metadata as any)?.pageCount;
 
+  // Remove outer container - ConditionalLayout handles everything
   return (
-    <div className="container max-w-6xl mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4">
+    <>
+      {/* Header with download button */}
+      <div className="flex items-start justify-between gap-4 mb-6 px-8 pt-8">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2">
             <FileText className="h-5 w-5 text-muted-foreground flex-shrink-0" />
@@ -167,39 +182,43 @@ export default function FileViewerPage({ params }: FileViewerPageProps) {
         </Button>
       </div>
 
-      {/* File Preview */}
-      <FilePreview document={document} />
+      {/* File Preview - fills available space */}
+      <div className="px-8 mb-6">
+        <FilePreview document={document} />
+      </div>
 
       {/* Extracted Text Section */}
       {extractedText && (
-        <Collapsible
-          open={extractedTextOpen}
-          onOpenChange={setExtractedTextOpen}
-          className="border rounded-lg"
-        >
-          <CollapsibleTrigger className="flex items-center justify-between w-full p-4 hover:bg-muted/50 transition-colors">
-            <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              <span className="font-semibold">Extracted Text</span>
-            </div>
-            <ChevronDown
-              className={`h-4 w-4 transition-transform ${
-                extractedTextOpen ? "transform rotate-180" : ""
-              }`}
-            />
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <div className="p-4 pt-0">
-              <div className="bg-muted p-4 rounded-md max-h-96 overflow-y-auto">
-                <pre className="whitespace-pre-wrap text-sm font-mono">
-                  {extractedText}
-                </pre>
+        <div className="px-8 pb-8">
+          <Collapsible
+            open={extractedTextOpen}
+            onOpenChange={setExtractedTextOpen}
+            className="border rounded-lg"
+          >
+            <CollapsibleTrigger className="flex items-center justify-between w-full p-4 hover:bg-muted/50 transition-colors">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                <span className="font-semibold">Extracted Text</span>
               </div>
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
+              <ChevronDown
+                className={`h-4 w-4 transition-transform ${
+                  extractedTextOpen ? "transform rotate-180" : ""
+                }`}
+              />
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="p-4 pt-0">
+                <div className="bg-muted p-4 rounded-md max-h-96 overflow-y-auto">
+                  <pre className="whitespace-pre-wrap text-sm font-mono">
+                    {extractedText}
+                  </pre>
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
       )}
-    </div>
+    </>
   );
 }
 
