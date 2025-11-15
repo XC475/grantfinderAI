@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { supabaseServer } from "@/lib/supabaseServer";
 import prisma from "@/lib/prisma";
 
 /**
@@ -101,9 +102,37 @@ export async function GET(req: NextRequest) {
       `✅ [${requestId}] Found ${recommendations.length} of ${totalCount} total recommendations`
     );
 
-    // 6. Return recommendations with pagination info
+    // 6. Fetch opportunity details for all recommendations in one query (efficient!)
+    const opportunityIds = recommendations.map((r) =>
+      parseInt(r.opportunityId)
+    );
+
+    const { data: opportunities, error: oppError } = await supabaseServer
+      .from("opportunities")
+      .select("*")
+      .in("id", opportunityIds);
+
+    if (oppError) {
+      console.error(
+        `❌ [${requestId}] Error fetching opportunities:`,
+        oppError
+      );
+    }
+
+    // Create a map for quick lookup
+    const opportunityMap = new Map(
+      opportunities?.map((opp) => [opp.id, opp]) || []
+    );
+
+    // Merge opportunity data with recommendations
+    const recommendationsWithGrants = recommendations.map((rec) => ({
+      ...rec,
+      grant: opportunityMap.get(parseInt(rec.opportunityId)) || null,
+    }));
+
+    // 7. Return recommendations with grant details and pagination info
     return NextResponse.json({
-      data: recommendations,
+      data: recommendationsWithGrants,
       pagination: {
         total: totalCount,
         limit,

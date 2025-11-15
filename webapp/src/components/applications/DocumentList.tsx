@@ -1,7 +1,5 @@
 "use client";
 
-import { CreateDocumentButton } from "./CreateDocumentButton";
-import { useState } from "react";
 import { FileText, MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
@@ -40,13 +38,6 @@ export function DocumentList({
   onRefresh,
   isDeleting = false,
 }: DocumentListProps) {
-  const [isCreating, setIsCreating] = useState(false);
-
-  const handleCreateSuccess = () => {
-    setIsCreating(false);
-    onRefresh();
-  };
-
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -77,39 +68,14 @@ export function DocumentList({
 
   if (documents.length === 0) {
     return (
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Documents</h3>
-          <CreateDocumentButton
-            applicationId={applicationId}
-            organizationSlug={organizationSlug}
-            onSuccess={handleCreateSuccess}
-            isCreating={isCreating}
-            setIsCreating={setIsCreating}
-          />
-        </div>
-        <div className="text-center py-8 text-muted-foreground">
-          <p>No documents yet. Create your first document to get started.</p>
-        </div>
+      <div className="text-center py-8 text-muted-foreground">
+        <p>No documents yet. Create your first document to get started.</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">
-          Documents ({documents.length})
-        </h3>
-        <CreateDocumentButton
-          applicationId={applicationId}
-          organizationSlug={organizationSlug}
-          onSuccess={handleCreateSuccess}
-          isCreating={isCreating}
-          setIsCreating={setIsCreating}
-        />
-      </div>
-
       <div className="space-y-0">
         {/* Header Row */}
         <div className="flex items-center justify-between px-4 py-3 text-sm font-medium text-muted-foreground border-b">
