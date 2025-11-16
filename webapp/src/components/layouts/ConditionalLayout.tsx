@@ -126,7 +126,6 @@ function DocumentEditorLayoutContent({
               </Button>
             </div>
           </header>
-          <div className="flex-1 flex flex-col overflow-y-auto">{children}</div>
           <div className="flex-1 flex flex-col overflow-hidden bg-white">{children}</div>
         </SidebarInset>
       </ResizablePanel>

@@ -14,8 +14,6 @@ import {
   Table,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowDown, Square, ArrowUp, Plus, FolderOpen } from "lucide-react";
-import { AnimatePresence } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 import { useAutoScroll } from "@/hooks/use-auto-scroll";
@@ -30,7 +28,6 @@ import { TypingIndicator } from "@/components/ui/typing-indicator";
 import { useAutosizeTextArea } from "@/hooks/use-autosize-textarea";
 import { ChatForm as BaseChatForm } from "@/components/ui/chat";
 import { FilePreview } from "@/components/ui/file-preview";
-import { Paperclip } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -202,7 +199,6 @@ export function DocumentSidebarChat({
               onChange={handleInputChange}
               stop={handleStop}
               isGenerating={isGenerating}
-              isEmpty={isEmpty}
               placeholder={placeholder}
               files={files}
               setFiles={setFiles}
@@ -343,7 +339,6 @@ interface SidebarMessageInputProps
   submitOnEnter?: boolean;
   stop?: () => void;
   isGenerating: boolean;
-  isEmpty?: boolean;
   files?: File[] | null;
   setFiles?: React.Dispatch<React.SetStateAction<File[] | null>>;
   sourceDocuments?: SourceDocument[];
@@ -357,7 +352,6 @@ function SidebarMessageInput({
   submitOnEnter = true,
   stop,
   isGenerating,
-  isEmpty = false,
   files,
   setFiles,
   sourceDocuments,
@@ -382,8 +376,7 @@ function SidebarMessageInput({
     ref: textAreaRef,
     maxHeight: 240, // Keep current sizing
     borderWidth: 1,
-    dependencies: [textareaProps.value],
-    dependencies: [props.value, files],
+    dependencies: [textareaProps.value, files],
   });
 
   // Handle file selection
@@ -451,10 +444,11 @@ function SidebarMessageInput({
     if (text && text.length > 500) {
       e.preventDefault();
       const blob = new Blob([text], { type: "text/plain" });
-      const file = new File([blob], "Pasted text", {
+      // Create File object from blob
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const file = new (File as any)([blob], "Pasted text.txt", {
         type: "text/plain",
-        lastModified: Date.now(),
-      });
+      }) as File;
       addFiles([file]);
       return;
     }
@@ -562,17 +556,6 @@ function SidebarMessageInput({
               </div>
             )}
 
-            {showFileList && (
-              <div className="mb-2 flex flex-wrap gap-2">
-                {files?.map((file, index) => (
-                  <FilePreview
-                    key={index}
-                    file={file}
-                    onRemove={() => removeFile(index)}
-                  />
-                ))}
-              </div>
-            )}
             <textarea
               aria-label="Write your prompt here"
               placeholder={placeholder || "Ask anything..."}
@@ -580,7 +563,7 @@ function SidebarMessageInput({
               onKeyDown={onKeyDown}
               onPaste={handlePaste}
               className={cn(
-                "z-10 w-full grow resize-none rounded-xl border border-input bg-background text-sm ring-offset-background transition-[border] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+                "z-10 w-full grow resize-none rounded-xl bg-transparent border-0 text-sm placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
                 "p-3 pr-20",
                 className
               )}
@@ -591,25 +574,6 @@ function SidebarMessageInput({
 
         <div className="absolute right-3 top-3 z-20 flex gap-1">
           {setFiles && (
-        {/* Textarea - Top section */}
-        <textarea
-          aria-label="Write your prompt here"
-          placeholder={placeholder || "Ask anything..."}
-          ref={textAreaRef}
-          onKeyDown={onKeyDown}
-          onPaste={handlePaste}
-          className={cn(
-            "flex-1 resize-none border-0 bg-transparent p-3 pr-20 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0",
-            className
-          )}
-          style={{ maxHeight: 240 }}
-          {...props}
-        />
-
-        {/* Buttons Row - Bottom section */}
-        <div className="flex items-center justify-between px-3 pb-3 pt-1">
-          {/* Plus Button - Bottom left */}
-          {setFiles ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -619,16 +583,10 @@ function SidebarMessageInput({
                   className="h-8 w-8"
                   aria-label="Add content"
                   disabled={isGenerating}
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem
-                  onClick={handleFileButtonClick}
               <DropdownMenuContent align="start" className="w-56">
                 <DropdownMenuItem
                   onClick={async () => {
@@ -655,17 +613,13 @@ function SidebarMessageInput({
                   disabled
                   className="cursor-not-allowed opacity-50"
                 >
-                <DropdownMenuItem disabled className="cursor-not-allowed opacity-50">
                   <FolderOpen className="mr-2 h-4 w-4" />
                   <span>Google Drive (Coming Soon)</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          ) : (
-            <div className="h-8 w-8" />
           )}
 
-          {/* Send/Stop Button - Bottom right */}
           {isGenerating && stop ? (
             <Button
               type="button"
@@ -677,11 +631,15 @@ function SidebarMessageInput({
               aria-label="Stop generating"
               onClick={stop}
             >
-              <Square className="h-3 w-3 animate-pulse text-white" fill="currentColor" />
+              <Square
+                className="h-3 w-3 animate-pulse text-white"
+                fill="currentColor"
+              />
             </Button>
           ) : (
             <Button
               type="submit"
+              size="icon"
               className={cn(
                 "h-8 w-8 bg-[#5a8bf2] hover:bg-[#4a7bd9] disabled:opacity-50 disabled:cursor-not-allowed transition-opacity",
                 "dark:bg-[#d4917c] dark:hover:bg-[#c27d68]"
