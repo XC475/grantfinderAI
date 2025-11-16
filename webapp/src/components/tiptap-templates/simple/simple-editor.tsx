@@ -13,6 +13,11 @@ import { Highlight } from "@tiptap/extension-highlight";
 import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
 import { Selection } from "@tiptap/extensions";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { FontFamily } from "@tiptap/extension-font-family";
+import { Color } from "@tiptap/extension-color";
+import FontSize from "tiptap-extension-font-size";
+import { BackgroundColor } from "@/components/tiptap-node/background-color-node/background-color-extension";
 import { Markdown } from "@tiptap/markdown";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { Fragment, Slice } from "@tiptap/pm/model";
@@ -30,9 +35,11 @@ import {
 // --- Tiptap Node ---
 import { ImageUploadNode } from "@/components/tiptap-node/image-upload-node/image-upload-node-extension";
 import { HorizontalRule } from "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension";
+import { PageBreak } from "@/components/tiptap-node/page-break-node/page-break-extension";
 import "@/components/tiptap-node/blockquote-node/blockquote-node.scss";
 import "@/components/tiptap-node/code-block-node/code-block-node.scss";
 import "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node.scss";
+import "@/components/tiptap-node/page-break-node/page-break-node.scss";
 import "@/components/tiptap-node/list-node/list-node.scss";
 import "@/components/tiptap-node/image-node/image-node.scss";
 import "@/components/tiptap-node/heading-node/heading-node.scss";
@@ -57,6 +64,11 @@ import {
 import { MarkButton } from "@/components/tiptap-ui/mark-button";
 import { TextAlignButton } from "@/components/tiptap-ui/text-align-button";
 import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button";
+import { PageBreakButton } from "@/components/tiptap-ui/page-break-button";
+import { FontFamilyDropdownMenu } from "@/components/tiptap-ui/font-family-dropdown-menu";
+import { FontSizeDropdownMenu } from "@/components/tiptap-ui/font-size-dropdown-menu";
+import { TextColorPopover } from "@/components/tiptap-ui/text-color-popover";
+import { BackgroundColorPopover } from "@/components/tiptap-ui/background-color-popover";
 
 // --- Icons ---
 import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon";
@@ -104,6 +116,14 @@ const MainToolbarContent = ({
         />
         <BlockquoteButton />
         <CodeBlockButton />
+        <PageBreakButton />
+      </ToolbarGroup>
+
+      <ToolbarSeparator />
+
+      <ToolbarGroup>
+        <FontFamilyDropdownMenu portal={isMobile} />
+        <FontSizeDropdownMenu portal={isMobile} />
       </ToolbarGroup>
 
       <ToolbarSeparator />
@@ -115,7 +135,11 @@ const MainToolbarContent = ({
         <MarkButton type="code" />
         <MarkButton type="underline" />
         {!isMobile ? (
-          <ColorHighlightPopover />
+          <>
+            <TextColorPopover />
+            <BackgroundColorPopover />
+            <ColorHighlightPopover />
+          </>
         ) : (
           <ColorHighlightPopoverButton onClick={onHighlighterClick} />
         )}
@@ -292,6 +316,7 @@ export function SimpleEditor({
       Markdown,
       MarkdownPaste,
       HorizontalRule,
+      PageBreak,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       TaskList,
       TaskItem.configure({ nested: true }),
@@ -301,6 +326,12 @@ export function SimpleEditor({
       Superscript,
       Subscript,
       Selection,
+      TextStyle,
+      FontFamily,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      FontSize as any, // Type compatibility issue with third-party extension
+      Color,
+      BackgroundColor,
       ImageUploadNode.configure({
         accept: "image/*",
         maxSize: MAX_FILE_SIZE,

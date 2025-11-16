@@ -307,7 +307,7 @@ export function MessageInput({
         {/* Main Input Container */}
         <div
           className={cn(
-            "relative flex flex-col rounded-3xl border-2 bg-background transition-all min-h-[100px]",
+            "relative flex flex-col rounded-3xl border-2 bg-white dark:bg-zinc-900 transition-all min-h-[100px]",
             isDragging
               ? "border-primary bg-primary/5"
               : "border-border focus-within:border-primary/50"
@@ -382,11 +382,14 @@ export function MessageInput({
               <Button
                 type="button"
                 size="icon"
-                className="h-9 w-9 rounded-full"
+                className={cn(
+                  "h-9 w-9 rounded-lg bg-[#5a8bf2] hover:bg-[#4a7bd9] transition-colors",
+                  "dark:bg-[#d4917c] dark:hover:bg-[#c27d68]"
+                )}
                 aria-label="Stop generating"
                 onClick={stop}
               >
-                <Square className="h-4 w-4 animate-pulse" fill="currentColor" />
+                <Square className="h-4 w-4 animate-pulse text-white" fill="currentColor" />
               </Button>
             ) : (
               <Button
