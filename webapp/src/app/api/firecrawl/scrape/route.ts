@@ -40,17 +40,12 @@ export async function POST(request: NextRequest) {
     const results = await Promise.all(
       urls.map(async (url: string) => {
         try {
-          console.log(`🔍 Scraping URL: ${url}`);
           const result = await firecrawl.scrape(url, {
             formats: ["markdown"],
           });
 
           // Extract markdown from the result
           const markdown = result.markdown || "";
-
-          console.log(
-            `✅ Successfully scraped ${url} (${markdown.length} chars)`
-          );
 
           return {
             url,
@@ -71,7 +66,6 @@ export async function POST(request: NextRequest) {
 
     // Calculate success rate
     const successCount = results.filter((r) => r.success).length;
-    console.log(`📊 Scraped ${successCount}/${urls.length} URLs successfully`);
 
     return NextResponse.json({
       results,

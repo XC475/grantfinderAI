@@ -151,9 +151,6 @@ export async function POST(req: NextRequest) {
     });
 
     // 10. Execute agent and stream response
-    console.log("🤖 [Assistant Agent] Executing agent for chat:", chat.id);
-    console.log("📝 [Assistant Agent] User message:", lastUserMessage.content);
-
     let fullResponse = "";
     const encoder = new TextEncoder();
     let clientDisconnected = false;
@@ -161,8 +158,6 @@ export async function POST(req: NextRequest) {
     // Save response to database after stream completes
     const saveToDatabase = async () => {
       try {
-        console.log("💾 [Assistant Agent] Saving response to database...");
-
         await prisma.aiChatMessage.create({
           data: {
             role: "ASSISTANT",
@@ -181,10 +176,6 @@ export async function POST(req: NextRequest) {
           where: { id: chat.id },
           data: { updatedAt: new Date() },
         });
-
-        console.log(
-          `✅ [Assistant Agent] Saved response to DB${clientDisconnected ? " (client disconnected)" : ""}`
-        );
       } catch (error) {
         console.error("❌ [Assistant Agent] Error saving to database:", error);
       }
@@ -204,14 +195,6 @@ export async function POST(req: NextRequest) {
           );
 
           for await (const chunk of streamResult) {
-            // Log chunk structure for debugging (first few only)
-            if (fullResponse.length < 100) {
-              console.log(
-                "🔍 [Assistant Agent] Chunk structure:",
-                JSON.stringify(chunk, null, 2)
-              );
-            }
-
             // Extract content from LangChain streaming chunks
             // LangChain streams chunks as [message, metadata] tuples in "messages" mode
             let content = "";
@@ -232,7 +215,6 @@ export async function POST(req: NextRequest) {
               ) {
                 // This is from the LLM - stream it to the user
                 shouldStream = true;
-                console.log("✅ [Assistant Agent] Model response chunk");
 
                 // Extract content from the message
                 if (typeof message === "string") {
@@ -245,12 +227,10 @@ export async function POST(req: NextRequest) {
                 }
               } else if (node === "tools") {
                 // This is from tool execution - don't stream to user
-                console.log(
-                  "🔧 [Assistant Agent] Tool execution chunk (filtered out)"
-                );
+                // (silently filtered)
               } else {
-                // Unknown node - log for debugging but don't stream
-                console.log(`⚠️ [Assistant Agent] Unknown node: ${node}`);
+                // Unknown node - don't stream
+                // (silently filtered)
               }
             } else if (chunk && typeof chunk === "object") {
               // Handle non-tuple chunks (fallback for compatibility)
@@ -276,9 +256,6 @@ export async function POST(req: NextRequest) {
               } catch {
                 if (!clientDisconnected) {
                   clientDisconnected = true;
-                  console.log(
-                    "ℹ️ [Assistant Agent] Client disconnected, continuing in background"
-                  );
                 }
               }
             }
@@ -305,9 +282,6 @@ export async function POST(req: NextRequest) {
       },
       cancel() {
         clientDisconnected = true;
-        console.log(
-          "ℹ️ [Assistant Agent] Client cancelled stream, will save to DB when complete"
-        );
       },
     });
 

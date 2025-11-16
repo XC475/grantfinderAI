@@ -44,8 +44,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log("[School Districts] Searching Urban API...", { state, search });
-
     const year = 2022; // Use most recent year available
     let apiUrl = `${URBAN_API_BASE}/school-districts/ccd/directory/${year}/`;
 
@@ -69,9 +67,6 @@ export async function GET(request: NextRequest) {
     // For state-specific queries, fetch all pages to ensure complete data
     // This avoids needing to refetch when user selects a district
     if (state && data.next) {
-      console.log(
-        `[School Districts] Fetching all pages for state ${state}...`
-      );
       let nextUrl: string | null = data.next;
       let pageCount = 1;
       const maxPages = 50; // Safety limit
@@ -84,15 +79,7 @@ export async function GET(request: NextRequest) {
         allDistricts = allDistricts.concat(pageData.results);
         nextUrl = pageData.next;
         pageCount++;
-
-        console.log(
-          `[School Districts] Fetched page ${pageCount}, total districts: ${allDistricts.length}`
-        );
       }
-
-      console.log(
-        `[School Districts] Completed fetching ${allDistricts.length} districts for ${state}`
-      );
     }
 
     // Filter by search term if provided
@@ -101,9 +88,6 @@ export async function GET(request: NextRequest) {
       const searchLower = search.toLowerCase();
       filteredDistricts = allDistricts.filter((d) =>
         d.lea_name.toLowerCase().includes(searchLower)
-      );
-      console.log(
-        `[School Districts] Filtered to ${filteredDistricts.length} districts matching "${search}"`
       );
     }
 

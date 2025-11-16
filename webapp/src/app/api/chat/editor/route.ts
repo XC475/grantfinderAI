@@ -284,8 +284,6 @@ Use **clean, well-structured markdown** with clear visual hierarchy.
     // Save response to database after stream completes
     const saveToDatabase = async () => {
       try {
-        console.log("📝 [Editor Chat] Saving assistant response to database");
-
         // Save assistant response
         await prisma.aiChatMessage.create({
           data: {
@@ -306,10 +304,6 @@ Use **clean, well-structured markdown** with clear visual hierarchy.
           where: { id: chat.id },
           data: { updatedAt: new Date() },
         });
-
-        console.log(
-          `✅ [Editor Chat] Saved response to DB${clientDisconnected ? " (client disconnected)" : ""}`
-        );
       } catch (error) {
         console.error("❌ [Editor Chat] Error saving to database:", error);
       }
@@ -327,9 +321,6 @@ Use **clean, well-structured markdown** with clear visual hierarchy.
               } catch {
                 if (!clientDisconnected) {
                   clientDisconnected = true;
-                  console.log(
-                    "ℹ️ [Editor Chat] Client disconnected, continuing in background"
-                  );
                 }
               }
             }
@@ -346,10 +337,6 @@ Use **clean, well-structured markdown** with clear visual hierarchy.
           await saveToDatabase();
         } catch (error) {
           clientDisconnected = true;
-          console.log(
-            "ℹ️ [Editor Chat] Stream error (likely client disconnect):",
-            error
-          );
           // Still save to database even on error
           await saveToDatabase();
           controller.error(error);
@@ -357,9 +344,6 @@ Use **clean, well-structured markdown** with clear visual hierarchy.
       },
       cancel() {
         clientDisconnected = true;
-        console.log(
-          "ℹ️ [Editor Chat] Client cancelled stream, will save to DB when complete"
-        );
       },
     });
 
