@@ -1,0 +1,91 @@
+/* =====================
+     PAGE BREAK
+     ===================== */
+.tiptap.ProseMirror {
+  [data-type="page-break"] {
+    page-break-after: always;
+    break-after: page;
+    margin-top: 2.25em;
+    margin-bottom: 2.25em;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    border: none;
+    width: 100%;
+    display: block;
+    position: relative;
+    min-height: 2rem;
+
+    /* Visual indicator for page break in editor */
+    &::before {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 1px;
+      background: repeating-linear-gradient(
+        to right,
+        transparent,
+        transparent 10px,
+        var(--tt-gray-light-a-200, #e5e7eb) 10px,
+        var(--tt-gray-light-a-200, #e5e7eb) 20px
+      );
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+
+    /* Label for better visibility */
+    &::after {
+      content: "Page Break";
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--tt-background-color, #ffffff);
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      color: var(--tt-muted-foreground, #6b7280);
+      white-space: nowrap;
+      border: 1px solid var(--tt-gray-light-a-200, #e5e7eb);
+      border-radius: 4px;
+    }
+  }
+
+  .dark & {
+    [data-type="page-break"] {
+      &::before {
+        background: repeating-linear-gradient(
+          to right,
+          transparent,
+          transparent 10px,
+          var(--tt-gray-dark-a-200, #4b5563) 10px,
+          var(--tt-gray-dark-a-200, #4b5563) 20px
+        );
+      }
+
+      &::after {
+        background: var(--tt-background-color, #1a1a1a);
+        color: var(--tt-muted-foreground, #9ca3af);
+        border-color: var(--tt-gray-dark-a-200, #4b5563);
+      }
+    }
+  }
+}
+
+/* Print styles */
+@media print {
+  .tiptap.ProseMirror {
+    [data-type="page-break"] {
+      &::before,
+      &::after {
+        display: none;
+      }
+      margin: 0;
+      padding: 0;
+      min-height: 0;
+      height: 0;
+    }
+  }
+}
+

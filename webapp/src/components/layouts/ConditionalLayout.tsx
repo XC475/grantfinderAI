@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { PanelRight, Loader2, Check } from "lucide-react";
@@ -59,13 +59,51 @@ function DocumentEditorLayoutContent({
   documentId: string;
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Only render ResizablePanelGroup on client to avoid hydration mismatches
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    // Return a placeholder during SSR that matches the structure
+    return (
+      <div className="flex-1 w-full flex">
+        <div className="flex-1 flex flex-col h-full bg-white">
+          <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b bg-white">
+            <div className="flex items-center gap-2 px-4">
+              <Separator orientation="vertical" className="mr-2 h-4" />
+              <DynamicBreadcrumb organizationSlug={organizationSlug} />
+            </div>
+            <div className="flex items-center gap-3 px-4">
+              <SaveStatusIndicator />
+              <Separator orientation="vertical" className="h-4" />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                className="size-7"
+              >
+                <PanelRight className="h-4 w-4" />
+                <span className="sr-only">
+                  {isSidebarOpen ? "Close" : "Open"} Assistant Sidebar
+                </span>
+              </Button>
+            </div>
+          </header>
+          <div className="flex-1 flex flex-col overflow-hidden bg-white">{children}</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <ResizablePanelGroup direction="horizontal" className="flex-1 w-full">
       {/* Main content panel with breadcrumbs */}
       <ResizablePanel defaultSize={isSidebarOpen ? 60 : 100} minSize={30}>
-        <SidebarInset className="flex flex-col h-full">
-          <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 border-b">
+        <SidebarInset className="flex flex-col h-full bg-white">
+          <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 border-b bg-white">
             <div className="flex items-center gap-2 px-4">
               <Separator orientation="vertical" className="mr-2 h-4" />
               <DynamicBreadcrumb organizationSlug={organizationSlug} />
@@ -89,6 +127,7 @@ function DocumentEditorLayoutContent({
             </div>
           </header>
           <div className="flex-1 flex flex-col overflow-y-auto">{children}</div>
+          <div className="flex-1 flex flex-col overflow-hidden bg-white">{children}</div>
         </SidebarInset>
       </ResizablePanel>
 

@@ -104,7 +104,7 @@ export default function ApplicationsPage({
   }
 
   return (
-    <div className="container max-w-6xl py-8 p-4 space-y-6">
+    <div className="container max-w-full py-8 px-4 space-y-6">
       <div>
         <h1 className="text-3xl font-bold mb-2">Applications</h1>
         <p className="text-muted-foreground">
