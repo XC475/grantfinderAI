@@ -1,13 +1,16 @@
 "use client";
 
 import { useDraggable, useDroppable } from "@dnd-kit/core";
-import { FileText, MoreHorizontal, Trash2, GripVertical, Edit, Copy, FolderInput, File, Table } from "lucide-react";
+import { FileText, MoreHorizontal, Trash2, GripVertical, Edit, Copy, FolderInput, File, Table, Download } from "lucide-react";
 import { FolderIcon } from "./FolderIcon";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
@@ -72,6 +75,7 @@ interface FolderListProps {
   onCopyDocument?: (documentId: string) => void;
   onMoveFolder?: (folderId: string) => void;
   onMoveDocument?: (documentId: string) => void;
+  onExportDocument?: (documentId: string, format: 'google-drive' | 'pdf' | 'docx') => void;
   organizationSlug: string;
 }
 
@@ -206,6 +210,7 @@ function DraggableDocument({
   onRename,
   onCopy,
   onMove,
+  onExport,
   organizationSlug,
 }: {
   document: Document;
@@ -214,6 +219,7 @@ function DraggableDocument({
   onRename?: () => void;
   onCopy?: () => void;
   onMove?: () => void;
+  onExport?: (format: 'google-drive' | 'pdf' | 'docx') => void;
   organizationSlug: string;
 }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
@@ -251,7 +257,7 @@ function DraggableDocument({
         {format(new Date(document.updatedAt), "MMM d, yyyy")}
       </td>
       <td className="py-3 px-4 text-right">
-        {(onRename || onCopy || onMove || onDelete) && (
+        {(onRename || onCopy || onMove || onExport || onDelete) && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -296,6 +302,40 @@ function DraggableDocument({
                   Move
                 </DropdownMenuItem>
               )}
+              {onExport && (
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <Download className="h-4 w-4 mr-2" />
+                    Export
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onExport('google-drive');
+                      }}
+                    >
+                      Google Drive
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onExport('pdf');
+                      }}
+                    >
+                      PDF
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onExport('docx');
+                      }}
+                    >
+                      Word Doc
+                    </DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+              )}
               {onDelete && (
                 <DropdownMenuItem
                   onClick={(e) => {
@@ -329,6 +369,7 @@ export function FolderList({
   onCopyDocument,
   onMoveFolder,
   onMoveDocument,
+  onExportDocument,
   organizationSlug,
 }: FolderListProps) {
   // Root level droppable zone
@@ -411,6 +452,11 @@ export function FolderList({
               }
               onMove={
                 onMoveDocument ? () => onMoveDocument(document.id) : undefined
+              }
+              onExport={
+                onExportDocument
+                  ? (format) => onExportDocument(document.id, format)
+                  : undefined
               }
               organizationSlug={organizationSlug}
             />

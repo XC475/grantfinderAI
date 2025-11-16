@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { useDocument } from "@/contexts/DocumentContext";
-import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
-import { ExportToGoogleDriveDialog } from "@/components/google-drive/ExportDialog";
 import "./editor-overrides.css";
 
 interface Document {
@@ -112,38 +110,8 @@ export function DocumentEditor({
     // Title changes are handled separately if needed
   };
 
-  const handleDriveImportComplete = useCallback(
-    (newDocumentId?: string) => {
-      if (newDocumentId) {
-        router.push(`/private/${organizationSlug}/editor/${newDocumentId}`);
-      }
-    },
-    [organizationSlug, router]
-  );
-
   return (
     <div className="h-full bg-white">
-      <div className="border-b border-border/60 bg-card">
-        <div className="container max-w-4xl mx-auto px-8 py-4 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">
-              Google Drive
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Import files or export this document
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <GoogleDriveImportPicker
-              folderId={document.folderId ?? null}
-              applicationId={document.applicationId ?? null}
-              onImported={handleDriveImportComplete}
-            />
-            <ExportToGoogleDriveDialog documentId={document.id} />
-          </div>
-        </div>
-      </div>
-
       {/* Main editor */}
       <div className="h-full flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto">

@@ -5,10 +5,9 @@ import { getValidGoogleToken } from "@/lib/google-drive";
 import {
   convertTiptapToDocx,
   convertTiptapToGoogleDoc,
-  convertTiptapToPdf,
 } from "@/lib/document-converters";
 
-type ExportFormat = "google-doc" | "pdf" | "docx";
+type ExportFormat = "google-doc" | "docx";
 
 export const runtime = "nodejs";
 
@@ -18,8 +17,8 @@ interface ExportPayload {
 }
 
 const MIME_TYPES: Record<ExportFormat, string> = {
-  "google-doc": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  pdf: "application/pdf",
+  "google-doc":
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 };
 
@@ -84,13 +83,10 @@ export async function POST(request: NextRequest) {
       case "docx":
         fileBuffer = await convertTiptapToDocx(document.content);
         break;
-      case "pdf":
-        fileBuffer = await convertTiptapToPdf(document.content);
-        break;
     }
 
     const metadata: Record<string, string> = {
-      name: `${document.title || "Document"}.${format === "pdf" ? "pdf" : "docx"}`,
+      name: `${document.title || "Document"}.docx`,
       mimeType:
         format === "google-doc" ? GOOGLE_DOC_METADATA_TYPE : MIME_TYPES[format],
     };
@@ -102,7 +98,7 @@ export async function POST(request: NextRequest) {
     );
     formData.append(
       "file",
-      new Blob([fileBuffer], { type: MIME_TYPES[format] })
+      new Blob([new Uint8Array(fileBuffer)], { type: MIME_TYPES[format] })
     );
 
     const uploadResponse = await fetch(
@@ -117,10 +113,7 @@ export async function POST(request: NextRequest) {
     );
 
     if (!uploadResponse.ok) {
-      console.error(
-        "Google Drive upload failed",
-        await uploadResponse.text()
-      );
+      console.error("Google Drive upload failed", await uploadResponse.text());
       return NextResponse.json(
         { error: "Failed to upload file to Google Drive" },
         { status: 502 }
@@ -142,4 +135,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

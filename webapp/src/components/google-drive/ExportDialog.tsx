@@ -10,10 +10,16 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Loader2, Share2 } from "lucide-react";
 
-type ExportFormat = "google-doc" | "pdf" | "docx";
+type ExportFormat = "google-doc" | "docx";
 
 interface ExportToGoogleDriveDialogProps {
   documentId: string;
@@ -21,7 +27,6 @@ interface ExportToGoogleDriveDialogProps {
 
 const formatOptions: { value: ExportFormat; label: string }[] = [
   { value: "google-doc", label: "Google Docs" },
-  { value: "pdf", label: "PDF" },
   { value: "docx", label: "Word Document (DOCX)" },
 ];
 
@@ -73,19 +78,26 @@ export function ExportToGoogleDriveDialog({
         Export to Drive
       </Button>
 
-      <Dialog open={open} onOpenChange={(value) => !exporting && setOpen(value)}>
+      <Dialog
+        open={open}
+        onOpenChange={(value) => !exporting && setOpen(value)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Export to Google Drive</DialogTitle>
             <DialogDescription>
-              Choose the format to export this document in. A copy will be saved to your Google Drive.
+              Choose the format to export this document in. A copy will be saved
+              to your Google Drive.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Format</label>
-              <Select value={format} onValueChange={(value: ExportFormat) => setFormat(value)}>
+              <Select
+                value={format}
+                onValueChange={(value: ExportFormat) => setFormat(value)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select format" />
                 </SelectTrigger>
@@ -99,7 +111,11 @@ export function ExportToGoogleDriveDialog({
               </Select>
             </div>
 
-            <Button onClick={handleExport} disabled={exporting} className="w-full">
+            <Button
+              onClick={handleExport}
+              disabled={exporting}
+              className="w-full"
+            >
               {exporting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Export
             </Button>
@@ -109,4 +125,3 @@ export function ExportToGoogleDriveDialog({
     </>
   );
 }
-

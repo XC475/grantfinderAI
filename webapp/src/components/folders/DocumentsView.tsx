@@ -11,8 +11,6 @@ import { FolderList } from "./FolderList";
 import { RenameDialog } from "./RenameDialog";
 import { MoveModal } from "./MoveModal";
 import { CopyDialog } from "./CopyDialog";
-import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
-import { GoogleDriveConnectButton } from "@/components/google-drive/ConnectButton";
 
 interface Folder {
   id: string;
@@ -31,6 +29,7 @@ interface Document {
   folderId?: string | null;
   fileUrl?: string | null;
   fileType?: string | null;
+  content?: string | null;
 }
 
 interface FolderPathItem {
@@ -165,14 +164,17 @@ export function DocumentsView({
   };
 
   const handleDocumentClick = (documentId: string) => {
-    // Find the document to check if it's a file upload
+    // Find the document to check if it has content or is a file upload
     const document = documents.find((doc) => doc.id === documentId);
 
-    if (document?.fileUrl) {
-      // Route to file viewer for uploaded files
+    // If document has content, show the editor (even if it also has a fileUrl)
+    if (document?.content) {
+      router.push(`/private/${organizationSlug}/editor/${documentId}`);
+    } else if (document?.fileUrl) {
+      // Only route to file viewer if it has a fileUrl but no content
       router.push(`/private/${organizationSlug}/file-viewer/${documentId}`);
     } else {
-      // Route to editor for regular documents
+      // Default to editor for regular documents
       router.push(`/private/${organizationSlug}/editor/${documentId}`);
     }
   };
@@ -492,6 +494,97 @@ export function DocumentsView({
     }
   };
 
+  // Export handler
+  const handleExportDocument = async (
+    documentId: string,
+    format: "google-drive" | "pdf" | "docx"
+  ) => {
+    try {
+      if (format === "google-drive") {
+        // For Google Drive, use the existing API that opens dialog
+        const response = await fetch("/api/google-drive/export", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ documentId, format: "google-doc" }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json().catch(() => null);
+          throw new Error(error?.error || "Failed to export to Google Drive");
+        }
+
+        const data = await response.json();
+        toast.success("Document exported to Google Drive");
+        if (data.webViewLink) {
+          window.open(data.webViewLink, "_blank", "noopener,noreferrer");
+        }
+      } else if (format === "pdf") {
+        // For PDF, open styled HTML in new window and trigger print
+        const response = await fetch(`/api/documents/${documentId}/export`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ format: "pdf" }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json().catch(() => null);
+          throw new Error(error?.error || "Failed to export as PDF");
+        }
+
+        // Open HTML in new window
+        const html = await response.text();
+        const printWindow = window.open("", "_blank");
+        if (printWindow) {
+          printWindow.document.write(html);
+          printWindow.document.close();
+
+          // Wait for content to load, then trigger print dialog
+          printWindow.onload = () => {
+            setTimeout(() => {
+              printWindow.print();
+            }, 250);
+          };
+
+          toast.success("Opening print dialog for PDF export");
+        } else {
+          throw new Error("Please allow popups to export as PDF");
+        }
+      } else {
+        // For DOCX, download directly
+        const response = await fetch(`/api/documents/${documentId}/export`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ format }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json().catch(() => null);
+          throw new Error(
+            error?.error || `Failed to export as ${format.toUpperCase()}`
+          );
+        }
+
+        // Download the file
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `document.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        toast.success(`Document exported as ${format.toUpperCase()}`);
+      }
+    } catch (error) {
+      console.error("Error exporting document:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to export document"
+      );
+    }
+  };
+
   // File upload handler
   const handleFileUpload = async (file: File) => {
     if (!file) return;
@@ -597,12 +690,6 @@ export function DocumentsView({
           />
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <GoogleDriveConnectButton />
-          <GoogleDriveImportPicker
-            folderId={currentFolderId}
-            applicationId={applicationId}
-            onImported={() => fetchFolderContents(currentFolderId)}
-          />
           <CreateMenu
             currentFolderId={currentFolderId}
             applicationId={applicationId}
@@ -627,6 +714,7 @@ export function DocumentsView({
           onCopyDocument={handleCopyDocument}
           onMoveFolder={handleMoveFolder}
           onMoveDocument={handleMoveDocument}
+          onExportDocument={handleExportDocument}
           organizationSlug={organizationSlug}
         />
       </DragDropProvider>
