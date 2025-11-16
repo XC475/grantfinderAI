@@ -33,8 +33,6 @@ export async function GET(req: NextRequest) {
   const requestId = Math.random().toString(36).substring(7);
 
   try {
-    console.log(`📋 [${requestId}] Recommendations List API called`);
-
     // 1. Authenticate user
     const supabase = await createClient();
     const {
@@ -66,17 +64,11 @@ export async function GET(req: NextRequest) {
 
     // Validate parameters
     if (limit > 100) {
-      console.warn(`⚠️ [${requestId}] Limit too high, capping at 100`);
       limit = 100;
     }
     if (offset < 0) {
-      console.warn(`⚠️ [${requestId}] Negative offset, setting to 0`);
       offset = 0;
     }
-
-    console.log(
-      `📋 [${requestId}] Pagination: limit=${limit}, offset=${offset}`
-    );
 
     // 4. Get total count
     const totalCount = await prisma.recommendation.count({
@@ -97,10 +89,6 @@ export async function GET(req: NextRequest) {
       take: limit,
       skip: offset,
     });
-
-    console.log(
-      `✅ [${requestId}] Found ${recommendations.length} of ${totalCount} total recommendations`
-    );
 
     // 6. Fetch opportunity details for all recommendations in one query (efficient!)
     const opportunityIds = recommendations.map((r) =>

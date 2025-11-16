@@ -27,6 +27,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const parentFolderId = searchParams.get("parentFolderId");
     const applicationId = searchParams.get("applicationId");
+    const all = searchParams.get("all"); // Fetch all folders (for move modal)
 
     // Build where clause
     const where: {
@@ -41,10 +42,14 @@ export async function GET(req: NextRequest) {
       where.applicationId = applicationId;
     }
 
-    if (parentFolderId === "null" || parentFolderId === null) {
-      where.parentFolderId = null;
-    } else if (parentFolderId) {
-      where.parentFolderId = parentFolderId;
+    // Only filter by parentFolderId if explicitly requested
+    // Don't apply parent filtering when searching by applicationId or when all=true
+    if (!all && !applicationId && parentFolderId !== undefined) {
+      if (parentFolderId === "null" || parentFolderId === null) {
+        where.parentFolderId = null;
+      } else {
+        where.parentFolderId = parentFolderId;
+      }
     }
 
     // Fetch folders

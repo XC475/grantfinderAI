@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { ChatDemo } from "@/components/chat/Chat";
 import { Message } from "@/components/ui/chat-message";
 import { Loading } from "@/components/ui/spinner";
+import { type SourceDocument } from "@/components/chat/SourcesModal";
 
 interface ChatData {
   id: string;
@@ -24,6 +25,7 @@ interface ChatData {
         extractedText?: string;
         contentType?: string;
       }[];
+      sourceDocuments?: string[];
     } | null;
   }[];
 }
@@ -42,6 +44,9 @@ export default function ChatPage() {
     initialMessage
   );
   const [userName, setUserName] = useState<string>("");
+  const [initialSourceDocuments, setInitialSourceDocuments] = useState<
+    SourceDocument[]
+  >([]);
 
   // Fetch user data for personalized greeting
   useEffect(() => {
@@ -96,6 +101,48 @@ export default function ChatPage() {
           }));
           setInitialMessages(messages);
           setCurrentChatId(chat.id);
+
+          // Extract source documents from the latest user message
+          const lastUserMessage = [...chat.messages]
+            .reverse()
+            .find((msg) => msg.role === "USER");
+
+          if (
+            lastUserMessage?.metadata?.sourceDocuments &&
+            lastUserMessage.metadata.sourceDocuments.length > 0
+          ) {
+            const sourceDocIds = lastUserMessage.metadata.sourceDocuments;
+            // Fetch full source document details
+            Promise.all(
+              sourceDocIds.map(async (docId: string) => {
+                try {
+                  const response = await fetch(`/api/documents/${docId}`);
+                  if (response.ok) {
+                    const doc = await response.json();
+                    return {
+                      id: doc.id,
+                      title: doc.title,
+                      contentType: doc.contentType,
+                      fileUrl: doc.fileUrl,
+                      fileType: doc.fileType,
+                    } as SourceDocument;
+                  }
+                  return null;
+                } catch (error) {
+                  console.error(
+                    `Failed to fetch source document ${docId}:`,
+                    error
+                  );
+                  return null;
+                }
+              })
+            ).then((sourceDocs) => {
+              const validSourceDocs = sourceDocs.filter(
+                (doc): doc is SourceDocument => doc !== null
+              );
+              setInitialSourceDocuments(validSourceDocs);
+            });
+          }
 
           // Check if last message is from user (pending response)
           const lastMessage = messages[messages.length - 1];
@@ -198,6 +245,7 @@ export default function ChatPage() {
         initialMessageToSend={messageToSend}
         onMessageSent={() => setMessageToSend(null)}
         userName={userName}
+        initialSourceDocuments={initialSourceDocuments}
       />
     </div>
   );

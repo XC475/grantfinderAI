@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma";
 import { createGrantsAgent } from "@/lib/ai/agent";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { DistrictInfo } from "@/lib/ai/prompts/grants-assistant";
+import { getSourceDocumentContext } from "@/lib/documentContext";
 
 interface FileAttachment {
   id: string;
@@ -23,7 +24,8 @@ interface ChatMessage {
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, chatId, organizationId } = await req.json();
+    const { messages, chatId, organizationId, sourceDocumentIds } =
+      await req.json();
 
     // 1. Authenticate user
     const supabase = await createClient();
@@ -81,6 +83,16 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Get source document context if provided
+    let sourceContext = "";
+    if (
+      sourceDocumentIds &&
+      Array.isArray(sourceDocumentIds) &&
+      sourceDocumentIds.length > 0
+    ) {
+      sourceContext = await getSourceDocumentContext(sourceDocumentIds);
+    }
+
     // 6. Save user message with attachments
     await prisma.aiChatMessage.create({
       data: {
@@ -91,6 +103,10 @@ export async function POST(req: NextRequest) {
           timestamp: Date.now(),
           source: "webapp",
           attachments: lastUserMessage.attachments || [],
+          ...(sourceDocumentIds &&
+            sourceDocumentIds.length > 0 && {
+              sourceDocuments: sourceDocumentIds,
+            }),
         },
       },
     });
@@ -128,8 +144,15 @@ export async function POST(req: NextRequest) {
 
     // 9. Convert all messages to LangChain format (including last user message)
     // If message has attachments, append extracted text to content
-    const langChainMessages = messages.map((m: ChatMessage) => {
+    const langChainMessages = messages.map((m: ChatMessage, index: number) => {
       let content = m.content;
+
+      // For the last user message, prepend source document context if available
+      const isLastUserMessage =
+        index === messages.length - 1 && m.role === "user";
+      if (isLastUserMessage && sourceContext) {
+        content = `${sourceContext}\n\n${content}`;
+      }
 
       // Append extracted text from attachments to user messages
       if (m.role === "user" && m.attachments && m.attachments.length > 0) {
@@ -151,9 +174,6 @@ export async function POST(req: NextRequest) {
     });
 
     // 10. Execute agent and stream response
-    console.log("🤖 [Assistant Agent] Executing agent for chat:", chat.id);
-    console.log("📝 [Assistant Agent] User message:", lastUserMessage.content);
-
     let fullResponse = "";
     const encoder = new TextEncoder();
     let clientDisconnected = false;
@@ -161,8 +181,6 @@ export async function POST(req: NextRequest) {
     // Save response to database after stream completes
     const saveToDatabase = async () => {
       try {
-        console.log("💾 [Assistant Agent] Saving response to database...");
-
         await prisma.aiChatMessage.create({
           data: {
             role: "ASSISTANT",
@@ -181,10 +199,6 @@ export async function POST(req: NextRequest) {
           where: { id: chat.id },
           data: { updatedAt: new Date() },
         });
-
-        console.log(
-          `✅ [Assistant Agent] Saved response to DB${clientDisconnected ? " (client disconnected)" : ""}`
-        );
       } catch (error) {
         console.error("❌ [Assistant Agent] Error saving to database:", error);
       }
@@ -204,14 +218,6 @@ export async function POST(req: NextRequest) {
           );
 
           for await (const chunk of streamResult) {
-            // Log chunk structure for debugging (first few only)
-            if (fullResponse.length < 100) {
-              console.log(
-                "🔍 [Assistant Agent] Chunk structure:",
-                JSON.stringify(chunk, null, 2)
-              );
-            }
-
             // Extract content from LangChain streaming chunks
             // LangChain streams chunks as [message, metadata] tuples in "messages" mode
             let content = "";
@@ -232,7 +238,6 @@ export async function POST(req: NextRequest) {
               ) {
                 // This is from the LLM - stream it to the user
                 shouldStream = true;
-                console.log("✅ [Assistant Agent] Model response chunk");
 
                 // Extract content from the message
                 if (typeof message === "string") {
@@ -245,12 +250,10 @@ export async function POST(req: NextRequest) {
                 }
               } else if (node === "tools") {
                 // This is from tool execution - don't stream to user
-                console.log(
-                  "🔧 [Assistant Agent] Tool execution chunk (filtered out)"
-                );
+                // (silently filtered)
               } else {
-                // Unknown node - log for debugging but don't stream
-                console.log(`⚠️ [Assistant Agent] Unknown node: ${node}`);
+                // Unknown node - don't stream
+                // (silently filtered)
               }
             } else if (chunk && typeof chunk === "object") {
               // Handle non-tuple chunks (fallback for compatibility)
@@ -276,9 +279,6 @@ export async function POST(req: NextRequest) {
               } catch {
                 if (!clientDisconnected) {
                   clientDisconnected = true;
-                  console.log(
-                    "ℹ️ [Assistant Agent] Client disconnected, continuing in background"
-                  );
                 }
               }
             }
@@ -305,9 +305,6 @@ export async function POST(req: NextRequest) {
       },
       cancel() {
         clientDisconnected = true;
-        console.log(
-          "ℹ️ [Assistant Agent] Client cancelled stream, will save to DB when complete"
-        );
       },
     });
 

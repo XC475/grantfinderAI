@@ -24,8 +24,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    console.log("📊 [Vectorize Estimate] Starting text analysis...");
-
     // Get row count for both tables (opportunities, documents)
     const opportunitiesCount = await prisma.$queryRaw<[{ count: bigint }]>`
       SELECT COUNT(*) as count FROM public.opportunities
@@ -37,10 +35,6 @@ export async function GET(req: NextRequest) {
 
     const totalOpportunities = Number(opportunitiesCount[0].count);
     const totalDocuments = Number(documentsCount[0].count);
-
-    console.log(
-      `📊 [Vectorize Estimate] Opportunities: ${totalOpportunities}, Documents: ${totalDocuments}`
-    );
 
     // Get existing documents with their hashes (same logic as /vectorize)
     const existingDocuments = await prisma.$queryRaw<
@@ -56,10 +50,6 @@ export async function GET(req: NextRequest) {
     // Create a map of opportunity_id -> hash
     const existingDocsMap = new Map(
       existingDocuments.map((d) => [d.opportunity_id, d.content_hash])
-    );
-
-    console.log(
-      `📋 [Vectorize Estimate] Found ${existingDocuments.length} existing documents`
     );
 
     // Fetch ALL opportunities with raw_text to check for changes
@@ -97,10 +87,6 @@ export async function GET(req: NextRequest) {
       }
       // else: Hash matches - already up to date, skip
     }
-
-    console.log(
-      `🎯 [Vectorize Estimate] Found ${opportunitiesToVectorize.length} grants to analyze (${newCount} new, ${changedCount} changed)`
-    );
 
     if (opportunitiesToVectorize.length === 0) {
       return NextResponse.json({
@@ -176,20 +162,6 @@ export async function GET(req: NextRequest) {
     // Cost calculation for text-embedding-3-small
     const estimatedCostUSD =
       (textStats.totalEstimatedTokens / 1_000_000) * 0.02;
-
-    console.log(`\n📊 [Vectorize Estimate] Text Statistics:`);
-    console.log(`   Grants to vectorize: ${opportunitiesToVectorize.length}`);
-    console.log(`   Average characters per grant: ${avgCharacters}`);
-    console.log(`   Average tokens per grant: ${avgTokens}`);
-    console.log(`   Min characters: ${textStats.minCharacters}`);
-    console.log(`   Max characters: ${textStats.maxCharacters}`);
-    console.log(`   Embedding dimensions: 1536 (fixed)`);
-    console.log(`\n💰 [Vectorize Estimate] Cost Estimation:`);
-    console.log(
-      `   Total tokens: ~${textStats.totalEstimatedTokens.toLocaleString()}`
-    );
-    console.log(`   Estimated cost: ~$${estimatedCostUSD.toFixed(4)} USD`);
-    console.log(`   (Based on text-embedding-3-small: $0.02 per 1M tokens)\n`);
 
     return NextResponse.json({
       success: true,

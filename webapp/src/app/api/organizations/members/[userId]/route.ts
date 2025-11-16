@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
+import { deleteAllUserChatAttachments } from "@/lib/chatStorageCleanup";
 
 // PATCH /api/organizations/members/[userId] - Update member role (OWNER only)
 export async function PATCH(
@@ -204,6 +205,10 @@ export async function DELETE(
         { status: 403 }
       );
     }
+
+    // Clean up all chat attachments for this user BEFORE deleting
+    // (user deletion cascades to chats, so we must cleanup first)
+    await deleteAllUserChatAttachments(userId, prisma);
 
     // Delete from Supabase Auth
     const { error: authError } = await supabase.auth.admin.deleteUser(userId);

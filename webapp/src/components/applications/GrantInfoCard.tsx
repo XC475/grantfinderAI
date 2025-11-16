@@ -176,8 +176,22 @@ export function GrantInfoCard({
                         name?: string;
                       },
                       index: number
-                    ) =>
-                      attachment.url ? (
+                    ) => {
+                      // Priority: title > filename from URL > full URL
+                      const getAttachmentName = () => {
+                        if (attachment.title) return attachment.title;
+                        if (!attachment.url) return "Untitled Attachment";
+                        try {
+                          const url = new URL(attachment.url);
+                          const pathname = url.pathname;
+                          const filename = pathname.split("/").pop();
+                          return filename || attachment.url;
+                        } catch {
+                          return attachment.url;
+                        }
+                      };
+
+                      return attachment.url ? (
                         <a
                           key={index}
                           href={attachment.url}
@@ -186,9 +200,7 @@ export function GrantInfoCard({
                           className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-md hover:bg-muted transition-colors cursor-pointer"
                         >
                           <span className="text-sm">
-                            {attachment.title ||
-                              attachment.name ||
-                              `Attachment ${index + 1}`}
+                            {getAttachmentName()}
                           </span>
                           <ExternalLink className="h-3 w-3 text-muted-foreground" />
                         </a>
@@ -198,12 +210,11 @@ export function GrantInfoCard({
                           className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-md"
                         >
                           <span className="text-sm">
-                            {attachment.title ||
-                              attachment.name ||
-                              `Attachment ${index + 1}`}
+                            {getAttachmentName()}
                           </span>
                         </div>
-                      )
+                      );
+                    }
                   )}
                 </div>
               </div>

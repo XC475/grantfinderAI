@@ -26,7 +26,6 @@ import {
   AlertCircle,
   BarChart3,
   DollarSign,
-  ExternalLink,
   Calendar as CalendarIconSolid,
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
@@ -42,7 +41,7 @@ import {
 import { format } from "date-fns";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import prisma from "@/lib/prisma";
+// prisma not needed on client page
 
 interface Grant extends GrantCardData {
   contact_name: string | null;
@@ -242,6 +241,7 @@ function GrantsSearchPage() {
   // Fetch bookmarks count on initial load to determine tab order
   useEffect(() => {
     fetchBookmarks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch filter options
@@ -718,6 +718,7 @@ function GrantsSearchPage() {
     } else if (activeTab === "bookmarks") {
       fetchBookmarks();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   // Memoized computed values
@@ -768,10 +769,7 @@ function GrantsSearchPage() {
     closeDateTo,
   ]);
 
-  // Memoized bookmarked grants from bookmarks tab
-  const bookmarkedGrantIds = useMemo(() => {
-    return bookmarks.map((b) => b.opportunityId);
-  }, [bookmarks]);
+  // Memoized bookmarked grants from bookmarks tab (removed unused variable)
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -814,11 +812,6 @@ function GrantsSearchPage() {
             >
               <Search className="inline h-4 w-4 mr-2" />
               Search Grants
-              {pagination.total > 0 && (
-                <span className="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                  {pagination.total}
-                </span>
-              )}
             </button>
 
             {/* Recommendations */}

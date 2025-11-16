@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { getFolderPath, wouldCreateCircularReference } from "@/lib/folders";
+import {
+  getDocumentsInFolderTree,
+  deleteFileFromStorage,
+} from "@/lib/documentStorageCleanup";
 
 // GET /api/folders/[folderId] - Get folder details with contents
 export async function GET(
@@ -129,13 +133,19 @@ export async function PUT(
     // Application-linked folders cannot be renamed
     if (name && folder.applicationId) {
       return NextResponse.json(
-        { error: "Cannot rename application-linked folders. Rename the application instead." },
+        {
+          error:
+            "Cannot rename application-linked folders. Rename the application instead.",
+        },
         { status: 400 }
       );
     }
 
     // If moving, validate no circular references
-    if (parentFolderId !== undefined && parentFolderId !== folder.parentFolderId) {
+    if (
+      parentFolderId !== undefined &&
+      parentFolderId !== folder.parentFolderId
+    ) {
       const wouldBeCircular = await wouldCreateCircularReference(
         folderId,
         parentFolderId
@@ -234,9 +244,24 @@ export async function DELETE(
     // Application-linked folders can only be deleted when application is deleted
     if (folder.applicationId) {
       return NextResponse.json(
-        { error: "Cannot delete application-linked folders. Delete the application instead." },
+        {
+          error:
+            "Cannot delete application-linked folders. Delete the application instead.",
+        },
         { status: 400 }
       );
+    }
+
+    // Delete all files in folder tree from storage before cascade delete
+    const docs = await getDocumentsInFolderTree(folderId, prisma);
+    const fileDocs = docs.filter((d) => d.fileUrl);
+
+    if (fileDocs.length > 0) {
+      for (const doc of fileDocs) {
+        if (doc.fileUrl) {
+          await deleteFileFromStorage(doc.fileUrl);
+        }
+      }
     }
 
     // Delete folder (cascade will handle children and documents)
@@ -253,4 +278,3 @@ export async function DELETE(
     );
   }
 }
-

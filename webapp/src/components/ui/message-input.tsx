@@ -2,7 +2,17 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUp, Paperclip, Square, Plus, FolderOpen } from "lucide-react";
+import {
+  ArrowUp,
+  Paperclip,
+  Square,
+  Plus,
+  FolderOpen,
+  FileText,
+  X,
+  File,
+  Table,
+} from "lucide-react";
 import { omit } from "remeda";
 
 import { cn } from "@/lib/utils";
@@ -16,6 +26,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  SourcesModal,
+  type SourceDocument,
+} from "@/components/chat/SourcesModal";
 
 interface MessageInputBaseProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -29,12 +43,16 @@ interface MessageInputBaseProps
 
 interface MessageInputWithoutAttachmentProps extends MessageInputBaseProps {
   allowAttachments?: false;
+  sourceDocuments?: SourceDocument[];
+  onSourceDocumentsChange?: (docs: SourceDocument[]) => void;
 }
 
 interface MessageInputWithAttachmentsProps extends MessageInputBaseProps {
   allowAttachments: true;
   files: File[] | null;
   setFiles: React.Dispatch<React.SetStateAction<File[] | null>>;
+  sourceDocuments?: SourceDocument[];
+  onSourceDocumentsChange?: (docs: SourceDocument[]) => void;
 }
 
 type MessageInputProps =
@@ -48,6 +66,29 @@ const placeholderTexts = [
   "Find grants...",
   "Get recommendations...",
 ];
+
+// Helper function to get document icon based on file type
+function getDocumentIcon(doc: SourceDocument) {
+  if (!doc.fileType) {
+    return <FileText className="h-4 w-4 text-blue-500 flex-shrink-0" />;
+  }
+  if (doc.fileType === "application/pdf") {
+    return <FileText className="h-4 w-4 text-red-500 flex-shrink-0" />;
+  }
+  if (
+    doc.fileType ===
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ) {
+    return <FileText className="h-4 w-4 text-blue-600 flex-shrink-0" />;
+  }
+  if (doc.fileType === "text/csv") {
+    return <Table className="h-4 w-4 text-green-600 flex-shrink-0" />;
+  }
+  if (doc.fileType === "text/plain") {
+    return <File className="h-4 w-4 text-gray-600 flex-shrink-0" />;
+  }
+  return <File className="h-4 w-4 text-muted-foreground flex-shrink-0" />;
+}
 
 export function MessageInput({
   placeholder,
@@ -65,6 +106,7 @@ export function MessageInput({
   const [currentPlaceholder, setCurrentPlaceholder] = useState(
     placeholder || placeholderTexts[0]
   );
+  const [sourcesModalOpen, setSourcesModalOpen] = useState(false);
 
   useEffect(() => {
     if (!isGenerating) {
@@ -158,7 +200,8 @@ export function MessageInput({
     if (text && text.length > 500 && props.allowAttachments) {
       event.preventDefault();
       const blob = new Blob([text], { type: "text/plain" });
-      const file = new File([blob], "Pasted text", {
+      // @ts-expect-error - File constructor signature issue in some environments
+      const file: File = new File([blob], "Pasted text", {
         type: "text/plain",
         lastModified: Date.now(),
       });
@@ -280,8 +323,51 @@ export function MessageInput({
           close={() => setShowInterruptPrompt(false)}
         />
       )}
-      
+
       <div className="w-full max-w-2xl">
+        {/* Source Documents Preview */}
+        {props.sourceDocuments && props.sourceDocuments.length > 0 && (
+          <div className="mb-3 flex flex-wrap gap-2">
+            <AnimatePresence mode="popLayout">
+              {props.sourceDocuments.map((doc) => (
+                <motion.div
+                  key={doc.id}
+                  className="relative flex max-w-[200px] rounded-md border border-primary/30 bg-primary/5 p-1.5 pr-2 text-xs"
+                  layout
+                  initial={{ opacity: 0, y: "100%" }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: "100%" }}
+                >
+                  <div className="flex w-full items-center space-x-2">
+                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-sm border bg-muted">
+                      {getDocumentIcon(doc)}
+                    </div>
+                    <span className="w-full truncate text-muted-foreground">
+                      {doc.title}
+                    </span>
+                  </div>
+                  {props.onSourceDocumentsChange && (
+                    <button
+                      className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full border bg-background"
+                      type="button"
+                      onClick={() => {
+                        props.onSourceDocumentsChange?.(
+                          props.sourceDocuments?.filter(
+                            (d) => d.id !== doc.id
+                          ) || []
+                        );
+                      }}
+                      aria-label="Remove source"
+                    >
+                      <X className="h-2.5 w-2.5" />
+                    </button>
+                  )}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
+
         {/* File Attachments Preview */}
         {props.allowAttachments && props.files && props.files.length > 0 && (
           <div className="mb-3 flex flex-wrap gap-2">
@@ -293,7 +379,9 @@ export function MessageInput({
                   onRemove={() => {
                     props.setFiles((files) => {
                       if (!files) return null;
-                      const filtered = Array.from(files).filter((f) => f !== file);
+                      const filtered = Array.from(files).filter(
+                        (f) => f !== file
+                      );
                       if (filtered.length === 0) return null;
                       return filtered;
                     });
@@ -337,8 +425,18 @@ export function MessageInput({
             className="flex-1 resize-none border-0 bg-transparent px-4 pt-4 pb-2 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0 min-h-[60px]"
             style={{ maxHeight: manualHeight || 180 }}
             {...(props.allowAttachments
-              ? omit(props, ["allowAttachments", "files", "setFiles"])
-              : omit(props, ["allowAttachments"]))}
+              ? omit(props, [
+                  "allowAttachments",
+                  "files",
+                  "setFiles",
+                  "sourceDocuments",
+                  "onSourceDocumentsChange",
+                ])
+              : omit(props, [
+                  "allowAttachments",
+                  "sourceDocuments",
+                  "onSourceDocumentsChange",
+                ]))}
           />
 
           {/* Buttons Row - Bottom section */}
@@ -367,7 +465,19 @@ export function MessageInput({
                     <Paperclip className="mr-2 h-4 w-4" />
                     <span>Attach files</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem disabled className="cursor-not-allowed opacity-50">
+                  {props.onSourceDocumentsChange && (
+                    <DropdownMenuItem
+                      onClick={() => setSourcesModalOpen(true)}
+                      className="cursor-pointer"
+                    >
+                      <FileText className="mr-2 h-4 w-4" />
+                      <span>Add sources</span>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem
+                    disabled
+                    className="cursor-not-allowed opacity-50"
+                  >
                     <FolderOpen className="mr-2 h-4 w-4" />
                     <span>Google Drive (Coming Soon)</span>
                   </DropdownMenuItem>
@@ -420,6 +530,18 @@ export function MessageInput({
           )}
         </div>
       </div>
+
+      {/* Sources Modal */}
+      {props.onSourceDocumentsChange && (
+        <SourcesModal
+          open={sourcesModalOpen}
+          onOpenChange={setSourcesModalOpen}
+          onSelectDocuments={(docs) => {
+            props.onSourceDocumentsChange?.(docs);
+          }}
+          selectedDocumentIds={props.sourceDocuments?.map((d) => d.id) || []}
+        />
+      )}
     </div>
   );
 }

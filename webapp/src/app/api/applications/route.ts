@@ -170,9 +170,6 @@ export async function GET(request: NextRequest) {
       console.error("Error fetching opportunities:", oppError);
     }
 
-    console.log("Opportunity IDs:", opportunityIds);
-    console.log("Fetched opportunities:", opportunities);
-
     // Create a map for quick lookup
     const opportunityMap = new Map(
       opportunities?.map((opp) => [opp.id, opp]) || []
@@ -183,11 +180,6 @@ export async function GET(request: NextRequest) {
       ...app,
       opportunity: opportunityMap.get(app.opportunityId) || null,
     }));
-
-    console.log(
-      "Applications with opportunities:",
-      JSON.stringify(applicationsWithOpportunities, null, 2)
-    );
 
     return NextResponse.json({ applications: applicationsWithOpportunities });
   } catch (error) {

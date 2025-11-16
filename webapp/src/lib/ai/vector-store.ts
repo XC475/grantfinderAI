@@ -46,6 +46,7 @@ export async function searchGrants(
     stateCode?: string;
     status?: string;
     category?: string;
+    services?: string[];
   }
 ): Promise<GrantDocument[]> {
   try {
@@ -75,11 +76,28 @@ export async function searchGrants(
     console.log("📋 Filters:", filters);
 
     // Perform similarity search
-    const results = await vectorStore.similaritySearch(
+    let results = await vectorStore.similaritySearch(
       query,
       10, // top 10 results
       filter
     );
+
+    // Post-filter by services if provided (since vector store doesn't support array overlap filtering)
+    if (filters?.services && filters.services.length > 0) {
+      results = results.filter((doc) => {
+        const grantServices = doc.metadata.services as string[] | undefined;
+        if (!grantServices || grantServices.length === 0) {
+          return false; // Exclude grants without services
+        }
+        // Check if there's any overlap between grant services and filter services
+        return grantServices.some((service) =>
+          filters.services!.includes(service)
+        );
+      });
+      console.log(
+        `📋 Filtered to ${results.length} grants matching services: ${filters.services.join(", ")}`
+      );
+    }
 
     console.log(`✅ Found ${results.length} grants`);
 

@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
+import { deleteAllChatAttachments } from "@/lib/chatStorageCleanup";
 
 // GET /api/chats/[chatId] - Get specific chat with messages
 export async function GET(
@@ -69,6 +70,10 @@ export async function DELETE(
     if (!chat) {
       return new Response("Chat not found", { status: 404 });
     }
+
+    // Clean up chat attachments from storage BEFORE deleting
+    // (must happen before cascade delete removes message metadata)
+    await deleteAllChatAttachments(chatId, prisma);
 
     // Delete the chat (messages will be deleted due to cascade)
     await prisma.aiChat.delete({

@@ -80,9 +80,6 @@ export async function GET(req: NextRequest) {
   const requestId = Math.random().toString(36).substring(7);
 
   try {
-    console.log(`🔍 [${requestId}] Grants search API called`);
-    console.log(`🔍 [${requestId}] Request URL: ${req.url}`);
-
     const { searchParams } = new URL(req.url);
 
     // Extract search parameters
@@ -103,17 +100,21 @@ export async function GET(req: NextRequest) {
     let limit = parseInt(searchParams.get("limit") || "50");
     let offset = parseInt(searchParams.get("offset") || "0");
 
-    // Fetch bookmarked and applied grant IDs from database
+    // Fetch bookmarked and applied grant IDs from database, and organization services
     let deprioritizeIds: number[] = [];
+    let organizationServices: string[] = [];
     if (organizationSlug) {
       try {
-        // Get organization by slug
+        // Get organization by slug including services
         const organization = await prisma.organization.findUnique({
           where: { slug: organizationSlug },
-          select: { id: true },
+          select: { id: true, services: true },
         });
 
         if (organization) {
+          // Store organization services for filtering
+          organizationServices = organization.services || [];
+
           // Fetch bookmarked grants
           const bookmarks = await prisma.grantBookmark.findMany({
             where: { organizationId: organization.id },
@@ -139,45 +140,20 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    console.log(`🔍 [${requestId}] Search parameters:`, {
-      query,
-      status,
-      category,
-      minAmount,
-      maxAmount,
-      stateCode,
-      agency,
-      fundingInstrument,
-      costSharing,
-      fiscalYear,
-      source,
-      closeDateFrom,
-      closeDateTo,
-      organizationSlug,
-      deprioritizeIds:
-        deprioritizeIds.length > 0 ? `${deprioritizeIds.length} IDs` : "none",
-      limit,
-      offset,
-    });
-
     // Validate parameters
     if (limit > 100) {
-      console.warn(`⚠️ [${requestId}] Limit too high, capping at 100`);
       limit = 100;
     }
 
     if (offset < 0) {
-      console.warn(`⚠️ [${requestId}] Negative offset, setting to 0`);
       offset = 0;
     }
 
     // Build the base query
-    console.log(`🔍 [${requestId}] Building Supabase query...`);
     let supabaseQuery = supabaseServer.from("opportunities").select("*");
 
     // Add text search if query is provided
     if (query) {
-      console.log(`🔍 [${requestId}] Adding text search for: "${query}"`);
       supabaseQuery = supabaseQuery.or(
         `title.ilike.%${query}%,description.ilike.%${query}%,source_grant_id.ilike.%${query}%`
       );
@@ -185,94 +161,71 @@ export async function GET(req: NextRequest) {
 
     // Add status filter
     if (status) {
-      console.log(`🔍 [${requestId}] Adding status filter: "${status}"`);
       supabaseQuery = supabaseQuery.eq("status", status);
     }
 
     // Add category filter (category is an array, so we check if it contains the selected value)
     if (category) {
-      console.log(`🔍 [${requestId}] Adding category filter: "${category}"`);
       supabaseQuery = supabaseQuery.contains("category", [category]);
     }
 
     // Add amount range filters
     if (minAmount) {
       const minAmountNum = parseInt(minAmount);
-      console.log(
-        `🔍 [${requestId}] Adding minimum amount filter: ${minAmountNum}`
-      );
       supabaseQuery = supabaseQuery.gte("total_funding_amount", minAmountNum);
     }
     if (maxAmount) {
       const maxAmountNum = parseInt(maxAmount);
-      console.log(
-        `🔍 [${requestId}] Adding maximum amount filter: ${maxAmountNum}`
-      );
       supabaseQuery = supabaseQuery.lte("total_funding_amount", maxAmountNum);
     }
 
     // Add state filter
     if (stateCode) {
-      console.log(`🔍 [${requestId}] Adding state filter: "${stateCode}"`);
       supabaseQuery = supabaseQuery.eq("state_code", stateCode);
     }
 
     // Add agency filter
     if (agency) {
-      console.log(`🔍 [${requestId}] Adding agency filter: "${agency}"`);
       supabaseQuery = supabaseQuery.eq("agency", agency);
     }
 
     // Add funding instrument filter
     if (fundingInstrument) {
-      console.log(
-        `🔍 [${requestId}] Adding funding instrument filter: "${fundingInstrument}"`
-      );
       supabaseQuery = supabaseQuery.eq("funding_instrument", fundingInstrument);
     }
 
     // Add cost sharing filter
     if (costSharing !== null && costSharing !== undefined) {
       const requiresCostSharing = costSharing === "true";
-      console.log(
-        `🔍 [${requestId}] Adding cost sharing filter: ${requiresCostSharing}`
-      );
       supabaseQuery = supabaseQuery.eq("cost_sharing", requiresCostSharing);
     }
 
     // Add fiscal year filter
     if (fiscalYear) {
       const fiscalYearNum = parseInt(fiscalYear);
-      console.log(
-        `🔍 [${requestId}] Adding fiscal year filter: ${fiscalYearNum}`
-      );
       supabaseQuery = supabaseQuery.eq("fiscal_year", fiscalYearNum);
     }
 
     // Add source filter
     if (source) {
-      console.log(`🔍 [${requestId}] Adding source filter: "${source}"`);
       supabaseQuery = supabaseQuery.eq("source", source);
     }
 
     // Add close date range filters
     if (closeDateFrom) {
-      console.log(
-        `🔍 [${requestId}] Adding close date from filter: "${closeDateFrom}"`
-      );
       supabaseQuery = supabaseQuery.gte("close_date", closeDateFrom);
     }
     if (closeDateTo) {
-      console.log(
-        `🔍 [${requestId}] Adding close date to filter: "${closeDateTo}"`
-      );
       supabaseQuery = supabaseQuery.lte("close_date", closeDateTo);
     }
 
+    // Add services filter based on organization settings
+    // Only show grants that match ANY of the organization's selected services
+    if (organizationServices.length > 0) {
+      supabaseQuery = supabaseQuery.overlaps("services", organizationServices);
+    }
+
     // First, fetch ALL matching records (without pagination) to sort by status
-    console.log(
-      `🔍 [${requestId}] Fetching all matching records for status-based sorting...`
-    );
 
     const allDataQuery = supabaseQuery;
     const { data: allData, error: allError } = await allDataQuery;
@@ -290,12 +243,6 @@ export async function GET(req: NextRequest) {
         }
       );
     }
-
-    console.log(
-      `✅ [${requestId}] Supabase query successful. Found ${
-        allData?.length || 0
-      } total records before pagination`
-    );
 
     // Sort all data: deprioritized grants last, then by status, relevance, and date
     const statusPriority: { [key: string]: number } = {
@@ -335,36 +282,8 @@ export async function GET(req: NextRequest) {
     // Now apply pagination to the sorted data
     const data = sortedAllData.slice(offset, offset + limit);
 
-    console.log(
-      `🔍 [${requestId}] Applied pagination: offset=${offset}, limit=${limit}`
-    );
-
-    // Debug: Log status distribution for paginated results
-    const statusCounts = data.reduce(
-      (acc, grant) => {
-        const status = grant.status?.toLowerCase() || "unknown";
-        acc[status] = (acc[status] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-    console.log(
-      `✅ [${requestId}] Status distribution in paginated results:`,
-      statusCounts
-    );
-    console.log(
-      `✅ [${requestId}] First 5 grants on this page:`,
-      data.slice(0, 5).map((g) => ({
-        id: g.id,
-        status: g.status,
-        relevance: g.relevance_score,
-        title: g.title?.substring(0, 50),
-      }))
-    );
-
     // Get total count from the sorted data (all matching records)
     const totalCount = sortedAllData?.length || 0;
-    console.log(`🔍 [${requestId}] Total count: ${totalCount}`);
 
     const responseData = {
       data: data || [],
@@ -388,12 +307,6 @@ export async function GET(req: NextRequest) {
         source: "grants-search-api",
       },
     };
-
-    console.log(`✅ [${requestId}] Response prepared:`, {
-      dataCount: data?.length || 0,
-      totalCount: totalCount || 0,
-      processingTimeMs: Date.now() - startTime,
-    });
 
     return NextResponse.json(responseData, {
       status: 200,
@@ -421,7 +334,6 @@ export async function GET(req: NextRequest) {
 
 // Handle CORS preflight requests
 export async function OPTIONS() {
-  console.log(`🔍 CORS preflight request received`);
   return new NextResponse(null, {
     status: 200,
     // headers: corsHeaders,

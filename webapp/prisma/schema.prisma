@@ -113,6 +113,7 @@ model Organization {
   stateLeaId             String?
   urbanCentricLocale     Int?
   logoUrl                String?
+  services               opportunity_services_enum[] @default([k12_education])
   aiChats                AiChat[]
   applications           Application[]
   documents              Document[]                 @relation("OrganizationDocuments")
@@ -255,8 +256,11 @@ model Document {
   updatedAt      DateTime     @updatedAt
   organizationId String
   folderId       String?
+  fileUrl        String?
+  fileType       String?
+  fileSize       Int?
   application    Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  folder         Folder?      @relation(fields: [folderId], references: [id])
+  folder         Folder?      @relation(fields: [folderId], references: [id], onDelete: Cascade)
   organization   Organization @relation("OrganizationDocuments", fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([applicationId])

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
+import { deleteFileFromStorage } from "@/lib/documentStorageCleanup";
 
 // GET /api/applications/[applicationId]/documents/[documentId] - Get specific document
 export async function GET(
@@ -152,6 +153,12 @@ export async function DELETE(
         { error: "Document not found" },
         { status: 404 }
       );
+    }
+
+    // Delete file from storage if it exists
+    if (existingDocument.fileUrl) {
+      await deleteFileFromStorage(existingDocument.fileUrl);
+      // Continue even if storage deletion fails (DB consistency is priority)
     }
 
     // Delete document

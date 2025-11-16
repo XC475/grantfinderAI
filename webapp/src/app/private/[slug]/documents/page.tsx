@@ -1,7 +1,6 @@
 "use client";
 
 import { use } from "react";
-import { Loader2 } from "lucide-react";
 import { DocumentsView } from "@/components/folders/DocumentsView";
 
 interface DocumentsPageProps {

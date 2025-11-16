@@ -32,8 +32,6 @@ export async function GET(req: NextRequest) {
   const requestId = Math.random().toString(36).substring(7);
 
   try {
-    console.log(`📄 [${requestId}] Documents API called`);
-
     // Authenticate user
     const supabase = await createClient();
     const {
@@ -60,22 +58,47 @@ export async function GET(req: NextRequest) {
 
     // Extract pagination parameters
     const { searchParams } = new URL(req.url);
+    const withFolders = searchParams.get("withFolders") === "true";
     let limit = parseInt(searchParams.get("limit") || "10");
     let offset = parseInt(searchParams.get("offset") || "0");
 
     // Validate parameters
     if (limit > 100) {
-      console.warn(`⚠️ [${requestId}] Limit too high, capping at 100`);
       limit = 100;
     }
     if (offset < 0) {
-      console.warn(`⚠️ [${requestId}] Negative offset, setting to 0`);
       offset = 0;
     }
 
-    console.log(
-      `📄 [${requestId}] Pagination: limit=${limit}, offset=${offset}`
-    );
+    // If withFolders=true, return all documents with folder info (for SourcesModal)
+    if (withFolders) {
+      const documents = await prisma.document.findMany({
+        where: {
+          organizationId: dbUser.organizationId,
+        },
+        select: {
+          id: true,
+          title: true,
+          folderId: true,
+          fileUrl: true,
+          fileType: true,
+          contentType: true,
+          updatedAt: true,
+        },
+        orderBy: {
+          updatedAt: "desc",
+        },
+      });
+
+      return NextResponse.json({
+        data: documents,
+        meta: {
+          requestId,
+          timestamp: new Date().toISOString(),
+          processingTimeMs: Date.now() - startTime,
+        },
+      });
+    }
 
     // Get total count of documents for this organization
     const totalCount = await prisma.document.count({
@@ -105,10 +128,6 @@ export async function GET(req: NextRequest) {
       skip: offset,
     });
 
-    console.log(
-      `✅ [${requestId}] Found ${documents.length} of ${totalCount} total documents`
-    );
-
     return NextResponse.json({
       data: documents,
       pagination: {
@@ -125,8 +144,7 @@ export async function GET(req: NextRequest) {
     });
   } catch (e) {
     const processingTime = Date.now() - startTime;
-    console.error(`❌ [${requestId}] Error listing documents:`, e);
-    console.error(`❌ [${requestId}] Processing time: ${processingTime}ms`);
+    console.error("Error listing documents:", e);
 
     return NextResponse.json(
       {

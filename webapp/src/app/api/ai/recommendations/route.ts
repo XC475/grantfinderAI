@@ -20,8 +20,6 @@ interface RecommendationResult {
 
 export async function POST(_req: NextRequest) {
   try {
-    console.log("🎯 [Recommendations] Starting recommendation generation...");
-
     // 1. Authenticate user
     const supabase = await createClient();
     const {
@@ -95,13 +93,6 @@ export async function POST(_req: NextRequest) {
         }
       : null;
 
-    console.log("📋 [Recommendations] District info:", {
-      name: organization.name,
-      state: organization.state,
-      hasStrategicPlan: !!organization.strategicPlan,
-      hasMissionStatement: !!organization.missionStatement,
-    });
-
     // 6. Build the recommendations prompt
     const systemPrompt = buildRecommendationsPrompt(
       districtInfo || {
@@ -130,13 +121,15 @@ export async function POST(_req: NextRequest) {
       temperature: 0.0,
     });
 
-    // 8. Create grant search tool
-    const grantSearchTool = createGrantSearchTool(districtInfo);
+    // 8. Create grant search tool with organization services
+    const organizationServices = organization.services || [];
+    const grantSearchTool = createGrantSearchTool(
+      districtInfo,
+      organizationServices
+    );
 
     // 9. Bind tools to model
     const modelWithTools = model.bindTools([grantSearchTool]);
-
-    console.log("🤖 [Recommendations] Executing AI workflow...");
 
     // 10. Execute the model with the system prompt
     let fullResponse = "";
@@ -152,30 +145,17 @@ export async function POST(_req: NextRequest) {
       },
     ]);
 
-    console.log("📞 [Recommendations] Initial response received");
-
     // Check if model wants to call tools
     if (initialResponse.tool_calls && initialResponse.tool_calls.length > 0) {
       toolCalls = initialResponse.tool_calls;
-      console.log(
-        `🔧 [Recommendations] Model requested ${toolCalls.length} tool call(s)`
-      );
 
       // Execute each tool call
       const toolResults = await Promise.all(
         toolCalls.map(async (toolCall: ToolCall) => {
-          console.log(`🔧 [Recommendations] Executing tool: ${toolCall.name}`);
-          console.log(
-            `   Args: ${JSON.stringify(toolCall.args, null, 2).substring(0, 200)}`
-          );
-
           try {
             // Execute the tool
             const result = await grantSearchTool.invoke(
               toolCall.args as { query: string; stateCode?: string }
-            );
-            console.log(
-              `✅ [Recommendations] Tool ${toolCall.name} completed successfully`
             );
 
             return new ToolMessage({
@@ -204,10 +184,6 @@ export async function POST(_req: NextRequest) {
       );
 
       // Second invocation - model processes tool results and generates recommendations
-      console.log(
-        "🔄 [Recommendations] Sending tool results back to model for analysis..."
-      );
-
       const finalResponse = await model.invoke([
         { role: "system", content: systemPrompt },
         {
@@ -224,11 +200,6 @@ export async function POST(_req: NextRequest) {
       // No tool calls needed, use initial response
       fullResponse = initialResponse.content as string;
     }
-
-    console.log("✅ [Recommendations] AI workflow completed");
-    console.log(
-      `📝 [Recommendations] Response length: ${fullResponse.length} chars`
-    );
 
     // 11. Parse the JSON response
     let recommendations: RecommendationResult[];
@@ -249,10 +220,6 @@ export async function POST(_req: NextRequest) {
       // Parse JSON - expect either a single object or array
       const parsed = JSON.parse(jsonContent);
       recommendations = Array.isArray(parsed) ? parsed : [parsed];
-
-      console.log(
-        `✅ [Recommendations] Parsed ${recommendations.length} recommendations`
-      );
     } catch (parseError) {
       console.error("❌ [Recommendations] Failed to parse JSON:", parseError);
       console.error("Raw response:", fullResponse.substring(0, 500));
@@ -268,8 +235,6 @@ export async function POST(_req: NextRequest) {
     }
 
     // 12. Save recommendations to database
-    console.log("💾 [Recommendations] Saving to database...");
-
     const savedRecommendations = await Promise.all(
       recommendations.map(async (rec) => {
         try {
@@ -318,9 +283,6 @@ export async function POST(_req: NextRequest) {
                 },
               });
 
-          console.log(
-            `✅ [Recommendations] Saved: Grant #${rec.opportunity_id} (Score: ${rec.fit_score}%)`
-          );
           return saved;
         } catch (error) {
           console.error(
@@ -333,9 +295,6 @@ export async function POST(_req: NextRequest) {
     );
 
     const successCount = savedRecommendations.filter((r) => r !== null).length;
-    console.log(
-      `✅ [Recommendations] Saved ${successCount}/${recommendations.length} recommendations`
-    );
 
     // 13. Return success response
     return NextResponse.json({

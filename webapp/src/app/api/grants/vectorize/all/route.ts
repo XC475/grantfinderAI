@@ -19,11 +19,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    console.log("🔄 [Vectorize All] Starting FULL vectorization process...");
-    console.log(
-      "⚠️ [Vectorize All] This will re-vectorize ALL grants, including existing ones"
-    );
-
     // Get total count before filtering
     const totalOpportunitiesCount = await prisma.$queryRaw<[{ count: bigint }]>`
       SELECT COUNT(*) as count FROM public.opportunities
@@ -61,10 +56,6 @@ export async function POST(req: NextRequest) {
 
     const skippedCount = totalOpportunities - allOpportunities.length;
 
-    console.log(
-      `📊 [Vectorize All] Total opportunities: ${totalOpportunities}, With raw_text: ${allOpportunities.length}, Skipped: ${skippedCount}`
-    );
-
     if (allOpportunities.length === 0) {
       return NextResponse.json({
         success: true,
@@ -79,12 +70,10 @@ export async function POST(req: NextRequest) {
     }
 
     // Delete ALL existing documents to start fresh
-    console.log("🗑️ [Vectorize All] Deleting all existing documents...");
     await prisma.$executeRaw`
       DELETE FROM public.documents 
       WHERE metadata->>'opportunity_id' IS NOT NULL
     `;
-    console.log("✅ [Vectorize All] Cleared all existing documents");
 
     // Process in batches
     const BATCH_SIZE = 20;
@@ -93,9 +82,6 @@ export async function POST(req: NextRequest) {
 
     for (let i = 0; i < allOpportunities.length; i += BATCH_SIZE) {
       const batch = allOpportunities.slice(i, i + BATCH_SIZE);
-      console.log(
-        `⚙️ [Vectorize All] Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(allOpportunities.length / BATCH_SIZE)}`
-      );
 
       // Process each grant in the batch sequentially
       for (const opportunity of batch) {
@@ -170,9 +156,6 @@ export async function POST(req: NextRequest) {
           `;
 
           vectorizedCount++;
-          console.log(
-            `✅ [Vectorize All] Vectorized grant ${opportunity.id}: "${opportunity.title}"`
-          );
         } catch (error) {
           console.error(
             `❌ [Vectorize All] Failed to vectorize grant ${opportunity.id}:`,
@@ -190,10 +173,6 @@ export async function POST(req: NextRequest) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
-
-    console.log(
-      `🎉 [Vectorize All] Complete! Vectorized: ${vectorizedCount}, Errors: ${errors.length}`
-    );
 
     return NextResponse.json({
       success: true,

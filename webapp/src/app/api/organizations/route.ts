@@ -41,6 +41,7 @@ export async function GET() {
             numberOfSchools: true,
             lowestGrade: true,
             highestGrade: true,
+            services: true,
             createdAt: true,
             updatedAt: true,
           },

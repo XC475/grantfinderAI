@@ -45,10 +45,6 @@ export async function POST(request: NextRequest) {
       customOrgData, // For custom orgs
     } = body;
 
-    console.log(
-      `[Admin] Creating user with email: ${email}, mode: ${mode}, role: ${role}, system_admin: ${system_admin}`
-    );
-
     // Validate input
     if (!email || !name) {
       return NextResponse.json(
@@ -138,9 +134,6 @@ export async function POST(request: NextRequest) {
 
         targetOrganizationId = newOrg.id;
         newOrganizationCreated = true;
-        console.log(
-          `[Admin] Created new school district organization: ${newOrg.name} (${newOrg.slug})`
-        );
       } else if (organizationType === "custom" && customOrgData?.name) {
         // Create custom organization
         const slug = customOrgData.name
@@ -175,9 +168,6 @@ export async function POST(request: NextRequest) {
 
         targetOrganizationId = newOrg.id;
         newOrganizationCreated = true;
-        console.log(
-          `[Admin] Created new custom organization: ${newOrg.name} (${newOrg.slug})`
-        );
       } else {
         return NextResponse.json(
           { error: "Invalid organization data provided" },
@@ -214,7 +204,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Create user in Supabase Auth with admin API
-    console.log(`[Admin] Creating Supabase Auth user...`);
     const { data: authData, error: authError } =
       await supabase.auth.admin.createUser({
         email,
@@ -236,18 +225,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`[Admin] Supabase user created with ID: ${authData.user.id}`);
-
     const userId = authData.user.id;
 
     // Wait for database trigger to create app.users record and organization
-    console.log(
-      `[Admin] Waiting for database trigger to create user record...`
-    );
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     // Verify user was created by trigger
-    console.log(`[Admin] Verifying user creation in app.users...`);
     let newUser = await prisma.user.findUnique({
       where: { id: userId },
       include: { organization: true },
@@ -261,11 +244,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`[Admin] User record found in database`);
-
     // Update system_admin field if needed
     if (system_admin && newUser) {
-      console.log(`[Admin] Setting system_admin flag to true...`);
       newUser = await prisma.user.update({
         where: { id: userId },
         data: { system_admin: true },
@@ -282,11 +262,6 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-
-    console.log(`[Admin] Organization found: ${newUser.organization.slug}`);
-    console.log(
-      `[Admin] User ${email} created in organization ${newUser.organization.slug} with role ${newUser.role}`
-    );
 
     // Get updated user with organization
     const updatedUser = await prisma.user.findUnique({
@@ -319,9 +294,7 @@ export async function POST(request: NextRequest) {
       organizationUrl: `${siteUrl}/private/${organizationSlug}/dashboard`,
     });
 
-    if (emailResult.success) {
-      console.log(`[Admin] Welcome email sent to ${email}`);
-    } else {
+    if (!emailResult.success) {
       console.warn(
         `[Admin] Failed to send welcome email to ${email}:`,
         emailResult.error

@@ -15,7 +15,10 @@ import {
 } from "@/components/ui/resizable";
 import { DocumentChatSidebar } from "@/components/applications/DocumentChatSidebar";
 import { DocumentProvider, useDocument } from "@/contexts/DocumentContext";
-import { HeaderContentProvider, useHeaderContent } from "@/contexts/HeaderContentContext";
+import {
+  HeaderContentProvider,
+  useHeaderContent,
+} from "@/contexts/HeaderContentContext";
 
 interface ConditionalLayoutProps {
   children: React.ReactNode;
@@ -123,6 +126,7 @@ function DocumentEditorLayoutContent({
               </Button>
             </div>
           </header>
+          <div className="flex-1 flex flex-col overflow-y-auto">{children}</div>
           <div className="flex-1 flex flex-col overflow-hidden bg-white">{children}</div>
         </SidebarInset>
       </ResizablePanel>
@@ -164,10 +168,14 @@ function NormalLayoutContent({
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <Separator orientation="vertical" className="mr-2 h-4" />
-            {headerContent || <DynamicBreadcrumb organizationSlug={organizationSlug} />}
+            {headerContent || (
+              <DynamicBreadcrumb organizationSlug={organizationSlug} />
+            )}
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-hidden h-full">{children}</div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-hidden h-full">
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );
@@ -179,17 +187,41 @@ export function ConditionalLayout({
 }: ConditionalLayoutProps) {
   const pathname = usePathname();
 
-  // Detect if we're on an editor page and extract documentId
-  const { isEditorPage, documentId } = useMemo(() => {
+  // Detect if we're on an editor or file-viewer page and extract documentId
+  const { isDocumentPage, documentId } = useMemo(() => {
     const isEditor = pathname.includes("/editor/");
-    const docId = isEditor
-      ? pathname.split("/editor/")[1]?.split("/")[0]
-      : undefined;
-    return { isEditorPage: isEditor, documentId: docId };
+    const isFileViewer = pathname.includes("/file-viewer/");
+    const isDocPage = isEditor || isFileViewer;
+
+    let docId: string | undefined;
+    if (isEditor) {
+      docId = pathname.split("/editor/")[1]?.split("/")[0]?.split("?")[0];
+    } else if (isFileViewer) {
+      docId = pathname.split("/file-viewer/")[1]?.split("/")[0]?.split("?")[0];
+    }
+
+    // Remove any trailing slashes or empty strings
+    if (docId) {
+      docId = docId.trim();
+      if (docId === "" || docId === "/") {
+        docId = undefined;
+      }
+    }
+
+    console.log("ConditionalLayout route detection:", {
+      pathname,
+      isEditor,
+      isFileViewer,
+      isDocPage,
+      docId,
+      willApplyProvider: isDocPage && Boolean(docId),
+    });
+
+    return { isDocumentPage: isDocPage, documentId: docId };
   }, [pathname]);
 
-  if (isEditorPage && documentId) {
-    // Document editor layout with assistant sidebar
+  if (isDocumentPage && documentId) {
+    // Document editor/viewer layout with assistant sidebar
     return (
       <DocumentProvider>
         <SidebarProvider className="h-screen">

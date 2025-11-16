@@ -27,8 +27,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    console.log("🔄 [Vectorize] Starting grant vectorization process...");
-
     // Get row count for both tables (opportunities, documents)
     const opportunitiesCount = await prisma.$queryRaw<[{ count: bigint }]>`
       SELECT COUNT(*) as count FROM public.opportunities
@@ -40,10 +38,6 @@ export async function POST(req: NextRequest) {
 
     const totalOpportunities = Number(opportunitiesCount[0].count);
     const totalDocuments = Number(documentsCount[0].count);
-
-    console.log(
-      `📊 [Vectorize] Opportunities: ${totalOpportunities}, Documents: ${totalDocuments}`
-    );
 
     // Get existing documents with their hashes
     const existingDocuments = await prisma.$queryRaw<
@@ -62,11 +56,7 @@ export async function POST(req: NextRequest) {
       existingDocuments.map((d) => [
         d.opportunity_id,
         { hash: d.content_hash, docId: d.doc_id },
-      ])
-    );
-
-    console.log(
-      `📋 [Vectorize] Found ${existingDocuments.length} existing documents`
+      ]      )
     );
 
     // Fetch ALL opportunities to check for changes
@@ -101,17 +91,11 @@ export async function POST(req: NextRequest) {
     );
 
     if (orphanedDocuments.length > 0) {
-      console.log(
-        `🗑️ [Vectorize] Found ${orphanedDocuments.length} orphaned documents (opportunities no longer exist)`
-      );
       const orphanedDocIds = orphanedDocuments.map((doc) => doc.doc_id);
       await prisma.$executeRaw`
         DELETE FROM public.documents 
         WHERE id = ANY(${orphanedDocIds}::bigint[])
       `;
-      console.log(
-        `✅ [Vectorize] Deleted ${orphanedDocuments.length} orphaned documents`
-      );
     }
 
     // Determine which opportunities need vectorization
@@ -147,20 +131,12 @@ export async function POST(req: NextRequest) {
       // else: Hash matches and raw_text exists - already up to date
     }
 
-    console.log(
-      `🎯 [Vectorize] Found ${opportunitiesToVectorize.length} grants to vectorize (${newCount} new, ${changedCount} changed)`
-    );
-
     // Delete outdated documents for changed opportunities
     if (documentsToDelete.length > 0) {
-      console.log(
-        `🗑️ [Vectorize] Deleting ${documentsToDelete.length} outdated documents...`
-      );
       await prisma.$executeRaw`
         DELETE FROM public.documents 
         WHERE id = ANY(${documentsToDelete}::bigint[])
       `;
-      console.log(`✅ [Vectorize] Deleted outdated documents`);
     }
 
     if (opportunitiesToVectorize.length === 0) {
@@ -188,9 +164,6 @@ export async function POST(req: NextRequest) {
 
     for (let i = 0; i < opportunitiesToVectorize.length; i += BATCH_SIZE) {
       const batch = opportunitiesToVectorize.slice(i, i + BATCH_SIZE);
-      console.log(
-        `⚙️ [Vectorize] Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(opportunitiesToVectorize.length / BATCH_SIZE)}`
-      );
 
       // Process each grant in the batch sequentially
       for (const opportunity of batch) {
@@ -263,9 +236,6 @@ export async function POST(req: NextRequest) {
           `;
 
           vectorizedCount++;
-          console.log(
-            `✅ [Vectorize] Vectorized grant ${opportunity.id}: "${opportunity.title}"`
-          );
         } catch (error) {
           console.error(
             `❌ [Vectorize] Failed to vectorize grant ${opportunity.id}:`,
@@ -283,10 +253,6 @@ export async function POST(req: NextRequest) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
-
-    console.log(
-      `🎉 [Vectorize] Vectorization complete! Vectorized: ${vectorizedCount} (${newCount} new, ${changedCount} changed), Orphaned: ${orphanedCount}, Errors: ${errors.length}`
-    );
 
     return NextResponse.json({
       success: true,

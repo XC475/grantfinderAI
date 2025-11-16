@@ -1,7 +1,3 @@
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/sidebar/app-sidebar";
-import { Separator } from "@/components/ui/separator";
-import { DynamicBreadcrumb } from "@/components/sidebar/dynamic-breadcrumb";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { unstable_noStore } from "next/cache";
