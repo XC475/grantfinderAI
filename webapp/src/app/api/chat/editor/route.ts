@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import OpenAI from "openai";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
+import { getSourceDocumentContext } from "@/lib/documentContext";
 
 interface FileAttachment {
   id: string;
@@ -29,8 +30,14 @@ export async function POST(req: NextRequest) {
       return new Response("Unauthorized", { status: 401 });
     }
 
-    const { messages, documentId, documentTitle, documentContent, chatId } =
-      await req.json();
+    const {
+      messages,
+      documentId,
+      documentTitle,
+      documentContent,
+      chatId,
+      sourceDocumentIds,
+    } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       return new Response("Messages are required", { status: 400 });
@@ -164,6 +171,16 @@ ${opportunity.raw_text}`;
       });
     }
 
+    // Get source document context if provided
+    let sourceContext = "";
+    if (
+      sourceDocumentIds &&
+      Array.isArray(sourceDocumentIds) &&
+      sourceDocumentIds.length > 0
+    ) {
+      sourceContext = await getSourceDocumentContext(sourceDocumentIds);
+    }
+
     // Save user message with attachments
     await prisma.aiChatMessage.create({
       data: {
@@ -174,6 +191,10 @@ ${opportunity.raw_text}`;
           timestamp: Date.now(),
           source: "editor",
           attachments: lastUserMessage.attachments || [],
+          ...(sourceDocumentIds &&
+            sourceDocumentIds.length > 0 && {
+              sourceDocuments: sourceDocumentIds,
+            }),
         },
       },
     });
@@ -206,7 +227,7 @@ ${organization.annualOperatingBudget ? `\nAnnual Operating Budget: $${Number(org
 ${organization.fiscalYearEnd ? `Fiscal Year End: ${organization.fiscalYearEnd}` : ""}`;
     }
 
-    // Build system prompt with document context, organization info, application context, and attachments
+    // Build system prompt with document context, organization info, application context, attachments, and source documents
     const systemPrompt = `You are a helpful assistant for a grant writing application called GrantWare. 
 You are helping the user with their document titled "${documentTitle || document.title || "Untitled Document"}".
 ${organizationContext}
@@ -214,6 +235,7 @@ ${applicationContext}
 
 CURRENT DOCUMENT CONTENT:
 ${documentContent || "No content yet."}${attachmentContext}
+${sourceContext ? `\n\n${sourceContext}` : ""}
 
 Provide helpful, concise responses about the document content, suggest improvements, 
 answer questions, and help with grant writing tasks. Be specific and reference the 

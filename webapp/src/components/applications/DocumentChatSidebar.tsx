@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { History, Plus, X } from "lucide-react";
+import { type SourceDocument } from "@/components/chat/SourcesModal";
 
 interface FileAttachment {
   id: string;
@@ -55,6 +56,7 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
   const [loadingSessions, setLoadingSessions] = useState(false);
   const [editingTabId, setEditingTabId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState("");
+  const [sourceDocuments, setSourceDocuments] = useState<SourceDocument[]>([]);
   const abortControllerRef = useRef<AbortController | null>(null);
   const hasAutoLoaded = useRef(false);
   const editInputRef = useRef<HTMLInputElement>(null);
@@ -376,6 +378,7 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
             documentTitle,
             documentContent,
             chatId,
+            sourceDocumentIds: sourceDocuments.map((doc) => doc.id),
           }),
           signal: abortController.signal,
         });
@@ -719,6 +722,8 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
             setMessages={setMessages}
             isEmpty={isEmpty}
             placeholder="How can I help you with this document?"
+            sourceDocuments={sourceDocuments}
+            onSourceDocumentsChange={setSourceDocuments}
           />
         </div>
       </div>

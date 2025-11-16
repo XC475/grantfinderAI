@@ -1,7 +1,19 @@
 "use client";
 
 import { forwardRef, useCallback, useRef, useState } from "react";
-import { ArrowDown, Square, ArrowUp } from "lucide-react";
+import {
+  ArrowDown,
+  Square,
+  ArrowUp,
+  Plus,
+  Paperclip,
+  FileText,
+  FolderOpen,
+  X,
+  File,
+  Table,
+} from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 import { useAutoScroll } from "@/hooks/use-auto-scroll";
@@ -16,7 +28,16 @@ import { TypingIndicator } from "@/components/ui/typing-indicator";
 import { useAutosizeTextArea } from "@/hooks/use-autosize-textarea";
 import { ChatForm as BaseChatForm } from "@/components/ui/chat";
 import { FilePreview } from "@/components/ui/file-preview";
-import { Paperclip } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  SourcesModal,
+  type SourceDocument,
+} from "@/components/chat/SourcesModal";
 
 interface DocumentSidebarChatProps {
   handleSubmit: (
@@ -32,6 +53,8 @@ interface DocumentSidebarChatProps {
   setMessages?: (messages: Message[]) => void;
   isEmpty?: boolean;
   placeholder?: string;
+  sourceDocuments?: SourceDocument[];
+  onSourceDocumentsChange?: (docs: SourceDocument[]) => void;
 }
 
 export function DocumentSidebarChat({
@@ -45,6 +68,8 @@ export function DocumentSidebarChat({
   setMessages,
   isEmpty: isEmptyProp,
   placeholder,
+  sourceDocuments,
+  onSourceDocumentsChange,
 }: DocumentSidebarChatProps) {
   const lastMessage = messages.at(-1);
   const isEmpty = isEmptyProp ?? messages.length === 0;
@@ -178,6 +203,8 @@ export function DocumentSidebarChat({
               placeholder={placeholder}
               files={files}
               setFiles={setFiles}
+              sourceDocuments={sourceDocuments}
+              onSourceDocumentsChange={onSourceDocumentsChange}
             />
           )}
         </BaseChatForm>
@@ -284,6 +311,29 @@ function SidebarMessageList({
   );
 }
 
+// Helper function to get document icon based on file type
+function getDocumentIcon(doc: SourceDocument) {
+  if (!doc.fileType) {
+    return <FileText className="h-4 w-4 text-blue-500 flex-shrink-0" />;
+  }
+  if (doc.fileType === "application/pdf") {
+    return <FileText className="h-4 w-4 text-red-500 flex-shrink-0" />;
+  }
+  if (
+    doc.fileType ===
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ) {
+    return <FileText className="h-4 w-4 text-blue-600 flex-shrink-0" />;
+  }
+  if (doc.fileType === "text/csv") {
+    return <Table className="h-4 w-4 text-green-600 flex-shrink-0" />;
+  }
+  if (doc.fileType === "text/plain") {
+    return <File className="h-4 w-4 text-gray-600 flex-shrink-0" />;
+  }
+  return <File className="h-4 w-4 text-muted-foreground flex-shrink-0" />;
+}
+
 interface SidebarMessageInputProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   value: string;
@@ -293,6 +343,8 @@ interface SidebarMessageInputProps
   isEmpty?: boolean;
   files?: File[] | null;
   setFiles?: React.Dispatch<React.SetStateAction<File[] | null>>;
+  sourceDocuments?: SourceDocument[];
+  onSourceDocumentsChange?: (docs: SourceDocument[]) => void;
 }
 
 function SidebarMessageInput({
@@ -305,9 +357,12 @@ function SidebarMessageInput({
   isEmpty = false,
   files,
   setFiles,
-  ...props
+  sourceDocuments,
+  onSourceDocumentsChange,
+  ...textareaProps
 }: SidebarMessageInputProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const [sourcesModalOpen, setSourcesModalOpen] = useState(false);
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (submitOnEnter && event.key === "Enter" && !event.shiftKey) {
@@ -324,7 +379,7 @@ function SidebarMessageInput({
     ref: textAreaRef,
     maxHeight: 240,
     borderWidth: 1,
-    dependencies: [props.value],
+    dependencies: [textareaProps.value],
   });
 
   // Handle file selection - create new input each time (same as MessageInput)
@@ -389,7 +444,8 @@ function SidebarMessageInput({
   };
 
   const showFileList = files && files.length > 0;
-  const hasContent = props.value !== "" || showFileList;
+  const showSourceList = sourceDocuments && sourceDocuments.length > 0;
+  const hasContent = textareaProps.value !== "" || showFileList;
 
   return (
     <div className="w-full px-3 py-3">
@@ -407,6 +463,47 @@ function SidebarMessageInput({
 
         <div className="relative flex w-full items-center">
           <div className="relative w-full">
+            {/* Source Documents Preview */}
+            {showSourceList && (
+              <div className="mb-2 flex flex-wrap gap-2">
+                <AnimatePresence mode="popLayout">
+                  {sourceDocuments?.map((doc) => (
+                    <motion.div
+                      key={doc.id}
+                      className="relative flex max-w-[180px] rounded-md border border-primary/30 bg-primary/5 p-1.5 pr-2 text-xs"
+                      layout
+                      initial={{ opacity: 0, y: "100%" }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: "100%" }}
+                    >
+                      <div className="flex w-full items-center space-x-2">
+                        <div className="grid h-8 w-8 shrink-0 place-items-center rounded-sm border bg-muted">
+                          {getDocumentIcon(doc)}
+                        </div>
+                        <span className="w-full truncate text-muted-foreground text-xs">
+                          {doc.title}
+                        </span>
+                      </div>
+                      {onSourceDocumentsChange && (
+                        <button
+                          className="absolute -right-1.5 -top-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full border bg-background"
+                          type="button"
+                          onClick={() => {
+                            onSourceDocumentsChange(
+                              sourceDocuments.filter((d) => d.id !== doc.id)
+                            );
+                          }}
+                          aria-label="Remove source"
+                        >
+                          <X className="h-2 w-2" />
+                        </button>
+                      )}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            )}
+
             {showFileList && (
               <div className="mb-2 flex flex-wrap gap-2">
                 {files?.map((file, index) => (
@@ -429,24 +526,52 @@ function SidebarMessageInput({
                 "p-3 pr-20",
                 className
               )}
-              {...props}
+              {...textareaProps}
             />
           </div>
         </div>
 
         <div className="absolute right-3 top-3 z-20 flex gap-1">
           {setFiles && (
-            <Button
-              type="button"
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8"
-              aria-label="Attach files"
-              onClick={handleFileButtonClick}
-              disabled={isGenerating}
-            >
-              <Paperclip className="h-4 w-4" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8"
+                  aria-label="Add content"
+                  disabled={isGenerating}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem
+                  onClick={handleFileButtonClick}
+                  className="cursor-pointer"
+                >
+                  <Paperclip className="mr-2 h-4 w-4" />
+                  <span>Attach files</span>
+                </DropdownMenuItem>
+                {onSourceDocumentsChange && (
+                  <DropdownMenuItem
+                    onClick={() => setSourcesModalOpen(true)}
+                    className="cursor-pointer"
+                  >
+                    <FileText className="mr-2 h-4 w-4" />
+                    <span>Add sources</span>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem
+                  disabled
+                  className="cursor-not-allowed opacity-50"
+                >
+                  <FolderOpen className="mr-2 h-4 w-4" />
+                  <span>Google Drive (Coming Soon)</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
           {isGenerating && stop ? (
             <Button
@@ -471,6 +596,18 @@ function SidebarMessageInput({
           )}
         </div>
       </div>
+
+      {/* Sources Modal */}
+      {onSourceDocumentsChange && (
+        <SourcesModal
+          open={sourcesModalOpen}
+          onOpenChange={setSourcesModalOpen}
+          onSelectDocuments={(docs) => {
+            onSourceDocumentsChange(docs);
+          }}
+          selectedDocumentIds={sourceDocuments?.map((d) => d.id) || []}
+        />
+      )}
     </div>
   );
 }

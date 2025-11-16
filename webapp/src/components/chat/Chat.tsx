@@ -5,6 +5,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Chat } from "@/components/ui/chat";
 import { Message } from "@/components/ui/chat-message";
+import { type SourceDocument } from "@/components/chat/SourcesModal";
 
 interface FileAttachment {
   id: string;
@@ -22,6 +23,7 @@ type ChatDemoProps = {
   initialMessageToSend?: string | null;
   onMessageSent?: () => void;
   userName?: string;
+  initialSourceDocuments?: SourceDocument[];
 };
 
 export function ChatDemo(props: ChatDemoProps) {
@@ -33,6 +35,9 @@ export function ChatDemo(props: ChatDemoProps) {
   const [chatId, setChatId] = useState(
     () => props.chatId || `chat_${Date.now()}`
   );
+  const [sourceDocuments, setSourceDocuments] = useState<SourceDocument[]>(
+    props.initialSourceDocuments || []
+  );
   const hasAutoSent = useRef(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -40,6 +45,11 @@ export function ChatDemo(props: ChatDemoProps) {
   useEffect(() => {
     setMessages(props.initialMessages || []);
   }, [props.initialMessages]);
+
+  // Update source documents when initialSourceDocuments prop changes
+  useEffect(() => {
+    setSourceDocuments(props.initialSourceDocuments || []);
+  }, [props.initialSourceDocuments]);
 
   // Update chatId when prop changes
   useEffect(() => {
@@ -160,6 +170,7 @@ export function ChatDemo(props: ChatDemoProps) {
           body: JSON.stringify({
             messages: apiMessages,
             chatId: chatId,
+            sourceDocumentIds: sourceDocuments.map((doc) => doc.id),
           }),
           signal: abortController.signal,
         });
@@ -335,9 +346,7 @@ export function ChatDemo(props: ChatDemoProps) {
       className={cn(
         "flex",
         "flex-col",
-        isEmpty
-          ? "min-h-[80vh] w-full"
-          : "h-[calc(100vh-80px)] w-full"
+        isEmpty ? "min-h-[80vh] w-full" : "h-[calc(100vh-80px)] w-full"
       )}
     >
       <Chat
@@ -352,6 +361,8 @@ export function ChatDemo(props: ChatDemoProps) {
         setMessages={setMessages}
         isEmpty={isEmpty}
         userName={props.userName}
+        sourceDocuments={sourceDocuments}
+        onSourceDocumentsChange={setSourceDocuments}
         suggestions={[
           "Find grants for improving student achievement in our district",
           "Help me find grants for teacher professional development",

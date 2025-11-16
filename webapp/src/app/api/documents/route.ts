@@ -58,6 +58,7 @@ export async function GET(req: NextRequest) {
 
     // Extract pagination parameters
     const { searchParams } = new URL(req.url);
+    const withFolders = searchParams.get("withFolders") === "true";
     let limit = parseInt(searchParams.get("limit") || "10");
     let offset = parseInt(searchParams.get("offset") || "0");
 
@@ -67,6 +68,36 @@ export async function GET(req: NextRequest) {
     }
     if (offset < 0) {
       offset = 0;
+    }
+
+    // If withFolders=true, return all documents with folder info (for SourcesModal)
+    if (withFolders) {
+      const documents = await prisma.document.findMany({
+        where: {
+          organizationId: dbUser.organizationId,
+        },
+        select: {
+          id: true,
+          title: true,
+          folderId: true,
+          fileUrl: true,
+          fileType: true,
+          contentType: true,
+          updatedAt: true,
+        },
+        orderBy: {
+          updatedAt: "desc",
+        },
+      });
+
+      return NextResponse.json({
+        data: documents,
+        meta: {
+          requestId,
+          timestamp: new Date().toISOString(),
+          processingTimeMs: Date.now() - startTime,
+        },
+      });
     }
 
     // Get total count of documents for this organization

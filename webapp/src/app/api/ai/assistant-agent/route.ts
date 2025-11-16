@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma";
 import { createGrantsAgent } from "@/lib/ai/agent";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { DistrictInfo } from "@/lib/ai/prompts/grants-assistant";
+import { getSourceDocumentContext } from "@/lib/documentContext";
 
 interface FileAttachment {
   id: string;
@@ -23,7 +24,8 @@ interface ChatMessage {
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, chatId, organizationId } = await req.json();
+    const { messages, chatId, organizationId, sourceDocumentIds } =
+      await req.json();
 
     // 1. Authenticate user
     const supabase = await createClient();
@@ -81,6 +83,16 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Get source document context if provided
+    let sourceContext = "";
+    if (
+      sourceDocumentIds &&
+      Array.isArray(sourceDocumentIds) &&
+      sourceDocumentIds.length > 0
+    ) {
+      sourceContext = await getSourceDocumentContext(sourceDocumentIds);
+    }
+
     // 6. Save user message with attachments
     await prisma.aiChatMessage.create({
       data: {
@@ -91,6 +103,10 @@ export async function POST(req: NextRequest) {
           timestamp: Date.now(),
           source: "webapp",
           attachments: lastUserMessage.attachments || [],
+          ...(sourceDocumentIds &&
+            sourceDocumentIds.length > 0 && {
+              sourceDocuments: sourceDocumentIds,
+            }),
         },
       },
     });
@@ -128,8 +144,15 @@ export async function POST(req: NextRequest) {
 
     // 9. Convert all messages to LangChain format (including last user message)
     // If message has attachments, append extracted text to content
-    const langChainMessages = messages.map((m: ChatMessage) => {
+    const langChainMessages = messages.map((m: ChatMessage, index: number) => {
       let content = m.content;
+
+      // For the last user message, prepend source document context if available
+      const isLastUserMessage =
+        index === messages.length - 1 && m.role === "user";
+      if (isLastUserMessage && sourceContext) {
+        content = `${sourceContext}\n\n${content}`;
+      }
 
       // Append extracted text from attachments to user messages
       if (m.role === "user" && m.attachments && m.attachments.length > 0) {

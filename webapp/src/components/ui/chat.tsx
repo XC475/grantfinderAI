@@ -19,6 +19,7 @@ import { HeroChatInput } from "@/components/ui/hero-chat-input";
 import { MessageList } from "@/components/ui/message-list";
 import { PromptSuggestions } from "@/components/ui/prompt-suggestions";
 import { ChatGreeting } from "@/components/chat/ChatGreeting";
+import { type SourceDocument } from "@/components/chat/SourcesModal";
 
 interface ChatPropsBase {
   handleSubmit: (
@@ -39,6 +40,8 @@ interface ChatPropsBase {
   isEmpty?: boolean;
   placeholder?: string;
   userName?: string;
+  sourceDocuments?: SourceDocument[];
+  onSourceDocumentsChange?: (docs: SourceDocument[]) => void;
 }
 
 interface ChatPropsWithoutSuggestions extends ChatPropsBase {
@@ -68,6 +71,8 @@ export function Chat({
   isEmpty: isEmptyProp,
   placeholder,
   userName,
+  sourceDocuments,
+  onSourceDocumentsChange,
 }: ChatProps) {
   const lastMessage = messages.at(-1);
   const isEmpty = isEmptyProp ?? messages.length === 0;
@@ -217,7 +222,7 @@ export function Chat({
         <HeroChatInput
           value={input}
           onChange={handleInputChange}
-          onSubmit={(files) => {
+          onSubmit={(files, sources) => {
             if (files && files.length > 0) {
               // Handle file upload
               const fileList = createFileList(files);
@@ -227,6 +232,8 @@ export function Chat({
             }
           }}
           placeholder={placeholder || "Ask anything..."}
+          sourceDocuments={sourceDocuments}
+          onSourceDocumentsChange={onSourceDocumentsChange}
         />
         
         <PromptSuggestions
@@ -265,6 +272,8 @@ export function Chat({
             isGenerating={isGenerating}
             isEmpty={isEmpty}
             placeholder={placeholder}
+            sourceDocuments={sourceDocuments}
+            onSourceDocumentsChange={onSourceDocumentsChange}
           />
         )}
       </ChatForm>
