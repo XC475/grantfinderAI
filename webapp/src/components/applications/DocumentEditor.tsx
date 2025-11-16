@@ -101,7 +101,7 @@ export function DocumentEditor({
   };
 
   return (
-    <div className="h-full bg-background">
+    <div className="h-full bg-white">
       {/* Main editor */}
       <div className="h-full flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto">
