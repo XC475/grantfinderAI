@@ -1,7 +1,8 @@
 "use client";
 
 import { forwardRef, useCallback, useRef, useState } from "react";
-import { ArrowDown, Square, ArrowUp } from "lucide-react";
+import { ArrowDown, Square, ArrowUp, Plus, FolderOpen } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 import { useAutoScroll } from "@/hooks/use-auto-scroll";
@@ -17,6 +18,12 @@ import { useAutosizeTextArea } from "@/hooks/use-autosize-textarea";
 import { ChatForm as BaseChatForm } from "@/components/ui/chat";
 import { FilePreview } from "@/components/ui/file-preview";
 import { Paperclip } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface DocumentSidebarChatProps {
   handleSubmit: (
@@ -322,35 +329,43 @@ function SidebarMessageInput({
 
   useAutosizeTextArea({
     ref: textAreaRef,
-    maxHeight: 240,
+    maxHeight: 240, // Keep current sizing
     borderWidth: 1,
-    dependencies: [props.value],
+    dependencies: [props.value, files],
   });
 
-  // Handle file selection - create new input each time (same as MessageInput)
-  const handleFileButtonClick = () => {
-    if (!setFiles) return;
-
+  // Handle file selection
+  const showFileUploadDialog = () => {
     const input = document.createElement("input");
     input.type = "file";
     input.multiple = true;
-    input.accept = ".pdf,.docx,.txt,.csv";
-
-    input.onchange = (e) => {
-      const selectedFiles = (e.currentTarget as HTMLInputElement).files;
-      if (selectedFiles && selectedFiles.length > 0) {
-        setFiles((prevFiles) => [
-          ...(prevFiles || []),
-          ...Array.from(selectedFiles),
-        ]);
-      }
-    };
-
+    input.accept =
+      ".pdf,.docx,.txt,.csv,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv";
     input.click();
+
+    return new Promise<File[] | null>((resolve) => {
+      input.onchange = (e) => {
+        const selectedFiles = (e.currentTarget as HTMLInputElement).files;
+        if (selectedFiles) {
+          resolve(Array.from(selectedFiles));
+        } else {
+          resolve(null);
+        }
+      };
+    });
+  };
+
+  const addFiles = async (newFiles: File[] | null) => {
+    if (!setFiles || !newFiles) return;
+    setFiles((prevFiles) => {
+      if (!prevFiles) return newFiles;
+      return [...prevFiles, ...newFiles];
+    });
   };
 
   // Handle drag and drop
   const handleDragOver = (e: React.DragEvent) => {
+    if (!setFiles) return;
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
@@ -367,24 +382,47 @@ function SidebarMessageInput({
     e.stopPropagation();
     setIsDragging(false);
 
+    if (!setFiles) return;
     const droppedFiles = Array.from(e.dataTransfer.files);
-    if (droppedFiles.length > 0 && setFiles) {
-      setFiles((prevFiles) => [...(prevFiles || []), ...droppedFiles]);
+    if (droppedFiles.length > 0) {
+      addFiles(droppedFiles);
     }
   };
 
   // Handle paste
   const handlePaste = (e: React.ClipboardEvent) => {
-    const pastedFiles = Array.from(e.clipboardData.files);
-    if (pastedFiles.length > 0 && setFiles) {
+    if (!setFiles) return;
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    const text = e.clipboardData.getData("text");
+    if (text && text.length > 500) {
       e.preventDefault();
-      setFiles((prevFiles) => [...(prevFiles || []), ...pastedFiles]);
+      const blob = new Blob([text], { type: "text/plain" });
+      const file = new File([blob], "Pasted text", {
+        type: "text/plain",
+        lastModified: Date.now(),
+      });
+      addFiles([file]);
+      return;
+    }
+
+    const pastedFiles = Array.from(items)
+      .map((item) => item.getAsFile())
+      .filter((file) => file !== null) as File[];
+
+    if (pastedFiles.length > 0) {
+      addFiles(pastedFiles);
     }
   };
 
   const removeFile = (index: number) => {
     if (setFiles) {
-      setFiles((prevFiles) => prevFiles?.filter((_, i) => i !== index) || null);
+      setFiles((prevFiles) => {
+        if (!prevFiles) return null;
+        const filtered = prevFiles.filter((_, i) => i !== index);
+        return filtered.length > 0 ? filtered : null;
+      });
     }
   };
 
@@ -393,80 +431,119 @@ function SidebarMessageInput({
 
   return (
     <div className="w-full px-3 py-3">
+      {/* File Attachments Preview */}
+      {showFileList && (
+        <div className="mb-3 flex flex-wrap gap-2">
+          <AnimatePresence mode="popLayout">
+            {files?.map((file, index) => (
+              <FilePreview
+                key={file.name + String(file.lastModified)}
+                file={file}
+                onRemove={() => removeFile(index)}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
+      )}
+
+      {/* Main Input Container */}
       <div
-        className="relative flex w-full"
+        className={cn(
+          "relative flex flex-col rounded-xl border border-input bg-white dark:bg-zinc-900 transition-all",
+          isDragging
+            ? "border-primary bg-primary/5"
+            : "border-border focus-within:border-primary"
+        )}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        {isDragging && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center rounded-xl border-2 border-dashed border-primary bg-primary/5">
-            <p className="text-sm font-medium text-primary">Drop files here</p>
+        {/* Drag & Drop Overlay */}
+        {isDragging && setFiles && (
+          <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center space-x-2 rounded-xl border border-dashed border-border bg-background text-sm text-muted-foreground">
+            <Paperclip className="h-4 w-4" />
+            <span>Drop your files here to attach them.</span>
           </div>
         )}
 
-        <div className="relative flex w-full items-center">
-          <div className="relative w-full">
-            {showFileList && (
-              <div className="mb-2 flex flex-wrap gap-2">
-                {files?.map((file, index) => (
-                  <FilePreview
-                    key={index}
-                    file={file}
-                    onRemove={() => removeFile(index)}
-                  />
-                ))}
-              </div>
-            )}
-            <textarea
-              aria-label="Write your prompt here"
-              placeholder={placeholder || "Ask anything..."}
-              ref={textAreaRef}
-              onKeyDown={onKeyDown}
-              onPaste={handlePaste}
-              className={cn(
-                "z-10 w-full grow resize-none rounded-xl border border-input bg-background text-sm ring-offset-background transition-[border] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
-                "p-3 pr-20",
-                className
-              )}
-              {...props}
-            />
-          </div>
-        </div>
-
-        <div className="absolute right-3 top-3 z-20 flex gap-1">
-          {setFiles && (
-            <Button
-              type="button"
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8"
-              aria-label="Attach files"
-              onClick={handleFileButtonClick}
-              disabled={isGenerating}
-            >
-              <Paperclip className="h-4 w-4" />
-            </Button>
+        {/* Textarea - Top section */}
+        <textarea
+          aria-label="Write your prompt here"
+          placeholder={placeholder || "Ask anything..."}
+          ref={textAreaRef}
+          onKeyDown={onKeyDown}
+          onPaste={handlePaste}
+          className={cn(
+            "flex-1 resize-none border-0 bg-transparent p-3 pr-20 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0",
+            className
           )}
+          style={{ maxHeight: 240 }}
+          {...props}
+        />
+
+        {/* Buttons Row - Bottom section */}
+        <div className="flex items-center justify-between px-3 pb-3 pt-1">
+          {/* Plus Button - Bottom left */}
+          {setFiles ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem
+                  onClick={async () => {
+                    const selectedFiles = await showFileUploadDialog();
+                    if (selectedFiles) {
+                      addFiles(selectedFiles);
+                    }
+                  }}
+                  className="cursor-pointer"
+                >
+                  <Paperclip className="mr-2 h-4 w-4" />
+                  <span>Attach files</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem disabled className="cursor-not-allowed opacity-50">
+                  <FolderOpen className="mr-2 h-4 w-4" />
+                  <span>Google Drive (Coming Soon)</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <div className="h-8 w-8" />
+          )}
+
+          {/* Send/Stop Button - Bottom right */}
           {isGenerating && stop ? (
             <Button
               type="button"
               size="icon"
-              className="h-8 w-8"
+              className={cn(
+                "h-8 w-8 bg-[#5a8bf2] hover:bg-[#4a7bd9] transition-colors",
+                "dark:bg-[#d4917c] dark:hover:bg-[#c27d68]"
+              )}
               aria-label="Stop generating"
               onClick={stop}
             >
-              <Square className="h-3 w-3 animate-pulse" fill="currentColor" />
+              <Square className="h-3 w-3 animate-pulse text-white" fill="currentColor" />
             </Button>
           ) : (
             <Button
               type="submit"
-              size="icon"
-              className="h-8 w-8 transition-opacity"
+              className={cn(
+                "h-8 w-8 bg-[#5a8bf2] hover:bg-[#4a7bd9] disabled:opacity-50 disabled:cursor-not-allowed transition-opacity",
+                "dark:bg-[#d4917c] dark:hover:bg-[#c27d68]"
+              )}
               aria-label="Send message"
               disabled={!hasContent || isGenerating}
             >
-              <ArrowUp className="h-5 w-5" />
+              <ArrowUp className="h-5 w-5 text-white" />
             </Button>
           )}
         </div>
