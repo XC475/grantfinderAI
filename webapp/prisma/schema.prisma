@@ -248,7 +248,7 @@ model Document {
   applicationId  String?
   title          String
   content        String?
-  contentType    String       @default("html")
+  contentType    String       @default("json")
   metadata       Json?
   version        Int          @default(1)
   createdAt      DateTime     @default(now())

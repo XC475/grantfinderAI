@@ -29,7 +29,11 @@ export function DocumentEditor({
 }: DocumentEditorProps) {
   const { setDocumentTitle, setDocumentContent, setSaveStatus } = useDocument();
   const [title, setTitle] = useState(document.title);
-  const [content, setContent] = useState(document.content || "");
+  const [content, setContent] = useState(() => {
+    if (!document.content) return "";
+    // Content is already in JSON format from database
+    return document.content;
+  });
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSavedContentRef = useRef(document.content || "");
 

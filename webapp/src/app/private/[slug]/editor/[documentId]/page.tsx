@@ -68,7 +68,7 @@ export default function EditorPage({ params }: DocumentPageProps) {
         },
         body: JSON.stringify({
           content,
-          contentType: "html",
+          contentType: "json",
         }),
       });
 

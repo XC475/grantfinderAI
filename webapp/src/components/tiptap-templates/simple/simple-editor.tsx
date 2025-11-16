@@ -18,6 +18,10 @@ import { FontFamily } from "@tiptap/extension-font-family";
 import { Color } from "@tiptap/extension-color";
 import FontSize from "tiptap-extension-font-size";
 import { BackgroundColor } from "@/components/tiptap-node/background-color-node/background-color-extension";
+import { Markdown } from "@tiptap/markdown";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
+import { Fragment, Slice } from "@tiptap/pm/model";
+import { Extension } from "@tiptap/core";
 
 // --- UI Primitives ---
 import { Button } from "@/components/tiptap-ui-primitive/button";
@@ -83,8 +87,6 @@ import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss";
-
-import content from "@/components/tiptap-templates/simple/data/content.json";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -200,6 +202,81 @@ const MobileToolbarContent = ({
   </>
 );
 
+// Custom extension to handle markdown paste
+const MarkdownPaste = Extension.create({
+  name: "markdownPaste",
+
+  addProseMirrorPlugins() {
+    return [
+      new Plugin({
+        key: new PluginKey("markdownPaste"),
+        props: {
+          handlePaste: (view, event) => {
+            const text = event.clipboardData?.getData("text/plain");
+
+            // Check if the pasted content looks like markdown
+            if (
+              text &&
+              (text.includes("# ") ||
+                text.includes("## ") ||
+                text.includes("### ") ||
+                /^\s*[-*+]\s/m.test(text) || // bullet lists
+                /^\s*\d+\.\s/m.test(text) || // ordered lists
+                text.includes("**") || // bold
+                text.includes("__")) // bold alternative
+            ) {
+              try {
+                // Get the editor instance
+                const editor = this.editor;
+
+                if (editor) {
+                  // Use the editor's markdown manager to parse the text
+                  // The markdown extension adds a 'markdown' property to the editor
+                  const markdownManager = (
+                    editor as {
+                      markdown?: {
+                        parse: (text: string) => { content: unknown[] };
+                      };
+                    }
+                  ).markdown;
+
+                  if (markdownManager && markdownManager.parse) {
+                    const json = markdownManager.parse(text);
+
+                    if (json && json.content && json.content.length > 0) {
+                      const { state } = view;
+                      const { tr } = state;
+
+                      // Create nodes from the parsed JSON
+                      const nodes = json.content.map((nodeJSON: unknown) =>
+                        state.schema.nodeFromJSON(nodeJSON)
+                      );
+
+                      // Create a fragment from the nodes and replace the selection with a slice
+                      const fragment = Fragment.from(nodes);
+                      const slice = new Slice(fragment, 0, 0);
+                      tr.replaceSelection(slice);
+
+                      view.dispatch(tr);
+
+                      return true; // Prevent default paste
+                    }
+                  }
+                }
+              } catch (error) {
+                console.error("Failed to parse markdown:", error);
+                // Fall through to default paste behavior
+              }
+            }
+
+            return false; // Use default paste behavior
+          },
+        },
+      }),
+    ];
+  },
+});
+
 interface SimpleEditorProps {
   initialContent?: string;
   onContentChange?: (content: string) => void;
@@ -236,6 +313,8 @@ export function SimpleEditor({
           enableClickSelection: true,
         },
       }),
+      Markdown,
+      MarkdownPaste,
       HorizontalRule,
       PageBreak,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
@@ -261,10 +340,14 @@ export function SimpleEditor({
         onError: (error) => console.error("Upload failed:", error),
       }),
     ],
-    content: initialContent || "",
+    content: initialContent
+      ? typeof initialContent === "string"
+        ? JSON.parse(initialContent)
+        : initialContent
+      : undefined,
     onUpdate: ({ editor }) => {
       if (onContentChange) {
-        onContentChange(editor.getHTML());
+        onContentChange(JSON.stringify(editor.getJSON()));
       }
     },
   });
