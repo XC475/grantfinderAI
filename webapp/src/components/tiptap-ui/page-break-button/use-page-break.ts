@@ -4,7 +4,7 @@ import { Editor } from "@tiptap/core"
 import { PageBreakIcon } from "@/components/tiptap-icons/page-break-icon"
 
 export interface UsePageBreakConfig {
-  editor: Editor | null
+  editor?: Editor | null
   hideWhenUnavailable?: boolean
   onInserted?: () => void
 }
@@ -66,11 +66,11 @@ export function shouldShowButton(props: {
 export function usePageBreak(config: UsePageBreakConfig) {
   const { editor, hideWhenUnavailable = false, onInserted } = config
 
-  const isVisible = shouldShowButton({ editor, hideWhenUnavailable })
-  const canInsert = canInsertPageBreak(editor)
+  const isVisible = shouldShowButton({ editor: editor ?? null, hideWhenUnavailable })
+  const canInsert = canInsertPageBreak(editor ?? null)
 
   const handleInsert = () => {
-    if (insertPageBreak(editor)) {
+    if (insertPageBreak(editor ?? null)) {
       onInserted?.()
     }
   }
@@ -83,6 +83,4 @@ export function usePageBreak(config: UsePageBreakConfig) {
     Icon: PageBreakIcon,
   }
 }
-
-export type { UsePageBreakConfig }
 

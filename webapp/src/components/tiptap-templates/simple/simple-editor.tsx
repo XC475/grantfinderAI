@@ -249,7 +249,8 @@ export function SimpleEditor({
       Selection,
       TextStyle,
       FontFamily,
-      FontSize,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      FontSize as any, // Type compatibility issue with third-party extension
       Color,
       BackgroundColor,
       ImageUploadNode.configure({

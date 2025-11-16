@@ -12,6 +12,7 @@ import {
   type SortingState,
   type VisibilityState,
   type ColumnDef,
+  type Header,
 } from "@tanstack/react-table";
 import {
   DndContext,
@@ -69,7 +70,7 @@ function SortableHeader({
   header,
   columnId,
 }: {
-  header: any;
+  header: Header<Application, unknown>;
   columnId: string;
 }) {
   const {
@@ -244,7 +245,7 @@ export function ApplicationsTable({
       setColumnOrder(baseColumns.map((col, index) => {
         if (col.id) return col.id;
         // Try to get accessorKey if it exists
-        const accessorKey = (col as any).accessorKey;
+        const accessorKey = 'accessorKey' in col ? (col.accessorKey as string | undefined) : undefined;
         if (typeof accessorKey === 'string') return accessorKey;
         return `col-${index}`;
       }));
@@ -257,7 +258,7 @@ export function ApplicationsTable({
     
     const orderedColumns: ColumnDef<Application>[] = [];
     const columnMap = new Map(baseColumns.map((col, index) => {
-      const id = col.id || (col as any).accessorKey || `col-${index}`;
+      const id = col.id || ('accessorKey' in col ? (col.accessorKey as string | undefined) : undefined) || `col-${index}`;
       return [id, col];
     }));
     

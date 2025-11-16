@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import type { Editor } from "@tiptap/core"
 
 // --- Icons ---
 import { ChevronDownIcon } from "@/components/tiptap-icons/chevron-down-icon"
@@ -29,7 +30,7 @@ export interface FontSizeDropdownMenuProps
   /**
    * The Tiptap editor instance.
    */
-  editor?: any
+  editor?: Editor | null
   /**
    * Whether to render the dropdown menu in a portal
    * @default false
