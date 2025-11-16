@@ -812,11 +812,6 @@ function GrantsSearchPage() {
             >
               <Search className="inline h-4 w-4 mr-2" />
               Search Grants
-              {pagination.total > 0 && (
-                <span className="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                  {pagination.total}
-                </span>
-              )}
             </button>
 
             {/* Recommendations */}

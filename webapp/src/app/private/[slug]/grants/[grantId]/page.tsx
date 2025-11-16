@@ -392,33 +392,43 @@ export default function GrantDetailPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {grant.attachments.map((attachment, index) => (
-                <div key={index}>
-                  {attachment.title && (
-                    <p className="font-medium text-sm mb-1">
-                      {attachment.title}
-                    </p>
-                  )}
-                  {attachment.description && (
-                    <p className="text-xs text-gray-600 mb-2">
-                      {attachment.description}
-                    </p>
-                  )}
-                  <a
-                    href={attachment.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-blue-600 hover:underline break-all"
-                  >
-                    {attachment.url}
-                  </a>
-                  {attachment.type && (
-                    <Badge variant="outline" className="text-xs mt-2 ml-2">
-                      {attachment.type}
-                    </Badge>
-                  )}
-                </div>
-              ))}
+              {grant.attachments.map((attachment, index) => {
+                // Priority: title > filename from URL > full URL
+                const getAttachmentName = () => {
+                  if (attachment.title) return attachment.title;
+                  try {
+                    const url = new URL(attachment.url);
+                    const pathname = url.pathname;
+                    const filename = pathname.split("/").pop();
+                    return filename || attachment.url;
+                  } catch {
+                    return attachment.url;
+                  }
+                };
+
+                return (
+                  <div key={index}>
+                    {attachment.description && (
+                      <p className="text-xs text-gray-600 mb-2">
+                        {attachment.description}
+                      </p>
+                    )}
+                    <a
+                      href={attachment.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-blue-600 hover:underline inline-flex items-center gap-1"
+                    >
+                      {getAttachmentName()}
+                    </a>
+                    {attachment.type && (
+                      <Badge variant="outline" className="text-xs mt-2 ml-2">
+                        {attachment.type}
+                      </Badge>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
