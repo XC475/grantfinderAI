@@ -444,11 +444,10 @@ function SidebarMessageInput({
     if (text && text.length > 500) {
       e.preventDefault();
       const blob = new Blob([text], { type: "text/plain" });
-      // Create File object from blob
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const file = new (File as any)([blob], "Pasted text.txt", {
+      // Create File object from blob using window.File to avoid conflict with lucide-react File icon
+      const file = new window.File([blob], "Pasted text.txt", {
         type: "text/plain",
-      }) as File;
+      });
       addFiles([file]);
       return;
     }
