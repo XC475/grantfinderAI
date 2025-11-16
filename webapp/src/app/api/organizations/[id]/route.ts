@@ -74,6 +74,7 @@ export async function PATCH(
         numberOfSchools: body.numberOfSchools !== undefined ? body.numberOfSchools : undefined,
         lowestGrade: body.lowestGrade !== undefined ? body.lowestGrade : undefined,
         highestGrade: body.highestGrade !== undefined ? body.highestGrade : undefined,
+        services: body.services !== undefined ? body.services : undefined,
       },
       select: {
         id: true,
@@ -96,6 +97,7 @@ export async function PATCH(
         numberOfSchools: true,
         lowestGrade: true,
         highestGrade: true,
+        services: true,
         createdAt: true,
         updatedAt: true,
       },

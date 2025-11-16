@@ -3,7 +3,7 @@ import { z } from "zod";
 import { searchGrants } from "../vector-store";
 import { DistrictInfo } from "../prompts/grants-assistant";
 
-export function createGrantSearchTool(districtInfo: DistrictInfo | null) {
+export function createGrantSearchTool(districtInfo: DistrictInfo | null, organizationServices: string[] = []) {
   return new DynamicStructuredTool({
     name: "search_grants",
     description: `Search for grant funding opportunities in the database. 
@@ -36,11 +36,13 @@ ${districtInfo?.enrollment ? `The district has ${districtInfo.enrollment} studen
       console.log(`   Query: "${query}"`);
       console.log(`   State: ${stateCode || districtInfo?.state || "any"}`);
       console.log(`   Status: posted`);
+      console.log(`   Services: ${organizationServices.join(", ") || "any"}`);
 
       try {
         const results = await searchGrants(query, {
           stateCode: stateCode || districtInfo?.state || undefined,
           status: "posted",
+          services: organizationServices.length > 0 ? organizationServices : undefined,
         });
 
         if (results.length === 0) {

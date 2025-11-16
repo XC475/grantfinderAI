@@ -206,7 +206,8 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   numberOfSchools: 'numberOfSchools',
   stateLeaId: 'stateLeaId',
   urbanCentricLocale: 'urbanCentricLocale',
-  logoUrl: 'logoUrl'
+  logoUrl: 'logoUrl',
+  services: 'services'
 };
 
 exports.Prisma.GrantBookmarkScalarFieldEnum = {

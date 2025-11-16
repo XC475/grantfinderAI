@@ -84,13 +84,13 @@ model User {
 }
 
 model Organization {
-  id                     String                     @id @default(cuid())
+  id                     String                      @id @default(cuid())
   name                   String
-  createdAt              DateTime                   @default(now())
-  updatedAt              DateTime                   @updatedAt
-  slug                   String                     @unique
+  createdAt              DateTime                    @default(now())
+  updatedAt              DateTime                    @updatedAt
+  slug                   String                      @unique
   address                String?
-  annualOperatingBudget  Decimal?                   @db.Decimal(15, 2)
+  annualOperatingBudget  Decimal?                    @db.Decimal(15, 2)
   city                   String?
   email                  String?
   fiscalYearEnd          String?
@@ -106,21 +106,22 @@ model Organization {
   enrollment             Int?
   highestGrade           Int?
   latitude               Float?
-  leaId                  String?                    @unique
+  leaId                  String?                     @unique
   longitude              Float?
   lowestGrade            Int?
   numberOfSchools        Int?
   stateLeaId             String?
   urbanCentricLocale     Int?
   logoUrl                String?
+  services               opportunity_services_enum[] @default([k12_education])
   aiChats                AiChat[]
   applications           Application[]
-  documents              Document[]                 @relation("OrganizationDocuments")
-  folders                Folder[]                   @relation("OrganizationFolders")
+  documents              Document[]                  @relation("OrganizationDocuments")
+  folders                Folder[]                    @relation("OrganizationFolders")
   grantBookmarks         GrantBookmark[]
   eligibilityAnalyses    GrantEligibilityAnalysis[]
   recommendations        Recommendation[]
-  users                  User[]                     @relation("UserOrganization")
+  users                  User[]                      @relation("UserOrganization")
 
   @@index([leaId])
   @@index([state])

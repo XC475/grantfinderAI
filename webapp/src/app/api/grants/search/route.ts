@@ -100,17 +100,21 @@ export async function GET(req: NextRequest) {
     let limit = parseInt(searchParams.get("limit") || "50");
     let offset = parseInt(searchParams.get("offset") || "0");
 
-    // Fetch bookmarked and applied grant IDs from database
+    // Fetch bookmarked and applied grant IDs from database, and organization services
     let deprioritizeIds: number[] = [];
+    let organizationServices: string[] = [];
     if (organizationSlug) {
       try {
-        // Get organization by slug
+        // Get organization by slug including services
         const organization = await prisma.organization.findUnique({
           where: { slug: organizationSlug },
-          select: { id: true },
+          select: { id: true, services: true },
         });
 
         if (organization) {
+          // Store organization services for filtering
+          organizationServices = organization.services || [];
+
           // Fetch bookmarked grants
           const bookmarks = await prisma.grantBookmark.findMany({
             where: { organizationId: organization.id },
@@ -213,6 +217,12 @@ export async function GET(req: NextRequest) {
     }
     if (closeDateTo) {
       supabaseQuery = supabaseQuery.lte("close_date", closeDateTo);
+    }
+
+    // Add services filter based on organization settings
+    // Only show grants that match ANY of the organization's selected services
+    if (organizationServices.length > 0) {
+      supabaseQuery = supabaseQuery.overlaps("services", organizationServices);
     }
 
     // First, fetch ALL matching records (without pagination) to sort by status

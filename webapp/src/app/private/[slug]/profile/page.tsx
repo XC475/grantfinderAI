@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -54,6 +55,15 @@ const GRADE_OPTIONS = [
   { value: 12, label: "12th Grade (Senior)" },
 ];
 
+// Services options matching Prisma enum
+const SERVICES_OPTIONS = [
+  { value: "k12_education", label: "K-12 Education" },
+  { value: "higher_education", label: "Higher Education" },
+  { value: "non_profit", label: "Non-Profit" },
+  { value: "government_agencies", label: "Government Agencies" },
+  { value: "other", label: "Other" },
+];
+
 interface Organization {
   id: string;
   name: string;
@@ -75,6 +85,7 @@ interface Organization {
   numberOfSchools: number | null;
   lowestGrade: number | null;
   highestGrade: number | null;
+  services: string[] | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -482,6 +493,70 @@ export default function ProfilePage() {
                 rows={4}
                 placeholder="Your organization's mission statement..."
               />
+            </div>
+
+            <div className="grid gap-2">
+              <div className="flex items-center gap-2">
+                <Label>Services Provided</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="h-4 w-4 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">
+                        Select the types of services your organization provides.
+                        This helps filter grants to show only relevant
+                        opportunities.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <div className="space-y-3">
+                {SERVICES_OPTIONS.map((service) => {
+                  const isChecked =
+                    organization.services?.includes(service.value) || false;
+                  return (
+                    <div
+                      key={service.value}
+                      className="flex items-center space-x-2"
+                    >
+                      <Checkbox
+                        id={`service-${service.value}`}
+                        checked={isChecked}
+                        onCheckedChange={(checked) => {
+                          const currentServices = organization.services || [];
+                          let newServices: string[];
+                          if (checked) {
+                            // Add service if not already present
+                            if (!currentServices.includes(service.value)) {
+                              newServices = [...currentServices, service.value];
+                            } else {
+                              newServices = currentServices;
+                            }
+                          } else {
+                            // Remove service
+                            newServices = currentServices.filter(
+                              (s) => s !== service.value
+                            );
+                          }
+                          setOrganization({
+                            ...organization,
+                            services: newServices,
+                          });
+                        }}
+                      />
+                      <Label
+                        htmlFor={`service-${service.value}`}
+                        className="text-sm font-normal cursor-pointer"
+                      >
+                        {service.label}
+                      </Label>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="grid gap-2">

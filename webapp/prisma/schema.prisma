@@ -113,6 +113,7 @@ model Organization {
   stateLeaId             String?
   urbanCentricLocale     Int?
   logoUrl                String?
+  services               opportunity_services_enum[] @default([k12_education])
   aiChats                AiChat[]
   applications           Application[]
   documents              Document[]                 @relation("OrganizationDocuments")

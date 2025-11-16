@@ -121,8 +121,12 @@ export async function POST(_req: NextRequest) {
       temperature: 0.0,
     });
 
-    // 8. Create grant search tool
-    const grantSearchTool = createGrantSearchTool(districtInfo);
+    // 8. Create grant search tool with organization services
+    const organizationServices = organization.services || [];
+    const grantSearchTool = createGrantSearchTool(
+      districtInfo,
+      organizationServices
+    );
 
     // 9. Bind tools to model
     const modelWithTools = model.bindTools([grantSearchTool]);

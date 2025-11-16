@@ -6302,6 +6302,7 @@ export namespace Prisma {
     stateLeaId: number
     urbanCentricLocale: number
     logoUrl: number
+    services: number
     _all: number
   }
 
@@ -6424,6 +6425,7 @@ export namespace Prisma {
     stateLeaId?: true
     urbanCentricLocale?: true
     logoUrl?: true
+    services?: true
     _all?: true
   }
 
@@ -6543,6 +6545,7 @@ export namespace Prisma {
     stateLeaId: string | null
     urbanCentricLocale: number | null
     logoUrl: string | null
+    services: $Enums.opportunity_services_enum[]
     _count: OrganizationCountAggregateOutputType | null
     _avg: OrganizationAvgAggregateOutputType | null
     _sum: OrganizationSumAggregateOutputType | null
@@ -6594,6 +6597,7 @@ export namespace Prisma {
     stateLeaId?: boolean
     urbanCentricLocale?: boolean
     logoUrl?: boolean
+    services?: boolean
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
     documents?: boolean | Organization$documentsArgs<ExtArgs>
@@ -6635,6 +6639,7 @@ export namespace Prisma {
     stateLeaId?: boolean
     urbanCentricLocale?: boolean
     logoUrl?: boolean
+    services?: boolean
   }, ExtArgs["result"]["organization"]>
 
   export type OrganizationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6667,6 +6672,7 @@ export namespace Prisma {
     stateLeaId?: boolean
     urbanCentricLocale?: boolean
     logoUrl?: boolean
+    services?: boolean
   }, ExtArgs["result"]["organization"]>
 
   export type OrganizationSelectScalar = {
@@ -6699,9 +6705,10 @@ export namespace Prisma {
     stateLeaId?: boolean
     urbanCentricLocale?: boolean
     logoUrl?: boolean
+    services?: boolean
   }
 
-  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "slug" | "address" | "annualOperatingBudget" | "city" | "email" | "fiscalYearEnd" | "missionStatement" | "organizationLeaderName" | "phone" | "state" | "website" | "zipCode" | "strategicPlan" | "countyName" | "districtDataYear" | "enrollment" | "highestGrade" | "latitude" | "leaId" | "longitude" | "lowestGrade" | "numberOfSchools" | "stateLeaId" | "urbanCentricLocale" | "logoUrl", ExtArgs["result"]["organization"]>
+  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "slug" | "address" | "annualOperatingBudget" | "city" | "email" | "fiscalYearEnd" | "missionStatement" | "organizationLeaderName" | "phone" | "state" | "website" | "zipCode" | "strategicPlan" | "countyName" | "districtDataYear" | "enrollment" | "highestGrade" | "latitude" | "leaId" | "longitude" | "lowestGrade" | "numberOfSchools" | "stateLeaId" | "urbanCentricLocale" | "logoUrl" | "services", ExtArgs["result"]["organization"]>
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
@@ -6758,6 +6765,7 @@ export namespace Prisma {
       stateLeaId: string | null
       urbanCentricLocale: number | null
       logoUrl: string | null
+      services: $Enums.opportunity_services_enum[]
     }, ExtArgs["result"]["organization"]>
     composites: {}
   }
@@ -7218,6 +7226,7 @@ export namespace Prisma {
     readonly stateLeaId: FieldRef<"Organization", 'String'>
     readonly urbanCentricLocale: FieldRef<"Organization", 'Int'>
     readonly logoUrl: FieldRef<"Organization", 'String'>
+    readonly services: FieldRef<"Organization", 'opportunity_services_enum[]'>
   }
     
 
@@ -19377,7 +19386,8 @@ export namespace Prisma {
     numberOfSchools: 'numberOfSchools',
     stateLeaId: 'stateLeaId',
     urbanCentricLocale: 'urbanCentricLocale',
-    logoUrl: 'logoUrl'
+    logoUrl: 'logoUrl',
+    services: 'services'
   };
 
   export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
@@ -20184,6 +20194,7 @@ export namespace Prisma {
     stateLeaId?: StringNullableFilter<"Organization"> | string | null
     urbanCentricLocale?: IntNullableFilter<"Organization"> | number | null
     logoUrl?: StringNullableFilter<"Organization"> | string | null
+    services?: Enumopportunity_services_enumNullableListFilter<"Organization">
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
     documents?: DocumentListRelationFilter
@@ -20224,6 +20235,7 @@ export namespace Prisma {
     stateLeaId?: SortOrderInput | SortOrder
     urbanCentricLocale?: SortOrderInput | SortOrder
     logoUrl?: SortOrderInput | SortOrder
+    services?: SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     applications?: ApplicationOrderByRelationAggregateInput
     documents?: DocumentOrderByRelationAggregateInput
@@ -20267,6 +20279,7 @@ export namespace Prisma {
     stateLeaId?: StringNullableFilter<"Organization"> | string | null
     urbanCentricLocale?: IntNullableFilter<"Organization"> | number | null
     logoUrl?: StringNullableFilter<"Organization"> | string | null
+    services?: Enumopportunity_services_enumNullableListFilter<"Organization">
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
     documents?: DocumentListRelationFilter
@@ -20307,6 +20320,7 @@ export namespace Prisma {
     stateLeaId?: SortOrderInput | SortOrder
     urbanCentricLocale?: SortOrderInput | SortOrder
     logoUrl?: SortOrderInput | SortOrder
+    services?: SortOrder
     _count?: OrganizationCountOrderByAggregateInput
     _avg?: OrganizationAvgOrderByAggregateInput
     _max?: OrganizationMaxOrderByAggregateInput
@@ -20347,6 +20361,7 @@ export namespace Prisma {
     stateLeaId?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     urbanCentricLocale?: IntNullableWithAggregatesFilter<"Organization"> | number | null
     logoUrl?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    services?: Enumopportunity_services_enumNullableListFilter<"Organization">
   }
 
   export type GrantBookmarkWhereInput = {
@@ -21534,6 +21549,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
@@ -21574,6 +21590,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -21614,6 +21631,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
@@ -21654,6 +21672,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -21694,6 +21713,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
   }
 
   export type OrganizationUpdateManyMutationInput = {
@@ -21726,6 +21746,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
   }
 
   export type OrganizationUncheckedUpdateManyInput = {
@@ -21758,6 +21779,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
   }
 
   export type GrantBookmarkCreateInput = {
@@ -23229,6 +23251,7 @@ export namespace Prisma {
     stateLeaId?: SortOrder
     urbanCentricLocale?: SortOrder
     logoUrl?: SortOrder
+    services?: SortOrder
   }
 
   export type OrganizationAvgOrderByAggregateInput = {
@@ -24106,6 +24129,10 @@ export namespace Prisma {
     deleteMany?: GrantBookmarkScalarWhereInput | GrantBookmarkScalarWhereInput[]
   }
 
+  export type OrganizationCreateservicesInput = {
+    set: $Enums.opportunity_services_enum[]
+  }
+
   export type AiChatCreateNestedManyWithoutOrganizationInput = {
     create?: XOR<AiChatCreateWithoutOrganizationInput, AiChatUncheckedCreateWithoutOrganizationInput> | AiChatCreateWithoutOrganizationInput[] | AiChatUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: AiChatCreateOrConnectWithoutOrganizationInput | AiChatCreateOrConnectWithoutOrganizationInput[]
@@ -24232,6 +24259,11 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type OrganizationUpdateservicesInput = {
+    set?: $Enums.opportunity_services_enum[]
+    push?: $Enums.opportunity_services_enum | $Enums.opportunity_services_enum[]
   }
 
   export type AiChatUpdateManyWithoutOrganizationNestedInput = {
@@ -25588,6 +25620,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
@@ -25627,6 +25660,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25741,6 +25775,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
@@ -25780,6 +25815,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26324,6 +26360,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
@@ -26363,6 +26400,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -26455,6 +26493,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
@@ -26494,6 +26533,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26576,6 +26616,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
@@ -26615,6 +26656,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -26670,6 +26712,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
@@ -26709,6 +26752,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26782,6 +26826,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
@@ -26821,6 +26866,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
@@ -26961,6 +27007,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
@@ -27000,6 +27047,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -27149,6 +27197,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
@@ -27188,6 +27237,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
@@ -27349,6 +27399,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
@@ -27388,6 +27439,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -27534,6 +27586,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
@@ -27573,6 +27626,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -27628,6 +27682,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
@@ -27667,6 +27722,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -27768,6 +27824,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
@@ -27807,6 +27864,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
@@ -27936,6 +27994,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
@@ -27975,6 +28034,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -28091,6 +28151,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
@@ -28130,6 +28191,7 @@ export namespace Prisma {
     stateLeaId?: string | null
     urbanCentricLocale?: number | null
     logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -28301,6 +28363,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
@@ -28340,6 +28403,7 @@ export namespace Prisma {
     stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
