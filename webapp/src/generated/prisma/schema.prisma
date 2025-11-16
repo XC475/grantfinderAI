@@ -74,6 +74,10 @@ model User {
   role                 OrganizationRole @default(MEMBER)
   onboardingCompleted  Boolean          @default(false)
   hasTemporaryPassword Boolean          @default(false)
+  googleAccessToken    String?
+  googleRefreshToken   String?
+  googleTokenExpiry    DateTime?
+  googleDriveConnected Boolean          @default(false)
   aiChats              AiChat[]
   grantBookmarks       GrantBookmark[]
   organization         Organization     @relation("UserOrganization", fields: [organizationId], references: [id], onDelete: Cascade)

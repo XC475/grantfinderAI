@@ -601,8 +601,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.16.2
-   * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
+   * Prisma Client JS version: 6.19.0
+   * Query Engine version: 2ba551f319ab1df4bc874a89965d8b3641056773
    */
   export type PrismaVersion = {
     client: string
@@ -615,6 +615,7 @@ export namespace Prisma {
    */
 
 
+  export import Bytes = runtime.Bytes
   export import JsonObject = runtime.JsonObject
   export import JsonArray = runtime.JsonArray
   export import JsonValue = runtime.JsonValue
@@ -4988,6 +4989,10 @@ export namespace Prisma {
     role: $Enums.OrganizationRole | null
     onboardingCompleted: boolean | null
     hasTemporaryPassword: boolean | null
+    googleAccessToken: string | null
+    googleRefreshToken: string | null
+    googleTokenExpiry: Date | null
+    googleDriveConnected: boolean | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -5003,6 +5008,10 @@ export namespace Prisma {
     role: $Enums.OrganizationRole | null
     onboardingCompleted: boolean | null
     hasTemporaryPassword: boolean | null
+    googleAccessToken: string | null
+    googleRefreshToken: string | null
+    googleTokenExpiry: Date | null
+    googleDriveConnected: boolean | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -5018,6 +5027,10 @@ export namespace Prisma {
     role: number
     onboardingCompleted: number
     hasTemporaryPassword: number
+    googleAccessToken: number
+    googleRefreshToken: number
+    googleTokenExpiry: number
+    googleDriveConnected: number
     _all: number
   }
 
@@ -5035,6 +5048,10 @@ export namespace Prisma {
     role?: true
     onboardingCompleted?: true
     hasTemporaryPassword?: true
+    googleAccessToken?: true
+    googleRefreshToken?: true
+    googleTokenExpiry?: true
+    googleDriveConnected?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -5050,6 +5067,10 @@ export namespace Prisma {
     role?: true
     onboardingCompleted?: true
     hasTemporaryPassword?: true
+    googleAccessToken?: true
+    googleRefreshToken?: true
+    googleTokenExpiry?: true
+    googleDriveConnected?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -5065,6 +5086,10 @@ export namespace Prisma {
     role?: true
     onboardingCompleted?: true
     hasTemporaryPassword?: true
+    googleAccessToken?: true
+    googleRefreshToken?: true
+    googleTokenExpiry?: true
+    googleDriveConnected?: true
     _all?: true
   }
 
@@ -5153,6 +5178,10 @@ export namespace Prisma {
     role: $Enums.OrganizationRole
     onboardingCompleted: boolean
     hasTemporaryPassword: boolean
+    googleAccessToken: string | null
+    googleRefreshToken: string | null
+    googleTokenExpiry: Date | null
+    googleDriveConnected: boolean
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -5185,6 +5214,10 @@ export namespace Prisma {
     role?: boolean
     onboardingCompleted?: boolean
     hasTemporaryPassword?: boolean
+    googleAccessToken?: boolean
+    googleRefreshToken?: boolean
+    googleTokenExpiry?: boolean
+    googleDriveConnected?: boolean
     aiChats?: boolean | User$aiChatsArgs<ExtArgs>
     grantBookmarks?: boolean | User$grantBookmarksArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -5204,6 +5237,10 @@ export namespace Prisma {
     role?: boolean
     onboardingCompleted?: boolean
     hasTemporaryPassword?: boolean
+    googleAccessToken?: boolean
+    googleRefreshToken?: boolean
+    googleTokenExpiry?: boolean
+    googleDriveConnected?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -5220,6 +5257,10 @@ export namespace Prisma {
     role?: boolean
     onboardingCompleted?: boolean
     hasTemporaryPassword?: boolean
+    googleAccessToken?: boolean
+    googleRefreshToken?: boolean
+    googleTokenExpiry?: boolean
+    googleDriveConnected?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -5236,9 +5277,13 @@ export namespace Prisma {
     role?: boolean
     onboardingCompleted?: boolean
     hasTemporaryPassword?: boolean
+    googleAccessToken?: boolean
+    googleRefreshToken?: boolean
+    googleTokenExpiry?: boolean
+    googleDriveConnected?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "createdAt" | "updatedAt" | "avatarUrl" | "lastActiveAt" | "organizationId" | "system_admin" | "role" | "onboardingCompleted" | "hasTemporaryPassword", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "createdAt" | "updatedAt" | "avatarUrl" | "lastActiveAt" | "organizationId" | "system_admin" | "role" | "onboardingCompleted" | "hasTemporaryPassword" | "googleAccessToken" | "googleRefreshToken" | "googleTokenExpiry" | "googleDriveConnected", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | User$aiChatsArgs<ExtArgs>
     grantBookmarks?: boolean | User$grantBookmarksArgs<ExtArgs>
@@ -5272,6 +5317,10 @@ export namespace Prisma {
       role: $Enums.OrganizationRole
       onboardingCompleted: boolean
       hasTemporaryPassword: boolean
+      googleAccessToken: string | null
+      googleRefreshToken: string | null
+      googleTokenExpiry: Date | null
+      googleDriveConnected: boolean
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -5710,6 +5759,10 @@ export namespace Prisma {
     readonly role: FieldRef<"User", 'OrganizationRole'>
     readonly onboardingCompleted: FieldRef<"User", 'Boolean'>
     readonly hasTemporaryPassword: FieldRef<"User", 'Boolean'>
+    readonly googleAccessToken: FieldRef<"User", 'String'>
+    readonly googleRefreshToken: FieldRef<"User", 'String'>
+    readonly googleTokenExpiry: FieldRef<"User", 'DateTime'>
+    readonly googleDriveConnected: FieldRef<"User", 'Boolean'>
   }
     
 
@@ -19351,7 +19404,11 @@ export namespace Prisma {
     system_admin: 'system_admin',
     role: 'role',
     onboardingCompleted: 'onboardingCompleted',
-    hasTemporaryPassword: 'hasTemporaryPassword'
+    hasTemporaryPassword: 'hasTemporaryPassword',
+    googleAccessToken: 'googleAccessToken',
+    googleRefreshToken: 'googleRefreshToken',
+    googleTokenExpiry: 'googleTokenExpiry',
+    googleDriveConnected: 'googleDriveConnected'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -20081,6 +20138,10 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFilter<"User"> | $Enums.OrganizationRole
     onboardingCompleted?: BoolFilter<"User"> | boolean
     hasTemporaryPassword?: BoolFilter<"User"> | boolean
+    googleAccessToken?: StringNullableFilter<"User"> | string | null
+    googleRefreshToken?: StringNullableFilter<"User"> | string | null
+    googleTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
+    googleDriveConnected?: BoolFilter<"User"> | boolean
     aiChats?: AiChatListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
@@ -20099,6 +20160,10 @@ export namespace Prisma {
     role?: SortOrder
     onboardingCompleted?: SortOrder
     hasTemporaryPassword?: SortOrder
+    googleAccessToken?: SortOrderInput | SortOrder
+    googleRefreshToken?: SortOrderInput | SortOrder
+    googleTokenExpiry?: SortOrderInput | SortOrder
+    googleDriveConnected?: SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     grantBookmarks?: GrantBookmarkOrderByRelationAggregateInput
     organization?: OrganizationOrderByWithRelationInput
@@ -20120,6 +20185,10 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFilter<"User"> | $Enums.OrganizationRole
     onboardingCompleted?: BoolFilter<"User"> | boolean
     hasTemporaryPassword?: BoolFilter<"User"> | boolean
+    googleAccessToken?: StringNullableFilter<"User"> | string | null
+    googleRefreshToken?: StringNullableFilter<"User"> | string | null
+    googleTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
+    googleDriveConnected?: BoolFilter<"User"> | boolean
     aiChats?: AiChatListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
@@ -20138,6 +20207,10 @@ export namespace Prisma {
     role?: SortOrder
     onboardingCompleted?: SortOrder
     hasTemporaryPassword?: SortOrder
+    googleAccessToken?: SortOrderInput | SortOrder
+    googleRefreshToken?: SortOrderInput | SortOrder
+    googleTokenExpiry?: SortOrderInput | SortOrder
+    googleDriveConnected?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -20159,6 +20232,10 @@ export namespace Prisma {
     role?: EnumOrganizationRoleWithAggregatesFilter<"User"> | $Enums.OrganizationRole
     onboardingCompleted?: BoolWithAggregatesFilter<"User"> | boolean
     hasTemporaryPassword?: BoolWithAggregatesFilter<"User"> | boolean
+    googleAccessToken?: StringNullableWithAggregatesFilter<"User"> | string | null
+    googleRefreshToken?: StringNullableWithAggregatesFilter<"User"> | string | null
+    googleTokenExpiry?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    googleDriveConnected?: BoolWithAggregatesFilter<"User"> | boolean
   }
 
   export type OrganizationWhereInput = {
@@ -21419,6 +21496,10 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     onboardingCompleted?: boolean
     hasTemporaryPassword?: boolean
+    googleAccessToken?: string | null
+    googleRefreshToken?: string | null
+    googleTokenExpiry?: Date | string | null
+    googleDriveConnected?: boolean
     aiChats?: AiChatCreateNestedManyWithoutUserInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutUserInput
     organization: OrganizationCreateNestedOneWithoutUsersInput
@@ -21437,6 +21518,10 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     onboardingCompleted?: boolean
     hasTemporaryPassword?: boolean
+    googleAccessToken?: string | null
+    googleRefreshToken?: string | null
+    googleTokenExpiry?: Date | string | null
+    googleDriveConnected?: boolean
     aiChats?: AiChatUncheckedCreateNestedManyWithoutUserInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutUserInput
   }
@@ -21453,6 +21538,10 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
+    googleAccessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    googleDriveConnected?: BoolFieldUpdateOperationsInput | boolean
     aiChats?: AiChatUpdateManyWithoutUserNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
@@ -21471,6 +21560,10 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
+    googleAccessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    googleDriveConnected?: BoolFieldUpdateOperationsInput | boolean
     aiChats?: AiChatUncheckedUpdateManyWithoutUserNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -21488,6 +21581,10 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     onboardingCompleted?: boolean
     hasTemporaryPassword?: boolean
+    googleAccessToken?: string | null
+    googleRefreshToken?: string | null
+    googleTokenExpiry?: Date | string | null
+    googleDriveConnected?: boolean
   }
 
   export type UserUpdateManyMutationInput = {
@@ -21502,6 +21599,10 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
+    googleAccessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    googleDriveConnected?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -21517,6 +21618,10 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
+    googleAccessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    googleDriveConnected?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrganizationCreateInput = {
@@ -23060,6 +23165,10 @@ export namespace Prisma {
     role?: SortOrder
     onboardingCompleted?: SortOrder
     hasTemporaryPassword?: SortOrder
+    googleAccessToken?: SortOrder
+    googleRefreshToken?: SortOrder
+    googleTokenExpiry?: SortOrder
+    googleDriveConnected?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -23075,6 +23184,10 @@ export namespace Prisma {
     role?: SortOrder
     onboardingCompleted?: SortOrder
     hasTemporaryPassword?: SortOrder
+    googleAccessToken?: SortOrder
+    googleRefreshToken?: SortOrder
+    googleTokenExpiry?: SortOrder
+    googleDriveConnected?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -23090,6 +23203,10 @@ export namespace Prisma {
     role?: SortOrder
     onboardingCompleted?: SortOrder
     hasTemporaryPassword?: SortOrder
+    googleAccessToken?: SortOrder
+    googleRefreshToken?: SortOrder
+    googleTokenExpiry?: SortOrder
+    googleDriveConnected?: SortOrder
   }
 
   export type UuidWithAggregatesFilter<$PrismaModel = never> = {
@@ -26075,6 +26192,10 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     onboardingCompleted?: boolean
     hasTemporaryPassword?: boolean
+    googleAccessToken?: string | null
+    googleRefreshToken?: string | null
+    googleTokenExpiry?: Date | string | null
+    googleDriveConnected?: boolean
     aiChats?: AiChatCreateNestedManyWithoutUserInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutUserInput
   }
@@ -26091,6 +26212,10 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     onboardingCompleted?: boolean
     hasTemporaryPassword?: boolean
+    googleAccessToken?: string | null
+    googleRefreshToken?: string | null
+    googleTokenExpiry?: Date | string | null
+    googleDriveConnected?: boolean
     aiChats?: AiChatUncheckedCreateNestedManyWithoutUserInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutUserInput
   }
@@ -26328,6 +26453,10 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFilter<"User"> | $Enums.OrganizationRole
     onboardingCompleted?: BoolFilter<"User"> | boolean
     hasTemporaryPassword?: BoolFilter<"User"> | boolean
+    googleAccessToken?: StringNullableFilter<"User"> | string | null
+    googleRefreshToken?: StringNullableFilter<"User"> | string | null
+    googleTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
+    googleDriveConnected?: BoolFilter<"User"> | boolean
   }
 
   export type OrganizationCreateWithoutGrantBookmarksInput = {
@@ -26427,6 +26556,10 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     onboardingCompleted?: boolean
     hasTemporaryPassword?: boolean
+    googleAccessToken?: string | null
+    googleRefreshToken?: string | null
+    googleTokenExpiry?: Date | string | null
+    googleDriveConnected?: boolean
     aiChats?: AiChatCreateNestedManyWithoutUserInput
     organization: OrganizationCreateNestedOneWithoutUsersInput
   }
@@ -26444,6 +26577,10 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     onboardingCompleted?: boolean
     hasTemporaryPassword?: boolean
+    googleAccessToken?: string | null
+    googleRefreshToken?: string | null
+    googleTokenExpiry?: Date | string | null
+    googleDriveConnected?: boolean
     aiChats?: AiChatUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -26566,6 +26703,10 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
+    googleAccessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    googleDriveConnected?: BoolFieldUpdateOperationsInput | boolean
     aiChats?: AiChatUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
   }
@@ -26583,6 +26724,10 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
+    googleAccessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    googleDriveConnected?: BoolFieldUpdateOperationsInput | boolean
     aiChats?: AiChatUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -27264,6 +27409,10 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     onboardingCompleted?: boolean
     hasTemporaryPassword?: boolean
+    googleAccessToken?: string | null
+    googleRefreshToken?: string | null
+    googleTokenExpiry?: Date | string | null
+    googleDriveConnected?: boolean
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutUserInput
     organization: OrganizationCreateNestedOneWithoutUsersInput
   }
@@ -27281,6 +27430,10 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     onboardingCompleted?: boolean
     hasTemporaryPassword?: boolean
+    googleAccessToken?: string | null
+    googleRefreshToken?: string | null
+    googleTokenExpiry?: Date | string | null
+    googleDriveConnected?: boolean
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -27472,6 +27625,10 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
+    googleAccessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    googleDriveConnected?: BoolFieldUpdateOperationsInput | boolean
     grantBookmarks?: GrantBookmarkUpdateManyWithoutUserNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
   }
@@ -27489,6 +27646,10 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
+    googleAccessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    googleDriveConnected?: BoolFieldUpdateOperationsInput | boolean
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -28827,6 +28988,10 @@ export namespace Prisma {
     role?: $Enums.OrganizationRole
     onboardingCompleted?: boolean
     hasTemporaryPassword?: boolean
+    googleAccessToken?: string | null
+    googleRefreshToken?: string | null
+    googleTokenExpiry?: Date | string | null
+    googleDriveConnected?: boolean
   }
 
   export type AiChatUpdateWithoutOrganizationInput = {
@@ -29087,6 +29252,10 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
+    googleAccessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    googleDriveConnected?: BoolFieldUpdateOperationsInput | boolean
     aiChats?: AiChatUpdateManyWithoutUserNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutUserNestedInput
   }
@@ -29103,6 +29272,10 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
+    googleAccessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    googleDriveConnected?: BoolFieldUpdateOperationsInput | boolean
     aiChats?: AiChatUncheckedUpdateManyWithoutUserNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -29119,6 +29292,10 @@ export namespace Prisma {
     role?: EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
     onboardingCompleted?: BoolFieldUpdateOperationsInput | boolean
     hasTemporaryPassword?: BoolFieldUpdateOperationsInput | boolean
+    googleAccessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    googleDriveConnected?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type AiChatCreateManyApplicationInput = {

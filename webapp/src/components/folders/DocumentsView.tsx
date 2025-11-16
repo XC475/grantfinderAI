@@ -11,6 +11,8 @@ import { FolderList } from "./FolderList";
 import { RenameDialog } from "./RenameDialog";
 import { MoveModal } from "./MoveModal";
 import { CopyDialog } from "./CopyDialog";
+import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
+import { GoogleDriveConnectButton } from "@/components/google-drive/ConnectButton";
 
 interface Folder {
   id: string;
@@ -586,19 +588,29 @@ export function DocumentsView({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <FolderBreadcrumb
-          folderPath={folderPath}
-          rootLabel={rootLabel}
-          onNavigate={handleNavigate}
-        />
-        <CreateMenu
-          currentFolderId={currentFolderId}
-          applicationId={applicationId}
-          onCreateFolder={handleCreateFolder}
-          onCreateDocument={handleCreateDocument}
-          onFileUpload={handleFileUpload}
-        />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex-1 min-w-[200px]">
+          <FolderBreadcrumb
+            folderPath={folderPath}
+            rootLabel={rootLabel}
+            onNavigate={handleNavigate}
+          />
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <GoogleDriveConnectButton />
+          <GoogleDriveImportPicker
+            folderId={currentFolderId}
+            applicationId={applicationId}
+            onImported={() => fetchFolderContents(currentFolderId)}
+          />
+          <CreateMenu
+            currentFolderId={currentFolderId}
+            applicationId={applicationId}
+            onCreateFolder={handleCreateFolder}
+            onCreateDocument={handleCreateDocument}
+            onFileUpload={handleFileUpload}
+          />
+        </div>
       </div>
 
       <DragDropProvider onDragEnd={handleDragEnd}>

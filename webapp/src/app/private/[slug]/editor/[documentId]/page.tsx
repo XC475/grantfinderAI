@@ -13,6 +13,7 @@ interface Document {
   contentType: string;
   version: number;
   applicationId: string | null;
+  folderId?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -114,6 +115,11 @@ export default function EditorPage({ params }: DocumentPageProps) {
   }
 
   return (
-    <DocumentEditor document={document} onSave={handleSave} isSaving={saving} />
+    <DocumentEditor
+      document={document}
+      onSave={handleSave}
+      isSaving={saving}
+      organizationSlug={organizationSlug}
+    />
   );
 }
