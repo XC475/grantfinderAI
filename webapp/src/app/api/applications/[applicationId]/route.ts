@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import {
   getDocumentsInFolderTree,
   deleteFileFromStorage,
-} from "@/lib/storageCleanup";
+} from "@/lib/documentStorageCleanup";
 
 // PUT /api/applications/[applicationId] - Update application
 export async function PUT(
@@ -125,7 +125,6 @@ export async function DELETE(
       const fileDocs = docs.filter((d) => d.fileUrl);
 
       if (fileDocs.length > 0) {
-        console.log(`Cleaning ${fileDocs.length} files before cascade...`);
         for (const doc of fileDocs) {
           if (doc.fileUrl) {
             await deleteFileFromStorage(doc.fileUrl);

@@ -32,8 +32,6 @@ export async function GET(req: NextRequest) {
   const requestId = Math.random().toString(36).substring(7);
 
   try {
-    console.log(`📄 [${requestId}] Documents API called`);
-
     // Authenticate user
     const supabase = await createClient();
     const {
@@ -65,17 +63,11 @@ export async function GET(req: NextRequest) {
 
     // Validate parameters
     if (limit > 100) {
-      console.warn(`⚠️ [${requestId}] Limit too high, capping at 100`);
       limit = 100;
     }
     if (offset < 0) {
-      console.warn(`⚠️ [${requestId}] Negative offset, setting to 0`);
       offset = 0;
     }
-
-    console.log(
-      `📄 [${requestId}] Pagination: limit=${limit}, offset=${offset}`
-    );
 
     // Get total count of documents for this organization
     const totalCount = await prisma.document.count({
@@ -105,10 +97,6 @@ export async function GET(req: NextRequest) {
       skip: offset,
     });
 
-    console.log(
-      `✅ [${requestId}] Found ${documents.length} of ${totalCount} total documents`
-    );
-
     return NextResponse.json({
       data: documents,
       pagination: {
@@ -125,8 +113,7 @@ export async function GET(req: NextRequest) {
     });
   } catch (e) {
     const processingTime = Date.now() - startTime;
-    console.error(`❌ [${requestId}] Error listing documents:`, e);
-    console.error(`❌ [${requestId}] Processing time: ${processingTime}ms`);
+    console.error("Error listing documents:", e);
 
     return NextResponse.json(
       {

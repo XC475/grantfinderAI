@@ -5,7 +5,7 @@ import { getFolderPath, wouldCreateCircularReference } from "@/lib/folders";
 import {
   getDocumentsInFolderTree,
   deleteFileFromStorage,
-} from "@/lib/storageCleanup";
+} from "@/lib/documentStorageCleanup";
 
 // GET /api/folders/[folderId] - Get folder details with contents
 export async function GET(
@@ -257,14 +257,11 @@ export async function DELETE(
     const fileDocs = docs.filter((d) => d.fileUrl);
 
     if (fileDocs.length > 0) {
-      console.log(`Deleting ${fileDocs.length} files from storage...`);
-      let deleted = 0;
       for (const doc of fileDocs) {
-        if (doc.fileUrl && (await deleteFileFromStorage(doc.fileUrl))) {
-          deleted++;
+        if (doc.fileUrl) {
+          await deleteFileFromStorage(doc.fileUrl);
         }
       }
-      console.log(`✓ Deleted ${deleted}/${fileDocs.length} files`);
     }
 
     // Delete folder (cascade will handle children and documents)

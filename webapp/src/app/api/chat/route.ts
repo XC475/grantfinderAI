@@ -129,13 +129,6 @@ export async function POST(req: NextRequest) {
         : null,
     };
 
-    console.log("🔍 [Grant Finder API] Sending to n8n with district info:", {
-      ...n8nMessage,
-      district_name: organization.leaId
-        ? organization.name
-        : "No district linked",
-    });
-
     const response = await fetch(N8N_WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -163,8 +156,6 @@ export async function POST(req: NextRequest) {
     const saveToDatabase = async () => {
       try {
         // After streaming completes, save to database
-        console.log("🔍 [Grant Finder API] Full n8n response:", fullText);
-
         // 4. Save assistant response
         await prisma.aiChatMessage.create({
           data: {
@@ -185,12 +176,8 @@ export async function POST(req: NextRequest) {
           where: { id: chat.id },
           data: { updatedAt: new Date() },
         });
-
-        console.log(
-          `✅ [Grant Finder API] Saved response to DB${clientDisconnected ? " (client disconnected)" : ""}`
-        );
       } catch (error) {
-        console.error("❌ [Grant Finder API] Error saving to database:", error);
+        console.error("Error saving to database:", error);
       }
     };
 
@@ -227,19 +214,8 @@ export async function POST(req: NextRequest) {
                   try {
                     controller.enqueue(encoder.encode(content));
                   } catch {
-                    if (!clientDisconnected) {
-                      clientDisconnected = true;
-                      console.log(
-                        "ℹ️ [Grant Finder API] Client disconnected, continuing in background"
-                      );
-                    }
+                    clientDisconnected = true;
                   }
-                }
-                // Log begin/end events for debugging
-                else if (jsonChunk.type === "begin") {
-                  console.log("🔍 [Grant Finder API] Stream started");
-                } else if (jsonChunk.type === "end") {
-                  console.log("🔍 [Grant Finder API] Stream ended");
                 }
               } catch {
                 // Silently skip unparseable chunks
@@ -276,10 +252,6 @@ export async function POST(req: NextRequest) {
           await saveToDatabase();
         } catch (error) {
           clientDisconnected = true;
-          console.log(
-            "ℹ️ [Grant Finder API] Stream error (likely client disconnect):",
-            error
-          );
           // Still save to database even on error
           await saveToDatabase();
         } finally {
@@ -288,9 +260,6 @@ export async function POST(req: NextRequest) {
       },
       cancel() {
         clientDisconnected = true;
-        console.log(
-          "ℹ️ [Grant Finder API] Client cancelled stream, will save to DB when complete"
-        );
       },
     });
 
@@ -303,7 +272,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("❌ [Grant Finder API] Error:", error);
+    console.error("Error processing request:", error);
     return new Response("Error processing request", { status: 500 });
   }
 }

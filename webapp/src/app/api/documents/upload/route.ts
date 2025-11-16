@@ -117,14 +117,6 @@ export async function POST(req: NextRequest) {
     const fileName = `${Date.now()}-${randomUUID()}${extension}`;
     const filePath = `${dbUser.organizationId}/${fileName}`;
 
-    console.log("Uploading file:", {
-      bucket: "documents",
-      filePath,
-      organizationId: dbUser.organizationId,
-      userId: user.id,
-      authHeader: req.headers.get("authorization") ? "present" : "missing",
-    });
-
     const { error: uploadError } = await supabase.storage
       .from("documents")
       .upload(filePath, buffer, {
@@ -134,12 +126,6 @@ export async function POST(req: NextRequest) {
 
     if (uploadError) {
       console.error("Storage upload error:", uploadError);
-      console.error("Upload details:", {
-        bucket: "documents",
-        filePath,
-        organizationId: dbUser.organizationId,
-        organizationIdType: typeof dbUser.organizationId,
-      });
       return NextResponse.json(
         { error: "Failed to upload file" },
         { status: 500 }

@@ -33,8 +33,6 @@ export async function GET(req: NextRequest) {
   const requestId = Math.random().toString(36).substring(7);
 
   try {
-    console.log(`🔖 [${requestId}] Bookmarks API called`);
-
     // Authenticate user
     const supabase = await createClient();
     const {
@@ -53,17 +51,11 @@ export async function GET(req: NextRequest) {
 
     // Validate parameters
     if (limit > 100) {
-      console.warn(`⚠️ [${requestId}] Limit too high, capping at 100`);
       limit = 100;
     }
     if (offset < 0) {
-      console.warn(`⚠️ [${requestId}] Negative offset, setting to 0`);
       offset = 0;
     }
-
-    console.log(
-      `🔖 [${requestId}] Pagination: limit=${limit}, offset=${offset}`
-    );
 
     // Get total count
     const totalCount = await prisma.grantBookmark.count({
@@ -77,10 +69,6 @@ export async function GET(req: NextRequest) {
       take: limit,
       skip: offset,
     });
-
-    console.log(
-      `🔖 [${requestId}] Found ${bookmarks.length} of ${totalCount} total bookmarks`
-    );
 
     // Fetch opportunity details for all bookmarks in one query (efficient!)
     const opportunityIds = bookmarks.map((b) => b.opportunityId);

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
-import { deleteFileFromStorage } from "@/lib/storageCleanup";
+import { deleteFileFromStorage } from "@/lib/documentStorageCleanup";
 
 // GET /api/applications/[applicationId]/documents/[documentId] - Get specific document
 export async function GET(
