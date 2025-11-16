@@ -3,23 +3,10 @@
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Clock, ChevronRight, Loader2, Settings2, Plus, Search } from "lucide-react";
+import { Clock, ChevronRight, Loader2, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { ApplicationsTable } from "@/components/applications/ApplicationsTable";
 import { TextAnimate } from "@/components/ui/text-animate";
@@ -164,17 +151,13 @@ export default function DashboardPage() {
       hasSetHeaderRef.current = true;
       setHeaderContent(
         <div className="text-base text-muted-foreground font-medium">
-          <TextAnimate 
-            animation="blurInUp"
-            by="character"
-            once
-          >
+          <TextAnimate animation="blurInUp" by="character" once>
             {`Welcome back, ${userName}`}
           </TextAnimate>
         </div>
       );
     }
-    
+
     // Cleanup: reset header content when component unmounts
     return () => setHeaderContent(null);
   }, [userName, setHeaderContent]);
@@ -196,7 +179,10 @@ export default function DashboardPage() {
           <CardHeader className="flex-shrink-0 pb-4">
             <CardTitle className="flex items-center gap-3 text-lg font-normal text-foreground/90">
               <div className="w-8 h-8 rounded-lg bg-foreground/5 flex items-center justify-center">
-                <Clock className="h-4 w-4 text-foreground/70" strokeWidth={1.5} />
+                <Clock
+                  className="h-4 w-4 text-foreground/70"
+                  strokeWidth={1.5}
+                />
               </div>
               Jump Back In
             </CardTitle>
@@ -216,7 +202,10 @@ export default function DashboardPage() {
                     {activity.timestamp}
                   </p>
                 </div>
-                <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 ml-2 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5" strokeWidth={1.5} />
+                <ChevronRight
+                  className="h-4 w-4 text-muted-foreground flex-shrink-0 ml-2 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5"
+                  strokeWidth={1.5}
+                />
               </div>
             ))}
           </CardContent>
@@ -225,8 +214,10 @@ export default function DashboardPage() {
         {/* Applications - Right Side (3 columns) - NO CARD WRAPPER */}
         <div className="md:col-span-3 flex flex-col overflow-hidden">
           <div className="flex items-center justify-between mb-5 gap-2">
-            <h3 className="text-2xl font-normal text-foreground/90">Recent Applications</h3>
-            
+            <h3 className="text-2xl font-normal text-foreground/90">
+              Recent Applications
+            </h3>
+
             <div className="flex items-center gap-2">
               {/* Search Input */}
               <div className="relative">
@@ -240,9 +231,11 @@ export default function DashboardPage() {
               </div>
 
               {/* Add Application Button */}
-              <Button 
-                size="sm" 
-                onClick={() => router.push(`/private/${organizationSlug}/applications/new`)}
+              <Button
+                size="sm"
+                onClick={() =>
+                  router.push(`/private/${organizationSlug}/applications/new`)
+                }
                 className="font-medium"
               >
                 <Plus className="mr-2 h-4 w-4" />
@@ -250,7 +243,12 @@ export default function DashboardPage() {
               </Button>
 
               {/* View All Button */}
-              <Button variant="outline" size="sm" asChild className="border-muted-foreground/20 hover:border-foreground/30 font-medium">
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+                className="border-muted-foreground/20 hover:border-foreground/30 font-medium"
+              >
                 <Link href={`/private/${organizationSlug}/applications`}>
                   View All
                 </Link>
@@ -264,7 +262,9 @@ export default function DashboardPage() {
               </div>
             ) : filteredApplications.length === 0 ? (
               <div className="text-center py-12 text-sm text-foreground/60 border border-muted-foreground/20 rounded-xl bg-card/40 font-light">
-                {searchFilter ? "No applications match your search" : "No applications yet"}
+                {searchFilter
+                  ? "No applications match your search"
+                  : "No applications yet"}
               </div>
             ) : (
               <ApplicationsTable

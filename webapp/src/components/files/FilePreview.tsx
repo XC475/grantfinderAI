@@ -47,7 +47,7 @@ export function FilePreview({ document }: FilePreviewProps) {
   // Text and CSV files - show extracted text
   if (document.fileType === "text/plain" || document.fileType === "text/csv") {
     const extractedText =
-      (document.metadata as any)?.extractedText || "No text content available";
+      document.metadata?.extractedText || "No text content available";
 
     return (
       <div className="border rounded-md bg-muted p-6">

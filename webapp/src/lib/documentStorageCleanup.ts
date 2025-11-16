@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import type { PrismaClient } from "@/generated/prisma";
 
 /**
  * Delete a file from Supabase Storage
@@ -50,7 +51,7 @@ export async function deleteFileFromStorage(fileUrl: string): Promise<boolean> {
  */
 export async function getDocumentsInFolderTree(
   folderId: string,
-  prisma: any
+  prisma: PrismaClient
 ): Promise<Array<{ id: string; fileUrl: string | null }>> {
   const results: Array<{ id: string; fileUrl: string | null }> = [];
 

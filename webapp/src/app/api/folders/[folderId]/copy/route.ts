@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma";
 
 // Recursive helper function to copy a folder and all its contents
 async function copyFolderRecursive(
@@ -43,9 +44,11 @@ async function copyFolderRecursive(
     await prisma.document.create({
       data: {
         title: `Copy of ${document.title}`,
-        content: document.content,
+        content: document.content as string | null,
         contentType: document.contentType,
-        metadata: document.metadata,
+        metadata: document.metadata
+          ? (document.metadata as Prisma.InputJsonValue)
+          : Prisma.JsonNull,
         folderId: newFolder.id,
         organizationId,
         // Don't copy applicationId - copies are independent
@@ -114,7 +117,8 @@ export async function POST(
     const copyName = name || `Copy of ${folder.name}`;
 
     // Use custom parentFolderId or default to original parent
-    const targetParentId = parentFolderId !== undefined ? parentFolderId : folder.parentFolderId;
+    const targetParentId =
+      parentFolderId !== undefined ? parentFolderId : folder.parentFolderId;
 
     // If custom parentFolderId provided, verify it belongs to the organization
     if (targetParentId !== null) {
@@ -169,4 +173,3 @@ export async function POST(
     );
   }
 }
-

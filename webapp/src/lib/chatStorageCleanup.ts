@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import type { PrismaClient } from "@/generated/prisma";
 
 /**
  * Delete a chat attachment file from Supabase Storage
@@ -48,7 +49,7 @@ export async function deleteChatAttachmentFromStorage(
  */
 export async function getChatAttachments(
   chatId: string,
-  prisma: any
+  prisma: PrismaClient
 ): Promise<string[]> {
   const attachmentUrls: string[] = [];
 
@@ -62,7 +63,9 @@ export async function getChatAttachments(
     // Extract attachment URLs from metadata
     for (const message of messages) {
       if (message.metadata && typeof message.metadata === "object") {
-        const metadata = message.metadata as any;
+        const metadata = message.metadata as {
+          attachments?: Array<{ url?: string }>;
+        };
         if (Array.isArray(metadata.attachments)) {
           for (const attachment of metadata.attachments) {
             if (attachment.url) {
@@ -75,10 +78,7 @@ export async function getChatAttachments(
 
     return attachmentUrls;
   } catch (error) {
-    console.error(
-      `Error fetching attachments for chat ${chatId}:`,
-      error
-    );
+    console.error(`Error fetching attachments for chat ${chatId}:`, error);
     return [];
   }
 }
@@ -91,7 +91,7 @@ export async function getChatAttachments(
  */
 export async function deleteAllChatAttachments(
   chatId: string,
-  prisma: any
+  prisma: PrismaClient
 ): Promise<number> {
   try {
     // Get all attachment URLs for this chat
@@ -126,7 +126,7 @@ export async function deleteAllChatAttachments(
  */
 export async function deleteAllUserChatAttachments(
   userId: string,
-  prisma: any
+  prisma: PrismaClient
 ): Promise<number> {
   try {
     // Get all chats for this user
@@ -149,11 +149,7 @@ export async function deleteAllUserChatAttachments(
 
     return totalDeleted;
   } catch (error) {
-    console.error(
-      `Error deleting attachments for user ${userId}:`,
-      error
-    );
+    console.error(`Error deleting attachments for user ${userId}:`, error);
     return 0;
   }
 }
-

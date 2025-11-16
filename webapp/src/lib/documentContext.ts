@@ -1,9 +1,15 @@
 import prisma from "@/lib/prisma";
 
+interface TipTapNode {
+  text?: string;
+  content?: TipTapNode[];
+  type?: string;
+}
+
 /**
  * Extract text from TipTap JSON recursively
  */
-function extractTextFromTipTap(node: any): string {
+function extractTextFromTipTap(node: TipTapNode): string {
   if (!node) return "";
 
   let text = "";

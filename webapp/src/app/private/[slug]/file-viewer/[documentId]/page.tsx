@@ -142,8 +142,8 @@ export default function FileViewerPage({ params }: FileViewerPageProps) {
     );
   }
 
-  const extractedText = (document.metadata as any)?.extractedText;
-  const pageCount = (document.metadata as any)?.pageCount;
+  const extractedText = document.metadata?.extractedText;
+  const pageCount = document.metadata?.pageCount;
 
   // Remove outer container - ConditionalLayout handles everything
   return (
