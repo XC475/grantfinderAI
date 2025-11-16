@@ -151,6 +151,7 @@ export function GrantInfoCard({ grant, organizationSlug }: GrantInfoCardProps) {
                       // Priority: title > filename from URL > full URL
                       const getAttachmentName = () => {
                         if (attachment.title) return attachment.title;
+                        if (!attachment.url) return "Untitled Attachment";
                         try {
                           const url = new URL(attachment.url);
                           const pathname = url.pathname;
