@@ -117,7 +117,7 @@ export function HeroChatInput({
       {/* Main Input Container */}
       <div
         className={cn(
-          "relative flex flex-col rounded-3xl border-2 bg-background transition-all min-h-[120px]",
+          "relative flex flex-col rounded-3xl border-2 bg-white dark:bg-zinc-900 transition-all min-h-[120px]",
           isDragging
             ? "border-primary bg-primary/5"
             : "border-border focus-within:border-primary/50"

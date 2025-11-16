@@ -47,6 +47,9 @@ export function ApplicationPage({
   const [applicationFolderId, setApplicationFolderId] = useState<string | null>(
     null
   );
+  const [applicationStatus, setApplicationStatus] = useState<string | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
 
   const fetchApplication = useCallback(async () => {
@@ -61,6 +64,7 @@ export function ApplicationPage({
         );
         if (app) {
           setApplication(app);
+          setApplicationStatus(app.status);
           return app;
         }
       }
@@ -103,6 +107,36 @@ export function ApplicationPage({
       console.error("Error fetching application folder:", error);
     }
   }, [applicationId]);
+
+  const handleStatusUpdate = async (newStatus: string) => {
+    if (!application) return;
+
+    const previousStatus = applicationStatus;
+
+    // Optimistic update
+    setApplicationStatus(newStatus);
+    toast.success("Status updated successfully");
+
+    try {
+      const response = await fetch(`/api/applications/${application.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) throw new Error("Failed to update status");
+
+      // Refresh application data
+      await fetchApplication();
+    } catch (error) {
+      console.error("Error updating status:", error);
+
+      // Revert on error
+      setApplicationStatus(previousStatus);
+
+      toast.error("Failed to update status");
+    }
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -170,6 +204,11 @@ export function ApplicationPage({
             attachments: undefined,
           }
         }
+        application={{
+          id: applicationId,
+          status: applicationStatus || application.status,
+        }}
+        onStatusUpdate={handleStatusUpdate}
         organizationSlug={organizationSlug}
       />
 

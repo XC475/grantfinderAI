@@ -11,6 +11,7 @@ import {
   Paperclip,
 } from "lucide-react";
 import Link from "next/link";
+import { StatusSelect } from "./StatusSelect";
 
 interface GrantInfoCardProps {
   grant: {
@@ -26,7 +27,12 @@ interface GrantInfoCardProps {
     url?: string;
     attachments?: Array<{ url?: string; title?: string; name?: string }>;
   };
+  application?: {
+    id: string;
+    status: string;
+  };
   organizationSlug: string;
+  onStatusUpdate?: (newStatus: string) => void;
 }
 
 function formatCurrency(amount: number | null | undefined) {
@@ -60,7 +66,12 @@ function getStatusColor(status: string): string {
   }
 }
 
-export function GrantInfoCard({ grant, organizationSlug }: GrantInfoCardProps) {
+export function GrantInfoCard({
+  grant,
+  application,
+  organizationSlug,
+  onStatusUpdate,
+}: GrantInfoCardProps) {
   return (
     <Card>
       <CardHeader>
@@ -78,6 +89,24 @@ export function GrantInfoCard({ grant, organizationSlug }: GrantInfoCardProps) {
                 </div>
               )}
             </div>
+            {application && (
+              <div className="mt-4 pt-4 border-t">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Application Status:
+                  </span>
+                  <StatusSelect
+                    currentStatus={application.status}
+                    applicationId={application.id}
+                    onStatusChange={(_, newStatus) => {
+                      if (onStatusUpdate) {
+                        onStatusUpdate(newStatus);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
           {grant.status !== "Not specified" && (
             <Button asChild variant="outline" size="sm">

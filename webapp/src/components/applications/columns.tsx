@@ -20,6 +20,7 @@ import {
   Trash,
   GripVertical 
 } from "lucide-react";
+import { StatusSelect } from "./StatusSelect";
 
 export interface Application {
   id: string;
@@ -45,6 +46,7 @@ interface ColumnActions {
   onEdit: (id: string) => void;
   onDuplicate: (id: string) => void;
   onDelete: (id: string, title: string | null) => void;
+  onStatusChange: (id: string, newStatus: string) => void;
 }
 
 function getStatusVariant(status: string): string {
@@ -88,7 +90,7 @@ export function createSimpleColumns(actions: ColumnActions): ColumnDef<Applicati
       header: "Application Name",
       cell: ({ row }) => {
         return (
-          <div className="space-y-1 max-w-[300px]">
+          <div className="space-y-1 max-w-[200px]">
             <div className="font-medium truncate">
               {row.original.title || `Grant #${row.original.opportunityId}`}
             </div>
@@ -98,7 +100,7 @@ export function createSimpleColumns(actions: ColumnActions): ColumnDef<Applicati
           </div>
         );
       },
-      size: 300,
+      size: 200,
     },
 
     // Status Column (no sorting)
@@ -106,14 +108,16 @@ export function createSimpleColumns(actions: ColumnActions): ColumnDef<Applicati
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
-        const status = row.getValue("status") as string;
+        const application = row.original;
         return (
-          <Badge className={getStatusVariant(status)}>
-            {formatStatus(status)}
-          </Badge>
+          <StatusSelect
+            currentStatus={application.status}
+            applicationId={application.id}
+            onStatusChange={actions.onStatusChange}
+          />
         );
       },
-      size: 150,
+      size: 120,
     },
 
     // Funding Amount Column (no sorting)
@@ -128,7 +132,7 @@ export function createSimpleColumns(actions: ColumnActions): ColumnDef<Applicati
           </div>
         );
       },
-      size: 180,
+      size: 140,
     },
 
     // Deadline Column (no sorting)
@@ -150,7 +154,7 @@ export function createSimpleColumns(actions: ColumnActions): ColumnDef<Applicati
           </div>
         );
       },
-      size: 150,
+      size: 120,
     },
 
     // Actions Column (dropdown)
@@ -219,7 +223,7 @@ export function createSimpleColumns(actions: ColumnActions): ColumnDef<Applicati
       },
       enableSorting: false,
       enableResizing: false,
-      size: 60,
+      size: 50,
     },
   ];
 }
@@ -279,7 +283,7 @@ export function createColumns(actions: ColumnActions): ColumnDef<Application>[] 
       },
       cell: ({ row }) => {
         return (
-          <div className="space-y-1 max-w-[300px]">
+          <div className="space-y-1 max-w-[200px]">
             <div className="font-medium truncate">
               {row.original.title || `Grant #${row.original.opportunityId}`}
             </div>
@@ -289,7 +293,7 @@ export function createColumns(actions: ColumnActions): ColumnDef<Application>[] 
           </div>
         );
       },
-      size: 300,
+      size: 200,
     },
 
     // Status Column (badge)
@@ -308,14 +312,16 @@ export function createColumns(actions: ColumnActions): ColumnDef<Application>[] 
         );
       },
       cell: ({ row }) => {
-        const status = row.getValue("status") as string;
+        const application = row.original;
         return (
-          <Badge className={getStatusVariant(status)}>
-            {formatStatus(status)}
-          </Badge>
+          <StatusSelect
+            currentStatus={application.status}
+            applicationId={application.id}
+            onStatusChange={actions.onStatusChange}
+          />
         );
       },
-      size: 150,
+      size: 120,
     },
 
     // Funding Amount Column
@@ -343,7 +349,7 @@ export function createColumns(actions: ColumnActions): ColumnDef<Application>[] 
           </div>
         );
       },
-      size: 180,
+      size: 140,
     },
 
     // Deadline Column
@@ -376,10 +382,10 @@ export function createColumns(actions: ColumnActions): ColumnDef<Application>[] 
           </div>
         );
       },
-      size: 150,
+      size: 120,
     },
 
-    // Last Edited Column (hidden by default)
+    // Last Edited Column
     {
       accessorKey: "lastEditedAt",
       header: ({ column }) => {
@@ -406,7 +412,37 @@ export function createColumns(actions: ColumnActions): ColumnDef<Application>[] 
           </div>
         );
       },
-      size: 150,
+      size: 120,
+    },
+
+    // Created At Column
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="-ml-4"
+          >
+            Created At
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const date = new Date(row.getValue("createdAt"));
+        return (
+          <div className="text-sm text-muted-foreground">
+            {date.toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </div>
+        );
+      },
+      size: 120,
     },
 
     // Actions Column (dropdown)
@@ -475,7 +511,7 @@ export function createColumns(actions: ColumnActions): ColumnDef<Application>[] 
       },
       enableSorting: false,
       enableResizing: false,
-      size: 60,
+      size: 50,
     },
   ];
 }
