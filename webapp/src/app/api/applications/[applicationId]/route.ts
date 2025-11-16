@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
+import {
+  getDocumentsInFolderTree,
+  deleteFileFromStorage,
+} from "@/lib/storageCleanup";
 
 // PUT /api/applications/[applicationId] - Update application
 export async function PUT(
@@ -110,6 +114,26 @@ export async function DELETE(
       );
     }
 
+    // Delete files from storage for documents that will be cascade deleted
+    const appFolder = await prisma.folder.findFirst({
+      where: { applicationId },
+    });
+
+    if (appFolder) {
+      // Get all docs in folder tree
+      const docs = await getDocumentsInFolderTree(appFolder.id, prisma);
+      const fileDocs = docs.filter((d) => d.fileUrl);
+
+      if (fileDocs.length > 0) {
+        console.log(`Cleaning ${fileDocs.length} files before cascade...`);
+        for (const doc of fileDocs) {
+          if (doc.fileUrl) {
+            await deleteFileFromStorage(doc.fileUrl);
+          }
+        }
+      }
+    }
+
     // Unlink documents from application (set applicationId to null)
     // instead of deleting them
     await prisma.document.updateMany({
@@ -121,7 +145,7 @@ export async function DELETE(
       },
     });
 
-    // Delete the application
+    // Delete the application (cascade deletes folder + remaining docs)
     await prisma.application.delete({
       where: {
         id: applicationId,

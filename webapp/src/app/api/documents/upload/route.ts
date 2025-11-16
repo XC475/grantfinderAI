@@ -122,6 +122,7 @@ export async function POST(req: NextRequest) {
       filePath,
       organizationId: dbUser.organizationId,
       userId: user.id,
+      authHeader: req.headers.get("authorization") ? "present" : "missing",
     });
 
     const { error: uploadError } = await supabase.storage
