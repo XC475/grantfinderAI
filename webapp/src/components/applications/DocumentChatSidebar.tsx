@@ -539,6 +539,49 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
     );
   }, []);
 
+  // Listen for editor selection events (must be after handleSubmit is defined)
+  useEffect(() => {
+    const handleAddToChat = (event: CustomEvent<{ text: string }>) => {
+      const { text } = event.detail;
+      setInput((prev) => {
+        if (prev.trim()) {
+          return `${prev}\n\nSelected text: "${text}"`;
+        }
+        return `Selected text: "${text}"`;
+      });
+    };
+
+    const handleAskAI = (event: CustomEvent<{ text: string; prompt: string }>) => {
+      const { prompt } = event.detail;
+      setInput(prompt);
+      // Auto-submit after a short delay to ensure input is set
+      setTimeout(() => {
+        const fakeEvent = { preventDefault: () => {} };
+        handleSubmit(fakeEvent);
+      }, 100);
+    };
+
+    const handleImproveWriting = (event: CustomEvent<{ text: string; prompt: string }>) => {
+      const { prompt } = event.detail;
+      setInput(prompt);
+      // Auto-submit after a short delay to ensure input is set
+      setTimeout(() => {
+        const fakeEvent = { preventDefault: () => {} };
+        handleSubmit(fakeEvent);
+      }, 100);
+    };
+
+    window.addEventListener("editor-selection-add-to-chat", handleAddToChat as EventListener);
+    window.addEventListener("editor-selection-ask-ai", handleAskAI as EventListener);
+    window.addEventListener("editor-selection-improve-writing", handleImproveWriting as EventListener);
+
+    return () => {
+      window.removeEventListener("editor-selection-add-to-chat", handleAddToChat as EventListener);
+      window.removeEventListener("editor-selection-ask-ai", handleAskAI as EventListener);
+      window.removeEventListener("editor-selection-improve-writing", handleImproveWriting as EventListener);
+    };
+  }, [handleSubmit]);
+
   const handleSuggestedAction = (action: string) => {
     setInput(action);
     // Small delay to ensure the input is set before submitting
