@@ -11,6 +11,8 @@ import { FolderList } from "./FolderList";
 import { RenameDialog } from "./RenameDialog";
 import { MoveModal } from "./MoveModal";
 import { CopyDialog } from "./CopyDialog";
+import { GoogleDriveConnectButton } from "@/components/google-drive/ConnectButton";
+import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
 
 interface Folder {
   id: string;
@@ -690,6 +692,13 @@ export function DocumentsView({
           />
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <GoogleDriveConnectButton />
+          <GoogleDriveImportPicker
+            mode="import"
+            folderId={currentFolderId}
+            applicationId={applicationId}
+            onImported={() => fetchFolderContents(currentFolderId)}
+          />
           <CreateMenu
             currentFolderId={currentFolderId}
             applicationId={applicationId}

@@ -26,6 +26,7 @@ import {
   SourcesModal,
   type SourceDocument,
 } from "@/components/chat/SourcesModal";
+import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
 
 // Helper function to get document icon based on file type
 function getDocumentIcon(doc: SourceDocument) {
@@ -133,6 +134,10 @@ export function HeroChatInput({
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       setFiles(Array.from(e.dataTransfer.files));
     }
+  };
+
+  const handleDriveFilesSelected = (driveFiles: File[]) => {
+    setFiles((prev) => (prev ? [...prev, ...driveFiles] : driveFiles));
   };
 
   return (
@@ -262,13 +267,20 @@ export function HeroChatInput({
                   <span>Add sources</span>
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem
-                disabled
-                className="cursor-not-allowed opacity-50"
+              <GoogleDriveImportPicker
+                mode="attach"
+                onFilesSelected={handleDriveFilesSelected}
               >
-                <FolderOpen className="mr-2 h-4 w-4" />
-                <span>Google Drive (Coming Soon)</span>
-              </DropdownMenuItem>
+                {({ onClick }) => (
+                  <DropdownMenuItem
+                    onClick={onClick}
+                    className="cursor-pointer"
+                  >
+                    <FolderOpen className="mr-2 h-4 w-4" />
+                    <span>Google Drive</span>
+                  </DropdownMenuItem>
+                )}
+              </GoogleDriveImportPicker>
             </DropdownMenuContent>
           </DropdownMenu>
 

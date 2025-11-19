@@ -30,6 +30,7 @@ import {
   SourcesModal,
   type SourceDocument,
 } from "@/components/chat/SourcesModal";
+import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
 
 interface MessageInputBaseProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -168,6 +169,10 @@ export function MessageInput({
         return [...currentFiles, ...files];
       });
     }
+  };
+
+  const handleDriveFilesSelected = (driveFiles: File[]) => {
+    addFiles(driveFiles);
   };
 
   const onDragOver = (event: React.DragEvent) => {
@@ -474,13 +479,20 @@ export function MessageInput({
                       <span>Add sources</span>
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem
-                    disabled
-                    className="cursor-not-allowed opacity-50"
+                  <GoogleDriveImportPicker
+                    mode="attach"
+                    onFilesSelected={handleDriveFilesSelected}
                   >
-                    <FolderOpen className="mr-2 h-4 w-4" />
-                    <span>Google Drive (Coming Soon)</span>
-                  </DropdownMenuItem>
+                    {({ onClick }) => (
+                      <DropdownMenuItem
+                        onClick={onClick}
+                        className="cursor-pointer"
+                      >
+                        <FolderOpen className="mr-2 h-4 w-4" />
+                        <span>Google Drive</span>
+                      </DropdownMenuItem>
+                    )}
+                  </GoogleDriveImportPicker>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
