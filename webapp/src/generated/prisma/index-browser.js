@@ -284,7 +284,6 @@ exports.Prisma.RecommendationScalarFieldEnum = {
   organizationId: 'organizationId',
   opportunityId: 'opportunityId',
   fitScore: 'fitScore',
-  fitReasoning: 'fitReasoning',
   fitDescription: 'fitDescription',
   districtName: 'districtName',
   queryDate: 'queryDate',

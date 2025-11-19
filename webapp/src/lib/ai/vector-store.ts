@@ -6,9 +6,19 @@ const embeddings = new OpenAIEmbeddings({
   modelName: "text-embedding-3-small",
 });
 
+// Validate environment variables
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable");
+}
+if (!process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
+  throw new Error(
+    "Missing NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY environment variable"
+  );
+}
+
 const supabaseClient = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 );
 
 export interface GrantMetadata {
@@ -33,6 +43,7 @@ export interface GrantMetadata {
   vectorized_at: string;
   model: string;
   source_field: string;
+  services?: string[] | null;
 }
 
 export interface GrantDocument {
@@ -76,28 +87,32 @@ export async function searchGrants(
     console.log("📋 Filters:", filters);
 
     // Perform similarity search
-    let results = await vectorStore.similaritySearch(
-      query,
-      10, // top 10 results
-      filter
-    );
-
-    // Post-filter by services if provided (since vector store doesn't support array overlap filtering)
-    if (filters?.services && filters.services.length > 0) {
-      results = results.filter((doc) => {
-        const grantServices = doc.metadata.services as string[] | undefined;
-        if (!grantServices || grantServices.length === 0) {
-          return false; // Exclude grants without services
-        }
-        // Check if there's any overlap between grant services and filter services
-        return grantServices.some((service) =>
-          filters.services!.includes(service)
-        );
+    let results;
+    try {
+      results = await vectorStore.similaritySearch(
+        query,
+        10, // top 10 results
+        filter
+      );
+    } catch (searchError) {
+      console.error("❌ Vector store search failed:", searchError);
+      console.error("   Error details:", {
+        message:
+          searchError instanceof Error
+            ? searchError.message
+            : String(searchError),
+        cause: searchError instanceof Error ? searchError.cause : undefined,
+        stack: searchError instanceof Error ? searchError.stack : undefined,
       });
-      console.log(
-        `📋 Filtered to ${results.length} grants matching services: ${filters.services.join(", ")}`
+      throw new Error(
+        `Error searching for documents: ${searchError instanceof Error ? searchError.message : String(searchError)} ${searchError instanceof Error && searchError.cause ? searchError.cause : ""}`
       );
     }
+
+    console.log(`✅ Vector search returned ${results.length} grants`);
+
+    // Note: Service filtering is disabled because grants don't have a 'services' field in the vector store
+    // The AI agent will handle relevance filtering based on the organization's context
 
     console.log(`✅ Found ${results.length} grants`);
 

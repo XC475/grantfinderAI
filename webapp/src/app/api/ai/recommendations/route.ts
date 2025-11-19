@@ -11,7 +11,6 @@ interface RecommendationResult {
   opportunity_id: number;
   opportunity_title: string;
   fit_score: number;
-  fit_reasoning: string;
   fit_description: string;
   organization_name: string;
   organization_id: string;
@@ -47,6 +46,9 @@ export async function POST(_req: NextRequest) {
     // 3. Fetch organization data
     const organization = await prisma.organization.findUnique({
       where: { id: dbUser.organizationId },
+      include: {
+        customFields: true,
+      },
     });
 
     if (!organization) {
@@ -90,6 +92,12 @@ export async function POST(_req: NextRequest) {
             ? organization.annualOperatingBudget.toString()
             : null,
           fiscalYearEnd: organization.fiscalYearEnd,
+          customFields: organization.customFields
+            ? organization.customFields.reduce((acc, field) => {
+                acc[field.fieldName] = field.fieldValue;
+                return acc;
+              }, {} as Record<string, string | null>)
+            : {},
         }
       : null;
 
@@ -112,6 +120,12 @@ export async function POST(_req: NextRequest) {
           ? organization.annualOperatingBudget.toString()
           : null,
         fiscalYearEnd: organization.fiscalYearEnd,
+        customFields: organization.customFields
+          ? organization.customFields.reduce((acc, field) => {
+              acc[field.fieldName] = field.fieldValue;
+              return acc;
+            }, {} as Record<string, string | null>)
+          : {},
       }
     );
 
@@ -242,7 +256,6 @@ export async function POST(_req: NextRequest) {
           if (
             !rec.opportunity_id ||
             rec.fit_score === undefined ||
-            !rec.fit_reasoning ||
             !rec.fit_description
           ) {
             console.warn(
@@ -266,7 +279,6 @@ export async function POST(_req: NextRequest) {
                 where: { id: existing.id },
                 data: {
                   fitScore: Math.round(rec.fit_score),
-                  fitReasoning: rec.fit_reasoning,
                   fitDescription: rec.fit_description,
                   queryDate: new Date(),
                 },
@@ -276,7 +288,6 @@ export async function POST(_req: NextRequest) {
                   organizationId: organization.id,
                   opportunityId: rec.opportunity_id.toString(),
                   fitScore: Math.round(rec.fit_score),
-                  fitReasoning: rec.fit_reasoning,
                   fitDescription: rec.fit_description,
                   districtName: organization.name,
                   queryDate: new Date(),
@@ -329,8 +340,7 @@ Goal:
 3. ALWAYS evaluate and rank the grants you receive based on how well they fit the district's eligibility, scale, and needs.
 4. ALWAYS Return:
  - A **fit_score** (0–100%)  
- - A **fit_reasoning** (concise explanation of your evaluation logic)  
- - A **fit_description** (a short, plain-language summary written for a non-technical user)
+ - A **fit_description** (a concise, plain-language summary written for a non-technical user explaining why this grant fits)
 - The **fit_description** must be **straight to the point** — no introductions, no phrases like "This grant is…" or "The district should…". Just state the fit directly.
 </task_summary>
 
@@ -438,8 +448,7 @@ Return a JSON array of recommendation objects. Each object must follow this stru
     "opportunity_id": <number from tool results>,
     "opportunity_title": "<title from tool results>",
     "fit_score": <0-100 integer>,
-    "fit_reasoning": "<detailed reasoning for the fit score>",
-    "fit_description": "<short plain-language summary>",
+    "fit_description": "<concise plain-language summary explaining why this grant fits>",
     "organization_name": "${districtInfo.name}",
     "organization_id": "${districtInfo.id}",
     "query_date": "${new Date().toISOString()}"
@@ -451,7 +460,7 @@ CRITICAL RULES:
 - fit_score must be an integer between 0-100
 - opportunity_id must be extracted from the tool results (the 'id' field)
 - opportunity_title must be extracted from the tool results (the 'title' field)
-- fit_description should be concise (1-2 sentences max)
+- fit_description should be concise (2-3 sentences max) and explain WHY the grant fits the district's needs, priorities, and eligibility
 - Do NOT include phrases like "This grant is" or "The district should" in fit_description
 </output_policy>`;
 }

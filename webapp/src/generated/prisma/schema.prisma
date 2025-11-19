@@ -240,7 +240,6 @@ model Recommendation {
   organizationId String
   opportunityId  String
   fitScore       Int
-  fitReasoning   String
   fitDescription String
   districtName   String
   queryDate      DateTime

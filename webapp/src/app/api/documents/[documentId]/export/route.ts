@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
-import { convertTiptapToDocx, tiptapToStyledHTML } from "@/lib/document-converters";
+import {
+  convertTiptapToDocx,
+  tiptapToStyledHTML,
+} from "@/lib/document-converters";
 
 // POST /api/documents/[documentId]/export - Export document as PDF or DOCX
 export async function POST(
@@ -12,7 +15,7 @@ export async function POST(
     const { documentId } = await params;
     const { format } = await request.json();
 
-    if (!format || !['pdf', 'docx'].includes(format)) {
+    if (!format || !["pdf", "docx"].includes(format)) {
       return NextResponse.json(
         { error: "Invalid format. Must be 'pdf' or 'docx'" },
         { status: 400 }
@@ -56,27 +59,28 @@ export async function POST(
     }
 
     // Convert document based on format
-    if (format === 'pdf') {
+    if (format === "pdf") {
       // Return styled HTML that the browser can print to PDF
-      const html = tiptapToStyledHTML(document.content || '');
-      
+      const html = tiptapToStyledHTML(document.content || "");
+
       return new NextResponse(html, {
         status: 200,
         headers: {
-          'Content-Type': 'text/html; charset=utf-8',
+          "Content-Type": "text/html; charset=utf-8",
         },
       });
     } else {
       // DOCX export
-      const buffer = await convertTiptapToDocx(document.content || '');
+      const buffer = await convertTiptapToDocx(document.content || "");
       const filename = `${document.title}.docx`;
-      
-      return new NextResponse(buffer, {
+
+      return new NextResponse(new Uint8Array(buffer), {
         status: 200,
         headers: {
-          'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-          'Content-Disposition': `attachment; filename="${filename}"`,
-          'Content-Length': buffer.length.toString(),
+          "Content-Type":
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "Content-Disposition": `attachment; filename="${filename}"`,
+          "Content-Length": buffer.length.toString(),
         },
       });
     }
@@ -88,4 +92,3 @@ export async function POST(
     );
   }
 }
-

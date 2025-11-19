@@ -540,12 +540,11 @@ export default function ProfilePage() {
       </div>
 
       <Tabs defaultValue="basic-info" className="w-full">
-        <TabsList className="grid w-full grid-cols-5 mb-8">
+        <TabsList className="grid w-full grid-cols-4 mb-8">
           <TabsTrigger value="basic-info">Basic Info</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
           <TabsTrigger value="org-info">Org Info</TabsTrigger>
           <TabsTrigger value="custom-fields">Custom Fields</TabsTrigger>
-          <TabsTrigger value="funding">Funding</TabsTrigger>
         </TabsList>
 
         <TabsContent value="basic-info" className="space-y-8">
@@ -1263,14 +1262,6 @@ export default function ProfilePage() {
               ))}
             </div>
           )}
-        </TabsContent>
-
-        <TabsContent value="funding" className="space-y-8">
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">
-              Funding information will be available here soon.
-            </p>
-          </div>
         </TabsContent>
       </Tabs>
 

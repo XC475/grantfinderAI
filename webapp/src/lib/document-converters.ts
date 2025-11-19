@@ -1,3 +1,4 @@
+import { Extension } from "@tiptap/core";
 import { generateHTML, generateJSON } from "@tiptap/html";
 import StarterKit from "@tiptap/starter-kit";
 import { TextStyle } from "@tiptap/extension-text-style";
@@ -25,9 +26,9 @@ type TiptapJSON = {
   text?: string;
   marks?: Array<{
     type: string;
-    attrs?: Record<string, any>;
+    attrs?: Record<string, unknown>;
   }>;
-  attrs?: Record<string, any>;
+  attrs?: Record<string, unknown>;
 };
 
 const EMPTY_TIPTAP_DOC: TiptapJSON = {
@@ -41,7 +42,7 @@ const tiptapExtensions = [
   TextStyle,
   Color,
   FontFamily,
-  FontSize as any, // Type compatibility workaround for third-party extension
+  FontSize as unknown as Extension, // Type compatibility workaround for third-party extension
   TextAlign.configure({ types: ["heading", "paragraph"] }),
   Highlight,
   Subscript,
@@ -219,7 +220,6 @@ export function tiptapToPlainText(jsonString?: string | null): string {
 
 export async function convertTiptapToDocx(tiptapJson: string): Promise<Buffer> {
   const json = parseTiptapJSON(tiptapJson);
-  const paragraphs: Paragraph[] = [];
 
   function processNode(node: TiptapJSON): Paragraph[] {
     const results: Paragraph[] = [];
@@ -233,7 +233,7 @@ export async function convertTiptapToDocx(tiptapJson: string): Promise<Buffer> {
       results.push(
         new Paragraph({
           children: textRuns.length > 0 ? textRuns : [new TextRun("")],
-          alignment: getAlignment(node.attrs?.textAlign),
+          alignment: getAlignment(node.attrs?.textAlign as string | undefined),
         })
       );
     } else if (node.type.startsWith("heading")) {
@@ -243,7 +243,7 @@ export async function convertTiptapToDocx(tiptapJson: string): Promise<Buffer> {
         new Paragraph({
           children: textRuns.length > 0 ? textRuns : [new TextRun("")],
           heading: getHeadingLevel(level),
-          alignment: getAlignment(node.attrs?.textAlign),
+          alignment: getAlignment(node.attrs?.textAlign as string | undefined),
         })
       );
     } else if (node.type === "bulletList" && node.content) {
@@ -261,7 +261,7 @@ export async function convertTiptapToDocx(tiptapJson: string): Promise<Buffer> {
         }
       });
     } else if (node.type === "orderedList" && node.content) {
-      node.content.forEach((listItem, index) => {
+      node.content.forEach((listItem) => {
         if (listItem.type === "listItem" && listItem.content) {
           listItem.content.forEach((para) => {
             const textRuns = extractTextRuns(para);
@@ -304,7 +304,8 @@ export async function convertTiptapToDocx(tiptapJson: string): Promise<Buffer> {
               italics: isItalic,
               underline: isUnderline ? {} : undefined,
               strike: isStrike,
-              color: color ? color.replace("#", "") : undefined,
+              color:
+                typeof color === "string" ? color.replace("#", "") : undefined,
             })
           );
         }

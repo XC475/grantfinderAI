@@ -7,8 +7,51 @@ import { toast } from "sonner";
 
 declare global {
   interface Window {
-    gapi: any;
-    google: any;
+    gapi:
+      | {
+          load: (api: string, callback: () => void) => void;
+        }
+      | undefined;
+    google:
+      | {
+          accounts: {
+            oauth2: {
+              initTokenClient: (config: unknown) => {
+                requestAccessToken: () => void;
+              };
+            };
+          };
+          picker: {
+            Action: { PICKED: string; CANCEL: string };
+            Feature: { MULTISELECT_ENABLED: string };
+            PickerBuilder: new () => PickerBuilder;
+            ViewId: { DOCS: string };
+            DocsView: new () => DocsView;
+            DocsUploadView: new () => unknown;
+          };
+        }
+      | undefined;
+  }
+
+  interface PickerBuilder {
+    addView: (view: unknown) => PickerBuilder;
+    setOAuthToken: (token: string) => PickerBuilder;
+    setDeveloperKey: (key: string) => PickerBuilder;
+    setCallback: (
+      callback: (data: {
+        action: string;
+        docs?: Array<{ id: string; name: string; mimeType: string }>;
+      }) => void
+    ) => PickerBuilder;
+    enableFeature: (feature: string) => PickerBuilder;
+    setTitle: (title: string) => PickerBuilder;
+    setSize: (width: number, height: number) => PickerBuilder;
+    build: () => { setVisible: (visible: boolean) => void };
+  }
+
+  interface DocsView {
+    setIncludeFolders: (include: boolean) => DocsView;
+    setSelectFolderEnabled: (enabled: boolean) => DocsView;
   }
 }
 
@@ -71,13 +114,16 @@ export function GoogleDriveImportPicker(props: GoogleDriveImportPickerProps) {
     try {
       const statusResponse = await fetch("/api/google-drive/status");
       if (!statusResponse.ok) {
-        throw new Error("Connect Google Drive to import files");
+        throw new Error("Failed to check Google Drive status");
       }
 
       const status = await statusResponse.json();
 
       if (!status.connected || !status.accessToken) {
-        throw new Error("Google Drive is not connected");
+        // Not connected - redirect to auth flow
+        toast.info("Connecting to Google Drive...");
+        window.location.href = "/api/google-drive/auth";
+        return;
       }
 
       if (!status.pickerApiKey) {
@@ -106,17 +152,85 @@ export function GoogleDriveImportPicker(props: GoogleDriveImportPickerProps) {
       }
 
       const picker = pickerBuilder
-        .setCallback(async (data: any) => {
-          if (data.action === window.google.picker.Action.PICKED) {
-            if (mode === "attach") {
-              // Chat attachment mode - download files
-              try {
-                const files = data.docs;
-                const downloadedFiles: File[] = [];
+        .setCallback(
+          async (data: {
+            action: string;
+            docs?: Array<{ id: string; name: string; mimeType: string }>;
+          }) => {
+            if (data.action === window.google?.picker.Action.PICKED) {
+              if (mode === "attach") {
+                // Chat attachment mode - download files
+                try {
+                  const files = data.docs;
+                  if (!files || files.length === 0) {
+                    return;
+                  }
+                  const downloadedFiles: File[] = [];
 
-                for (const file of files) {
-                  const downloadResponse = await fetch(
-                    "/api/google-drive/download",
+                  for (const file of files) {
+                    const downloadResponse = await fetch(
+                      "/api/google-drive/download",
+                      {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          fileId: file.id,
+                          fileName: file.name,
+                          mimeType: file.mimeType,
+                          asText: true, // For chat, get text content not binary files
+                        }),
+                      }
+                    );
+
+                    if (!downloadResponse.ok) {
+                      throw new Error(`Failed to download ${file.name}`);
+                    }
+
+                    const blob = await downloadResponse.blob();
+                    // Get the actual filename from Content-Disposition header
+                    const contentDisposition = downloadResponse.headers.get(
+                      "Content-Disposition"
+                    );
+                    const actualFileName = contentDisposition
+                      ? contentDisposition
+                          .split('filename="')[1]
+                          ?.split('"')[0] || file.name
+                      : file.name;
+
+                    const actualMimeType =
+                      downloadResponse.headers.get("Content-Type") ||
+                      file.mimeType;
+
+                    const downloadedFile = new File([blob], actualFileName, {
+                      type: actualMimeType,
+                    });
+
+                    downloadedFiles.push(downloadedFile);
+                  }
+
+                  if (props.mode === "attach") {
+                    props.onFilesSelected(downloadedFiles);
+                  }
+                  toast.success(
+                    `${downloadedFiles.length} file(s) added from Google Drive`
+                  );
+                } catch (error) {
+                  console.error(error);
+                  toast.error(
+                    error instanceof Error
+                      ? error.message
+                      : "Failed to download files"
+                  );
+                }
+              } else {
+                // Folder import mode - import single file
+                if (!data.docs || data.docs.length === 0) {
+                  return;
+                }
+                const file = data.docs[0];
+                try {
+                  const importResponse = await fetch(
+                    "/api/google-drive/import",
                     {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
@@ -124,91 +238,39 @@ export function GoogleDriveImportPicker(props: GoogleDriveImportPickerProps) {
                         fileId: file.id,
                         fileName: file.name,
                         mimeType: file.mimeType,
-                        asText: true, // For chat, get text content not binary files
+                        folderId:
+                          props.mode !== "attach"
+                            ? (props.folderId ?? null)
+                            : null,
+                        applicationId:
+                          props.mode !== "attach"
+                            ? (props.applicationId ?? null)
+                            : null,
                       }),
                     }
                   );
 
-                  if (!downloadResponse.ok) {
-                    throw new Error(`Failed to download ${file.name}`);
+                  if (!importResponse.ok) {
+                    const error = await importResponse.json().catch(() => null);
+                    throw new Error(error?.error || "Failed to import file");
                   }
 
-                  const blob = await downloadResponse.blob();
-                  // Get the actual filename from Content-Disposition header
-                  const contentDisposition = downloadResponse.headers.get(
-                    "Content-Disposition"
+                  const importData = await importResponse.json();
+
+                  toast.success("File imported from Google Drive");
+                  props.onImported?.(importData.document?.id);
+                } catch (error) {
+                  console.error(error);
+                  toast.error(
+                    error instanceof Error
+                      ? error.message
+                      : "Failed to import file"
                   );
-                  const actualFileName = contentDisposition
-                    ? contentDisposition
-                        .split('filename="')[1]
-                        ?.split('"')[0] || file.name
-                    : file.name;
-
-                  const actualMimeType =
-                    downloadResponse.headers.get("Content-Type") ||
-                    file.mimeType;
-
-                  const downloadedFile = new File([blob], actualFileName, {
-                    type: actualMimeType,
-                  });
-
-                  downloadedFiles.push(downloadedFile);
                 }
-
-                if (props.mode === "attach") {
-                  props.onFilesSelected(downloadedFiles);
-                }
-                toast.success(
-                  `${downloadedFiles.length} file(s) added from Google Drive`
-                );
-              } catch (error) {
-                console.error(error);
-                toast.error(
-                  error instanceof Error
-                    ? error.message
-                    : "Failed to download files"
-                );
-              }
-            } else {
-              // Folder import mode - import single file
-              const file = data.docs[0];
-              try {
-                const importResponse = await fetch("/api/google-drive/import", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    fileId: file.id,
-                    fileName: file.name,
-                    mimeType: file.mimeType,
-                    folderId:
-                      props.mode !== "attach" ? (props.folderId ?? null) : null,
-                    applicationId:
-                      props.mode !== "attach"
-                        ? (props.applicationId ?? null)
-                        : null,
-                  }),
-                });
-
-                if (!importResponse.ok) {
-                  const error = await importResponse.json().catch(() => null);
-                  throw new Error(error?.error || "Failed to import file");
-                }
-
-                const importData = await importResponse.json();
-
-                toast.success("File imported from Google Drive");
-                props.onImported?.(importData.document?.id);
-              } catch (error) {
-                console.error(error);
-                toast.error(
-                  error instanceof Error
-                    ? error.message
-                    : "Failed to import file"
-                );
               }
             }
           }
-        })
+        )
         .setTitle(
           mode === "attach"
             ? "Select files from Google Drive"

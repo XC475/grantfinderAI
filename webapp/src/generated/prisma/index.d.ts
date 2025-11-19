@@ -14843,7 +14843,6 @@ export namespace Prisma {
     organizationId: string | null
     opportunityId: string | null
     fitScore: number | null
-    fitReasoning: string | null
     fitDescription: string | null
     districtName: string | null
     queryDate: Date | null
@@ -14855,7 +14854,6 @@ export namespace Prisma {
     organizationId: string | null
     opportunityId: string | null
     fitScore: number | null
-    fitReasoning: string | null
     fitDescription: string | null
     districtName: string | null
     queryDate: Date | null
@@ -14867,7 +14865,6 @@ export namespace Prisma {
     organizationId: number
     opportunityId: number
     fitScore: number
-    fitReasoning: number
     fitDescription: number
     districtName: number
     queryDate: number
@@ -14889,7 +14886,6 @@ export namespace Prisma {
     organizationId?: true
     opportunityId?: true
     fitScore?: true
-    fitReasoning?: true
     fitDescription?: true
     districtName?: true
     queryDate?: true
@@ -14901,7 +14897,6 @@ export namespace Prisma {
     organizationId?: true
     opportunityId?: true
     fitScore?: true
-    fitReasoning?: true
     fitDescription?: true
     districtName?: true
     queryDate?: true
@@ -14913,7 +14908,6 @@ export namespace Prisma {
     organizationId?: true
     opportunityId?: true
     fitScore?: true
-    fitReasoning?: true
     fitDescription?: true
     districtName?: true
     queryDate?: true
@@ -15012,7 +15006,6 @@ export namespace Prisma {
     organizationId: string
     opportunityId: string
     fitScore: number
-    fitReasoning: string
     fitDescription: string
     districtName: string
     queryDate: Date
@@ -15043,7 +15036,6 @@ export namespace Prisma {
     organizationId?: boolean
     opportunityId?: boolean
     fitScore?: boolean
-    fitReasoning?: boolean
     fitDescription?: boolean
     districtName?: boolean
     queryDate?: boolean
@@ -15056,7 +15048,6 @@ export namespace Prisma {
     organizationId?: boolean
     opportunityId?: boolean
     fitScore?: boolean
-    fitReasoning?: boolean
     fitDescription?: boolean
     districtName?: boolean
     queryDate?: boolean
@@ -15069,7 +15060,6 @@ export namespace Prisma {
     organizationId?: boolean
     opportunityId?: boolean
     fitScore?: boolean
-    fitReasoning?: boolean
     fitDescription?: boolean
     districtName?: boolean
     queryDate?: boolean
@@ -15082,14 +15072,13 @@ export namespace Prisma {
     organizationId?: boolean
     opportunityId?: boolean
     fitScore?: boolean
-    fitReasoning?: boolean
     fitDescription?: boolean
     districtName?: boolean
     queryDate?: boolean
     createdAt?: boolean
   }
 
-  export type RecommendationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "opportunityId" | "fitScore" | "fitReasoning" | "fitDescription" | "districtName" | "queryDate" | "createdAt", ExtArgs["result"]["recommendation"]>
+  export type RecommendationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "opportunityId" | "fitScore" | "fitDescription" | "districtName" | "queryDate" | "createdAt", ExtArgs["result"]["recommendation"]>
   export type RecommendationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }
@@ -15110,7 +15099,6 @@ export namespace Prisma {
       organizationId: string
       opportunityId: string
       fitScore: number
-      fitReasoning: string
       fitDescription: string
       districtName: string
       queryDate: Date
@@ -15543,7 +15531,6 @@ export namespace Prisma {
     readonly organizationId: FieldRef<"Recommendation", 'String'>
     readonly opportunityId: FieldRef<"Recommendation", 'String'>
     readonly fitScore: FieldRef<"Recommendation", 'Int'>
-    readonly fitReasoning: FieldRef<"Recommendation", 'String'>
     readonly fitDescription: FieldRef<"Recommendation", 'String'>
     readonly districtName: FieldRef<"Recommendation", 'String'>
     readonly queryDate: FieldRef<"Recommendation", 'DateTime'>
@@ -20736,7 +20723,6 @@ export namespace Prisma {
     organizationId: 'organizationId',
     opportunityId: 'opportunityId',
     fitScore: 'fitScore',
-    fitReasoning: 'fitReasoning',
     fitDescription: 'fitDescription',
     districtName: 'districtName',
     queryDate: 'queryDate',
@@ -22103,7 +22089,6 @@ export namespace Prisma {
     organizationId?: StringFilter<"Recommendation"> | string
     opportunityId?: StringFilter<"Recommendation"> | string
     fitScore?: IntFilter<"Recommendation"> | number
-    fitReasoning?: StringFilter<"Recommendation"> | string
     fitDescription?: StringFilter<"Recommendation"> | string
     districtName?: StringFilter<"Recommendation"> | string
     queryDate?: DateTimeFilter<"Recommendation"> | Date | string
@@ -22116,7 +22101,6 @@ export namespace Prisma {
     organizationId?: SortOrder
     opportunityId?: SortOrder
     fitScore?: SortOrder
-    fitReasoning?: SortOrder
     fitDescription?: SortOrder
     districtName?: SortOrder
     queryDate?: SortOrder
@@ -22132,7 +22116,6 @@ export namespace Prisma {
     organizationId?: StringFilter<"Recommendation"> | string
     opportunityId?: StringFilter<"Recommendation"> | string
     fitScore?: IntFilter<"Recommendation"> | number
-    fitReasoning?: StringFilter<"Recommendation"> | string
     fitDescription?: StringFilter<"Recommendation"> | string
     districtName?: StringFilter<"Recommendation"> | string
     queryDate?: DateTimeFilter<"Recommendation"> | Date | string
@@ -22145,7 +22128,6 @@ export namespace Prisma {
     organizationId?: SortOrder
     opportunityId?: SortOrder
     fitScore?: SortOrder
-    fitReasoning?: SortOrder
     fitDescription?: SortOrder
     districtName?: SortOrder
     queryDate?: SortOrder
@@ -22165,7 +22147,6 @@ export namespace Prisma {
     organizationId?: StringWithAggregatesFilter<"Recommendation"> | string
     opportunityId?: StringWithAggregatesFilter<"Recommendation"> | string
     fitScore?: IntWithAggregatesFilter<"Recommendation"> | number
-    fitReasoning?: StringWithAggregatesFilter<"Recommendation"> | string
     fitDescription?: StringWithAggregatesFilter<"Recommendation"> | string
     districtName?: StringWithAggregatesFilter<"Recommendation"> | string
     queryDate?: DateTimeWithAggregatesFilter<"Recommendation"> | Date | string
@@ -23624,7 +23605,6 @@ export namespace Prisma {
     id?: string
     opportunityId: string
     fitScore: number
-    fitReasoning: string
     fitDescription: string
     districtName: string
     queryDate: Date | string
@@ -23637,7 +23617,6 @@ export namespace Prisma {
     organizationId: string
     opportunityId: string
     fitScore: number
-    fitReasoning: string
     fitDescription: string
     districtName: string
     queryDate: Date | string
@@ -23648,7 +23627,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: StringFieldUpdateOperationsInput | string
     fitScore?: IntFieldUpdateOperationsInput | number
-    fitReasoning?: StringFieldUpdateOperationsInput | string
     fitDescription?: StringFieldUpdateOperationsInput | string
     districtName?: StringFieldUpdateOperationsInput | string
     queryDate?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23661,7 +23639,6 @@ export namespace Prisma {
     organizationId?: StringFieldUpdateOperationsInput | string
     opportunityId?: StringFieldUpdateOperationsInput | string
     fitScore?: IntFieldUpdateOperationsInput | number
-    fitReasoning?: StringFieldUpdateOperationsInput | string
     fitDescription?: StringFieldUpdateOperationsInput | string
     districtName?: StringFieldUpdateOperationsInput | string
     queryDate?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23673,7 +23650,6 @@ export namespace Prisma {
     organizationId: string
     opportunityId: string
     fitScore: number
-    fitReasoning: string
     fitDescription: string
     districtName: string
     queryDate: Date | string
@@ -23684,7 +23660,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: StringFieldUpdateOperationsInput | string
     fitScore?: IntFieldUpdateOperationsInput | number
-    fitReasoning?: StringFieldUpdateOperationsInput | string
     fitDescription?: StringFieldUpdateOperationsInput | string
     districtName?: StringFieldUpdateOperationsInput | string
     queryDate?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23696,7 +23671,6 @@ export namespace Prisma {
     organizationId?: StringFieldUpdateOperationsInput | string
     opportunityId?: StringFieldUpdateOperationsInput | string
     fitScore?: IntFieldUpdateOperationsInput | number
-    fitReasoning?: StringFieldUpdateOperationsInput | string
     fitDescription?: StringFieldUpdateOperationsInput | string
     districtName?: StringFieldUpdateOperationsInput | string
     queryDate?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25176,7 +25150,6 @@ export namespace Prisma {
     organizationId?: SortOrder
     opportunityId?: SortOrder
     fitScore?: SortOrder
-    fitReasoning?: SortOrder
     fitDescription?: SortOrder
     districtName?: SortOrder
     queryDate?: SortOrder
@@ -25192,7 +25165,6 @@ export namespace Prisma {
     organizationId?: SortOrder
     opportunityId?: SortOrder
     fitScore?: SortOrder
-    fitReasoning?: SortOrder
     fitDescription?: SortOrder
     districtName?: SortOrder
     queryDate?: SortOrder
@@ -25204,7 +25176,6 @@ export namespace Prisma {
     organizationId?: SortOrder
     opportunityId?: SortOrder
     fitScore?: SortOrder
-    fitReasoning?: SortOrder
     fitDescription?: SortOrder
     districtName?: SortOrder
     queryDate?: SortOrder
@@ -27615,7 +27586,6 @@ export namespace Prisma {
     id?: string
     opportunityId: string
     fitScore: number
-    fitReasoning: string
     fitDescription: string
     districtName: string
     queryDate: Date | string
@@ -27626,7 +27596,6 @@ export namespace Prisma {
     id?: string
     opportunityId: string
     fitScore: number
-    fitReasoning: string
     fitDescription: string
     districtName: string
     queryDate: Date | string
@@ -27905,7 +27874,6 @@ export namespace Prisma {
     organizationId?: StringFilter<"Recommendation"> | string
     opportunityId?: StringFilter<"Recommendation"> | string
     fitScore?: IntFilter<"Recommendation"> | number
-    fitReasoning?: StringFilter<"Recommendation"> | string
     fitDescription?: StringFilter<"Recommendation"> | string
     districtName?: StringFilter<"Recommendation"> | string
     queryDate?: DateTimeFilter<"Recommendation"> | Date | string
@@ -30676,7 +30644,6 @@ export namespace Prisma {
     id?: string
     opportunityId: string
     fitScore: number
-    fitReasoning: string
     fitDescription: string
     districtName: string
     queryDate: Date | string
@@ -30942,7 +30909,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: StringFieldUpdateOperationsInput | string
     fitScore?: IntFieldUpdateOperationsInput | number
-    fitReasoning?: StringFieldUpdateOperationsInput | string
     fitDescription?: StringFieldUpdateOperationsInput | string
     districtName?: StringFieldUpdateOperationsInput | string
     queryDate?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30953,7 +30919,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: StringFieldUpdateOperationsInput | string
     fitScore?: IntFieldUpdateOperationsInput | number
-    fitReasoning?: StringFieldUpdateOperationsInput | string
     fitDescription?: StringFieldUpdateOperationsInput | string
     districtName?: StringFieldUpdateOperationsInput | string
     queryDate?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30964,7 +30929,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: StringFieldUpdateOperationsInput | string
     fitScore?: IntFieldUpdateOperationsInput | number
-    fitReasoning?: StringFieldUpdateOperationsInput | string
     fitDescription?: StringFieldUpdateOperationsInput | string
     districtName?: StringFieldUpdateOperationsInput | string
     queryDate?: DateTimeFieldUpdateOperationsInput | Date | string
