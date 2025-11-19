@@ -177,9 +177,9 @@ exports.Prisma.UserScalarFieldEnum = {
   onboardingCompleted: 'onboardingCompleted',
   hasTemporaryPassword: 'hasTemporaryPassword',
   googleAccessToken: 'googleAccessToken',
+  googleDriveConnected: 'googleDriveConnected',
   googleRefreshToken: 'googleRefreshToken',
-  googleTokenExpiry: 'googleTokenExpiry',
-  googleDriveConnected: 'googleDriveConnected'
+  googleTokenExpiry: 'googleTokenExpiry'
 };
 
 exports.Prisma.OrganizationScalarFieldEnum = {
@@ -213,6 +213,15 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   urbanCentricLocale: 'urbanCentricLocale',
   logoUrl: 'logoUrl',
   services: 'services'
+};
+
+exports.Prisma.CustomFieldScalarFieldEnum = {
+  id: 'id',
+  fieldName: 'fieldName',
+  fieldValue: 'fieldValue',
+  organizationId: 'organizationId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.GrantBookmarkScalarFieldEnum = {
@@ -300,9 +309,9 @@ exports.Prisma.DocumentScalarFieldEnum = {
   updatedAt: 'updatedAt',
   organizationId: 'organizationId',
   folderId: 'folderId',
-  fileUrl: 'fileUrl',
+  fileSize: 'fileSize',
   fileType: 'fileType',
-  fileSize: 'fileSize'
+  fileUrl: 'fileUrl'
 };
 
 exports.Prisma.FolderScalarFieldEnum = {
@@ -481,6 +490,7 @@ exports.Prisma.ModelName = {
   opportunities: 'opportunities',
   User: 'User',
   Organization: 'Organization',
+  CustomField: 'CustomField',
   GrantBookmark: 'GrantBookmark',
   GrantEligibilityAnalysis: 'GrantEligibilityAnalysis',
   Application: 'Application',

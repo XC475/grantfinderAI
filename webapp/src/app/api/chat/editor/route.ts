@@ -68,6 +68,7 @@ export async function POST(req: NextRequest) {
             strategicPlan: true,
             annualOperatingBudget: true,
             fiscalYearEnd: true,
+            customFields: true,
           },
         },
       },
@@ -224,7 +225,8 @@ ${organization.lowestGrade && organization.highestGrade ? `Grade Range: ${organi
 ${organization.missionStatement ? `\nMission Statement: ${organization.missionStatement}` : ""}
 ${organization.strategicPlan ? `\nStrategic Plan: ${organization.strategicPlan}` : ""}
 ${organization.annualOperatingBudget ? `\nAnnual Operating Budget: $${Number(organization.annualOperatingBudget).toLocaleString()}` : ""}
-${organization.fiscalYearEnd ? `Fiscal Year End: ${organization.fiscalYearEnd}` : ""}`;
+${organization.fiscalYearEnd ? `Fiscal Year End: ${organization.fiscalYearEnd}` : ""}
+${organization.customFields && organization.customFields.length > 0 ? `\n\nCUSTOM FIELDS:\n${organization.customFields.map(field => `${field.fieldName}: ${field.fieldValue || 'N/A'}`).join('\n')}` : ""}`;
     }
 
     // Build system prompt with document context, organization info, application context, attachments, and source documents

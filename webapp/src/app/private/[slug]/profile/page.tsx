@@ -31,11 +31,15 @@ import {
   Save,
   Sparkles,
   GraduationCap,
+  Plus,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { createClient } from "@/utils/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CustomFieldModal } from "@/components/profile/CustomFieldModal";
 
 // Grade level options with numeric values
 const GRADE_OPTIONS = [
@@ -91,6 +95,15 @@ interface Organization {
   updatedAt: string;
 }
 
+interface CustomField {
+  id: string;
+  fieldName: string;
+  fieldValue: string | null;
+  organizationId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export default function ProfilePage() {
   const params = useParams();
   const slug = params.slug as string;
@@ -103,6 +116,12 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
+
+  // Custom fields state
+  const [customFields, setCustomFields] = useState<CustomField[]>([]);
+  const [loadingCustomFields, setLoadingCustomFields] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedField, setSelectedField] = useState<CustomField | null>(null);
 
   useEffect(() => {
     fetchOrganization();
@@ -360,6 +379,134 @@ export default function ProfilePage() {
     }
   };
 
+  // Fetch custom fields
+  const fetchCustomFields = async () => {
+    if (!organization) return;
+
+    setLoadingCustomFields(true);
+    try {
+      const response = await fetch(
+        `/api/organizations/${organization.id}/custom-fields`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch custom fields");
+      }
+
+      const data = await response.json();
+      setCustomFields(data);
+    } catch (error) {
+      console.error("Error fetching custom fields:", error);
+      toast.error("Failed to load custom fields");
+    } finally {
+      setLoadingCustomFields(false);
+    }
+  };
+
+  // Load custom fields when organization is loaded
+  useEffect(() => {
+    if (organization) {
+      fetchCustomFields();
+    }
+  }, [organization?.id]);
+
+  // Handle create/update custom field
+  const handleSaveCustomField = async (
+    fieldName: string,
+    fieldValue: string
+  ) => {
+    if (!organization) return;
+
+    try {
+      if (selectedField) {
+        // Update existing field
+        const response = await fetch(
+          `/api/organizations/${organization.id}/custom-fields/${selectedField.id}`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ fieldName, fieldValue }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to update custom field");
+        }
+
+        const updatedField = await response.json();
+        setCustomFields((prev) =>
+          prev.map((field) =>
+            field.id === selectedField.id ? updatedField : field
+          )
+        );
+        toast.success("Custom field updated successfully");
+      } else {
+        // Create new field
+        const response = await fetch(
+          `/api/organizations/${organization.id}/custom-fields`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ fieldName, fieldValue }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to create custom field");
+        }
+
+        const newField = await response.json();
+        setCustomFields((prev) => [...prev, newField]);
+        toast.success("Custom field created successfully");
+      }
+    } catch (error) {
+      console.error("Error saving custom field:", error);
+      throw error;
+    }
+  };
+
+  // Handle delete custom field
+  const handleDeleteCustomField = async (field: CustomField) => {
+    if (!organization) return;
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete the custom field "${field.fieldName}"? This action cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch(
+        `/api/organizations/${organization.id}/custom-fields/${field.id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete custom field");
+      }
+
+      setCustomFields((prev) => prev.filter((f) => f.id !== field.id));
+      toast.success("Custom field deleted successfully");
+    } catch (error) {
+      console.error("Error deleting custom field:", error);
+      toast.error("Failed to delete custom field");
+    }
+  };
+
+  // Open modal for creating new field
+  const handleAddField = () => {
+    setSelectedField(null);
+    setModalOpen(true);
+  };
+
+  // Open modal for editing existing field
+  const handleEditField = (field: CustomField) => {
+    setSelectedField(field);
+    setModalOpen(true);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -397,7 +544,7 @@ export default function ProfilePage() {
           <TabsTrigger value="basic-info">Basic Info</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
           <TabsTrigger value="org-info">Org Info</TabsTrigger>
-          <TabsTrigger value="budget">Budget</TabsTrigger>
+          <TabsTrigger value="custom-fields">Custom Fields</TabsTrigger>
           <TabsTrigger value="funding">Funding</TabsTrigger>
         </TabsList>
 
@@ -507,7 +654,7 @@ export default function ProfilePage() {
 
               <div className="grid gap-2">
                 <div className="flex items-center gap-2">
-                  <Label>Services Provided</Label>
+                  <Label>Organization Type</Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>
@@ -741,6 +888,50 @@ export default function ProfilePage() {
         </TabsContent>
 
         <TabsContent value="org-info" className="space-y-8">
+          {/* Budget Information */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b">
+              <Building2 className="h-5 w-5 text-muted-foreground" />
+              <h3 className="font-semibold">Budget Information</h3>
+            </div>
+            <div className="grid gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="annualOperatingBudget">
+                    Annual Operating Budget
+                  </Label>
+                  <Input
+                    id="annualOperatingBudget"
+                    type="number"
+                    value={organization.annualOperatingBudget || ""}
+                    onChange={(e) =>
+                      setOrganization({
+                        ...organization,
+                        annualOperatingBudget: e.target.value,
+                      })
+                    }
+                    placeholder="1000000"
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="fiscalYearEnd">Fiscal Year End</Label>
+                  <Input
+                    id="fiscalYearEnd"
+                    type="text"
+                    value={organization.fiscalYearEnd || ""}
+                    onChange={(e) =>
+                      setOrganization({
+                        ...organization,
+                        fiscalYearEnd: e.target.value,
+                      })
+                    }
+                    placeholder="June 30 or 06/30"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
           {/* Strategic Plan */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 pb-2 border-b">
@@ -988,68 +1179,90 @@ export default function ProfilePage() {
           </div>
         </TabsContent>
 
-        <TabsContent value="budget" className="space-y-8">
-          {/* Budget Information */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b">
-              <Building2 className="h-5 w-5 text-muted-foreground" />
-              <h3 className="font-semibold">Budget Information</h3>
+        <TabsContent value="custom-fields" className="space-y-8">
+          {/* Custom Fields Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold">Custom Fields</h3>
+              <p className="text-sm text-muted-foreground">
+                Add custom information fields specific to your organization
+              </p>
             </div>
-            <div className="grid gap-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="annualOperatingBudget">
-                    Annual Operating Budget
-                  </Label>
-                  <Input
-                    id="annualOperatingBudget"
-                    type="number"
-                    value={organization.annualOperatingBudget || ""}
-                    onChange={(e) =>
-                      setOrganization({
-                        ...organization,
-                        annualOperatingBudget: e.target.value,
-                      })
-                    }
-                    placeholder="1000000"
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <Label htmlFor="fiscalYearEnd">Fiscal Year End</Label>
-                  <Input
-                    id="fiscalYearEnd"
-                    type="text"
-                    value={organization.fiscalYearEnd || ""}
-                    onChange={(e) =>
-                      setOrganization({
-                        ...organization,
-                        fiscalYearEnd: e.target.value,
-                      })
-                    }
-                    placeholder="June 30 or 06/30"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Save Button */}
-          <div className="flex justify-end pt-4">
-            <Button onClick={handleSave} disabled={saving}>
-              {saving ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="mr-2 h-4 w-4" />
-                  Save Changes
-                </>
-              )}
+            <Button onClick={handleAddField}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Custom Field
             </Button>
           </div>
+
+          {/* Custom Fields List */}
+          {loadingCustomFields ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : customFields.length === 0 ? (
+            <div className="text-center py-12 border-2 border-dashed rounded-lg">
+              <p className="text-muted-foreground mb-4">
+                No custom fields yet. Add your first custom field to get
+                started.
+              </p>
+              <Button variant="outline" onClick={handleAddField}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Custom Field
+              </Button>
+            </div>
+          ) : (
+            <div className="grid gap-4">
+              {customFields.map((field) => (
+                <div
+                  key={field.id}
+                  className="border rounded-lg p-4 space-y-3 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-base">
+                        {field.fieldName}
+                      </h4>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {field.fieldValue ? (
+                          field.fieldValue.length > 200 ? (
+                            <>
+                              {field.fieldValue.substring(0, 200)}...
+                              <button
+                                className="text-primary hover:underline ml-1"
+                                onClick={() => handleEditField(field)}
+                              >
+                                Show more
+                              </button>
+                            </>
+                          ) : (
+                            field.fieldValue
+                          )
+                        ) : (
+                          <span className="italic">No value set</span>
+                        )}
+                      </p>
+                    </div>
+                    <div className="flex gap-2 ml-4">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditField(field)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteCustomField(field)}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="funding" className="space-y-8">
@@ -1060,6 +1273,14 @@ export default function ProfilePage() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Custom Field Modal */}
+      <CustomFieldModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        field={selectedField}
+        onSave={handleSaveCustomField}
+      />
     </div>
   );
 }

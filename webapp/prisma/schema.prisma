@@ -75,9 +75,9 @@ model User {
   onboardingCompleted  Boolean          @default(false)
   hasTemporaryPassword Boolean          @default(false)
   googleAccessToken    String?
+  googleDriveConnected Boolean          @default(false)
   googleRefreshToken   String?
   googleTokenExpiry    DateTime?
-  googleDriveConnected Boolean          @default(false)
   aiChats              AiChat[]
   grantBookmarks       GrantBookmark[]
   organization         Organization     @relation("UserOrganization", fields: [organizationId], references: [id], onDelete: Cascade)
@@ -88,13 +88,13 @@ model User {
 }
 
 model Organization {
-  id                     String                     @id @default(cuid())
+  id                     String                      @id @default(cuid())
   name                   String
-  createdAt              DateTime                   @default(now())
-  updatedAt              DateTime                   @updatedAt
-  slug                   String                     @unique
+  createdAt              DateTime                    @default(now())
+  updatedAt              DateTime                    @updatedAt
+  slug                   String                      @unique
   address                String?
-  annualOperatingBudget  Decimal?                   @db.Decimal(15, 2)
+  annualOperatingBudget  Decimal?                    @db.Decimal(15, 2)
   city                   String?
   email                  String?
   fiscalYearEnd          String?
@@ -110,7 +110,7 @@ model Organization {
   enrollment             Int?
   highestGrade           Int?
   latitude               Float?
-  leaId                  String?                    @unique
+  leaId                  String?                     @unique
   longitude              Float?
   lowestGrade            Int?
   numberOfSchools        Int?
@@ -120,16 +120,31 @@ model Organization {
   services               opportunity_services_enum[] @default([k12_education])
   aiChats                AiChat[]
   applications           Application[]
-  documents              Document[]                 @relation("OrganizationDocuments")
-  folders                Folder[]                   @relation("OrganizationFolders")
+  customFields           CustomField[]
+  documents              Document[]                  @relation("OrganizationDocuments")
+  folders                Folder[]                    @relation("OrganizationFolders")
   grantBookmarks         GrantBookmark[]
   eligibilityAnalyses    GrantEligibilityAnalysis[]
   recommendations        Recommendation[]
-  users                  User[]                     @relation("UserOrganization")
+  users                  User[]                      @relation("UserOrganization")
 
   @@index([leaId])
   @@index([state])
   @@map("organizations")
+  @@schema("app")
+}
+
+model CustomField {
+  id             String       @id @default(cuid())
+  fieldName      String
+  fieldValue     String?
+  organizationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("custom_fields")
   @@schema("app")
 }
 
@@ -260,9 +275,9 @@ model Document {
   updatedAt      DateTime     @updatedAt
   organizationId String
   folderId       String?
-  fileUrl        String?
-  fileType       String?
   fileSize       Int?
+  fileType       String?
+  fileUrl        String?
   application    Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
   folder         Folder?      @relation(fields: [folderId], references: [id], onDelete: Cascade)
   organization   Organization @relation("OrganizationDocuments", fields: [organizationId], references: [id], onDelete: Cascade)
