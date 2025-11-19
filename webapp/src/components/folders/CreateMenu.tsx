@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Plus, Folder, FileText, Upload } from "lucide-react";
+import { Plus, Folder as FolderIcon, FileText, Upload, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +27,7 @@ interface CreateMenuProps {
   onCreateFolder: (name: string, parentFolderId: string | null) => Promise<void>;
   onCreateDocument: (title: string, folderId: string | null) => Promise<void>;
   onFileUpload?: (file: File) => void;
+  onGoogleDriveImported?: () => void;
 }
 
 export function CreateMenu({
@@ -34,6 +36,7 @@ export function CreateMenu({
   onCreateFolder,
   onCreateDocument,
   onFileUpload,
+  onGoogleDriveImported,
 }: CreateMenuProps) {
   const [folderDialogOpen, setFolderDialogOpen] = useState(false);
   const [documentDialogOpen, setDocumentDialogOpen] = useState(false);
@@ -96,7 +99,7 @@ export function CreateMenu({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={() => setFolderDialogOpen(true)}>
-            <Folder className="h-4 w-4 mr-2" />
+            <FolderIcon className="h-4 w-4 mr-2" />
             Folder
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setDocumentDialogOpen(true)}>
@@ -108,6 +111,21 @@ export function CreateMenu({
               <Upload className="h-4 w-4 mr-2" />
               Upload
             </DropdownMenuItem>
+          )}
+          {onGoogleDriveImported && (
+            <GoogleDriveImportPicker
+              mode="import"
+              folderId={currentFolderId}
+              applicationId={applicationId}
+              onImported={() => onGoogleDriveImported()}
+            >
+              {({ onClick, loading }) => (
+                <DropdownMenuItem onSelect={(e) => { e.preventDefault(); onClick(); }} disabled={loading}>
+                  <FolderOpen className="h-4 w-4 mr-2" />
+                  Google Drive
+                </DropdownMenuItem>
+              )}
+            </GoogleDriveImportPicker>
           )}
         </DropdownMenuContent>
       </DropdownMenu>

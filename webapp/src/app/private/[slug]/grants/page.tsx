@@ -85,7 +85,6 @@ interface Recommendation {
   id: string;
   opportunityId: string;
   fitScore: number;
-  fitReasoning: string;
   fitDescription: string;
   districtName: string;
   queryDate: string;
@@ -1476,19 +1475,10 @@ function GrantsSearchPage() {
                               <h4 className="font-medium text-sm mb-1">
                                 Why This Fits
                               </h4>
-                              <p className="text-sm text-muted-foreground line-clamp-3">
+                              <p className="text-sm text-muted-foreground">
                                 {rec.fitDescription}
                               </p>
                             </div>
-
-                            <details className="text-xs text-muted-foreground">
-                              <summary className="cursor-pointer font-medium hover:text-foreground">
-                                View detailed analysis
-                              </summary>
-                              <p className="mt-2 pl-2 border-l-2 border-blue-200">
-                                {rec.fitReasoning}
-                              </p>
-                            </details>
 
                             <div className="text-xs text-muted-foreground flex items-center gap-2">
                               <CalendarIconSolid className="h-3 w-3" />

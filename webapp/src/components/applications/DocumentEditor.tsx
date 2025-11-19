@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { useDocument } from "@/contexts/DocumentContext";
@@ -14,20 +15,25 @@ interface Document {
   version: number;
   createdAt: string;
   updatedAt: string;
+  folderId?: string | null;
+  applicationId?: string | null;
 }
 
 interface DocumentEditorProps {
   document: Document;
   onSave: (content: string) => Promise<void>;
   isSaving: boolean;
+  organizationSlug: string;
 }
 
 export function DocumentEditor({
   document,
   onSave,
   isSaving,
+  organizationSlug,
 }: DocumentEditorProps) {
   const { setDocumentTitle, setDocumentContent, setSaveStatus } = useDocument();
+  const router = useRouter();
   const [title, setTitle] = useState(document.title);
   const [content, setContent] = useState(() => {
     if (!document.content) return "";

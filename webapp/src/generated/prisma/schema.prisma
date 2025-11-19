@@ -74,6 +74,10 @@ model User {
   role                 OrganizationRole @default(MEMBER)
   onboardingCompleted  Boolean          @default(false)
   hasTemporaryPassword Boolean          @default(false)
+  googleAccessToken    String?
+  googleDriveConnected Boolean          @default(false)
+  googleRefreshToken   String?
+  googleTokenExpiry    DateTime?
   aiChats              AiChat[]
   grantBookmarks       GrantBookmark[]
   organization         Organization     @relation("UserOrganization", fields: [organizationId], references: [id], onDelete: Cascade)
@@ -116,6 +120,7 @@ model Organization {
   services               opportunity_services_enum[] @default([k12_education])
   aiChats                AiChat[]
   applications           Application[]
+  customFields           CustomField[]
   documents              Document[]                  @relation("OrganizationDocuments")
   folders                Folder[]                    @relation("OrganizationFolders")
   grantBookmarks         GrantBookmark[]
@@ -126,6 +131,20 @@ model Organization {
   @@index([leaId])
   @@index([state])
   @@map("organizations")
+  @@schema("app")
+}
+
+model CustomField {
+  id             String       @id @default(cuid())
+  fieldName      String
+  fieldValue     String?
+  organizationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("custom_fields")
   @@schema("app")
 }
 
@@ -221,7 +240,6 @@ model Recommendation {
   organizationId String
   opportunityId  String
   fitScore       Int
-  fitReasoning   String
   fitDescription String
   districtName   String
   queryDate      DateTime
@@ -256,9 +274,9 @@ model Document {
   updatedAt      DateTime     @updatedAt
   organizationId String
   folderId       String?
-  fileUrl        String?
-  fileType       String?
   fileSize       Int?
+  fileType       String?
+  fileUrl        String?
   application    Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
   folder         Folder?      @relation(fields: [folderId], references: [id], onDelete: Cascade)
   organization   Organization @relation("OrganizationDocuments", fields: [organizationId], references: [id], onDelete: Cascade)

@@ -13,6 +13,7 @@ export interface DistrictInfo {
   strategicPlan: string | null;
   annualOperatingBudget: string | null;
   fiscalYearEnd: string | null;
+  customFields: Record<string, string | null>;
 }
 
 export function buildSystemPrompt(
@@ -194,6 +195,14 @@ ${info.missionStatement || "Not provided"}
 
 **Strategic Plan:**  
 ${info.strategicPlan || "Not provided"}
+
+${
+  info.customFields && Object.keys(info.customFields).length > 0
+    ? `**Custom Organization Fields:**\n${Object.entries(info.customFields)
+        .map(([key, value]) => `- **${key}:** ${value || "Not provided"}`)
+        .join("\n")}`
+    : ""
+}
 
 **Critical Usage Instruction:** Every grant recommendation you provide, you MUST leverage this profile data to ensure relevance.`;
 }
