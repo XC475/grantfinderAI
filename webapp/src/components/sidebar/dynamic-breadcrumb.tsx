@@ -36,6 +36,7 @@ export function DynamicBreadcrumb({
   const [grantTitle, setGrantTitle] = useState<string | null>(null);
   const [documentTitle, setDocumentTitle] = useState<string | null>(null);
   const [applicationTitle, setApplicationTitle] = useState<string | null>(null);
+  const [folderNames, setFolderNames] = useState<Record<string, string>>({});
 
   const fromBookmarks = searchParams.get("from") === "bookmarks";
 
@@ -159,8 +160,30 @@ export function DynamicBreadcrumb({
         });
       }
     } else if (segments[0] === "documents") {
-      // Documents page uses FolderBreadcrumb - no DynamicBreadcrumb
-      return null;
+      // Documents page with folder navigation
+      items.push({
+        label: "Documents",
+        href: `/private/${organizationSlug}/documents`,
+        isLast: segments.length === 1,
+        isBase: true,
+      });
+
+      // Add folder path breadcrumbs
+      if (segments.length > 1) {
+        // Build path up to each folder
+        for (let i = 1; i < segments.length; i++) {
+          const folderId = segments[i];
+          const folderName = folderNames[folderId] || "Loading...";
+          const pathToFolder = segments.slice(1, i + 1).join("/");
+
+          items.push({
+            label: folderName,
+            href: `/private/${organizationSlug}/documents/${pathToFolder}`,
+            isLast: i === segments.length - 1,
+            isBase: false,
+          });
+        }
+      }
     } else {
       // For other pages, show the path with first item as base
       segments.forEach((segment, index) => {
@@ -185,6 +208,7 @@ export function DynamicBreadcrumb({
     documentTitle,
     applicationTitle,
     fromBookmarks,
+    folderNames,
   ]);
 
   // Fetch grant title if we're on a grant detail page
@@ -253,11 +277,98 @@ export function DynamicBreadcrumb({
     }
   }, [pathname, organizationSlug]);
 
+  // Fetch folder names for documents route
+  useEffect(() => {
+    const path = pathname.replace(`/private/${organizationSlug}`, "");
+    const segments = path.split("/").filter(Boolean);
+
+    if (segments[0] === "documents" && segments.length > 1) {
+      // Fetch names for all folders in the path
+      const folderIds = segments.slice(1);
+      const names: Record<string, string> = {};
+
+      Promise.all(
+        folderIds.map((folderId) =>
+          fetch(`/api/folders/${folderId}`)
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.folder && data.folder.name) {
+                names[folderId] = data.folder.name;
+              }
+            })
+            .catch((error) => {
+              console.error(`Error fetching folder ${folderId}:`, error);
+            })
+        )
+      ).then(() => {
+        setFolderNames(names);
+      });
+    } else {
+      setFolderNames({});
+    }
+  }, [pathname, organizationSlug]);
+
   // Don't render anything if we're on the home page
   if (!breadcrumbs) {
     return null;
   }
 
+  // Check if we're on documents route
+  const path = pathname.replace(`/private/${organizationSlug}`, "");
+  const segments = path.split("/").filter(Boolean);
+  const isDocumentsRoute = segments[0] === "documents";
+
+  // For documents route, render heading + folder breadcrumbs
+  if (isDocumentsRoute) {
+    const documentsItem = breadcrumbs[0]; // "Documents" is always first
+    const folderBreadcrumbs = breadcrumbs.slice(1); // Remaining are folders
+
+    return (
+      <div className="flex items-center gap-3">
+        <h1 className="text-2xl font-semibold">Documents</h1>
+        {folderBreadcrumbs.length > 0 && (
+          <>
+            <BreadcrumbSeparator />
+            <Breadcrumb>
+              <BreadcrumbList>
+                {folderBreadcrumbs.map((item, index) => {
+                  const truncatedLabel = truncateText(item.label);
+                  return (
+                    <div
+                      key={item.href + index}
+                      className="flex items-center gap-2"
+                    >
+                      {index > 0 && <BreadcrumbSeparator />}
+                      <BreadcrumbItem>
+                        {item.isLast ? (
+                          <BreadcrumbPage
+                            title={item.label}
+                            isBase={item.isBase}
+                          >
+                            {truncatedLabel}
+                          </BreadcrumbPage>
+                        ) : (
+                          <BreadcrumbLink
+                            href={item.href}
+                            title={item.label}
+                            isBase={item.isBase}
+                          >
+                            {truncatedLabel}
+                          </BreadcrumbLink>
+                        )}
+                      </BreadcrumbItem>
+                    </div>
+                  );
+                })}
+              </BreadcrumbList>
+            </Breadcrumb>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  // Standard breadcrumb rendering for other routes
   return (
     <Breadcrumb>
       <BreadcrumbList>

@@ -43,6 +43,8 @@ interface DocumentsViewProps {
   rootFolderId?: string | null; // If provided, use this as root; otherwise use null (global root)
   rootLabel?: string; // Label for the root (e.g., "Documents" or application name)
   applicationId?: string; // If viewing an application's documents
+  currentFolderId?: string | null; // Optional: controlled folder ID (for URL-based navigation)
+  onNavigate?: (folderId: string | null) => void; // Optional: callback when navigating (for URL-based navigation)
 }
 
 export function DocumentsView({
@@ -50,14 +52,23 @@ export function DocumentsView({
   rootFolderId = null,
   rootLabel = "Documents",
   applicationId,
+  currentFolderId: externalCurrentFolderId,
+  onNavigate: externalOnNavigate,
 }: DocumentsViewProps) {
   const router = useRouter();
   const [folders, setFolders] = useState<Folder[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [folderPath, setFolderPath] = useState<FolderPathItem[]>([]);
-  const [currentFolderId, setCurrentFolderId] = useState<string | null>(
-    rootFolderId
-  );
+
+  // Use controlled currentFolderId if provided, otherwise internal state
+  const [internalCurrentFolderId, setInternalCurrentFolderId] = useState<
+    string | null
+  >(rootFolderId);
+  const currentFolderId =
+    externalCurrentFolderId !== undefined
+      ? externalCurrentFolderId
+      : internalCurrentFolderId;
+
   const [loading, setLoading] = useState(true);
 
   // Dialog/Modal states
@@ -156,11 +167,19 @@ export function DocumentsView({
   }, [currentFolderId, fetchFolderContents]);
 
   const handleNavigate = (folderId: string | null) => {
-    setCurrentFolderId(folderId);
+    if (externalOnNavigate) {
+      externalOnNavigate(folderId);
+    } else {
+      setInternalCurrentFolderId(folderId);
+    }
   };
 
   const handleFolderClick = (folderId: string) => {
-    setCurrentFolderId(folderId);
+    if (externalOnNavigate) {
+      externalOnNavigate(folderId);
+    } else {
+      setInternalCurrentFolderId(folderId);
+    }
   };
 
   const handleDocumentClick = (documentId: string) => {
@@ -681,25 +700,28 @@ export function DocumentsView({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex-1 min-w-[200px]">
-          <FolderBreadcrumb
-            folderPath={folderPath}
-            rootLabel={rootLabel}
-            onNavigate={handleNavigate}
-          />
+      {/* Only show internal breadcrumb and actions if not using external navigation */}
+      {!externalOnNavigate && (
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex-1 min-w-[200px]">
+            <FolderBreadcrumb
+              folderPath={folderPath}
+              rootLabel={rootLabel}
+              onNavigate={handleNavigate}
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <CreateMenu
+              currentFolderId={currentFolderId}
+              applicationId={applicationId}
+              onCreateFolder={handleCreateFolder}
+              onCreateDocument={handleCreateDocument}
+              onFileUpload={handleFileUpload}
+              onGoogleDriveImported={() => fetchFolderContents(currentFolderId)}
+            />
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <CreateMenu
-            currentFolderId={currentFolderId}
-            applicationId={applicationId}
-            onCreateFolder={handleCreateFolder}
-            onCreateDocument={handleCreateDocument}
-            onFileUpload={handleFileUpload}
-            onGoogleDriveImported={() => fetchFolderContents(currentFolderId)}
-          />
-        </div>
-      </div>
+      )}
 
       <DragDropProvider onDragEnd={handleDragEnd}>
         <FolderList

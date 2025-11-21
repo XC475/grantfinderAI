@@ -19,6 +19,10 @@ import {
   HeaderContentProvider,
   useHeaderContent,
 } from "@/contexts/HeaderContentContext";
+import {
+  HeaderActionsProvider,
+  useHeaderActions,
+} from "@/contexts/HeaderActionsContext";
 
 interface ConditionalLayoutProps {
   children: React.ReactNode;
@@ -159,12 +163,13 @@ function NormalLayoutContent({
   organizationSlug: string;
 }) {
   const { headerContent } = useHeaderContent();
+  const { headerActions } = useHeaderActions();
   const pathname = usePathname();
 
   // Determine if we should show the header
   const showHeader = useMemo(() => {
-    // Always show if there's custom header content
-    if (headerContent) return true;
+    // Always show if there's custom header content or actions
+    if (headerContent || headerActions) return true;
     
     // Check if current route would show breadcrumbs
     const path = pathname.replace(`/private/${organizationSlug}`, "");
@@ -176,7 +181,6 @@ function NormalLayoutContent({
       "chat", 
       "settings",
       "profile",
-      "documents"
     ];
     
     // If it's one of these base pages, don't show header
@@ -185,7 +189,7 @@ function NormalLayoutContent({
     }
     
     return true;
-  }, [pathname, organizationSlug, headerContent]);
+  }, [pathname, organizationSlug, headerContent, headerActions]);
 
   return (
     <SidebarProvider>
@@ -193,10 +197,17 @@ function NormalLayoutContent({
       <SidebarInset>
         {showHeader && (
           <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-            <div className="flex items-center gap-2 px-4">
-              <Separator orientation="vertical" className="mr-2 h-4" />
-              {headerContent || (
-                <DynamicBreadcrumb organizationSlug={organizationSlug} />
+            <div className="flex items-center justify-between w-full px-4">
+              <div className="flex items-center gap-2">
+                <Separator orientation="vertical" className="mr-2 h-4" />
+                {headerContent || (
+                  <DynamicBreadcrumb organizationSlug={organizationSlug} />
+                )}
+              </div>
+              {headerActions && (
+                <div className="flex items-center gap-2">
+                  {headerActions}
+                </div>
               )}
             </div>
           </header>
@@ -265,12 +276,14 @@ export function ConditionalLayout({
     );
   }
 
-  // Normal layout for other pages - wrapped with HeaderContentProvider
+  // Normal layout for other pages - wrapped with HeaderContentProvider and HeaderActionsProvider
   return (
     <HeaderContentProvider>
-      <NormalLayoutContent organizationSlug={organizationSlug}>
-        {children}
-      </NormalLayoutContent>
+      <HeaderActionsProvider>
+        <NormalLayoutContent organizationSlug={organizationSlug}>
+          {children}
+        </NormalLayoutContent>
+      </HeaderActionsProvider>
     </HeaderContentProvider>
   );
 }
