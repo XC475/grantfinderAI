@@ -718,8 +718,8 @@ export function ApplicationsTable({
             <DialogDescription>
               Are you sure you want to delete &quot;
               {applicationToDelete?.title || "this application"}&quot;? This
-              action cannot be undone. Associated documents will be preserved
-              and can be found in the Documents page.
+              action cannot be undone. Associated documents will also be
+              deleted.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
