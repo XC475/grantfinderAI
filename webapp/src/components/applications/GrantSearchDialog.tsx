@@ -27,7 +27,7 @@ interface Grant {
   award_min: number | null;
   award_max: number | null;
   url: string | null;
-  attachments: any | null;
+  attachments: Array<{ url?: string; title?: string; description?: string }> | null;
 }
 
 interface GrantSearchDialogProps {

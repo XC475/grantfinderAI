@@ -228,7 +228,7 @@ export function ApplicationsTable({
     onEdit: (id: string) => {
       router.push(`/private/${slug}/applications/${id}`);
     },
-    onDuplicate: (id: string) => {
+    onDuplicate: (_id: string) => {
       toast.info("Duplicate feature coming soon!");
     },
     onDelete: (id: string, title: string | null) => {
@@ -240,7 +240,7 @@ export function ApplicationsTable({
 
   const baseColumns = useMemo(
     () => variant === "dashboard" ? createSimpleColumns(actions) : createColumns(actions),
-    [slug, variant, actions]
+    [variant, actions]
   );
 
   // Initialize column order on first render

@@ -22,7 +22,7 @@ interface Application {
   opportunityAwardMin: bigint | null;
   opportunityAwardMax: bigint | null;
   opportunityUrl: string | null;
-  opportunityAttachments: any | null;
+  opportunityAttachments: Array<{ url?: string; title?: string; description?: string }> | null;
   organization: {
     slug: string;
     name: string;

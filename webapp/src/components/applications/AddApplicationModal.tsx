@@ -63,7 +63,7 @@ export function AddApplicationModal({
           <DialogHeader>
             <DialogTitle>Create New Application</DialogTitle>
             <DialogDescription>
-              Choose how you'd like to create your application
+              Choose how you&apos;d like to create your application
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">

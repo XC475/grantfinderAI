@@ -1,7 +1,6 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -40,7 +39,7 @@ export interface Application {
   opportunityAwardMin: bigint | null;
   opportunityAwardMax: bigint | null;
   opportunityUrl: string | null;
-  opportunityAttachments: any | null;
+  opportunityAttachments: Array<{ url?: string; title?: string; description?: string }> | null;
   organization: {
     slug: string;
     name: string;
@@ -53,29 +52,6 @@ interface ColumnActions {
   onDuplicate: (id: string) => void;
   onDelete: (id: string, title: string | null) => void;
   onStatusChange: (id: string, newStatus: string) => void;
-}
-
-function getStatusVariant(status: string): string {
-  switch (status) {
-    case "DRAFT":
-      return "bg-purple-100 text-purple-800";
-    case "IN_PROGRESS":
-      return "bg-blue-100 text-blue-800";
-    case "UNDER_REVIEW":
-    case "SUBMITTED":
-      return "bg-cyan-100 text-cyan-800";
-    case "AWARDED":
-    case "APPROVED":
-      return "bg-green-100 text-green-800";
-    case "REJECTED":
-      return "bg-red-100 text-red-800";
-    default:
-      return "bg-gray-100 text-gray-800";
-  }
-}
-
-function formatStatus(status: string): string {
-  return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
 function formatCurrency(amount: number | null | undefined): string {

@@ -72,7 +72,7 @@ export function BookmarkSelectionDialog({
       // Extract opportunity data from bookmarks (they already include opportunity data)
       if (bookmarksData.length > 0) {
         const grantsMap = new Map<number, Grant>();
-        bookmarksData.forEach((bookmark: any) => {
+        bookmarksData.forEach((bookmark: Bookmark & { opportunity?: Grant }) => {
           if (bookmark.opportunity) {
             grantsMap.set(bookmark.opportunityId, bookmark.opportunity);
           }
