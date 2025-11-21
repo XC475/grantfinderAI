@@ -20,6 +20,8 @@ import {
   X,
   Plus,
   Trash2,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import Link from "next/link";
 import { StatusSelect } from "./StatusSelect";
@@ -90,6 +92,7 @@ export function GrantInfoCard({
 }: GrantInfoCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [formData, setFormData] = useState({
     opportunityTitle: grant.title,
     opportunityDescription: grant.description || "",
@@ -494,10 +497,30 @@ export function GrantInfoCard({
         ) : (
           <div className="space-y-4">
             {grant.description && (
-              <div
-                className="text-sm text-gray-700 line-clamp-3"
-                dangerouslySetInnerHTML={{ __html: grant.description }}
-              />
+              <div>
+                <div
+                  className={`text-sm text-gray-700 ${!isDescriptionExpanded ? "line-clamp-3" : ""}`}
+                  dangerouslySetInnerHTML={{ __html: grant.description }}
+                />
+                <button
+                  onClick={() =>
+                    setIsDescriptionExpanded(!isDescriptionExpanded)
+                  }
+                  className="text-xs text-muted-foreground hover:text-foreground hover:underline inline-flex items-center mt-1"
+                >
+                  {isDescriptionExpanded ? (
+                    <>
+                      <ChevronUp className="h-3 w-3 mr-1" />
+                      Hide details
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="h-3 w-3 mr-1" />
+                      Show details
+                    </>
+                  )}
+                </button>
+              </div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
