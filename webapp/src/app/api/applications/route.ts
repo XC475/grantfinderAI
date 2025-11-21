@@ -77,6 +77,7 @@ export async function POST(request: NextRequest) {
       });
 
       if (existingApplication) {
+        // The existingApplication only has id, title, status, createdAt - no BigInt fields
         return NextResponse.json(
           {
             error: "Application already exists for this grant",
@@ -235,7 +236,19 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    return NextResponse.json({ application, alsoBookmarked: alsoBookmark });
+    // Convert BigInt values to strings for JSON serialization
+    const serializedApplication = {
+      ...application,
+      opportunityTotalFunding:
+        application.opportunityTotalFunding?.toString() ?? null,
+      opportunityAwardMin: application.opportunityAwardMin?.toString() ?? null,
+      opportunityAwardMax: application.opportunityAwardMax?.toString() ?? null,
+    };
+
+    return NextResponse.json({
+      application: serializedApplication,
+      alsoBookmarked: alsoBookmark,
+    });
   } catch (error) {
     console.error("Error creating application:", error);
     return NextResponse.json(
@@ -286,8 +299,16 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    // Convert BigInt values to strings for JSON serialization
+    const serializedApplications = applications.map((app) => ({
+      ...app,
+      opportunityTotalFunding: app.opportunityTotalFunding?.toString() ?? null,
+      opportunityAwardMin: app.opportunityAwardMin?.toString() ?? null,
+      opportunityAwardMax: app.opportunityAwardMax?.toString() ?? null,
+    }));
+
     // Applications now contain their own opportunity data - no need to fetch separately
-    return NextResponse.json({ applications });
+    return NextResponse.json({ applications: serializedApplications });
   } catch (error) {
     console.error("Error fetching applications:", error);
     return NextResponse.json(
