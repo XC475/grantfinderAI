@@ -1,7 +1,9 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState, useRef } from "react";
+import Link from "next/link";
+import { toast } from "sonner";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,9 +12,17 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Input } from "@/components/ui/input";
 
 interface DynamicBreadcrumbProps {
   organizationSlug: string;
+}
+
+interface BreadcrumbItemData {
+  label: string;
+  href: string;
+  isLast: boolean;
+  isBase: boolean;
 }
 
 // Helper function to truncate text at 50 characters
@@ -28,8 +38,71 @@ export function DynamicBreadcrumb({
   const searchParams = useSearchParams();
   const [grantTitle, setGrantTitle] = useState<string | null>(null);
   const [documentTitle, setDocumentTitle] = useState<string | null>(null);
+  const [applicationTitle, setApplicationTitle] = useState<string | null>(null);
+  const [folderNames, setFolderNames] = useState<Record<string, string>>({});
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const fromBookmarks = searchParams.get("from") === "bookmarks";
+
+  // Handler for double-clicking document title to edit
+  const handleDoubleClickTitle = () => {
+    if (documentTitle) {
+      setEditedTitle(documentTitle);
+      setIsEditingTitle(true);
+    }
+  };
+
+  // Handler for saving the edited title
+  const handleSaveTitle = async () => {
+    if (!editedTitle.trim()) {
+      toast.error("Document title cannot be empty");
+      return;
+    }
+
+    // Check if title actually changed
+    if (editedTitle.trim() === documentTitle) {
+      setIsEditingTitle(false);
+      return;
+    }
+
+    // Get document ID from URL
+    const path = pathname.replace(`/private/${organizationSlug}`, "");
+    const segments = path.split("/").filter(Boolean);
+    const documentId = segments[1];
+
+    try {
+      const response = await fetch(`/api/documents/${documentId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: editedTitle.trim() }),
+      });
+
+      if (!response.ok) throw new Error("Failed to update document title");
+
+      setDocumentTitle(editedTitle.trim());
+      setIsEditingTitle(false);
+      toast.success("Document title updated");
+    } catch (error) {
+      console.error("Error updating document title:", error);
+      toast.error("Failed to update document title");
+    }
+  };
+
+  // Handler for canceling edit
+  const handleCancelEdit = () => {
+    setIsEditingTitle(false);
+    setEditedTitle("");
+  };
+
+  // Focus input when editing starts
+  useEffect(() => {
+    if (isEditingTitle && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditingTitle]);
 
   const breadcrumbs = useMemo(() => {
     // Remove the /private/[slug] prefix
@@ -42,37 +115,27 @@ export function DynamicBreadcrumb({
     }
 
     // Build breadcrumb items
-    const items = [];
-
-    // Add Dashboard as first item (except for applications)
-    if (segments[0] !== "applications") {
-      items.push({
-        label: "Dashboard",
-        href: `/private/${organizationSlug}/dashboard`,
-        isLast: false,
-      });
-    }
+    const items: BreadcrumbItemData[] = [];
 
     // Handle different pages
     if (segments[0] === "chat") {
-      items.push({
-        label: "AI Chat",
-        href: `/private/${organizationSlug}/chat`,
-        isLast: true,
-      });
+      // Chat page has no nested content - no breadcrumbs
+      return null;
     } else if (segments[0] === "grants") {
       // Check if we came from bookmarks
       if (segments.length > 1 && segments[1] && fromBookmarks) {
         // Viewing grant from bookmarks
         items.push({
-          label: "Saved Grants",
-          href: `/private/${organizationSlug}/bookmarks`,
+          label: "Bookmarks",
+          href: `/private/${organizationSlug}/grants?tab=bookmarks`,
           isLast: false,
+          isBase: true,
         });
         items.push({
           label: grantTitle || "Grant Details",
           href: `#`,
           isLast: true,
+          isBase: false,
         });
       } else {
         // Regular grants flow
@@ -80,6 +143,7 @@ export function DynamicBreadcrumb({
           label: "Grants",
           href: `/private/${organizationSlug}/grants`,
           isLast: segments.length === 1,
+          isBase: true,
         });
 
         // If we're viewing a specific grant
@@ -88,59 +152,97 @@ export function DynamicBreadcrumb({
             label: grantTitle || "Grant Details",
             href: `#`,
             isLast: true,
+            isBase: false,
           });
         }
       }
-    } else if (segments[0] === "dashboard") {
-      items.push({
-        label: "Dashboard",
-        href: `/private/${organizationSlug}/dashboard`,
-        isLast: true,
-      });
-    } else if (segments[0] === "bookmarks") {
-      items.push({
-        label: "Saved Grants",
-        href: `/private/${organizationSlug}/bookmarks`,
-        isLast: true,
-      });
     } else if (segments[0] === "settings") {
-      items.push({
-        label: "Settings",
-        href: `/private/${organizationSlug}/settings`,
-        isLast: true,
-      });
+      // Settings and its sub-pages don't have nested content - no breadcrumbs
+      return null;
     } else if (segments[0] === "applications") {
       items.push({
         label: "Applications",
         href: `/private/${organizationSlug}/applications`,
         isLast: segments.length === 1,
+        isBase: true,
       });
 
       // If we're viewing a specific application
       if (segments.length > 1 && segments[1]) {
         items.push({
-          label: "Application Details",
-          href: `/private/${organizationSlug}/applications/${segments[1]}`,
+          label: applicationTitle || "Application Details",
+          href: `#`,
           isLast: true,
+          isBase: false,
         });
       }
     } else if (segments[0] === "editor") {
-      // Document editor breadcrumb
-      items.push({
-        label: "Applications",
-        href: `/private/${organizationSlug}/applications`,
-        isLast: false,
-      });
-
+      // Document editor breadcrumb - just show document title
       if (segments.length > 1 && segments[1]) {
         items.push({
           label: documentTitle || "Document",
           href: `#`,
           isLast: true,
+          isBase: false,
         });
       }
+    } else if (segments[0] === "profile") {
+      // Profile page has no nested content - no breadcrumbs
+      return null;
+    } else if (segments[0] === "admin") {
+      items.push({
+        label: "Admin",
+        href: `/private/${organizationSlug}/admin`,
+        isLast: segments.length === 1,
+        isBase: true,
+      });
+
+      // Handle admin sub-routes
+      if (segments.length > 1 && segments[1]) {
+        const subRoute = segments[1];
+        let subLabel = "Admin";
+
+        if (subRoute === "users") {
+          subLabel = "Users";
+        } else {
+          // Capitalize first letter for other sub-routes
+          subLabel = subRoute.charAt(0).toUpperCase() + subRoute.slice(1);
+        }
+
+        items.push({
+          label: subLabel,
+          href: `#`,
+          isLast: true,
+          isBase: false,
+        });
+      }
+    } else if (segments[0] === "documents") {
+      // Documents page with folder navigation
+      items.push({
+        label: "Documents",
+        href: `/private/${organizationSlug}/documents`,
+        isLast: segments.length === 1,
+        isBase: true,
+      });
+
+      // Add folder path breadcrumbs
+      if (segments.length > 1) {
+        // Build path up to each folder
+        for (let i = 1; i < segments.length; i++) {
+          const folderId = segments[i];
+          const folderName = folderNames[folderId] || "Loading...";
+          const pathToFolder = segments.slice(1, i + 1).join("/");
+
+          items.push({
+            label: folderName,
+            href: `/private/${organizationSlug}/documents/${pathToFolder}`,
+            isLast: i === segments.length - 1,
+            isBase: false,
+          });
+        }
+      }
     } else {
-      // For other pages, show the path
+      // For other pages, show the path with first item as base
       segments.forEach((segment, index) => {
         const label = segment
           .split("-")
@@ -150,12 +252,21 @@ export function DynamicBreadcrumb({
           label,
           href: `#`,
           isLast: index === segments.length - 1,
+          isBase: index === 0,
         });
       });
     }
 
     return items;
-  }, [pathname, organizationSlug, grantTitle, documentTitle, fromBookmarks]);
+  }, [
+    pathname,
+    organizationSlug,
+    grantTitle,
+    documentTitle,
+    applicationTitle,
+    fromBookmarks,
+    folderNames,
+  ]);
 
   // Fetch grant title if we're on a grant detail page
   useEffect(() => {
@@ -201,34 +312,179 @@ export function DynamicBreadcrumb({
     }
   }, [pathname, organizationSlug]);
 
+  // Fetch application title if we're on an application detail page
+  useEffect(() => {
+    const path = pathname.replace(`/private/${organizationSlug}`, "");
+    const segments = path.split("/").filter(Boolean);
+
+    if (segments[0] === "applications" && segments[1]) {
+      const applicationId = segments[1];
+      fetch(`/api/applications/${applicationId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.application && data.application.title) {
+            setApplicationTitle(data.application.title);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching application title:", error);
+        });
+    } else {
+      setApplicationTitle(null);
+    }
+  }, [pathname, organizationSlug]);
+
+  // Fetch folder names for documents route
+  useEffect(() => {
+    const path = pathname.replace(`/private/${organizationSlug}`, "");
+    const segments = path.split("/").filter(Boolean);
+
+    if (segments[0] === "documents" && segments.length > 1) {
+      // Fetch names for all folders in the path
+      const folderIds = segments.slice(1);
+      const names: Record<string, string> = {};
+
+      Promise.all(
+        folderIds.map((folderId) =>
+          fetch(`/api/folders/${folderId}`)
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.folder && data.folder.name) {
+                names[folderId] = data.folder.name;
+              }
+            })
+            .catch((error) => {
+              console.error(`Error fetching folder ${folderId}:`, error);
+            })
+        )
+      ).then(() => {
+        setFolderNames(names);
+      });
+    } else {
+      setFolderNames({});
+    }
+  }, [pathname, organizationSlug]);
+
   // Don't render anything if we're on the home page
   if (!breadcrumbs) {
     return null;
   }
 
+  // Check if first item is a base item (should be rendered as heading)
+  const hasBaseHeading = breadcrumbs.length > 0 && breadcrumbs[0].isBase;
+
+  // Check if we're on editor page for special handling
+  const path = pathname.replace(`/private/${organizationSlug}`, "");
+  const segments = path.split("/").filter(Boolean);
+  const isEditorPage = segments[0] === "editor";
+
+  // If no base heading (like editor page), render all as normal breadcrumbs
+  if (!hasBaseHeading) {
+    return (
+      <Breadcrumb>
+        <BreadcrumbList>
+          {breadcrumbs.map((item, index) => {
+            const truncatedLabel = truncateText(item.label);
+            return (
+              <div key={item.href + index} className="flex items-center gap-2">
+                {index > 0 && <BreadcrumbSeparator />}
+                <BreadcrumbItem>
+                  {item.isLast && isEditorPage ? (
+                    // Editable document title on editor page
+                    <div className="flex items-center">
+                      {isEditingTitle ? (
+                        <Input
+                          ref={inputRef}
+                          value={editedTitle}
+                          onChange={(e) => setEditedTitle(e.target.value)}
+                          onBlur={handleSaveTitle}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              handleSaveTitle();
+                            } else if (e.key === "Escape") {
+                              handleCancelEdit();
+                            }
+                          }}
+                          className="h-7 px-2 py-1 text-base"
+                          style={{
+                            width: `${Math.max(editedTitle.length * 8 + 20, 100)}px`,
+                          }}
+                        />
+                      ) : (
+                        <BreadcrumbPage
+                          title={item.label}
+                          onDoubleClick={handleDoubleClickTitle}
+                          className="cursor-text text-base"
+                        >
+                          {truncatedLabel}
+                        </BreadcrumbPage>
+                      )}
+                    </div>
+                  ) : item.isLast ? (
+                    <BreadcrumbPage title={item.label}>
+                      {truncatedLabel}
+                    </BreadcrumbPage>
+                  ) : (
+                    <BreadcrumbLink href={item.href} title={item.label}>
+                      {truncatedLabel}
+                    </BreadcrumbLink>
+                  )}
+                </BreadcrumbItem>
+              </div>
+            );
+          })}
+        </BreadcrumbList>
+      </Breadcrumb>
+    );
+  }
+
+  // Render heading + breadcrumbs pattern for routes with base heading
+  // First item (base) is the heading, remaining items are breadcrumbs
+  const baseItem = breadcrumbs[0];
+  const nestedBreadcrumbs = breadcrumbs.slice(1);
+
   return (
-    <Breadcrumb>
-      <BreadcrumbList>
-        {breadcrumbs.map((item, index) => {
-          const truncatedLabel = truncateText(item.label);
-          return (
-            <div key={item.href + index} className="flex items-center gap-2">
-              {index > 0 && <BreadcrumbSeparator />}
-              <BreadcrumbItem>
-                {item.isLast ? (
-                  <BreadcrumbPage title={item.label}>
-                    {truncatedLabel}
-                  </BreadcrumbPage>
-                ) : (
-                  <BreadcrumbLink href={item.href} title={item.label}>
-                    {truncatedLabel}
-                  </BreadcrumbLink>
-                )}
-              </BreadcrumbItem>
-            </div>
-          );
-        })}
-      </BreadcrumbList>
-    </Breadcrumb>
+    <div className="flex items-center gap-3">
+      <Link href={baseItem.href}>
+        <h1 className="text-2xl font-semibold hover:text-foreground/80 transition-colors cursor-pointer">
+          {baseItem.label}
+        </h1>
+      </Link>
+      {nestedBreadcrumbs.length > 0 && (
+        <>
+          <span className="text-muted-foreground/40">/</span>
+          <Breadcrumb>
+            <BreadcrumbList>
+              {nestedBreadcrumbs.map((item, index) => {
+                const truncatedLabel = truncateText(item.label);
+                return (
+                  <div
+                    key={item.href + index}
+                    className="flex items-center gap-2"
+                  >
+                    {index > 0 && <BreadcrumbSeparator />}
+                    <BreadcrumbItem>
+                      {item.isLast ? (
+                        <BreadcrumbPage title={item.label} isBase={item.isBase}>
+                          {truncatedLabel}
+                        </BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink
+                          href={item.href}
+                          title={item.label}
+                          isBase={item.isBase}
+                        >
+                          {truncatedLabel}
+                        </BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                  </div>
+                );
+              })}
+            </BreadcrumbList>
+          </Breadcrumb>
+        </>
+      )}
+    </div>
   );
 }

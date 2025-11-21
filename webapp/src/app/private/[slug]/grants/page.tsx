@@ -817,17 +817,16 @@ function GrantsSearchPage() {
   };
 
   return (
-    <div className="p-4 mx-auto w-full">
+    <div className="mx-auto w-full">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Grants</h1>
+      <div className="mb-4">
         <p className="text-muted-foreground">
           Discover, search, and manage grant opportunities
         </p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="mb-6">
+      <div className="mb-4">
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-2">
             {/* Search Grants */}
@@ -895,7 +894,7 @@ function GrantsSearchPage() {
       {activeTab === "search" && (
         <>
           {/* Search Form */}
-          <Card className="mb-6">
+          <Card className="mb-4">
             <CardHeader>
               <CardTitle>Search Grants</CardTitle>
             </CardHeader>
