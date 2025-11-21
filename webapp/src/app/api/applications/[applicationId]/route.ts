@@ -8,6 +8,61 @@ import {
 import type { UpdateApplicationOpportunityRequest } from "@/types/application";
 import { Prisma, ApplicationStatus } from "@/generated/prisma";
 
+// GET /api/applications/[applicationId] - Get application by ID
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ applicationId: string }> }
+) {
+  try {
+    const { applicationId } = await params;
+
+    // Authenticate user
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Fetch application and verify user has access
+    const application = await prisma.application.findFirst({
+      where: {
+        id: applicationId,
+        organization: {
+          users: {
+            some: { id: user.id },
+          },
+        },
+      },
+      include: {
+        organization: {
+          select: {
+            slug: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!application) {
+      return NextResponse.json(
+        { error: "Application not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ application });
+  } catch (error) {
+    console.error("Error fetching application:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch application" },
+      { status: 500 }
+    );
+  }
+}
+
 // PUT /api/applications/[applicationId] - Update application
 export async function PUT(
   request: NextRequest,

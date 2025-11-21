@@ -15,6 +15,13 @@ interface DynamicBreadcrumbProps {
   organizationSlug: string;
 }
 
+interface BreadcrumbItemData {
+  label: string;
+  href: string;
+  isLast: boolean;
+  isBase: boolean;
+}
+
 // Helper function to truncate text at 50 characters
 function truncateText(text: string, maxLength: number = 50): string {
   if (text.length <= maxLength) return text;
@@ -28,6 +35,7 @@ export function DynamicBreadcrumb({
   const searchParams = useSearchParams();
   const [grantTitle, setGrantTitle] = useState<string | null>(null);
   const [documentTitle, setDocumentTitle] = useState<string | null>(null);
+  const [applicationTitle, setApplicationTitle] = useState<string | null>(null);
 
   const fromBookmarks = searchParams.get("from") === "bookmarks";
 
@@ -42,37 +50,27 @@ export function DynamicBreadcrumb({
     }
 
     // Build breadcrumb items
-    const items = [];
-
-    // Add Dashboard as first item (except for applications)
-    if (segments[0] !== "applications") {
-      items.push({
-        label: "Dashboard",
-        href: `/private/${organizationSlug}/dashboard`,
-        isLast: false,
-      });
-    }
+    const items: BreadcrumbItemData[] = [];
 
     // Handle different pages
     if (segments[0] === "chat") {
-      items.push({
-        label: "AI Chat",
-        href: `/private/${organizationSlug}/chat`,
-        isLast: true,
-      });
+      // Chat page has no nested content - no breadcrumbs
+      return null;
     } else if (segments[0] === "grants") {
       // Check if we came from bookmarks
       if (segments.length > 1 && segments[1] && fromBookmarks) {
         // Viewing grant from bookmarks
         items.push({
-          label: "Saved Grants",
-          href: `/private/${organizationSlug}/bookmarks`,
+          label: "Bookmarks",
+          href: `/private/${organizationSlug}/grants?tab=bookmarks`,
           isLast: false,
+          isBase: true,
         });
         items.push({
           label: grantTitle || "Grant Details",
           href: `#`,
           isLast: true,
+          isBase: false,
         });
       } else {
         // Regular grants flow
@@ -80,6 +78,7 @@ export function DynamicBreadcrumb({
           label: "Grants",
           href: `/private/${organizationSlug}/grants`,
           isLast: segments.length === 1,
+          isBase: true,
         });
 
         // If we're viewing a specific grant
@@ -88,48 +87,37 @@ export function DynamicBreadcrumb({
             label: grantTitle || "Grant Details",
             href: `#`,
             isLast: true,
+            isBase: false,
           });
         }
       }
-    } else if (segments[0] === "dashboard") {
-      items.push({
-        label: "Dashboard",
-        href: `/private/${organizationSlug}/dashboard`,
-        isLast: true,
-      });
-    } else if (segments[0] === "bookmarks") {
-      items.push({
-        label: "Saved Grants",
-        href: `/private/${organizationSlug}/bookmarks`,
-        isLast: true,
-      });
     } else if (segments[0] === "settings") {
-      items.push({
-        label: "Settings",
-        href: `/private/${organizationSlug}/settings`,
-        isLast: true,
-      });
+      // Settings and its sub-pages don't have nested content - no breadcrumbs
+      return null;
     } else if (segments[0] === "applications") {
       items.push({
         label: "Applications",
         href: `/private/${organizationSlug}/applications`,
         isLast: segments.length === 1,
+        isBase: true,
       });
 
       // If we're viewing a specific application
       if (segments.length > 1 && segments[1]) {
         items.push({
-          label: "Application Details",
-          href: `/private/${organizationSlug}/applications/${segments[1]}`,
+          label: applicationTitle || "Application Details",
+          href: `#`,
           isLast: true,
+          isBase: false,
         });
       }
     } else if (segments[0] === "editor") {
       // Document editor breadcrumb
       items.push({
-        label: "Applications",
-        href: `/private/${organizationSlug}/applications`,
+        label: "Documents",
+        href: `/private/${organizationSlug}/documents`,
         isLast: false,
+        isBase: true,
       });
 
       if (segments.length > 1 && segments[1]) {
@@ -137,10 +125,44 @@ export function DynamicBreadcrumb({
           label: documentTitle || "Document",
           href: `#`,
           isLast: true,
+          isBase: false,
         });
       }
+    } else if (segments[0] === "profile") {
+      // Profile page has no nested content - no breadcrumbs
+      return null;
+    } else if (segments[0] === "admin") {
+      items.push({
+        label: "Admin",
+        href: `/private/${organizationSlug}/admin`,
+        isLast: segments.length === 1,
+        isBase: true,
+      });
+
+      // Handle admin sub-routes
+      if (segments.length > 1 && segments[1]) {
+        const subRoute = segments[1];
+        let subLabel = "Admin";
+
+        if (subRoute === "users") {
+          subLabel = "Users";
+        } else {
+          // Capitalize first letter for other sub-routes
+          subLabel = subRoute.charAt(0).toUpperCase() + subRoute.slice(1);
+        }
+
+        items.push({
+          label: subLabel,
+          href: `#`,
+          isLast: true,
+          isBase: false,
+        });
+      }
+    } else if (segments[0] === "documents") {
+      // Documents page uses FolderBreadcrumb - no DynamicBreadcrumb
+      return null;
     } else {
-      // For other pages, show the path
+      // For other pages, show the path with first item as base
       segments.forEach((segment, index) => {
         const label = segment
           .split("-")
@@ -150,12 +172,20 @@ export function DynamicBreadcrumb({
           label,
           href: `#`,
           isLast: index === segments.length - 1,
+          isBase: index === 0,
         });
       });
     }
 
     return items;
-  }, [pathname, organizationSlug, grantTitle, documentTitle, fromBookmarks]);
+  }, [
+    pathname,
+    organizationSlug,
+    grantTitle,
+    documentTitle,
+    applicationTitle,
+    fromBookmarks,
+  ]);
 
   // Fetch grant title if we're on a grant detail page
   useEffect(() => {
@@ -201,6 +231,28 @@ export function DynamicBreadcrumb({
     }
   }, [pathname, organizationSlug]);
 
+  // Fetch application title if we're on an application detail page
+  useEffect(() => {
+    const path = pathname.replace(`/private/${organizationSlug}`, "");
+    const segments = path.split("/").filter(Boolean);
+
+    if (segments[0] === "applications" && segments[1]) {
+      const applicationId = segments[1];
+      fetch(`/api/applications/${applicationId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.application && data.application.title) {
+            setApplicationTitle(data.application.title);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching application title:", error);
+        });
+    } else {
+      setApplicationTitle(null);
+    }
+  }, [pathname, organizationSlug]);
+
   // Don't render anything if we're on the home page
   if (!breadcrumbs) {
     return null;
@@ -216,11 +268,15 @@ export function DynamicBreadcrumb({
               {index > 0 && <BreadcrumbSeparator />}
               <BreadcrumbItem>
                 {item.isLast ? (
-                  <BreadcrumbPage title={item.label}>
+                  <BreadcrumbPage title={item.label} isBase={item.isBase}>
                     {truncatedLabel}
                   </BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink href={item.href} title={item.label}>
+                  <BreadcrumbLink
+                    href={item.href}
+                    title={item.label}
+                    isBase={item.isBase}
+                  >
                     {truncatedLabel}
                   </BreadcrumbLink>
                 )}

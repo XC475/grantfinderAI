@@ -159,20 +159,49 @@ function NormalLayoutContent({
   organizationSlug: string;
 }) {
   const { headerContent } = useHeaderContent();
+  const pathname = usePathname();
+
+  // Determine if we should show the header
+  const showHeader = useMemo(() => {
+    // Always show if there's custom header content
+    if (headerContent) return true;
+    
+    // Check if current route would show breadcrumbs
+    const path = pathname.replace(`/private/${organizationSlug}`, "");
+    const segments = path.split("/").filter(Boolean);
+    
+    // Pages that don't show breadcrumbs
+    const noBreadcrumbPages = [
+      "dashboard",
+      "chat", 
+      "settings",
+      "profile",
+      "documents"
+    ];
+    
+    // If it's one of these base pages, don't show header
+    if (segments.length === 0 || noBreadcrumbPages.includes(segments[0])) {
+      return false;
+    }
+    
+    return true;
+  }, [pathname, organizationSlug, headerContent]);
 
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            {headerContent || (
-              <DynamicBreadcrumb organizationSlug={organizationSlug} />
-            )}
-          </div>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-hidden h-full">
+        {showHeader && (
+          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+            <div className="flex items-center gap-2 px-4">
+              <Separator orientation="vertical" className="mr-2 h-4" />
+              {headerContent || (
+                <DynamicBreadcrumb organizationSlug={organizationSlug} />
+              )}
+            </div>
+          </header>
+        )}
+        <div className={`flex flex-1 flex-col gap-4 p-4 ${showHeader ? 'pt-0' : ''} overflow-hidden h-full`}>
           {children}
         </div>
       </SidebarInset>
