@@ -14,25 +14,7 @@ import { Loader2, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { ApplicationsTable } from "@/components/applications/ApplicationsTable";
 import { AddApplicationModal } from "@/components/applications/AddApplicationModal";
-
-interface Application {
-  id: string;
-  opportunityId: number;
-  status: string;
-  title: string | null;
-  createdAt: string;
-  updatedAt: string;
-  submittedAt: string | null;
-  lastEditedAt: string;
-  organization: {
-    slug: string;
-    name: string;
-  };
-  opportunity?: {
-    total_funding_amount: number | null;
-    close_date: string | null;
-  };
-}
+import { Application } from "@/components/applications/columns";
 
 export default function ApplicationsPage({
   params,

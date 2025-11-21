@@ -28,7 +28,6 @@ interface TeamSwitcherProps {
 
 export function TeamSwitcher({
   organization,
-  currentSlug: _currentSlug,
   loading = false,
   logoSize = "2rem",
 }: TeamSwitcherProps) {
