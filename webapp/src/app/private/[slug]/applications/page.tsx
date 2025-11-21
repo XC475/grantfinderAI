@@ -10,11 +10,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, FileText } from "lucide-react";
+import { Loader2, FileText, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { ApplicationsTable } from "@/components/applications/ApplicationsTable";
 import { AddApplicationModal } from "@/components/applications/AddApplicationModal";
 import { Application } from "@/components/applications/columns";
+import { useHeaderActions } from "@/contexts/HeaderActionsContext";
 
 export default function ApplicationsPage({
   params,
@@ -23,6 +24,7 @@ export default function ApplicationsPage({
 }) {
   const { slug } = use(params);
   const router = useRouter();
+  const { setHeaderActions } = useHeaderActions();
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -51,6 +53,19 @@ export default function ApplicationsPage({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
+  // Set header actions
+  useEffect(() => {
+    setHeaderActions(
+      <Button onClick={() => setAddModalOpen(true)}>
+        <Plus className="h-4 w-4 mr-1" />
+        New
+      </Button>
+    );
+
+    // Cleanup on unmount
+    return () => setHeaderActions(null);
+  }, [setHeaderActions]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -62,7 +77,7 @@ export default function ApplicationsPage({
   if (applications.length === 0) {
     return (
       <>
-        <div className="container max-w-6xl">
+        <div className="max-w-6xl">
           <Card>
             <CardHeader>
               <CardDescription>Manage your grant applications</CardDescription>
@@ -73,13 +88,10 @@ export default function ApplicationsPage({
                 <h3 className="text-lg font-semibold mb-2">
                   No applications yet
                 </h3>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-sm text-muted-foreground">
                   Create your first application from our grants database or add
-                  an outside opportunity
+                  an outside opportunity using the Add button above
                 </p>
-                <Button onClick={() => setAddModalOpen(true)}>
-                  Create Application
-                </Button>
               </div>
             </CardContent>
           </Card>
@@ -98,18 +110,30 @@ export default function ApplicationsPage({
   }
 
   return (
-    <div className="container max-w-full space-y-6">
-      <p className="text-muted-foreground">
-        {applications.length}{" "}
-        {applications.length === 1 ? "application" : "applications"}
-      </p>
+    <>
+      <div className="space-y-6">
+        <p className="text-muted-foreground">
+          {applications.length}{" "}
+          {applications.length === 1 ? "application" : "applications"}
+        </p>
 
-      <ApplicationsTable
-        applications={applications}
-        slug={slug}
-        onRefresh={fetchApplications}
-        variant="full"
+        <ApplicationsTable
+          applications={applications}
+          slug={slug}
+          onRefresh={fetchApplications}
+          variant="full"
+        />
+      </div>
+
+      <AddApplicationModal
+        open={addModalOpen}
+        onOpenChange={setAddModalOpen}
+        organizationSlug={slug}
+        onSuccess={() => {
+          setAddModalOpen(false);
+          fetchApplications();
+        }}
       />
-    </div>
+    </>
   );
 }

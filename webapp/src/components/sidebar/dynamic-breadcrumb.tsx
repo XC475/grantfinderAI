@@ -1,8 +1,9 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,6 +12,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Input } from "@/components/ui/input";
 
 interface DynamicBreadcrumbProps {
   organizationSlug: string;
@@ -38,8 +40,69 @@ export function DynamicBreadcrumb({
   const [documentTitle, setDocumentTitle] = useState<string | null>(null);
   const [applicationTitle, setApplicationTitle] = useState<string | null>(null);
   const [folderNames, setFolderNames] = useState<Record<string, string>>({});
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const fromBookmarks = searchParams.get("from") === "bookmarks";
+
+  // Handler for double-clicking document title to edit
+  const handleDoubleClickTitle = () => {
+    if (documentTitle) {
+      setEditedTitle(documentTitle);
+      setIsEditingTitle(true);
+    }
+  };
+
+  // Handler for saving the edited title
+  const handleSaveTitle = async () => {
+    if (!editedTitle.trim()) {
+      toast.error("Document title cannot be empty");
+      return;
+    }
+
+    // Check if title actually changed
+    if (editedTitle.trim() === documentTitle) {
+      setIsEditingTitle(false);
+      return;
+    }
+
+    // Get document ID from URL
+    const path = pathname.replace(`/private/${organizationSlug}`, "");
+    const segments = path.split("/").filter(Boolean);
+    const documentId = segments[1];
+
+    try {
+      const response = await fetch(`/api/documents/${documentId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: editedTitle.trim() }),
+      });
+
+      if (!response.ok) throw new Error("Failed to update document title");
+
+      setDocumentTitle(editedTitle.trim());
+      setIsEditingTitle(false);
+      toast.success("Document title updated");
+    } catch (error) {
+      console.error("Error updating document title:", error);
+      toast.error("Failed to update document title");
+    }
+  };
+
+  // Handler for canceling edit
+  const handleCancelEdit = () => {
+    setIsEditingTitle(false);
+    setEditedTitle("");
+  };
+
+  // Focus input when editing starts
+  useEffect(() => {
+    if (isEditingTitle && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditingTitle]);
 
   const breadcrumbs = useMemo(() => {
     // Remove the /private/[slug] prefix
@@ -114,14 +177,7 @@ export function DynamicBreadcrumb({
         });
       }
     } else if (segments[0] === "editor") {
-      // Document editor breadcrumb
-      items.push({
-        label: "Documents",
-        href: `/private/${organizationSlug}/documents`,
-        isLast: false,
-        isBase: true,
-      });
-
+      // Document editor breadcrumb - just show document title
       if (segments.length > 1 && segments[1]) {
         items.push({
           label: documentTitle || "Document",
@@ -314,7 +370,75 @@ export function DynamicBreadcrumb({
     return null;
   }
 
-  // Render heading + breadcrumbs pattern for all routes
+  // Check if first item is a base item (should be rendered as heading)
+  const hasBaseHeading = breadcrumbs.length > 0 && breadcrumbs[0].isBase;
+
+  // Check if we're on editor page for special handling
+  const path = pathname.replace(`/private/${organizationSlug}`, "");
+  const segments = path.split("/").filter(Boolean);
+  const isEditorPage = segments[0] === "editor";
+
+  // If no base heading (like editor page), render all as normal breadcrumbs
+  if (!hasBaseHeading) {
+    return (
+      <Breadcrumb>
+        <BreadcrumbList>
+          {breadcrumbs.map((item, index) => {
+            const truncatedLabel = truncateText(item.label);
+            return (
+              <div key={item.href + index} className="flex items-center gap-2">
+                {index > 0 && <BreadcrumbSeparator />}
+                <BreadcrumbItem>
+                  {item.isLast && isEditorPage ? (
+                    // Editable document title on editor page
+                    <div className="flex items-center">
+                      {isEditingTitle ? (
+                        <Input
+                          ref={inputRef}
+                          value={editedTitle}
+                          onChange={(e) => setEditedTitle(e.target.value)}
+                          onBlur={handleSaveTitle}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              handleSaveTitle();
+                            } else if (e.key === "Escape") {
+                              handleCancelEdit();
+                            }
+                          }}
+                          className="h-7 px-2 py-1 text-base"
+                          style={{
+                            width: `${Math.max(editedTitle.length * 8 + 20, 100)}px`,
+                          }}
+                        />
+                      ) : (
+                        <BreadcrumbPage
+                          title={item.label}
+                          onDoubleClick={handleDoubleClickTitle}
+                          className="cursor-text text-base"
+                        >
+                          {truncatedLabel}
+                        </BreadcrumbPage>
+                      )}
+                    </div>
+                  ) : item.isLast ? (
+                    <BreadcrumbPage title={item.label}>
+                      {truncatedLabel}
+                    </BreadcrumbPage>
+                  ) : (
+                    <BreadcrumbLink href={item.href} title={item.label}>
+                      {truncatedLabel}
+                    </BreadcrumbLink>
+                  )}
+                </BreadcrumbItem>
+              </div>
+            );
+          })}
+        </BreadcrumbList>
+      </Breadcrumb>
+    );
+  }
+
+  // Render heading + breadcrumbs pattern for routes with base heading
   // First item (base) is the heading, remaining items are breadcrumbs
   const baseItem = breadcrumbs[0];
   const nestedBreadcrumbs = breadcrumbs.slice(1);
