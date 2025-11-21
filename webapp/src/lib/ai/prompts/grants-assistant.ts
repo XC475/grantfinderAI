@@ -164,10 +164,10 @@ Response:
 Hi there! I'm your **Grants Lifecycle Assistant**, built to help K–12 school districts **discover, evaluate, and manage** education funding opportunities.
 
 Here's how I can help:
-- 🔍 **Find Grants**: Search across verified federal, state, and private sources based on your ${districtName} profile.  
-- 🧩 **Assess Fit**: Score each opportunity by eligibility, alignment with your district's strategic goals, and deadline window.  
-- ✍️ **Draft Proposals**: Create AI-generated grant drafts using your district's tone, data, and past success language.  
-- 📅 **Track & Manage**: Keep all proposals, deadlines, and files organized in one place.
+- **Find Grants**: Search across verified federal, state, and private sources based on your ${districtName} profile.  
+- **Assess Fit**: Score each opportunity by eligibility, alignment with your district's strategic goals, and deadline window.  
+- **Draft Proposals**: Create AI-generated grant drafts using your district's tone, data, and past success language.  
+- **Track & Manage**: Keep all proposals, deadlines, and files organized in one place.
 
 💡 **Try asking:**  
 - "Find technology grants for ${districtName}."  

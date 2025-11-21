@@ -11356,10 +11356,16 @@ export namespace Prisma {
 
   export type ApplicationAvgAggregateOutputType = {
     opportunityId: number | null
+    opportunityTotalFunding: number | null
+    opportunityAwardMin: number | null
+    opportunityAwardMax: number | null
   }
 
   export type ApplicationSumAggregateOutputType = {
     opportunityId: number | null
+    opportunityTotalFunding: bigint | null
+    opportunityAwardMin: bigint | null
+    opportunityAwardMax: bigint | null
   }
 
   export type ApplicationMinAggregateOutputType = {
@@ -11372,7 +11378,15 @@ export namespace Prisma {
     submittedAt: Date | null
     lastEditedAt: Date | null
     organizationId: string | null
-    attachments_markdown: string | null
+    opportunityTitle: string | null
+    opportunityDescription: string | null
+    opportunityEligibility: string | null
+    opportunityAgency: string | null
+    opportunityCloseDate: Date | null
+    opportunityTotalFunding: bigint | null
+    opportunityAwardMin: bigint | null
+    opportunityAwardMax: bigint | null
+    opportunityUrl: string | null
   }
 
   export type ApplicationMaxAggregateOutputType = {
@@ -11385,7 +11399,15 @@ export namespace Prisma {
     submittedAt: Date | null
     lastEditedAt: Date | null
     organizationId: string | null
-    attachments_markdown: string | null
+    opportunityTitle: string | null
+    opportunityDescription: string | null
+    opportunityEligibility: string | null
+    opportunityAgency: string | null
+    opportunityCloseDate: Date | null
+    opportunityTotalFunding: bigint | null
+    opportunityAwardMin: bigint | null
+    opportunityAwardMax: bigint | null
+    opportunityUrl: string | null
   }
 
   export type ApplicationCountAggregateOutputType = {
@@ -11398,17 +11420,32 @@ export namespace Prisma {
     submittedAt: number
     lastEditedAt: number
     organizationId: number
-    attachments_markdown: number
+    opportunityTitle: number
+    opportunityDescription: number
+    opportunityEligibility: number
+    opportunityAgency: number
+    opportunityCloseDate: number
+    opportunityTotalFunding: number
+    opportunityAwardMin: number
+    opportunityAwardMax: number
+    opportunityUrl: number
+    opportunityAttachments: number
     _all: number
   }
 
 
   export type ApplicationAvgAggregateInputType = {
     opportunityId?: true
+    opportunityTotalFunding?: true
+    opportunityAwardMin?: true
+    opportunityAwardMax?: true
   }
 
   export type ApplicationSumAggregateInputType = {
     opportunityId?: true
+    opportunityTotalFunding?: true
+    opportunityAwardMin?: true
+    opportunityAwardMax?: true
   }
 
   export type ApplicationMinAggregateInputType = {
@@ -11421,7 +11458,15 @@ export namespace Prisma {
     submittedAt?: true
     lastEditedAt?: true
     organizationId?: true
-    attachments_markdown?: true
+    opportunityTitle?: true
+    opportunityDescription?: true
+    opportunityEligibility?: true
+    opportunityAgency?: true
+    opportunityCloseDate?: true
+    opportunityTotalFunding?: true
+    opportunityAwardMin?: true
+    opportunityAwardMax?: true
+    opportunityUrl?: true
   }
 
   export type ApplicationMaxAggregateInputType = {
@@ -11434,7 +11479,15 @@ export namespace Prisma {
     submittedAt?: true
     lastEditedAt?: true
     organizationId?: true
-    attachments_markdown?: true
+    opportunityTitle?: true
+    opportunityDescription?: true
+    opportunityEligibility?: true
+    opportunityAgency?: true
+    opportunityCloseDate?: true
+    opportunityTotalFunding?: true
+    opportunityAwardMin?: true
+    opportunityAwardMax?: true
+    opportunityUrl?: true
   }
 
   export type ApplicationCountAggregateInputType = {
@@ -11447,7 +11500,16 @@ export namespace Prisma {
     submittedAt?: true
     lastEditedAt?: true
     organizationId?: true
-    attachments_markdown?: true
+    opportunityTitle?: true
+    opportunityDescription?: true
+    opportunityEligibility?: true
+    opportunityAgency?: true
+    opportunityCloseDate?: true
+    opportunityTotalFunding?: true
+    opportunityAwardMin?: true
+    opportunityAwardMax?: true
+    opportunityUrl?: true
+    opportunityAttachments?: true
     _all?: true
   }
 
@@ -11539,7 +11601,7 @@ export namespace Prisma {
 
   export type ApplicationGroupByOutputType = {
     id: string
-    opportunityId: number
+    opportunityId: number | null
     status: $Enums.ApplicationStatus
     title: string | null
     createdAt: Date
@@ -11547,7 +11609,16 @@ export namespace Prisma {
     submittedAt: Date | null
     lastEditedAt: Date
     organizationId: string
-    attachments_markdown: string | null
+    opportunityTitle: string | null
+    opportunityDescription: string | null
+    opportunityEligibility: string | null
+    opportunityAgency: string | null
+    opportunityCloseDate: Date | null
+    opportunityTotalFunding: bigint | null
+    opportunityAwardMin: bigint | null
+    opportunityAwardMax: bigint | null
+    opportunityUrl: string | null
+    opportunityAttachments: JsonValue | null
     _count: ApplicationCountAggregateOutputType | null
     _avg: ApplicationAvgAggregateOutputType | null
     _sum: ApplicationSumAggregateOutputType | null
@@ -11579,7 +11650,16 @@ export namespace Prisma {
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
-    attachments_markdown?: boolean
+    opportunityTitle?: boolean
+    opportunityDescription?: boolean
+    opportunityEligibility?: boolean
+    opportunityAgency?: boolean
+    opportunityCloseDate?: boolean
+    opportunityTotalFunding?: boolean
+    opportunityAwardMin?: boolean
+    opportunityAwardMax?: boolean
+    opportunityUrl?: boolean
+    opportunityAttachments?: boolean
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     documents?: boolean | Application$documentsArgs<ExtArgs>
@@ -11597,7 +11677,16 @@ export namespace Prisma {
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
-    attachments_markdown?: boolean
+    opportunityTitle?: boolean
+    opportunityDescription?: boolean
+    opportunityEligibility?: boolean
+    opportunityAgency?: boolean
+    opportunityCloseDate?: boolean
+    opportunityTotalFunding?: boolean
+    opportunityAwardMin?: boolean
+    opportunityAwardMax?: boolean
+    opportunityUrl?: boolean
+    opportunityAttachments?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
 
@@ -11611,7 +11700,16 @@ export namespace Prisma {
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
-    attachments_markdown?: boolean
+    opportunityTitle?: boolean
+    opportunityDescription?: boolean
+    opportunityEligibility?: boolean
+    opportunityAgency?: boolean
+    opportunityCloseDate?: boolean
+    opportunityTotalFunding?: boolean
+    opportunityAwardMin?: boolean
+    opportunityAwardMax?: boolean
+    opportunityUrl?: boolean
+    opportunityAttachments?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
 
@@ -11625,10 +11723,19 @@ export namespace Prisma {
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
-    attachments_markdown?: boolean
+    opportunityTitle?: boolean
+    opportunityDescription?: boolean
+    opportunityEligibility?: boolean
+    opportunityAgency?: boolean
+    opportunityCloseDate?: boolean
+    opportunityTotalFunding?: boolean
+    opportunityAwardMin?: boolean
+    opportunityAwardMax?: boolean
+    opportunityUrl?: boolean
+    opportunityAttachments?: boolean
   }
 
-  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "title" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId" | "attachments_markdown", ExtArgs["result"]["application"]>
+  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "title" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId" | "opportunityTitle" | "opportunityDescription" | "opportunityEligibility" | "opportunityAgency" | "opportunityCloseDate" | "opportunityTotalFunding" | "opportunityAwardMin" | "opportunityAwardMax" | "opportunityUrl" | "opportunityAttachments", ExtArgs["result"]["application"]>
   export type ApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -11653,7 +11760,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      opportunityId: number
+      opportunityId: number | null
       status: $Enums.ApplicationStatus
       title: string | null
       createdAt: Date
@@ -11661,7 +11768,16 @@ export namespace Prisma {
       submittedAt: Date | null
       lastEditedAt: Date
       organizationId: string
-      attachments_markdown: string | null
+      opportunityTitle: string | null
+      opportunityDescription: string | null
+      opportunityEligibility: string | null
+      opportunityAgency: string | null
+      opportunityCloseDate: Date | null
+      opportunityTotalFunding: bigint | null
+      opportunityAwardMin: bigint | null
+      opportunityAwardMax: bigint | null
+      opportunityUrl: string | null
+      opportunityAttachments: Prisma.JsonValue | null
     }, ExtArgs["result"]["application"]>
     composites: {}
   }
@@ -12098,7 +12214,16 @@ export namespace Prisma {
     readonly submittedAt: FieldRef<"Application", 'DateTime'>
     readonly lastEditedAt: FieldRef<"Application", 'DateTime'>
     readonly organizationId: FieldRef<"Application", 'String'>
-    readonly attachments_markdown: FieldRef<"Application", 'String'>
+    readonly opportunityTitle: FieldRef<"Application", 'String'>
+    readonly opportunityDescription: FieldRef<"Application", 'String'>
+    readonly opportunityEligibility: FieldRef<"Application", 'String'>
+    readonly opportunityAgency: FieldRef<"Application", 'String'>
+    readonly opportunityCloseDate: FieldRef<"Application", 'DateTime'>
+    readonly opportunityTotalFunding: FieldRef<"Application", 'BigInt'>
+    readonly opportunityAwardMin: FieldRef<"Application", 'BigInt'>
+    readonly opportunityAwardMax: FieldRef<"Application", 'BigInt'>
+    readonly opportunityUrl: FieldRef<"Application", 'String'>
+    readonly opportunityAttachments: FieldRef<"Application", 'Json'>
   }
     
 
@@ -20685,7 +20810,16 @@ export namespace Prisma {
     submittedAt: 'submittedAt',
     lastEditedAt: 'lastEditedAt',
     organizationId: 'organizationId',
-    attachments_markdown: 'attachments_markdown'
+    opportunityTitle: 'opportunityTitle',
+    opportunityDescription: 'opportunityDescription',
+    opportunityEligibility: 'opportunityEligibility',
+    opportunityAgency: 'opportunityAgency',
+    opportunityCloseDate: 'opportunityCloseDate',
+    opportunityTotalFunding: 'opportunityTotalFunding',
+    opportunityAwardMin: 'opportunityAwardMin',
+    opportunityAwardMax: 'opportunityAwardMax',
+    opportunityUrl: 'opportunityUrl',
+    opportunityAttachments: 'opportunityAttachments'
   };
 
   export type ApplicationScalarFieldEnum = (typeof ApplicationScalarFieldEnum)[keyof typeof ApplicationScalarFieldEnum]
@@ -21850,7 +21984,7 @@ export namespace Prisma {
     OR?: ApplicationWhereInput[]
     NOT?: ApplicationWhereInput | ApplicationWhereInput[]
     id?: StringFilter<"Application"> | string
-    opportunityId?: IntFilter<"Application"> | number
+    opportunityId?: IntNullableFilter<"Application"> | number | null
     status?: EnumApplicationStatusFilter<"Application"> | $Enums.ApplicationStatus
     title?: StringNullableFilter<"Application"> | string | null
     createdAt?: DateTimeFilter<"Application"> | Date | string
@@ -21858,7 +21992,16 @@ export namespace Prisma {
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
     organizationId?: StringFilter<"Application"> | string
-    attachments_markdown?: StringNullableFilter<"Application"> | string | null
+    opportunityTitle?: StringNullableFilter<"Application"> | string | null
+    opportunityDescription?: StringNullableFilter<"Application"> | string | null
+    opportunityEligibility?: StringNullableFilter<"Application"> | string | null
+    opportunityAgency?: StringNullableFilter<"Application"> | string | null
+    opportunityCloseDate?: DateTimeNullableFilter<"Application"> | Date | string | null
+    opportunityTotalFunding?: BigIntNullableFilter<"Application"> | bigint | number | null
+    opportunityAwardMin?: BigIntNullableFilter<"Application"> | bigint | number | null
+    opportunityAwardMax?: BigIntNullableFilter<"Application"> | bigint | number | null
+    opportunityUrl?: StringNullableFilter<"Application"> | string | null
+    opportunityAttachments?: JsonNullableFilter<"Application">
     aiChats?: AiChatListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     documents?: DocumentListRelationFilter
@@ -21867,7 +22010,7 @@ export namespace Prisma {
 
   export type ApplicationOrderByWithRelationInput = {
     id?: SortOrder
-    opportunityId?: SortOrder
+    opportunityId?: SortOrderInput | SortOrder
     status?: SortOrder
     title?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -21875,7 +22018,16 @@ export namespace Prisma {
     submittedAt?: SortOrderInput | SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
-    attachments_markdown?: SortOrderInput | SortOrder
+    opportunityTitle?: SortOrderInput | SortOrder
+    opportunityDescription?: SortOrderInput | SortOrder
+    opportunityEligibility?: SortOrderInput | SortOrder
+    opportunityAgency?: SortOrderInput | SortOrder
+    opportunityCloseDate?: SortOrderInput | SortOrder
+    opportunityTotalFunding?: SortOrderInput | SortOrder
+    opportunityAwardMin?: SortOrderInput | SortOrder
+    opportunityAwardMax?: SortOrderInput | SortOrder
+    opportunityUrl?: SortOrderInput | SortOrder
+    opportunityAttachments?: SortOrderInput | SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     organization?: OrganizationOrderByWithRelationInput
     documents?: DocumentOrderByRelationAggregateInput
@@ -21884,11 +22036,10 @@ export namespace Prisma {
 
   export type ApplicationWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    opportunityId_organizationId?: ApplicationOpportunityIdOrganizationIdCompoundUniqueInput
     AND?: ApplicationWhereInput | ApplicationWhereInput[]
     OR?: ApplicationWhereInput[]
     NOT?: ApplicationWhereInput | ApplicationWhereInput[]
-    opportunityId?: IntFilter<"Application"> | number
+    opportunityId?: IntNullableFilter<"Application"> | number | null
     status?: EnumApplicationStatusFilter<"Application"> | $Enums.ApplicationStatus
     title?: StringNullableFilter<"Application"> | string | null
     createdAt?: DateTimeFilter<"Application"> | Date | string
@@ -21896,16 +22047,25 @@ export namespace Prisma {
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
     organizationId?: StringFilter<"Application"> | string
-    attachments_markdown?: StringNullableFilter<"Application"> | string | null
+    opportunityTitle?: StringNullableFilter<"Application"> | string | null
+    opportunityDescription?: StringNullableFilter<"Application"> | string | null
+    opportunityEligibility?: StringNullableFilter<"Application"> | string | null
+    opportunityAgency?: StringNullableFilter<"Application"> | string | null
+    opportunityCloseDate?: DateTimeNullableFilter<"Application"> | Date | string | null
+    opportunityTotalFunding?: BigIntNullableFilter<"Application"> | bigint | number | null
+    opportunityAwardMin?: BigIntNullableFilter<"Application"> | bigint | number | null
+    opportunityAwardMax?: BigIntNullableFilter<"Application"> | bigint | number | null
+    opportunityUrl?: StringNullableFilter<"Application"> | string | null
+    opportunityAttachments?: JsonNullableFilter<"Application">
     aiChats?: AiChatListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     documents?: DocumentListRelationFilter
     folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
-  }, "id" | "opportunityId_organizationId">
+  }, "id">
 
   export type ApplicationOrderByWithAggregationInput = {
     id?: SortOrder
-    opportunityId?: SortOrder
+    opportunityId?: SortOrderInput | SortOrder
     status?: SortOrder
     title?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -21913,7 +22073,16 @@ export namespace Prisma {
     submittedAt?: SortOrderInput | SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
-    attachments_markdown?: SortOrderInput | SortOrder
+    opportunityTitle?: SortOrderInput | SortOrder
+    opportunityDescription?: SortOrderInput | SortOrder
+    opportunityEligibility?: SortOrderInput | SortOrder
+    opportunityAgency?: SortOrderInput | SortOrder
+    opportunityCloseDate?: SortOrderInput | SortOrder
+    opportunityTotalFunding?: SortOrderInput | SortOrder
+    opportunityAwardMin?: SortOrderInput | SortOrder
+    opportunityAwardMax?: SortOrderInput | SortOrder
+    opportunityUrl?: SortOrderInput | SortOrder
+    opportunityAttachments?: SortOrderInput | SortOrder
     _count?: ApplicationCountOrderByAggregateInput
     _avg?: ApplicationAvgOrderByAggregateInput
     _max?: ApplicationMaxOrderByAggregateInput
@@ -21926,7 +22095,7 @@ export namespace Prisma {
     OR?: ApplicationScalarWhereWithAggregatesInput[]
     NOT?: ApplicationScalarWhereWithAggregatesInput | ApplicationScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Application"> | string
-    opportunityId?: IntWithAggregatesFilter<"Application"> | number
+    opportunityId?: IntNullableWithAggregatesFilter<"Application"> | number | null
     status?: EnumApplicationStatusWithAggregatesFilter<"Application"> | $Enums.ApplicationStatus
     title?: StringNullableWithAggregatesFilter<"Application"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
@@ -21934,7 +22103,16 @@ export namespace Prisma {
     submittedAt?: DateTimeNullableWithAggregatesFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
     organizationId?: StringWithAggregatesFilter<"Application"> | string
-    attachments_markdown?: StringNullableWithAggregatesFilter<"Application"> | string | null
+    opportunityTitle?: StringNullableWithAggregatesFilter<"Application"> | string | null
+    opportunityDescription?: StringNullableWithAggregatesFilter<"Application"> | string | null
+    opportunityEligibility?: StringNullableWithAggregatesFilter<"Application"> | string | null
+    opportunityAgency?: StringNullableWithAggregatesFilter<"Application"> | string | null
+    opportunityCloseDate?: DateTimeNullableWithAggregatesFilter<"Application"> | Date | string | null
+    opportunityTotalFunding?: BigIntNullableWithAggregatesFilter<"Application"> | bigint | number | null
+    opportunityAwardMin?: BigIntNullableWithAggregatesFilter<"Application"> | bigint | number | null
+    opportunityAwardMax?: BigIntNullableWithAggregatesFilter<"Application"> | bigint | number | null
+    opportunityUrl?: StringNullableWithAggregatesFilter<"Application"> | string | null
+    opportunityAttachments?: JsonNullableWithAggregatesFilter<"Application">
   }
 
   export type AiChatWhereInput = {
@@ -23354,14 +23532,23 @@ export namespace Prisma {
 
   export type ApplicationCreateInput = {
     id?: string
-    opportunityId: number
+    opportunityId?: number | null
     status?: $Enums.ApplicationStatus
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    attachments_markdown?: string | null
+    opportunityTitle?: string | null
+    opportunityDescription?: string | null
+    opportunityEligibility?: string | null
+    opportunityAgency?: string | null
+    opportunityCloseDate?: Date | string | null
+    opportunityTotalFunding?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityAwardMax?: bigint | number | null
+    opportunityUrl?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
@@ -23370,7 +23557,7 @@ export namespace Prisma {
 
   export type ApplicationUncheckedCreateInput = {
     id?: string
-    opportunityId: number
+    opportunityId?: number | null
     status?: $Enums.ApplicationStatus
     title?: string | null
     createdAt?: Date | string
@@ -23378,7 +23565,16 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
-    attachments_markdown?: string | null
+    opportunityTitle?: string | null
+    opportunityDescription?: string | null
+    opportunityEligibility?: string | null
+    opportunityAgency?: string | null
+    opportunityCloseDate?: Date | string | null
+    opportunityTotalFunding?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityAwardMax?: bigint | number | null
+    opportunityUrl?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
     folder?: FolderUncheckedCreateNestedOneWithoutApplicationInput
@@ -23386,14 +23582,23 @@ export namespace Prisma {
 
   export type ApplicationUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    opportunityId?: IntFieldUpdateOperationsInput | number
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
@@ -23402,7 +23607,7 @@ export namespace Prisma {
 
   export type ApplicationUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    opportunityId?: IntFieldUpdateOperationsInput | number
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23410,7 +23615,16 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
     folder?: FolderUncheckedUpdateOneWithoutApplicationNestedInput
@@ -23418,7 +23632,7 @@ export namespace Prisma {
 
   export type ApplicationCreateManyInput = {
     id?: string
-    opportunityId: number
+    opportunityId?: number | null
     status?: $Enums.ApplicationStatus
     title?: string | null
     createdAt?: Date | string
@@ -23426,24 +23640,42 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
-    attachments_markdown?: string | null
+    opportunityTitle?: string | null
+    opportunityDescription?: string | null
+    opportunityEligibility?: string | null
+    opportunityAgency?: string | null
+    opportunityCloseDate?: Date | string | null
+    opportunityTotalFunding?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityAwardMax?: bigint | number | null
+    opportunityUrl?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type ApplicationUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    opportunityId?: IntFieldUpdateOperationsInput | number
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type ApplicationUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    opportunityId?: IntFieldUpdateOperationsInput | number
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23451,7 +23683,16 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type AiChatCreateInput = {
@@ -24970,11 +25211,6 @@ export namespace Prisma {
     isNot?: FolderWhereInput | null
   }
 
-  export type ApplicationOpportunityIdOrganizationIdCompoundUniqueInput = {
-    opportunityId: number
-    organizationId: string
-  }
-
   export type ApplicationCountOrderByAggregateInput = {
     id?: SortOrder
     opportunityId?: SortOrder
@@ -24985,11 +25221,23 @@ export namespace Prisma {
     submittedAt?: SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
-    attachments_markdown?: SortOrder
+    opportunityTitle?: SortOrder
+    opportunityDescription?: SortOrder
+    opportunityEligibility?: SortOrder
+    opportunityAgency?: SortOrder
+    opportunityCloseDate?: SortOrder
+    opportunityTotalFunding?: SortOrder
+    opportunityAwardMin?: SortOrder
+    opportunityAwardMax?: SortOrder
+    opportunityUrl?: SortOrder
+    opportunityAttachments?: SortOrder
   }
 
   export type ApplicationAvgOrderByAggregateInput = {
     opportunityId?: SortOrder
+    opportunityTotalFunding?: SortOrder
+    opportunityAwardMin?: SortOrder
+    opportunityAwardMax?: SortOrder
   }
 
   export type ApplicationMaxOrderByAggregateInput = {
@@ -25002,7 +25250,15 @@ export namespace Prisma {
     submittedAt?: SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
-    attachments_markdown?: SortOrder
+    opportunityTitle?: SortOrder
+    opportunityDescription?: SortOrder
+    opportunityEligibility?: SortOrder
+    opportunityAgency?: SortOrder
+    opportunityCloseDate?: SortOrder
+    opportunityTotalFunding?: SortOrder
+    opportunityAwardMin?: SortOrder
+    opportunityAwardMax?: SortOrder
+    opportunityUrl?: SortOrder
   }
 
   export type ApplicationMinOrderByAggregateInput = {
@@ -25015,11 +25271,22 @@ export namespace Prisma {
     submittedAt?: SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
-    attachments_markdown?: SortOrder
+    opportunityTitle?: SortOrder
+    opportunityDescription?: SortOrder
+    opportunityEligibility?: SortOrder
+    opportunityAgency?: SortOrder
+    opportunityCloseDate?: SortOrder
+    opportunityTotalFunding?: SortOrder
+    opportunityAwardMin?: SortOrder
+    opportunityAwardMax?: SortOrder
+    opportunityUrl?: SortOrder
   }
 
   export type ApplicationSumOrderByAggregateInput = {
     opportunityId?: SortOrder
+    opportunityTotalFunding?: SortOrder
+    opportunityAwardMin?: SortOrder
+    opportunityAwardMax?: SortOrder
   }
 
   export type EnumApplicationStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -27386,14 +27653,23 @@ export namespace Prisma {
 
   export type ApplicationCreateWithoutOrganizationInput = {
     id?: string
-    opportunityId: number
+    opportunityId?: number | null
     status?: $Enums.ApplicationStatus
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    attachments_markdown?: string | null
+    opportunityTitle?: string | null
+    opportunityDescription?: string | null
+    opportunityEligibility?: string | null
+    opportunityAgency?: string | null
+    opportunityCloseDate?: Date | string | null
+    opportunityTotalFunding?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityAwardMax?: bigint | number | null
+    opportunityUrl?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
     folder?: FolderCreateNestedOneWithoutApplicationInput
@@ -27401,14 +27677,23 @@ export namespace Prisma {
 
   export type ApplicationUncheckedCreateWithoutOrganizationInput = {
     id?: string
-    opportunityId: number
+    opportunityId?: number | null
     status?: $Enums.ApplicationStatus
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    attachments_markdown?: string | null
+    opportunityTitle?: string | null
+    opportunityDescription?: string | null
+    opportunityEligibility?: string | null
+    opportunityAgency?: string | null
+    opportunityCloseDate?: Date | string | null
+    opportunityTotalFunding?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityAwardMax?: bigint | number | null
+    opportunityUrl?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
     folder?: FolderUncheckedCreateNestedOneWithoutApplicationInput
@@ -27699,7 +27984,7 @@ export namespace Prisma {
     OR?: ApplicationScalarWhereInput[]
     NOT?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
     id?: StringFilter<"Application"> | string
-    opportunityId?: IntFilter<"Application"> | number
+    opportunityId?: IntNullableFilter<"Application"> | number | null
     status?: EnumApplicationStatusFilter<"Application"> | $Enums.ApplicationStatus
     title?: StringNullableFilter<"Application"> | string | null
     createdAt?: DateTimeFilter<"Application"> | Date | string
@@ -27707,7 +27992,16 @@ export namespace Prisma {
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
     organizationId?: StringFilter<"Application"> | string
-    attachments_markdown?: StringNullableFilter<"Application"> | string | null
+    opportunityTitle?: StringNullableFilter<"Application"> | string | null
+    opportunityDescription?: StringNullableFilter<"Application"> | string | null
+    opportunityEligibility?: StringNullableFilter<"Application"> | string | null
+    opportunityAgency?: StringNullableFilter<"Application"> | string | null
+    opportunityCloseDate?: DateTimeNullableFilter<"Application"> | Date | string | null
+    opportunityTotalFunding?: BigIntNullableFilter<"Application"> | bigint | number | null
+    opportunityAwardMin?: BigIntNullableFilter<"Application"> | bigint | number | null
+    opportunityAwardMax?: BigIntNullableFilter<"Application"> | bigint | number | null
+    opportunityUrl?: StringNullableFilter<"Application"> | string | null
+    opportunityAttachments?: JsonNullableFilter<"Application">
   }
 
   export type CustomFieldUpsertWithWhereUniqueWithoutOrganizationInput = {
@@ -28930,14 +29224,23 @@ export namespace Prisma {
 
   export type ApplicationCreateWithoutAiChatsInput = {
     id?: string
-    opportunityId: number
+    opportunityId?: number | null
     status?: $Enums.ApplicationStatus
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    attachments_markdown?: string | null
+    opportunityTitle?: string | null
+    opportunityDescription?: string | null
+    opportunityEligibility?: string | null
+    opportunityAgency?: string | null
+    opportunityCloseDate?: Date | string | null
+    opportunityTotalFunding?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityAwardMax?: bigint | number | null
+    opportunityUrl?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
     folder?: FolderCreateNestedOneWithoutApplicationInput
@@ -28945,7 +29248,7 @@ export namespace Prisma {
 
   export type ApplicationUncheckedCreateWithoutAiChatsInput = {
     id?: string
-    opportunityId: number
+    opportunityId?: number | null
     status?: $Enums.ApplicationStatus
     title?: string | null
     createdAt?: Date | string
@@ -28953,7 +29256,16 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
-    attachments_markdown?: string | null
+    opportunityTitle?: string | null
+    opportunityDescription?: string | null
+    opportunityEligibility?: string | null
+    opportunityAgency?: string | null
+    opportunityCloseDate?: Date | string | null
+    opportunityTotalFunding?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityAwardMax?: bigint | number | null
+    opportunityUrl?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
     folder?: FolderUncheckedCreateNestedOneWithoutApplicationInput
   }
@@ -29136,14 +29448,23 @@ export namespace Prisma {
 
   export type ApplicationUpdateWithoutAiChatsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    opportunityId?: IntFieldUpdateOperationsInput | number
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
     folder?: FolderUpdateOneWithoutApplicationNestedInput
@@ -29151,7 +29472,7 @@ export namespace Prisma {
 
   export type ApplicationUncheckedUpdateWithoutAiChatsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    opportunityId?: IntFieldUpdateOperationsInput | number
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29159,7 +29480,16 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
     folder?: FolderUncheckedUpdateOneWithoutApplicationNestedInput
   }
@@ -29554,14 +29884,23 @@ export namespace Prisma {
 
   export type ApplicationCreateWithoutDocumentsInput = {
     id?: string
-    opportunityId: number
+    opportunityId?: number | null
     status?: $Enums.ApplicationStatus
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    attachments_markdown?: string | null
+    opportunityTitle?: string | null
+    opportunityDescription?: string | null
+    opportunityEligibility?: string | null
+    opportunityAgency?: string | null
+    opportunityCloseDate?: Date | string | null
+    opportunityTotalFunding?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityAwardMax?: bigint | number | null
+    opportunityUrl?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
     folder?: FolderCreateNestedOneWithoutApplicationInput
@@ -29569,7 +29908,7 @@ export namespace Prisma {
 
   export type ApplicationUncheckedCreateWithoutDocumentsInput = {
     id?: string
-    opportunityId: number
+    opportunityId?: number | null
     status?: $Enums.ApplicationStatus
     title?: string | null
     createdAt?: Date | string
@@ -29577,7 +29916,16 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
-    attachments_markdown?: string | null
+    opportunityTitle?: string | null
+    opportunityDescription?: string | null
+    opportunityEligibility?: string | null
+    opportunityAgency?: string | null
+    opportunityCloseDate?: Date | string | null
+    opportunityTotalFunding?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityAwardMax?: bigint | number | null
+    opportunityUrl?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
     folder?: FolderUncheckedCreateNestedOneWithoutApplicationInput
   }
@@ -29714,14 +30062,23 @@ export namespace Prisma {
 
   export type ApplicationUpdateWithoutDocumentsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    opportunityId?: IntFieldUpdateOperationsInput | number
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
     folder?: FolderUpdateOneWithoutApplicationNestedInput
@@ -29729,7 +30086,7 @@ export namespace Prisma {
 
   export type ApplicationUncheckedUpdateWithoutDocumentsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    opportunityId?: IntFieldUpdateOperationsInput | number
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29737,7 +30094,16 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
     folder?: FolderUncheckedUpdateOneWithoutApplicationNestedInput
   }
@@ -29912,14 +30278,23 @@ export namespace Prisma {
 
   export type ApplicationCreateWithoutFolderInput = {
     id?: string
-    opportunityId: number
+    opportunityId?: number | null
     status?: $Enums.ApplicationStatus
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    attachments_markdown?: string | null
+    opportunityTitle?: string | null
+    opportunityDescription?: string | null
+    opportunityEligibility?: string | null
+    opportunityAgency?: string | null
+    opportunityCloseDate?: Date | string | null
+    opportunityTotalFunding?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityAwardMax?: bigint | number | null
+    opportunityUrl?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
@@ -29927,7 +30302,7 @@ export namespace Prisma {
 
   export type ApplicationUncheckedCreateWithoutFolderInput = {
     id?: string
-    opportunityId: number
+    opportunityId?: number | null
     status?: $Enums.ApplicationStatus
     title?: string | null
     createdAt?: Date | string
@@ -29935,7 +30310,16 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
-    attachments_markdown?: string | null
+    opportunityTitle?: string | null
+    opportunityDescription?: string | null
+    opportunityEligibility?: string | null
+    opportunityAgency?: string | null
+    opportunityCloseDate?: Date | string | null
+    opportunityTotalFunding?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityAwardMax?: bigint | number | null
+    opportunityUrl?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
   }
@@ -30120,14 +30504,23 @@ export namespace Prisma {
 
   export type ApplicationUpdateWithoutFolderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    opportunityId?: IntFieldUpdateOperationsInput | number
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
@@ -30135,7 +30528,7 @@ export namespace Prisma {
 
   export type ApplicationUncheckedUpdateWithoutFolderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    opportunityId?: IntFieldUpdateOperationsInput | number
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30143,7 +30536,16 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
   }
@@ -30578,14 +30980,23 @@ export namespace Prisma {
 
   export type ApplicationCreateManyOrganizationInput = {
     id?: string
-    opportunityId: number
+    opportunityId?: number | null
     status?: $Enums.ApplicationStatus
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    attachments_markdown?: string | null
+    opportunityTitle?: string | null
+    opportunityDescription?: string | null
+    opportunityEligibility?: string | null
+    opportunityAgency?: string | null
+    opportunityCloseDate?: Date | string | null
+    opportunityTotalFunding?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityAwardMax?: bigint | number | null
+    opportunityUrl?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type CustomFieldCreateManyOrganizationInput = {
@@ -30705,14 +31116,23 @@ export namespace Prisma {
 
   export type ApplicationUpdateWithoutOrganizationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    opportunityId?: IntFieldUpdateOperationsInput | number
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
     folder?: FolderUpdateOneWithoutApplicationNestedInput
@@ -30720,14 +31140,23 @@ export namespace Prisma {
 
   export type ApplicationUncheckedUpdateWithoutOrganizationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    opportunityId?: IntFieldUpdateOperationsInput | number
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
     folder?: FolderUncheckedUpdateOneWithoutApplicationNestedInput
@@ -30735,14 +31164,23 @@ export namespace Prisma {
 
   export type ApplicationUncheckedUpdateManyWithoutOrganizationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    opportunityId?: IntFieldUpdateOperationsInput | number
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    attachments_markdown?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type CustomFieldUpdateWithoutOrganizationInput = {

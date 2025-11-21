@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { supabaseServer } from "@/lib/supabaseServer";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma";
+import type { CreateApplicationRequest } from "@/types/application";
 
 // POST /api/applications - Create a new application
 export async function POST(request: NextRequest) {
@@ -17,12 +18,28 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json();
-    const { opportunityId, organizationSlug, alsoBookmark, grantTitle } = body;
+    const body: CreateApplicationRequest = await request.json();
+    const {
+      opportunityId,
+      organizationSlug,
+      alsoBookmark,
+      grantTitle,
+      title,
+      opportunityTitle,
+      opportunityDescription,
+      opportunityEligibility,
+      opportunityAgency,
+      opportunityCloseDate,
+      opportunityTotalFunding,
+      opportunityAwardMin,
+      opportunityAwardMax,
+      opportunityUrl,
+      opportunityAttachments,
+    } = body;
 
-    if (!opportunityId || !organizationSlug) {
+    if (!organizationSlug) {
       return NextResponse.json(
-        { error: "opportunityId and organizationSlug are required" },
+        { error: "organizationSlug is required" },
         { status: 400 }
       );
     }
@@ -44,33 +61,119 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if application already exists
-    const existing = await prisma.application.findUnique({
-      where: {
-        opportunityId_organizationId: {
-          opportunityId,
-          organizationId: organization.id,
-        },
-      },
-    });
+    // Prepare opportunity data
+    let opportunityData: Partial<{
+      opportunityTitle: string;
+      opportunityDescription: string;
+      opportunityEligibility: string;
+      opportunityAgency: string;
+      opportunityCloseDate: Date;
+      opportunityTotalFunding: bigint;
+      opportunityAwardMin: bigint;
+      opportunityAwardMax: bigint;
+      opportunityUrl: string;
+      opportunityAttachments: Prisma.InputJsonValue;
+    }> = {};
 
-    if (existing) {
-      return NextResponse.json(
-        {
-          error: "Application already exists for this grant",
-          application: existing,
-        },
-        { status: 409 }
-      );
+    // If opportunityId is provided, fetch the grant data from opportunities table
+    if (opportunityId) {
+      const { data: opportunity, error: oppError } = await supabaseServer
+        .from("opportunities")
+        .select("*")
+        .eq("id", opportunityId)
+        .single();
+
+      if (oppError || !opportunity) {
+        return NextResponse.json(
+          { error: "Opportunity not found" },
+          { status: 404 }
+        );
+      }
+
+      // Copy fields from opportunity (can be overridden by request body)
+      opportunityData = {
+        opportunityTitle: opportunityTitle || opportunity.title,
+        opportunityDescription:
+          opportunityDescription || opportunity.description,
+        opportunityEligibility:
+          opportunityEligibility || opportunity.eligibility_summary,
+        opportunityAgency: opportunityAgency || opportunity.agency,
+        opportunityCloseDate: opportunityCloseDate
+          ? new Date(opportunityCloseDate)
+          : opportunity.close_date
+            ? new Date(opportunity.close_date)
+            : undefined,
+        opportunityTotalFunding:
+          opportunityTotalFunding !== undefined
+            ? BigInt(opportunityTotalFunding)
+            : opportunity.total_funding_amount
+              ? BigInt(opportunity.total_funding_amount)
+              : undefined,
+        opportunityAwardMin:
+          opportunityAwardMin !== undefined
+            ? BigInt(opportunityAwardMin)
+            : opportunity.award_min
+              ? BigInt(opportunity.award_min)
+              : undefined,
+        opportunityAwardMax:
+          opportunityAwardMax !== undefined
+            ? BigInt(opportunityAwardMax)
+            : opportunity.award_max
+              ? BigInt(opportunity.award_max)
+              : undefined,
+        opportunityUrl: opportunityUrl || opportunity.url,
+        opportunityAttachments:
+          opportunityAttachments ||
+          (opportunity.attachments !== null
+            ? opportunity.attachments
+            : undefined),
+      };
+    } else {
+      // For outside opportunities, use provided data
+      if (!opportunityTitle) {
+        return NextResponse.json(
+          { error: "opportunityTitle is required for outside opportunities" },
+          { status: 400 }
+        );
+      }
+
+      opportunityData = {
+        opportunityTitle,
+        opportunityDescription,
+        opportunityEligibility,
+        opportunityAgency,
+        opportunityCloseDate: opportunityCloseDate
+          ? new Date(opportunityCloseDate)
+          : undefined,
+        opportunityTotalFunding:
+          opportunityTotalFunding !== undefined
+            ? BigInt(opportunityTotalFunding)
+            : undefined,
+        opportunityAwardMin:
+          opportunityAwardMin !== undefined
+            ? BigInt(opportunityAwardMin)
+            : undefined,
+        opportunityAwardMax:
+          opportunityAwardMax !== undefined
+            ? BigInt(opportunityAwardMax)
+            : undefined,
+        opportunityUrl,
+        opportunityAttachments,
+      };
     }
 
-    // Create the application with the grant title
+    // Create the application with opportunity data
     const application = await prisma.application.create({
       data: {
-        opportunityId,
+        opportunityId: opportunityId || null,
         organizationId: organization.id,
         status: "DRAFT",
-        title: grantTitle || `Application for Grant #${opportunityId}`,
+        title:
+          title ||
+          grantTitle ||
+          opportunityData.opportunityTitle ||
+          `Application for Grant #${opportunityId || "Outside"}`,
+        ...opportunityData,
       },
     });
 
@@ -84,8 +187,8 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Also bookmark if requested
-    if (alsoBookmark) {
+    // Also bookmark if requested (only if opportunityId exists)
+    if (alsoBookmark && opportunityId) {
       await prisma.grantBookmark.upsert({
         where: {
           userId_opportunityId_organizationId: {
@@ -154,34 +257,8 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // Fetch opportunity data for each application (from public schema)
-    const opportunityIds = applications.map((app) => app.opportunityId);
-
-    if (opportunityIds.length === 0) {
-      return NextResponse.json({ applications });
-    }
-
-    const { data: opportunities, error: oppError } = await supabaseServer
-      .from("opportunities")
-      .select("id, total_funding_amount, close_date")
-      .in("id", opportunityIds);
-
-    if (oppError) {
-      console.error("Error fetching opportunities:", oppError);
-    }
-
-    // Create a map for quick lookup
-    const opportunityMap = new Map(
-      opportunities?.map((opp) => [opp.id, opp]) || []
-    );
-
-    // Merge opportunity data with applications
-    const applicationsWithOpportunities = applications.map((app) => ({
-      ...app,
-      opportunity: opportunityMap.get(app.opportunityId) || null,
-    }));
-
-    return NextResponse.json({ applications: applicationsWithOpportunities });
+    // Applications now contain their own opportunity data - no need to fetch separately
+    return NextResponse.json({ applications });
   } catch (error) {
     console.error("Error fetching applications:", error);
     return NextResponse.json(

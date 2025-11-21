@@ -1,17 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   ExternalLink,
   Calendar,
   DollarSign,
   Building,
   Paperclip,
+  Edit2,
+  Save,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { StatusSelect } from "./StatusSelect";
+import { toast } from "sonner";
 
 interface GrantInfoCardProps {
   grant: {
@@ -33,6 +41,8 @@ interface GrantInfoCardProps {
   };
   organizationSlug: string;
   onStatusUpdate?: (newStatus: string) => void;
+  isEditable?: boolean;
+  onUpdate?: () => void;
 }
 
 function formatCurrency(amount: number | null | undefined) {
@@ -71,24 +81,122 @@ export function GrantInfoCard({
   application,
   organizationSlug,
   onStatusUpdate,
+  isEditable = false,
+  onUpdate,
 }: GrantInfoCardProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    opportunityTitle: grant.title,
+    opportunityDescription: grant.description || "",
+    opportunityAgency: grant.agency || "",
+    opportunityCloseDate: grant.close_date
+      ? new Date(grant.close_date).toISOString().split("T")[0]
+      : "",
+    opportunityTotalFunding: grant.total_funding_amount?.toString() || "",
+    opportunityAwardMin: grant.award_min?.toString() || "",
+    opportunityAwardMax: grant.award_max?.toString() || "",
+    opportunityUrl: grant.url || "",
+  });
+
+  const handleSave = async () => {
+    if (!application) return;
+
+    try {
+      setSaving(true);
+      const res = await fetch(`/api/applications/${application.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          opportunityTitle: formData.opportunityTitle,
+          opportunityDescription: formData.opportunityDescription || null,
+          opportunityAgency: formData.opportunityAgency || null,
+          opportunityCloseDate: formData.opportunityCloseDate || null,
+          opportunityTotalFunding: formData.opportunityTotalFunding
+            ? Number(formData.opportunityTotalFunding)
+            : null,
+          opportunityAwardMin: formData.opportunityAwardMin
+            ? Number(formData.opportunityAwardMin)
+            : null,
+          opportunityAwardMax: formData.opportunityAwardMax
+            ? Number(formData.opportunityAwardMax)
+            : null,
+          opportunityUrl: formData.opportunityUrl || null,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update opportunity details");
+      }
+
+      toast.success("Opportunity details updated successfully");
+      setIsEditing(false);
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (error) {
+      console.error("Error updating opportunity details:", error);
+      toast.error("Failed to update opportunity details");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      opportunityTitle: grant.title,
+      opportunityDescription: grant.description || "",
+      opportunityAgency: grant.agency || "",
+      opportunityCloseDate: grant.close_date
+        ? new Date(grant.close_date).toISOString().split("T")[0]
+        : "",
+      opportunityTotalFunding: grant.total_funding_amount?.toString() || "",
+      opportunityAwardMin: grant.award_min?.toString() || "",
+      opportunityAwardMax: grant.award_max?.toString() || "",
+      opportunityUrl: grant.url || "",
+    });
+    setIsEditing(false);
+  };
+
   return (
     <Card>
       <CardHeader>
         <div className="flex justify-between items-start">
           <div className="flex-1">
-            <CardTitle className="text-xl mb-2">{grant.title}</CardTitle>
-            <div className="flex items-center gap-2 mb-2">
-              <Badge className={getStatusColor(grant.status)}>
-                {grant.status}
-              </Badge>
-              {grant.agency && (
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <Building className="h-4 w-4" />
-                  {grant.agency}
+            {isEditing ? (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="opportunityTitle">Opportunity Title</Label>
+                  <Input
+                    id="opportunityTitle"
+                    value={formData.opportunityTitle}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        opportunityTitle: e.target.value,
+                      })
+                    }
+                  />
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <>
+                <CardTitle className="text-xl mb-2">{grant.title}</CardTitle>
+              </>
+            )}
+            {!isEditing && (
+              <div className="flex items-center gap-2 mb-2">
+                <Badge className={getStatusColor(grant.status)}>
+                  {grant.status}
+                </Badge>
+                {grant.agency && (
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Building className="h-4 w-4" />
+                    {grant.agency}
+                  </div>
+                )}
+              </div>
+            )}
             {application && (
               <div className="mt-4 pt-4 border-t">
                 <div className="flex items-center gap-3">
@@ -108,24 +216,172 @@ export function GrantInfoCard({
               </div>
             )}
           </div>
-          {grant.status !== "Not specified" && (
-            <Button asChild variant="outline" size="sm">
-              <Link href={`/private/${organizationSlug}/grants/${grant.id}`}>
-                <ExternalLink className="h-4 w-4 mr-1" />
-                View Grant
-              </Link>
-            </Button>
-          )}
+          <div className="flex gap-2">
+            {isEditable && !isEditing && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsEditing(true)}
+              >
+                <Edit2 className="h-4 w-4 mr-1" />
+                Edit Details
+              </Button>
+            )}
+            {isEditing && (
+              <>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={handleSave}
+                  disabled={saving}
+                >
+                  <Save className="h-4 w-4 mr-1" />
+                  {saving ? "Saving..." : "Save"}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCancel}
+                  disabled={saving}
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Cancel
+                </Button>
+              </>
+            )}
+            {grant.status !== "Not specified" &&
+              grant.id > 0 &&
+              !isEditing && (
+                <Button asChild variant="outline" size="sm">
+                  <Link href={`/private/${organizationSlug}/grants/${grant.id}`}>
+                    <ExternalLink className="h-4 w-4 mr-1" />
+                    View Grant
+                  </Link>
+                </Button>
+              )}
+          </div>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {grant.description && (
-            <div
-              className="text-sm text-gray-700 line-clamp-3"
-              dangerouslySetInnerHTML={{ __html: grant.description }}
-            />
-          )}
+        {isEditing ? (
+          <div className="space-y-4">
+            {/* Agency */}
+            <div>
+              <Label htmlFor="opportunityAgency">Agency/Organization</Label>
+              <Input
+                id="opportunityAgency"
+                value={formData.opportunityAgency}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    opportunityAgency: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <Label htmlFor="opportunityDescription">Description</Label>
+              <Textarea
+                id="opportunityDescription"
+                value={formData.opportunityDescription}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    opportunityDescription: e.target.value,
+                  })
+                }
+                rows={4}
+              />
+            </div>
+
+            {/* Close Date */}
+            <div>
+              <Label htmlFor="opportunityCloseDate">Deadline</Label>
+              <Input
+                id="opportunityCloseDate"
+                type="date"
+                value={formData.opportunityCloseDate}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    opportunityCloseDate: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            {/* Funding amounts */}
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="opportunityTotalFunding">Total Funding</Label>
+                <Input
+                  id="opportunityTotalFunding"
+                  type="number"
+                  value={formData.opportunityTotalFunding}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      opportunityTotalFunding: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="opportunityAwardMin">Award Min</Label>
+                <Input
+                  id="opportunityAwardMin"
+                  type="number"
+                  value={formData.opportunityAwardMin}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      opportunityAwardMin: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="opportunityAwardMax">Award Max</Label>
+                <Input
+                  id="opportunityAwardMax"
+                  type="number"
+                  value={formData.opportunityAwardMax}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      opportunityAwardMax: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
+
+            {/* URL */}
+            <div>
+              <Label htmlFor="opportunityUrl">Grant URL</Label>
+              <Input
+                id="opportunityUrl"
+                type="url"
+                value={formData.opportunityUrl}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    opportunityUrl: e.target.value,
+                  })
+                }
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {grant.description && (
+              <div
+                className="text-sm text-gray-700 line-clamp-3"
+                dangerouslySetInnerHTML={{ __html: grant.description }}
+              />
+            )}
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div className="flex items-center gap-2">
@@ -219,7 +475,8 @@ export function GrantInfoCard({
                 </div>
               </div>
             )}
-        </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

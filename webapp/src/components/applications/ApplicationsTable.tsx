@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { AddApplicationModal } from "./AddApplicationModal";
 import {
   flexRender,
   getCoreRowModel,
@@ -154,6 +155,9 @@ export function ApplicationsTable({
     id: string;
     title: string | null;
   } | null>(null);
+
+  // Add application modal state
+  const [addModalOpen, setAddModalOpen] = useState(false);
 
   const confirmDelete = async () => {
     if (!applicationToDelete) return;
@@ -530,7 +534,7 @@ export function ApplicationsTable({
           </DropdownMenu>
 
             {/* Add Application Button */}
-            <Button size="sm">
+            <Button size="sm" onClick={() => setAddModalOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
               Add Application
             </Button>
@@ -690,6 +694,19 @@ export function ApplicationsTable({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Add Application Modal */}
+      <AddApplicationModal
+        open={addModalOpen}
+        onOpenChange={setAddModalOpen}
+        organizationSlug={slug}
+        onSuccess={() => {
+          setAddModalOpen(false);
+          if (onRefresh) {
+            onRefresh();
+          }
+        }}
+      />
     </div>
   );
 }

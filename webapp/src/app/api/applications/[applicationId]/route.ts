@@ -5,6 +5,8 @@ import {
   getDocumentsInFolderTree,
   deleteFileFromStorage,
 } from "@/lib/documentStorageCleanup";
+import type { UpdateApplicationOpportunityRequest } from "@/types/application";
+import { Prisma, ApplicationStatus } from "@/generated/prisma";
 
 // PUT /api/applications/[applicationId] - Update application
 export async function PUT(
@@ -43,17 +45,60 @@ export async function PUT(
       );
     }
 
-    const body = await request.json();
-    const { title, status } = body;
+    const body: UpdateApplicationOpportunityRequest & {
+      status?: ApplicationStatus;
+    } = await request.json();
+    const {
+      title,
+      status,
+      opportunityTitle,
+      opportunityDescription,
+      opportunityEligibility,
+      opportunityAgency,
+      opportunityCloseDate,
+      opportunityTotalFunding,
+      opportunityAwardMin,
+      opportunityAwardMax,
+      opportunityUrl,
+      opportunityAttachments,
+    } = body;
+
+    // Build update data
+    const updateData: Prisma.ApplicationUpdateInput = {
+      ...(title !== undefined && { title }),
+      ...(status !== undefined && { status }),
+      ...(opportunityTitle !== undefined && { opportunityTitle }),
+      ...(opportunityDescription !== undefined && { opportunityDescription }),
+      ...(opportunityEligibility !== undefined && { opportunityEligibility }),
+      ...(opportunityAgency !== undefined && { opportunityAgency }),
+      ...(opportunityCloseDate !== undefined && {
+        opportunityCloseDate: opportunityCloseDate
+          ? new Date(opportunityCloseDate)
+          : null,
+      }),
+      ...(opportunityTotalFunding !== undefined && {
+        opportunityTotalFunding:
+          opportunityTotalFunding !== null
+            ? BigInt(opportunityTotalFunding)
+            : null,
+      }),
+      ...(opportunityAwardMin !== undefined && {
+        opportunityAwardMin:
+          opportunityAwardMin !== null ? BigInt(opportunityAwardMin) : null,
+      }),
+      ...(opportunityAwardMax !== undefined && {
+        opportunityAwardMax:
+          opportunityAwardMax !== null ? BigInt(opportunityAwardMax) : null,
+      }),
+      ...(opportunityUrl !== undefined && { opportunityUrl }),
+      ...(opportunityAttachments !== undefined && { opportunityAttachments }),
+      updatedAt: new Date(),
+    };
 
     // Update application
     const updatedApplication = await prisma.application.update({
       where: { id: applicationId },
-      data: {
-        ...(title && { title }),
-        ...(status && { status }),
-        updatedAt: new Date(),
-      },
+      data: updateData,
     });
 
     // If title changed, update linked folder name
