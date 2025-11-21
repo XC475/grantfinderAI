@@ -25,7 +25,11 @@ export async function GET(
     let currentFolderId: string | null = folderId;
 
     while (currentFolderId) {
-      const folder = await prisma.folder.findFirst({
+      const folder: {
+        id: string;
+        name: string;
+        parentFolderId: string | null;
+      } | null = await prisma.folder.findFirst({
         where: {
           id: currentFolderId,
           organization: {
@@ -42,7 +46,10 @@ export async function GET(
       });
 
       if (!folder) {
-        return NextResponse.json({ error: "Folder not found" }, { status: 404 });
+        return NextResponse.json(
+          { error: "Folder not found" },
+          { status: 404 }
+        );
       }
 
       // Add to beginning of path (we're traversing backwards)
@@ -61,4 +68,3 @@ export async function GET(
     );
   }
 }
-
