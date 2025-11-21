@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, Search, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { DuplicateApplicationWarning } from "./DuplicateApplicationWarning";
 
 interface Bookmark {
   id: string;
@@ -52,6 +53,19 @@ export function BookmarkSelectionDialog({
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [duplicateWarning, setDuplicateWarning] = useState<{
+    open: boolean;
+    existingApplication: {
+      id: string;
+      title: string | null;
+      status: string;
+      createdAt: string;
+    } | null;
+    grantTitle?: string;
+  }>({
+    open: false,
+    existingApplication: null,
+  });
 
   useEffect(() => {
     if (open) {
@@ -72,11 +86,13 @@ export function BookmarkSelectionDialog({
       // Extract opportunity data from bookmarks (they already include opportunity data)
       if (bookmarksData.length > 0) {
         const grantsMap = new Map<number, Grant>();
-        bookmarksData.forEach((bookmark: Bookmark & { opportunity?: Grant }) => {
-          if (bookmark.opportunity) {
-            grantsMap.set(bookmark.opportunityId, bookmark.opportunity);
+        bookmarksData.forEach(
+          (bookmark: Bookmark & { opportunity?: Grant }) => {
+            if (bookmark.opportunity) {
+              grantsMap.set(bookmark.opportunityId, bookmark.opportunity);
+            }
           }
-        });
+        );
         setGrants(grantsMap);
       }
     } catch (error) {
@@ -110,14 +126,14 @@ export function BookmarkSelectionDialog({
 
       const data = await res.json();
 
-      if (res.status === 409) {
-        toast.info("Application already exists for this grant");
-        if (data.application?.id) {
-          router.push(
-            `/private/${organizationSlug}/applications/${data.application.id}`
-          );
-          onSuccess();
-        }
+      if (res.status === 409 && data.isDuplicate && data.application) {
+        // Show warning dialog
+        setDuplicateWarning({
+          open: true,
+          existingApplication: data.application,
+          grantTitle: grant?.title,
+        });
+        setCreating(null);
         return;
       }
 
@@ -136,6 +152,20 @@ export function BookmarkSelectionDialog({
     } finally {
       setCreating(null);
     }
+  };
+
+  const handleViewExisting = () => {
+    if (duplicateWarning.existingApplication) {
+      router.push(
+        `/private/${organizationSlug}/applications/${duplicateWarning.existingApplication.id}`
+      );
+      onSuccess();
+      setDuplicateWarning({ open: false, existingApplication: null });
+    }
+  };
+
+  const handleCancelDuplicate = () => {
+    setDuplicateWarning({ open: false, existingApplication: null });
   };
 
   const filteredBookmarks = bookmarks.filter((bookmark) => {
@@ -254,6 +284,16 @@ export function BookmarkSelectionDialog({
           )}
         </div>
       </DialogContent>
+      <DuplicateApplicationWarning
+        open={duplicateWarning.open}
+        onOpenChange={(open) =>
+          setDuplicateWarning((prev) => ({ ...prev, open }))
+        }
+        existingApplication={duplicateWarning.existingApplication}
+        grantTitle={duplicateWarning.grantTitle}
+        onViewExisting={handleViewExisting}
+        onCancel={handleCancelDuplicate}
+      />
     </Dialog>
   );
 }

@@ -61,6 +61,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check for existing application with same opportunityId (only if not an outside opportunity)
+    if (opportunityId) {
+      const existingApplication = await prisma.application.findFirst({
+        where: {
+          opportunityId,
+          organizationId: organization.id,
+        },
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          createdAt: true,
+        },
+      });
+
+      if (existingApplication) {
+        return NextResponse.json(
+          {
+            error: "Application already exists for this grant",
+            application: existingApplication,
+            isDuplicate: true,
+          },
+          { status: 409 }
+        );
+      }
+    }
+
     // Prepare opportunity data
     let opportunityData: Partial<{
       opportunityTitle: string;
