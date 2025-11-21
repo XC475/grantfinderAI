@@ -127,9 +127,13 @@ export async function GET(req: NextRequest) {
             select: { opportunityId: true },
           });
 
-          // Combine opportunity IDs
-          const bookmarkedIds = bookmarks.map((b) => b.opportunityId);
-          const applicationIds = applications.map((a) => a.opportunityId);
+          // Combine opportunity IDs (filter out nulls)
+          const bookmarkedIds = bookmarks
+            .map((b) => b.opportunityId)
+            .filter((id): id is number => id !== null);
+          const applicationIds = applications
+            .map((a) => a.opportunityId)
+            .filter((id): id is number => id !== null);
           deprioritizeIds = [...new Set([...bookmarkedIds, ...applicationIds])];
         }
       } catch (error) {

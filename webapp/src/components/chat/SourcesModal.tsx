@@ -91,7 +91,6 @@ export function SourcesModal({
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
     new Set()
   );
-  const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -186,15 +185,13 @@ export function SourcesModal({
   };
 
   const handleOpenChange = (newOpen: boolean) => {
-    if (!isLoading) {
-      if (!newOpen) {
-        // Reset state when closing
-        setSearchQuery("");
-        setError(null);
-        setSelectedIds(new Set(selectedDocumentIds));
-      }
-      onOpenChange(newOpen);
+    if (!newOpen) {
+      // Reset state when closing
+      setSearchQuery("");
+      setError(null);
+      setSelectedIds(new Set(selectedDocumentIds));
     }
+    onOpenChange(newOpen);
   };
 
   // Recursive folder rendering
@@ -314,7 +311,7 @@ export function SourcesModal({
               placeholder="Type to search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              disabled={isLoading || isFetching}
+              disabled={isFetching}
             />
           </div>
 
@@ -331,16 +328,12 @@ export function SourcesModal({
           {error && <p className="text-sm text-destructive">{error}</p>}
         </div>
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => handleOpenChange(false)}
-            disabled={isLoading}
-          >
+          <Button variant="outline" onClick={() => handleOpenChange(false)}>
             Cancel
           </Button>
           <Button
             onClick={handleSelect}
-            disabled={isLoading || isFetching || selectedIds.size === 0}
+            disabled={isFetching || selectedIds.size === 0}
           >
             Add {selectedIds.size} Source{selectedIds.size !== 1 ? "s" : ""}
           </Button>

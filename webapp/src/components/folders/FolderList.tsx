@@ -211,7 +211,6 @@ function DraggableDocument({
   onCopy,
   onMove,
   onExport,
-  organizationSlug,
 }: {
   document: Document;
   onClick: () => void;

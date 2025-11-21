@@ -13,25 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Loader2, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { ApplicationsTable } from "@/components/applications/ApplicationsTable";
-
-interface Application {
-  id: string;
-  opportunityId: number;
-  status: string;
-  title: string | null;
-  createdAt: string;
-  updatedAt: string;
-  submittedAt: string | null;
-  lastEditedAt: string;
-  organization: {
-    slug: string;
-    name: string;
-  };
-  opportunity?: {
-    total_funding_amount: number | null;
-    close_date: string | null;
-  };
-}
+import { AddApplicationModal } from "@/components/applications/AddApplicationModal";
+import { Application } from "@/components/applications/columns";
 
 export default function ApplicationsPage({
   params,
@@ -42,6 +25,7 @@ export default function ApplicationsPage({
   const router = useRouter();
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
+  const [addModalOpen, setAddModalOpen] = useState(false);
 
   const fetchApplications = async () => {
     try {
@@ -77,29 +61,40 @@ export default function ApplicationsPage({
 
   if (applications.length === 0) {
     return (
-      <div className="container max-w-6xl py-8 p-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Applications</CardTitle>
-            <CardDescription>Manage your grant applications</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">
-                No applications yet
-              </h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Start by browsing grants and clicking &ldquo;Apply&rdquo; to
-                create your first application
-              </p>
-              <Button onClick={() => router.push(`/private/${slug}/grants`)}>
-                Browse Grants
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <>
+        <div className="container max-w-6xl py-8 p-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Applications</CardTitle>
+              <CardDescription>Manage your grant applications</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">
+                  No applications yet
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Create your first application from our grants database or add
+                  an outside opportunity
+                </p>
+                <Button onClick={() => setAddModalOpen(true)}>
+                  Create Application
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <AddApplicationModal
+          open={addModalOpen}
+          onOpenChange={setAddModalOpen}
+          organizationSlug={slug}
+          onSuccess={() => {
+            setAddModalOpen(false);
+            fetchApplications();
+          }}
+        />
+      </>
     );
   }
 

@@ -138,14 +138,24 @@ export default function GrantDetailPage() {
     try {
       setApplying(true);
 
-      // Create a new application for this grant
+      // Create a new application for this grant with all opportunity data
       const res = await fetch("/api/applications", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           opportunityId: parseInt(grantId),
           organizationSlug: slug,
-          grantTitle: grant?.title,
+          title: grant?.title,
+          opportunityTitle: grant?.title,
+          opportunityDescription: grant?.description,
+          opportunityEligibility: grant?.eligibility_summary,
+          opportunityAgency: grant?.agency,
+          opportunityCloseDate: grant?.close_date,
+          opportunityTotalFunding: grant?.total_funding_amount,
+          opportunityAwardMin: grant?.award_min,
+          opportunityAwardMax: grant?.award_max,
+          opportunityUrl: grant?.url,
+          opportunityAttachments: grant?.attachments,
           alsoBookmark: true, // Also bookmark when creating application
         }),
       });
@@ -155,8 +165,8 @@ export default function GrantDetailPage() {
       if (res.status === 409) {
         toast.info("Application already exists for this grant");
         // Navigate to existing application if we have the ID
-        if (data.applicationId) {
-          router.push(`/private/${slug}/applications/${data.applicationId}`);
+        if (data.application?.id) {
+          router.push(`/private/${slug}/applications/${data.application.id}`);
         }
         return;
       }
@@ -228,7 +238,7 @@ export default function GrantDetailPage() {
               )}
             </div>
           </div>
-          <div className="flex gap-2 flex-shrink-0">
+          <div className="flex gap-2 shrink-0">
             <Button
               onClick={toggleBookmark}
               disabled={bookmarking}

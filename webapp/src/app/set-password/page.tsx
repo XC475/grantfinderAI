@@ -16,34 +16,9 @@ import { toast } from "sonner";
 import { Loader2, Lock } from "lucide-react";
 
 export default function SetPasswordPage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [organizationSlug, setOrganizationSlug] = useState<string | null>(null);
-
-  // Fetch user's organization slug on mount
-  useEffect(() => {
-    const fetchOrganization = async () => {
-      try {
-        const response = await fetch("/api/user");
-        if (response.ok) {
-          const user = await response.json();
-          if (user.organizationId) {
-            // Fetch organization to get slug
-            const orgResponse = await fetch(`/api/organizations`);
-            if (orgResponse.ok) {
-              const org = await orgResponse.json();
-              setOrganizationSlug(org.slug);
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching organization:", error);
-      }
-    };
-    fetchOrganization();
-  }, []);
 
   const handleSetPassword = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { AddApplicationModal } from "./AddApplicationModal";
 import {
   flexRender,
   getCoreRowModel,
@@ -29,9 +30,7 @@ import {
   sortableKeyboardCoordinates,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import {
-  useSortable,
-} from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
   Table,
@@ -63,7 +62,11 @@ import {
 } from "@/components/ui/dialog";
 import { Settings2, Plus, GripVertical } from "lucide-react";
 import { toast } from "sonner";
-import { createColumns, createSimpleColumns, type Application } from "./columns";
+import {
+  createColumns,
+  createSimpleColumns,
+  type Application,
+} from "./columns";
 
 // Sortable Header Component
 function SortableHeader({
@@ -93,7 +96,7 @@ function SortableHeader({
   }
 
   const columnSize = header.column.getSize();
-  
+
   return (
     <TableHead
       ref={setNodeRef}
@@ -143,7 +146,7 @@ export function ApplicationsTable({
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilter, setGlobalFilter] = useState("");
   const [activeTab, setActiveTab] = useState("all");
-  
+
   // Column order state
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
 
@@ -154,6 +157,9 @@ export function ApplicationsTable({
     id: string;
     title: string | null;
   } | null>(null);
+
+  // Add application modal state
+  const [addModalOpen, setAddModalOpen] = useState(false);
 
   const confirmDelete = async () => {
     if (!applicationToDelete) return;
@@ -224,7 +230,7 @@ export function ApplicationsTable({
     onEdit: (id: string) => {
       router.push(`/private/${slug}/applications/${id}`);
     },
-    onDuplicate: (id: string) => {
+    onDuplicate: (_id: string) => {
       toast.info("Duplicate feature coming soon!");
     },
     onDelete: (id: string, title: string | null) => {
@@ -235,33 +241,48 @@ export function ApplicationsTable({
   };
 
   const baseColumns = useMemo(
-    () => variant === "dashboard" ? createSimpleColumns(actions) : createColumns(actions),
-    [slug, variant, actions]
+    () =>
+      variant === "dashboard"
+        ? createSimpleColumns(actions)
+        : createColumns(actions),
+    [variant, actions]
   );
 
   // Initialize column order on first render
   useEffect(() => {
     if (columnOrder.length === 0 && baseColumns.length > 0) {
-      setColumnOrder(baseColumns.map((col, index) => {
-        if (col.id) return col.id;
-        // Try to get accessorKey if it exists
-        const accessorKey = 'accessorKey' in col ? (col.accessorKey as string | undefined) : undefined;
-        if (typeof accessorKey === 'string') return accessorKey;
-        return `col-${index}`;
-      }));
+      setColumnOrder(
+        baseColumns.map((col, index) => {
+          if (col.id) return col.id;
+          // Try to get accessorKey if it exists
+          const accessorKey =
+            "accessorKey" in col
+              ? (col.accessorKey as string | undefined)
+              : undefined;
+          if (typeof accessorKey === "string") return accessorKey;
+          return `col-${index}`;
+        })
+      );
     }
   }, [baseColumns, columnOrder.length]);
 
   // Reorder columns based on columnOrder state
   const columns = useMemo(() => {
     if (columnOrder.length === 0) return baseColumns;
-    
+
     const orderedColumns: ColumnDef<Application>[] = [];
-    const columnMap = new Map(baseColumns.map((col, index) => {
-      const id = col.id || ('accessorKey' in col ? (col.accessorKey as string | undefined) : undefined) || `col-${index}`;
-      return [id, col];
-    }));
-    
+    const columnMap = new Map(
+      baseColumns.map((col, index) => {
+        const id =
+          col.id ||
+          ("accessorKey" in col
+            ? (col.accessorKey as string | undefined)
+            : undefined) ||
+          `col-${index}`;
+        return [id, col];
+      })
+    );
+
     // Add columns in the order specified by columnOrder
     columnOrder.forEach((id) => {
       const col = columnMap.get(id);
@@ -270,10 +291,10 @@ export function ApplicationsTable({
         columnMap.delete(id);
       }
     });
-    
+
     // Add any remaining columns that weren't in columnOrder
     columnMap.forEach((col) => orderedColumns.push(col));
-    
+
     return orderedColumns;
   }, [baseColumns, columnOrder]);
 
@@ -292,7 +313,7 @@ export function ApplicationsTable({
   // Handle drag end
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    
+
     if (over && active.id !== over.id) {
       setColumnOrder((items) => {
         const oldIndex = items.indexOf(active.id as string);
@@ -322,7 +343,9 @@ export function ApplicationsTable({
   }, [applications, activeTab]);
 
   // Count for badges
-  const draftCount = applications.filter((app) => app.status === "DRAFT").length;
+  const draftCount = applications.filter(
+    (app) => app.status === "DRAFT"
+  ).length;
   const submittedCount = applications.filter(
     (app) => app.status === "SUBMITTED" || app.status === "UNDER_REVIEW"
   ).length;
@@ -355,9 +378,15 @@ export function ApplicationsTable({
 
   // Dashboard variant (simplified - no tabs, no controls)
   if (variant === "dashboard") {
-    const visibleHeaders = table.getHeaderGroups()[0]?.headers.filter(
-      (header) => header.column.id !== "select" && header.column.id !== "dragHandle" && header.column.getIsVisible()
-    ) || [];
+    const visibleHeaders =
+      table
+        .getHeaderGroups()[0]
+        ?.headers.filter(
+          (header) =>
+            header.column.id !== "select" &&
+            header.column.id !== "dragHandle" &&
+            header.column.getIsVisible()
+        ) || [];
 
     return (
       <div className="space-y-4">
@@ -370,13 +399,20 @@ export function ApplicationsTable({
             <Table className="[&_table]:table-fixed">
               <TableHeader className="bg-muted/30 border-b border-muted-foreground/10">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="hover:bg-transparent border-none">
+                  <TableRow
+                    key={headerGroup.id}
+                    className="hover:bg-transparent border-none"
+                  >
                     <SortableContext
                       items={visibleHeaders.map((h) => h.column.id || h.id)}
                       strategy={horizontalListSortingStrategy}
                     >
                       {headerGroup.headers
-                        .filter((header) => header.column.id !== "select" && header.column.id !== "dragHandle")
+                        .filter(
+                          (header) =>
+                            header.column.id !== "select" &&
+                            header.column.id !== "dragHandle"
+                        )
                         .map((header) => (
                           <SortableHeader
                             key={header.id}
@@ -388,56 +424,62 @@ export function ApplicationsTable({
                   </TableRow>
                 ))}
               </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                    className="cursor-pointer hover:bg-foreground/5 border-b border-muted-foreground/5 transition-colors last:border-none"
-                    onClick={() =>
-                      router.push(`/private/${slug}/applications/${row.original.id}`)
-                    }
-                  >
-                    {row
-                      .getVisibleCells()
-                      .filter((cell) => cell.column.id !== "select" && cell.column.id !== "dragHandle")
-                      .map((cell) => {
-                        const columnSize = cell.column.getSize();
-                        return (
-                          <TableCell 
-                            key={cell.id} 
-                            className="font-light text-foreground/80"
-                            style={{
-                              width: columnSize,
-                              minWidth: columnSize,
-                              maxWidth: columnSize,
-                            }}
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        );
-                      })}
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                      className="cursor-pointer hover:bg-foreground/5 border-b border-muted-foreground/5 transition-colors last:border-none"
+                      onClick={() =>
+                        router.push(
+                          `/private/${slug}/applications/${row.original.id}`
+                        )
+                      }
+                    >
+                      {row
+                        .getVisibleCells()
+                        .filter(
+                          (cell) =>
+                            cell.column.id !== "select" &&
+                            cell.column.id !== "dragHandle"
+                        )
+                        .map((cell) => {
+                          const columnSize = cell.column.getSize();
+                          return (
+                            <TableCell
+                              key={cell.id}
+                              className="font-light text-foreground/80"
+                              style={{
+                                width: columnSize,
+                                minWidth: columnSize,
+                                maxWidth: columnSize,
+                              }}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length - 2}
+                      className="h-24 text-center text-foreground/60 font-light"
+                    >
+                      No applications found.
+                    </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length - 2}
-                    className="h-24 text-center text-foreground/60 font-light"
-                  >
-                    No applications found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                )}
+              </TableBody>
+            </Table>
           </DndContext>
         </div>
-        </div>
+      </div>
     );
   }
 
@@ -447,13 +489,14 @@ export function ApplicationsTable({
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex items-center justify-between mb-4">
           <TabsList>
-            <TabsTrigger value="all">
-              All Applications
-            </TabsTrigger>
+            <TabsTrigger value="all">All Applications</TabsTrigger>
             <TabsTrigger value="draft">
               Draft
               {draftCount > 0 && (
-                <Badge variant="secondary" className="ml-2 px-1.5 py-0.5 text-xs">
+                <Badge
+                  variant="secondary"
+                  className="ml-2 px-1.5 py-0.5 text-xs"
+                >
                   {draftCount}
                 </Badge>
               )}
@@ -461,7 +504,10 @@ export function ApplicationsTable({
             <TabsTrigger value="submitted">
               Submitted
               {submittedCount > 0 && (
-                <Badge variant="secondary" className="ml-2 px-1.5 py-0.5 text-xs">
+                <Badge
+                  variant="secondary"
+                  className="ml-2 px-1.5 py-0.5 text-xs"
+                >
                   {submittedCount}
                 </Badge>
               )}
@@ -469,7 +515,10 @@ export function ApplicationsTable({
             <TabsTrigger value="approved">
               Approved
               {approvedCount > 0 && (
-                <Badge variant="secondary" className="ml-2 px-1.5 py-0.5 text-xs">
+                <Badge
+                  variant="secondary"
+                  className="ml-2 px-1.5 py-0.5 text-xs"
+                >
                   {approvedCount}
                 </Badge>
               )}
@@ -486,21 +535,20 @@ export function ApplicationsTable({
             />
 
             {/* Customize Columns */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm">
                   <Settings2 className="mr-2 h-4 w-4" />
                   Columns
-              </Button>
-            </DropdownMenuTrigger>
+                </Button>
+              </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[200px]">
                 <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {table
                   .getAllColumns()
                   .filter(
-                    (column) =>
-                      column.getCanHide() && column.id !== "select"
+                    (column) => column.getCanHide() && column.id !== "select"
                   )
                   .map((column) => {
                     const columnNames: Record<string, string> = {
@@ -526,13 +574,13 @@ export function ApplicationsTable({
                       </DropdownMenuCheckboxItem>
                     );
                   })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* Add Application Button */}
-            <Button size="sm">
+            <Button size="sm" onClick={() => setAddModalOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Application
+              Add
             </Button>
           </div>
         </div>
@@ -547,16 +595,23 @@ export function ApplicationsTable({
               <Table className="w-full [&_table]:table-fixed">
                 <TableHeader className="bg-muted/50">
                   {table.getHeaderGroups().map((headerGroup) => {
-                    const selectHeader = headerGroup.headers.find((h) => h.column.id === "select");
-                    const dragHandleHeader = headerGroup.headers.find((h) => h.column.id === "dragHandle");
+                    const selectHeader = headerGroup.headers.find(
+                      (h) => h.column.id === "select"
+                    );
+                    const dragHandleHeader = headerGroup.headers.find(
+                      (h) => h.column.id === "dragHandle"
+                    );
                     const sortableHeaders = headerGroup.headers.filter(
-                      (header) => header.column.getIsVisible() && header.column.id !== "select" && header.column.id !== "dragHandle"
+                      (header) =>
+                        header.column.getIsVisible() &&
+                        header.column.id !== "select" &&
+                        header.column.id !== "dragHandle"
                     );
                     return (
                       <TableRow key={headerGroup.id}>
                         {/* Render select column first (not sortable) */}
                         {selectHeader && (
-                          <TableHead 
+                          <TableHead
                             key={selectHeader.id}
                             style={{
                               width: selectHeader.column.getSize(),
@@ -571,24 +626,27 @@ export function ApplicationsTable({
                           </TableHead>
                         )}
                         {/* Render dragHandle column (not sortable) */}
-                        {dragHandleHeader && dragHandleHeader.column.getIsVisible() && (
-                          <TableHead 
-                            key={dragHandleHeader.id}
-                            style={{
-                              width: dragHandleHeader.column.getSize(),
-                              minWidth: dragHandleHeader.column.getSize(),
-                              maxWidth: dragHandleHeader.column.getSize(),
-                            }}
-                          >
-                            {flexRender(
-                              dragHandleHeader.column.columnDef.header,
-                              dragHandleHeader.getContext()
-                            )}
-                          </TableHead>
-                        )}
+                        {dragHandleHeader &&
+                          dragHandleHeader.column.getIsVisible() && (
+                            <TableHead
+                              key={dragHandleHeader.id}
+                              style={{
+                                width: dragHandleHeader.column.getSize(),
+                                minWidth: dragHandleHeader.column.getSize(),
+                                maxWidth: dragHandleHeader.column.getSize(),
+                              }}
+                            >
+                              {flexRender(
+                                dragHandleHeader.column.columnDef.header,
+                                dragHandleHeader.getContext()
+                              )}
+                            </TableHead>
+                          )}
                         {/* Render sortable columns */}
                         <SortableContext
-                          items={sortableHeaders.map((h) => h.column.id || h.id)}
+                          items={sortableHeaders.map(
+                            (h) => h.column.id || h.id
+                          )}
                           strategy={horizontalListSortingStrategy}
                         >
                           {sortableHeaders.map((header) => (
@@ -603,51 +661,53 @@ export function ApplicationsTable({
                     );
                   })}
                 </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                      className="cursor-pointer hover:bg-muted/50"
-                  onClick={() =>
-                        router.push(`/private/${slug}/applications/${row.original.id}`)
-                  }
-                >
-                  {row.getVisibleCells().map((cell) => {
-                    const columnSize = cell.column.getSize();
-                    return (
-                      <TableCell 
-                        key={cell.id}
-                        style={{
-                          width: columnSize,
-                          minWidth: columnSize,
-                          maxWidth: columnSize,
-                        }}
+                <TableBody>
+                  {table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && "selected"}
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() =>
+                          router.push(
+                            `/private/${slug}/applications/${row.original.id}`
+                          )
+                        }
                       >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
+                        {row.getVisibleCells().map((cell) => {
+                          const columnSize = cell.column.getSize();
+                          return (
+                            <TableCell
+                              key={cell.id}
+                              style={{
+                                width: columnSize,
+                                minWidth: columnSize,
+                                maxWidth: columnSize,
+                              }}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={columns.length}
+                        className="h-24 text-center"
+                      >
+                        No applications found.
                       </TableCell>
-                    );
-                  })}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                      colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No applications found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </DndContext>
-      </div>
+          </div>
 
           {/* Row count info */}
           <div className="flex items-center justify-between px-2 py-4">
@@ -690,6 +750,19 @@ export function ApplicationsTable({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Add Application Modal */}
+      <AddApplicationModal
+        open={addModalOpen}
+        onOpenChange={setAddModalOpen}
+        organizationSlug={slug}
+        onSuccess={() => {
+          setAddModalOpen(false);
+          if (onRefresh) {
+            onRefresh();
+          }
+        }}
+      />
     </div>
   );
 }

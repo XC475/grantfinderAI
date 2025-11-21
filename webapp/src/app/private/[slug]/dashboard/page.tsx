@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Clock, ChevronRight, Loader2, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { ApplicationsTable } from "@/components/applications/ApplicationsTable";
+import { AddApplicationModal } from "@/components/applications/AddApplicationModal";
+import { type Application } from "@/components/applications/columns";
 import { TextAnimate } from "@/components/ui/text-animate";
 import { useHeaderContent } from "@/contexts/HeaderContentContext";
 import {
@@ -17,25 +19,6 @@ import {
   RecommendationsCard,
   OrgProfileCard,
 } from "@/components/dashboard/FeatureCards";
-
-interface Application {
-  id: string;
-  opportunityId: number;
-  status: string;
-  title: string | null;
-  createdAt: string;
-  updatedAt: string;
-  submittedAt: string | null;
-  lastEditedAt: string;
-  organization: {
-    slug: string;
-    name: string;
-  };
-  opportunity?: {
-    total_funding_amount: number | null;
-    close_date: string | null;
-  };
-}
 
 interface RecentActivity {
   id: string;
@@ -53,6 +36,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string>("");
   const [searchFilter, setSearchFilter] = useState("");
+  const [addModalOpen, setAddModalOpen] = useState(false);
   const { setHeaderContent } = useHeaderContent();
   const hasSetHeaderRef = useRef(false);
 
@@ -139,7 +123,7 @@ export default function DashboardPage() {
     const searchLower = searchFilter.toLowerCase();
     return (
       app.title?.toLowerCase().includes(searchLower) ||
-      app.opportunityId.toString().includes(searchLower) ||
+      app.opportunityId?.toString().includes(searchLower) ||
       app.status.toLowerCase().includes(searchLower)
     );
   });
@@ -233,9 +217,7 @@ export default function DashboardPage() {
               {/* Add Application Button */}
               <Button
                 size="sm"
-                onClick={() =>
-                  router.push(`/private/${organizationSlug}/applications/new`)
-                }
+                onClick={() => setAddModalOpen(true)}
                 className="font-medium"
               >
                 <Plus className="mr-2 h-4 w-4" />
@@ -277,6 +259,17 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Add Application Modal */}
+      <AddApplicationModal
+        open={addModalOpen}
+        onOpenChange={setAddModalOpen}
+        organizationSlug={organizationSlug}
+        onSuccess={() => {
+          setAddModalOpen(false);
+          fetchApplications();
+        }}
+      />
     </div>
   );
 }

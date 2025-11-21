@@ -8,29 +8,25 @@ import { DocumentsView } from "@/components/folders/DocumentsView";
 
 interface Application {
   id: string;
-  opportunityId: number;
+  opportunityId: number | null;
   status: string;
   title: string | null;
   createdAt: string;
   updatedAt: string;
+  opportunityTitle: string | null;
+  opportunityDescription: string | null;
+  opportunityEligibility: string | null;
+  opportunityAgency: string | null;
+  opportunityCloseDate: string | null;
+  opportunityTotalFunding: bigint | null;
+  opportunityAwardMin: bigint | null;
+  opportunityAwardMax: bigint | null;
+  opportunityUrl: string | null;
+  opportunityAttachments: Array<{ url?: string; title?: string; description?: string }> | null;
   organization: {
     slug: string;
     name: string;
   };
-}
-
-interface Grant {
-  id: number;
-  title: string;
-  description?: string;
-  status: string;
-  close_date?: string;
-  total_funding_amount?: number;
-  award_min?: number;
-  award_max?: number;
-  agency?: string;
-  url?: string;
-  attachments?: Array<{ url?: string; title?: string; name?: string }>;
 }
 
 interface ApplicationPageProps {
@@ -43,7 +39,6 @@ export function ApplicationPage({
   organizationSlug,
 }: ApplicationPageProps) {
   const [application, setApplication] = useState<Application | null>(null);
-  const [grant, setGrant] = useState<Grant | null>(null);
   const [applicationFolderId, setApplicationFolderId] = useState<string | null>(
     null
   );
@@ -75,18 +70,6 @@ export function ApplicationPage({
       return null;
     }
   }, [organizationSlug, applicationId]);
-
-  const fetchGrant = async (opportunityId: number) => {
-    try {
-      const response = await fetch(`/api/grants/${opportunityId}`);
-      if (response.ok) {
-        const grantData = await response.json();
-        setGrant(grantData);
-      }
-    } catch (error) {
-      console.error("Error fetching grant:", error);
-    }
-  };
 
   const fetchApplicationFolder = useCallback(async () => {
     try {
@@ -144,10 +127,7 @@ export function ApplicationPage({
       try {
         const app = await fetchApplication();
         if (app) {
-          await Promise.all([
-            fetchGrant(app.opportunityId),
-            fetchApplicationFolder(),
-          ]);
+          await fetchApplicationFolder();
         }
       } finally {
         setLoading(false);
@@ -188,28 +168,36 @@ export function ApplicationPage({
     <div className="container max-w-6xl space-y-8 p-4">
       {/* Grant Information */}
       <GrantInfoCard
-        grant={
-          grant || {
-            id: application.opportunityId,
-            title:
-              application.title || `Application #${application.opportunityId}`,
-            status: "Not specified",
-            description: undefined,
-            close_date: undefined,
-            total_funding_amount: undefined,
-            award_min: undefined,
-            award_max: undefined,
-            agency: undefined,
-            url: undefined,
-            attachments: undefined,
-          }
-        }
+        grant={{
+          id: application.opportunityId || 0,
+          title:
+            application.opportunityTitle ||
+            application.title ||
+            "Untitled Opportunity",
+          status: application.opportunityId ? "Referenced" : "Outside Opportunity",
+          description: application.opportunityDescription || undefined,
+          close_date: application.opportunityCloseDate || undefined,
+          total_funding_amount: application.opportunityTotalFunding
+            ? Number(application.opportunityTotalFunding)
+            : undefined,
+          award_min: application.opportunityAwardMin
+            ? Number(application.opportunityAwardMin)
+            : undefined,
+          award_max: application.opportunityAwardMax
+            ? Number(application.opportunityAwardMax)
+            : undefined,
+          agency: application.opportunityAgency || undefined,
+          url: application.opportunityUrl || undefined,
+          attachments: application.opportunityAttachments || undefined,
+        }}
         application={{
           id: applicationId,
           status: applicationStatus || application.status,
         }}
         onStatusUpdate={handleStatusUpdate}
         organizationSlug={organizationSlug}
+        isEditable={true}
+        onUpdate={fetchApplication}
       />
 
       {/* Documents Section */}

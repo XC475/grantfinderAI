@@ -66,13 +66,11 @@ export function DocumentSidebarChat({
   isGenerating,
   className,
   setMessages,
-  isEmpty: isEmptyProp,
   placeholder,
   sourceDocuments,
   onSourceDocumentsChange,
 }: DocumentSidebarChatProps) {
   const lastMessage = messages.at(-1);
-  const isEmpty = isEmptyProp ?? messages.length === 0;
   const isTyping = lastMessage?.role === "user";
 
   const messagesRef = useRef(messages);

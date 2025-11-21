@@ -1,7 +1,6 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,33 +10,43 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { 
-  ArrowUpDown, 
-  MoreVertical, 
-  Eye, 
-  Edit, 
-  Copy, 
+import {
+  ArrowUpDown,
+  MoreVertical,
+  Eye,
+  Edit,
+  Copy,
   Trash,
-  GripVertical 
+  GripVertical,
 } from "lucide-react";
 import { StatusSelect } from "./StatusSelect";
 
 export interface Application {
   id: string;
-  opportunityId: number;
+  opportunityId: number | null;
   status: string;
   title: string | null;
   createdAt: string;
   updatedAt: string;
   submittedAt: string | null;
   lastEditedAt: string;
+  opportunityTitle: string | null;
+  opportunityDescription: string | null;
+  opportunityEligibility: string | null;
+  opportunityAgency: string | null;
+  opportunityCloseDate: string | null;
+  opportunityTotalFunding: bigint | null;
+  opportunityAwardMin: bigint | null;
+  opportunityAwardMax: bigint | null;
+  opportunityUrl: string | null;
+  opportunityAttachments: Array<{
+    url?: string;
+    title?: string;
+    description?: string;
+  }> | null;
   organization: {
     slug: string;
     name: string;
-  };
-  opportunity?: {
-    total_funding_amount: number | null;
-    close_date: string | null;
   };
 }
 
@@ -47,29 +56,6 @@ interface ColumnActions {
   onDuplicate: (id: string) => void;
   onDelete: (id: string, title: string | null) => void;
   onStatusChange: (id: string, newStatus: string) => void;
-}
-
-function getStatusVariant(status: string): string {
-  switch (status) {
-    case "DRAFT":
-      return "bg-purple-100 text-purple-800";
-    case "IN_PROGRESS":
-      return "bg-blue-100 text-blue-800";
-    case "UNDER_REVIEW":
-    case "SUBMITTED":
-      return "bg-cyan-100 text-cyan-800";
-    case "AWARDED":
-    case "APPROVED":
-      return "bg-green-100 text-green-800";
-    case "REJECTED":
-      return "bg-red-100 text-red-800";
-    default:
-      return "bg-gray-100 text-gray-800";
-  }
-}
-
-function formatStatus(status: string): string {
-  return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
 function formatCurrency(amount: number | null | undefined): string {
@@ -82,7 +68,9 @@ function formatCurrency(amount: number | null | undefined): string {
   }).format(amount);
 }
 
-export function createSimpleColumns(actions: ColumnActions): ColumnDef<Application>[] {
+export function createSimpleColumns(
+  actions: ColumnActions
+): ColumnDef<Application>[] {
   return [
     // Application Name Column (no sorting)
     {
@@ -92,10 +80,16 @@ export function createSimpleColumns(actions: ColumnActions): ColumnDef<Applicati
         return (
           <div className="space-y-1 max-w-[200px]">
             <div className="font-medium truncate">
-              {row.original.title || `Grant #${row.original.opportunityId}`}
+              {row.original.title ||
+                row.original.opportunityTitle ||
+                (row.original.opportunityId
+                  ? `Grant #${row.original.opportunityId}`
+                  : "Untitled Application")}
             </div>
             <div className="text-sm text-muted-foreground truncate">
-              Opportunity ID: {row.original.opportunityId}
+              {row.original.opportunityId
+                ? `Opportunity ID: ${row.original.opportunityId}`
+                : "Outside Opportunity"}
             </div>
           </div>
         );
@@ -125,10 +119,10 @@ export function createSimpleColumns(actions: ColumnActions): ColumnDef<Applicati
       accessorKey: "funding",
       header: () => <div className="text-right">Funding Amount</div>,
       cell: ({ row }) => {
-        const amount = row.original.opportunity?.total_funding_amount;
+        const amount = row.original.opportunityTotalFunding;
         return (
           <div className="text-right font-medium">
-            {formatCurrency(amount)}
+            {formatCurrency(amount ? Number(amount) : null)}
           </div>
         );
       },
@@ -140,7 +134,7 @@ export function createSimpleColumns(actions: ColumnActions): ColumnDef<Applicati
       accessorKey: "deadline",
       header: "Deadline",
       cell: ({ row }) => {
-        const closeDate = row.original.opportunity?.close_date;
+        const closeDate = row.original.opportunityCloseDate;
         if (!closeDate) {
           return <span className="text-muted-foreground">No deadline</span>;
         }
@@ -156,79 +150,12 @@ export function createSimpleColumns(actions: ColumnActions): ColumnDef<Applicati
       },
       size: 120,
     },
-
-    // Actions Column (dropdown)
-    {
-      id: "actions",
-      header: "",
-      cell: ({ row }) => {
-        const application = row.original;
-
-        return (
-          <div className="flex justify-end">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="h-8 w-8 p-0"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <span className="sr-only">Open menu</span>
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    actions.onView(application.id);
-                  }}
-                >
-                  <Eye className="mr-2 h-4 w-4" />
-                  View Details
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    actions.onEdit(application.id);
-                  }}
-                >
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    actions.onDuplicate(application.id);
-                  }}
-                >
-                  <Copy className="mr-2 h-4 w-4" />
-                  Duplicate
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    actions.onDelete(application.id, application.title);
-                  }}
-                  className="text-red-600 focus:text-red-600"
-                >
-                  <Trash className="mr-2 h-4 w-4" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        );
-      },
-      enableSorting: false,
-      enableResizing: false,
-      size: 50,
-    },
   ];
 }
 
-export function createColumns(actions: ColumnActions): ColumnDef<Application>[] {
+export function createColumns(
+  actions: ColumnActions
+): ColumnDef<Application>[] {
   return [
     // Select Column (checkbox)
     {
@@ -285,10 +212,16 @@ export function createColumns(actions: ColumnActions): ColumnDef<Application>[] 
         return (
           <div className="space-y-1 max-w-[200px]">
             <div className="font-medium truncate">
-              {row.original.title || `Grant #${row.original.opportunityId}`}
+              {row.original.title ||
+                row.original.opportunityTitle ||
+                (row.original.opportunityId
+                  ? `Grant #${row.original.opportunityId}`
+                  : "Untitled Application")}
             </div>
             <div className="text-sm text-muted-foreground truncate">
-              Opportunity ID: {row.original.opportunityId}
+              {row.original.opportunityId
+                ? `Opportunity ID: ${row.original.opportunityId}`
+                : "Outside Opportunity"}
             </div>
           </div>
         );
@@ -332,7 +265,9 @@ export function createColumns(actions: ColumnActions): ColumnDef<Application>[] 
           <div className="flex justify-end">
             <Button
               variant="ghost"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
               className="-mr-4"
             >
               Funding Amount
@@ -342,10 +277,10 @@ export function createColumns(actions: ColumnActions): ColumnDef<Application>[] 
         );
       },
       cell: ({ row }) => {
-        const amount = row.original.opportunity?.total_funding_amount;
+        const amount = row.original.opportunityTotalFunding;
         return (
           <div className="text-right font-medium">
-            {formatCurrency(amount)}
+            {formatCurrency(amount ? Number(amount) : null)}
           </div>
         );
       },
@@ -368,7 +303,7 @@ export function createColumns(actions: ColumnActions): ColumnDef<Application>[] 
         );
       },
       cell: ({ row }) => {
-        const closeDate = row.original.opportunity?.close_date;
+        const closeDate = row.original.opportunityCloseDate;
         if (!closeDate) {
           return <span className="text-muted-foreground">No deadline</span>;
         }
@@ -515,4 +450,3 @@ export function createColumns(actions: ColumnActions): ColumnDef<Application>[] 
     },
   ];
 }
-

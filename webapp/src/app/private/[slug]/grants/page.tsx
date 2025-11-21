@@ -41,6 +41,7 @@ import {
 import { format } from "date-fns";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { DuplicateApplicationWarning } from "@/components/applications/DuplicateApplicationWarning";
 // prisma not needed on client page
 
 interface Grant extends GrantCardData {
@@ -150,6 +151,19 @@ function GrantsSearchPage() {
   const [creatingApplication, setCreatingApplication] = useState<number | null>(
     null
   );
+  const [duplicateWarning, setDuplicateWarning] = useState<{
+    open: boolean;
+    existingApplication: {
+      id: string;
+      title: string | null;
+      status: string;
+      createdAt: string;
+    } | null;
+    grantTitle?: string;
+  }>({
+    open: false,
+    existingApplication: null,
+  });
 
   // Filter options from API
   const [filterOptions, setFilterOptions] = useState<{
@@ -449,9 +463,15 @@ function GrantsSearchPage() {
 
       const data = await response.json();
 
-      if (response.status === 409) {
-        toast.info("Application already exists for this grant");
+      if (response.status === 409 && data.isDuplicate && data.application) {
+        // Show warning dialog
+        setDuplicateWarning({
+          open: true,
+          existingApplication: data.application,
+          grantTitle: grant?.title,
+        });
         setGrantApplications((prev) => [...prev, grantId]);
+        setCreatingApplication(null);
         return;
       }
 
@@ -476,6 +496,19 @@ function GrantsSearchPage() {
     } finally {
       setCreatingApplication(null);
     }
+  };
+
+  const handleViewExisting = () => {
+    if (duplicateWarning.existingApplication) {
+      router.push(
+        `/private/${slug}/applications/${duplicateWarning.existingApplication.id}`
+      );
+      setDuplicateWarning({ open: false, existingApplication: null });
+    }
+  };
+
+  const handleCancelDuplicate = () => {
+    setDuplicateWarning({ open: false, existingApplication: null });
   };
 
   const clearFilters = () => {
@@ -1590,6 +1623,16 @@ function GrantsSearchPage() {
           )}
         </>
       )}
+      <DuplicateApplicationWarning
+        open={duplicateWarning.open}
+        onOpenChange={(open) =>
+          setDuplicateWarning((prev) => ({ ...prev, open }))
+        }
+        existingApplication={duplicateWarning.existingApplication}
+        grantTitle={duplicateWarning.grantTitle}
+        onViewExisting={handleViewExisting}
+        onCancel={handleCancelDuplicate}
+      />
     </div>
   );
 }

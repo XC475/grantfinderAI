@@ -31,11 +31,8 @@ interface DocumentListProps {
 
 export function DocumentList({
   documents,
-  applicationId,
-  organizationSlug,
   onEdit,
   onDelete,
-  onRefresh,
   isDeleting = false,
 }: DocumentListProps) {
   const formatDate = (dateString: string) => {

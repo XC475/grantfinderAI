@@ -255,7 +255,16 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   submittedAt: 'submittedAt',
   lastEditedAt: 'lastEditedAt',
   organizationId: 'organizationId',
-  attachments_markdown: 'attachments_markdown'
+  opportunityTitle: 'opportunityTitle',
+  opportunityDescription: 'opportunityDescription',
+  opportunityEligibility: 'opportunityEligibility',
+  opportunityAgency: 'opportunityAgency',
+  opportunityCloseDate: 'opportunityCloseDate',
+  opportunityTotalFunding: 'opportunityTotalFunding',
+  opportunityAwardMin: 'opportunityAwardMin',
+  opportunityAwardMax: 'opportunityAwardMax',
+  opportunityUrl: 'opportunityUrl',
+  opportunityAttachments: 'opportunityAttachments'
 };
 
 exports.Prisma.AiChatScalarFieldEnum = {
