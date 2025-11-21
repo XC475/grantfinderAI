@@ -96,7 +96,7 @@ function DocumentEditorLayoutContent({
               </Button>
             </div>
           </header>
-          <div className="flex-1 flex flex-col overflow-hidden bg-white">{children}</div>
+          <div className="flex-1 flex flex-col overflow-auto bg-white">{children}</div>
         </div>
       </div>
     );
@@ -130,7 +130,7 @@ function DocumentEditorLayoutContent({
               </Button>
             </div>
           </header>
-          <div className="flex-1 flex flex-col overflow-hidden bg-white">{children}</div>
+          <div className="flex-1 flex flex-col overflow-auto bg-white">{children}</div>
         </SidebarInset>
       </ResizablePanel>
 
@@ -212,7 +212,7 @@ function NormalLayoutContent({
           </div>
         </header>
         )}
-        <div className={`flex flex-1 flex-col gap-4 p-4 ${showHeader ? 'pt-0' : ''} overflow-hidden h-full`}>
+        <div className={`flex flex-1 flex-col gap-4 p-4 ${showHeader ? 'pt-0' : ''} overflow-auto h-full`}>
           {children}
         </div>
       </SidebarInset>

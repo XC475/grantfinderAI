@@ -37,7 +37,7 @@ export function FilePreview({ document }: FilePreviewProps) {
       <div className="border rounded-md overflow-hidden bg-white">
         <iframe
           src={document.fileUrl}
-          className="w-full h-[600px]"
+          className="w-full h-[800px]"
           title={`PDF Preview - ${document.title}`}
         />
       </div>
@@ -51,7 +51,7 @@ export function FilePreview({ document }: FilePreviewProps) {
 
     return (
       <div className="border rounded-md bg-muted p-6">
-        <pre className="whitespace-pre-wrap text-sm font-mono overflow-auto max-h-[600px]">
+        <pre className="whitespace-pre-wrap text-sm font-mono overflow-auto max-h-[800px]">
           {extractedText}
         </pre>
       </div>
