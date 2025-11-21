@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Clock, ChevronRight, Loader2, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { ApplicationsTable } from "@/components/applications/ApplicationsTable";
+import { type Application } from "@/components/applications/columns";
 import { TextAnimate } from "@/components/ui/text-animate";
 import { useHeaderContent } from "@/contexts/HeaderContentContext";
 import {
@@ -17,25 +18,6 @@ import {
   RecommendationsCard,
   OrgProfileCard,
 } from "@/components/dashboard/FeatureCards";
-
-interface Application {
-  id: string;
-  opportunityId: number;
-  status: string;
-  title: string | null;
-  createdAt: string;
-  updatedAt: string;
-  submittedAt: string | null;
-  lastEditedAt: string;
-  organization: {
-    slug: string;
-    name: string;
-  };
-  opportunity?: {
-    total_funding_amount: number | null;
-    close_date: string | null;
-  };
-}
 
 interface RecentActivity {
   id: string;
@@ -139,7 +121,7 @@ export default function DashboardPage() {
     const searchLower = searchFilter.toLowerCase();
     return (
       app.title?.toLowerCase().includes(searchLower) ||
-      app.opportunityId.toString().includes(searchLower) ||
+      app.opportunityId?.toString().includes(searchLower) ||
       app.status.toLowerCase().includes(searchLower)
     );
   });
