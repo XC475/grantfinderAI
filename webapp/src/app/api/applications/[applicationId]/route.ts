@@ -53,7 +53,16 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ application });
+    // Convert BigInt values to strings for JSON serialization
+    const serializedApplication = {
+      ...application,
+      opportunityTotalFunding:
+        application.opportunityTotalFunding?.toString() ?? null,
+      opportunityAwardMin: application.opportunityAwardMin?.toString() ?? null,
+      opportunityAwardMax: application.opportunityAwardMax?.toString() ?? null,
+    };
+
+    return NextResponse.json({ application: serializedApplication });
   } catch (error) {
     console.error("Error fetching application:", error);
     return NextResponse.json(
@@ -164,7 +173,18 @@ export async function PUT(
       });
     }
 
-    return NextResponse.json({ application: updatedApplication });
+    // Convert BigInt values to strings for JSON serialization
+    const serializedApplication = {
+      ...updatedApplication,
+      opportunityTotalFunding:
+        updatedApplication.opportunityTotalFunding?.toString() ?? null,
+      opportunityAwardMin:
+        updatedApplication.opportunityAwardMin?.toString() ?? null,
+      opportunityAwardMax:
+        updatedApplication.opportunityAwardMax?.toString() ?? null,
+    };
+
+    return NextResponse.json({ application: serializedApplication });
   } catch (error) {
     console.error("Error updating application:", error);
     return NextResponse.json(
