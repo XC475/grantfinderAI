@@ -104,19 +104,20 @@ export async function POST(request: NextRequest) {
             ? new Date(opportunity.close_date)
             : undefined,
         opportunityTotalFunding:
-          opportunityTotalFunding !== undefined
+          opportunityTotalFunding !== undefined &&
+          opportunityTotalFunding !== null
             ? BigInt(opportunityTotalFunding)
             : opportunity.total_funding_amount
               ? BigInt(opportunity.total_funding_amount)
               : undefined,
         opportunityAwardMin:
-          opportunityAwardMin !== undefined
+          opportunityAwardMin !== undefined && opportunityAwardMin !== null
             ? BigInt(opportunityAwardMin)
             : opportunity.award_min
               ? BigInt(opportunity.award_min)
               : undefined,
         opportunityAwardMax:
-          opportunityAwardMax !== undefined
+          opportunityAwardMax !== undefined && opportunityAwardMax !== null
             ? BigInt(opportunityAwardMax)
             : opportunity.award_max
               ? BigInt(opportunity.award_max)
@@ -146,15 +147,16 @@ export async function POST(request: NextRequest) {
           ? new Date(opportunityCloseDate)
           : undefined,
         opportunityTotalFunding:
-          opportunityTotalFunding !== undefined
+          opportunityTotalFunding !== undefined &&
+          opportunityTotalFunding !== null
             ? BigInt(opportunityTotalFunding)
             : undefined,
         opportunityAwardMin:
-          opportunityAwardMin !== undefined
+          opportunityAwardMin !== undefined && opportunityAwardMin !== null
             ? BigInt(opportunityAwardMin)
             : undefined,
         opportunityAwardMax:
-          opportunityAwardMax !== undefined
+          opportunityAwardMax !== undefined && opportunityAwardMax !== null
             ? BigInt(opportunityAwardMax)
             : undefined,
         opportunityUrl,

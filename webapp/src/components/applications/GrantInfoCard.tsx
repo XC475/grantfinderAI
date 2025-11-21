@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { DatePicker } from "@/components/ui/date-picker";
+import { format } from "date-fns";
 import {
   ExternalLink,
   Calendar,
@@ -16,6 +18,8 @@ import {
   Edit2,
   Save,
   X,
+  Plus,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { StatusSelect } from "./StatusSelect";
@@ -90,20 +94,54 @@ export function GrantInfoCard({
     opportunityTitle: grant.title,
     opportunityDescription: grant.description || "",
     opportunityAgency: grant.agency || "",
-    opportunityCloseDate: grant.close_date
-      ? new Date(grant.close_date).toISOString().split("T")[0]
-      : "",
     opportunityTotalFunding: grant.total_funding_amount?.toString() || "",
     opportunityAwardMin: grant.award_min?.toString() || "",
     opportunityAwardMax: grant.award_max?.toString() || "",
     opportunityUrl: grant.url || "",
   });
+  const [opportunityCloseDate, setOpportunityCloseDate] = useState<
+    Date | undefined
+  >(grant.close_date ? new Date(grant.close_date) : undefined);
+  const [attachments, setAttachments] = useState<
+    Array<{ url: string; title?: string; description?: string }>
+  >(
+    grant.attachments && Array.isArray(grant.attachments)
+      ? grant.attachments.map((att) => ({
+          url: att.url || "",
+          title: att.title || att.name || "",
+          description: "",
+        }))
+      : []
+  );
+
+  const addAttachment = () => {
+    setAttachments([...attachments, { url: "", title: "", description: "" }]);
+  };
+
+  const removeAttachment = (index: number) => {
+    setAttachments(attachments.filter((_, i) => i !== index));
+  };
+
+  const updateAttachment = (
+    index: number,
+    field: "url" | "title" | "description",
+    value: string
+  ) => {
+    const updated = [...attachments];
+    updated[index] = { ...updated[index], [field]: value };
+    setAttachments(updated);
+  };
 
   const handleSave = async () => {
     if (!application) return;
 
     try {
       setSaving(true);
+      // Filter out empty attachments
+      const validAttachments = attachments.filter(
+        (att) => att.url && att.url.trim()
+      );
+
       const res = await fetch(`/api/applications/${application.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -111,7 +149,9 @@ export function GrantInfoCard({
           opportunityTitle: formData.opportunityTitle,
           opportunityDescription: formData.opportunityDescription || null,
           opportunityAgency: formData.opportunityAgency || null,
-          opportunityCloseDate: formData.opportunityCloseDate || null,
+          opportunityCloseDate: opportunityCloseDate
+            ? format(opportunityCloseDate, "yyyy-MM-dd")
+            : null,
           opportunityTotalFunding: formData.opportunityTotalFunding
             ? Number(formData.opportunityTotalFunding)
             : null,
@@ -122,6 +162,8 @@ export function GrantInfoCard({
             ? Number(formData.opportunityAwardMax)
             : null,
           opportunityUrl: formData.opportunityUrl || null,
+          opportunityAttachments:
+            validAttachments.length > 0 ? validAttachments : null,
         }),
       });
 
@@ -147,25 +189,34 @@ export function GrantInfoCard({
       opportunityTitle: grant.title,
       opportunityDescription: grant.description || "",
       opportunityAgency: grant.agency || "",
-      opportunityCloseDate: grant.close_date
-        ? new Date(grant.close_date).toISOString().split("T")[0]
-        : "",
       opportunityTotalFunding: grant.total_funding_amount?.toString() || "",
       opportunityAwardMin: grant.award_min?.toString() || "",
       opportunityAwardMax: grant.award_max?.toString() || "",
       opportunityUrl: grant.url || "",
     });
+    setOpportunityCloseDate(
+      grant.close_date ? new Date(grant.close_date) : undefined
+    );
+    setAttachments(
+      grant.attachments && Array.isArray(grant.attachments)
+        ? grant.attachments.map((att) => ({
+            url: att.url || "",
+            title: att.title || att.name || "",
+            description: "",
+          }))
+        : []
+    );
     setIsEditing(false);
   };
 
   return (
     <Card>
       <CardHeader>
-        <div className="flex justify-between items-start">
-          <div className="flex-1">
+        <div className="flex justify-between items-start gap-4">
+          <div className="flex-1 min-w-0">
             {isEditing ? (
               <div className="space-y-4">
-                <div>
+                <div className="max-w-2xl">
                   <Label htmlFor="opportunityTitle">Opportunity Title</Label>
                   <Input
                     id="opportunityTitle"
@@ -216,7 +267,7 @@ export function GrantInfoCard({
               </div>
             )}
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 shrink-0">
             {isEditable && !isEditing && (
               <Button
                 variant="outline"
@@ -249,16 +300,14 @@ export function GrantInfoCard({
                 </Button>
               </>
             )}
-            {grant.status !== "Not specified" &&
-              grant.id > 0 &&
-              !isEditing && (
-                <Button asChild variant="outline" size="sm">
-                  <Link href={`/private/${organizationSlug}/grants/${grant.id}`}>
-                    <ExternalLink className="h-4 w-4 mr-1" />
-                    View Grant
-                  </Link>
-                </Button>
-              )}
+            {grant.status !== "Not specified" && grant.id > 0 && !isEditing && (
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/private/${organizationSlug}/grants/${grant.id}`}>
+                  <ExternalLink className="h-4 w-4 mr-1" />
+                  View Grant
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </CardHeader>
@@ -299,16 +348,10 @@ export function GrantInfoCard({
             {/* Close Date */}
             <div>
               <Label htmlFor="opportunityCloseDate">Deadline</Label>
-              <Input
-                id="opportunityCloseDate"
-                type="date"
-                value={formData.opportunityCloseDate}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    opportunityCloseDate: e.target.value,
-                  })
-                }
+              <DatePicker
+                date={opportunityCloseDate}
+                onDateChange={setOpportunityCloseDate}
+                placeholder="Select deadline"
               />
             </div>
 
@@ -373,6 +416,80 @@ export function GrantInfoCard({
                 }
               />
             </div>
+
+            {/* Attachments */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Opportunity Attachments (URLs)</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addAttachment}
+                  className="h-8"
+                >
+                  <Plus className="h-3 w-3 mr-1" />
+                  Add Attachment
+                </Button>
+              </div>
+              {attachments.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No attachments added yet
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {attachments.map((attachment, index) => (
+                    <div
+                      key={index}
+                      className="p-3 border rounded-md space-y-2 bg-muted/50"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 space-y-2">
+                          <Input
+                            placeholder="Attachment URL *"
+                            type="url"
+                            value={attachment.url}
+                            onChange={(e) =>
+                              updateAttachment(index, "url", e.target.value)
+                            }
+                            className="bg-background"
+                          />
+                          <Input
+                            placeholder="Title (optional)"
+                            value={attachment.title || ""}
+                            onChange={(e) =>
+                              updateAttachment(index, "title", e.target.value)
+                            }
+                            className="bg-background"
+                          />
+                          <Input
+                            placeholder="Description (optional)"
+                            value={attachment.description || ""}
+                            onChange={(e) =>
+                              updateAttachment(
+                                index,
+                                "description",
+                                e.target.value
+                              )
+                            }
+                            className="bg-background"
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeAttachment(index)}
+                          className="shrink-0"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
@@ -383,98 +500,98 @@ export function GrantInfoCard({
               />
             )}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <div className="font-medium">Total Funding</div>
-                <div>{formatCurrency(grant.total_funding_amount)}</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <div className="font-medium">Award Range</div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  {grant.award_min && grant.award_max
-                    ? `${formatCurrency(grant.award_min)} - ${formatCurrency(grant.award_max)}`
-                    : grant.award_max
-                      ? `Up to ${formatCurrency(grant.award_max)}`
-                      : grant.award_min
-                        ? `From ${formatCurrency(grant.award_min)}`
-                        : "Not specified"}
+                  <div className="font-medium">Total Funding</div>
+                  <div>{formatCurrency(grant.total_funding_amount)}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <div className="font-medium">Award Range</div>
+                  <div>
+                    {grant.award_min && grant.award_max
+                      ? `${formatCurrency(grant.award_min)} - ${formatCurrency(grant.award_max)}`
+                      : grant.award_max
+                        ? `Up to ${formatCurrency(grant.award_max)}`
+                        : grant.award_min
+                          ? `From ${formatCurrency(grant.award_min)}`
+                          : "Not specified"}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <div className="font-medium">Deadline</div>
+                  <div>{formatDate(grant.close_date)}</div>
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <div className="font-medium">Deadline</div>
-                <div>{formatDate(grant.close_date)}</div>
-              </div>
-            </div>
-          </div>
 
-          {grant.attachments &&
-            Array.isArray(grant.attachments) &&
-            grant.attachments.length > 0 && (
-              <div className="pt-2 border-t">
-                <div className="flex items-center gap-2 mb-3 mt-2">
-                  <Paperclip className="h-4 w-4 text-muted-foreground" />
-                  <div className="font-medium text-sm">Attachments</div>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {grant.attachments.map(
-                    (
-                      attachment: {
-                        url?: string;
-                        title?: string;
-                        name?: string;
-                      },
-                      index: number
-                    ) => {
-                      // Priority: title > filename from URL > full URL
-                      const getAttachmentName = () => {
-                        if (attachment.title) return attachment.title;
-                        if (!attachment.url) return "Untitled Attachment";
-                        try {
-                          const url = new URL(attachment.url);
-                          const pathname = url.pathname;
-                          const filename = pathname.split("/").pop();
-                          return filename || attachment.url;
-                        } catch {
-                          return attachment.url;
-                        }
-                      };
+            {grant.attachments &&
+              Array.isArray(grant.attachments) &&
+              grant.attachments.length > 0 && (
+                <div className="pt-2 border-t">
+                  <div className="flex items-center gap-2 mb-3 mt-2">
+                    <Paperclip className="h-4 w-4 text-muted-foreground" />
+                    <div className="font-medium text-sm">Attachments</div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {grant.attachments.map(
+                      (
+                        attachment: {
+                          url?: string;
+                          title?: string;
+                          name?: string;
+                        },
+                        index: number
+                      ) => {
+                        // Priority: title > filename from URL > full URL
+                        const getAttachmentName = () => {
+                          if (attachment.title) return attachment.title;
+                          if (!attachment.url) return "Untitled Attachment";
+                          try {
+                            const url = new URL(attachment.url);
+                            const pathname = url.pathname;
+                            const filename = pathname.split("/").pop();
+                            return filename || attachment.url;
+                          } catch {
+                            return attachment.url;
+                          }
+                        };
 
-                      return attachment.url ? (
-                        <a
-                          key={index}
-                          href={attachment.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-md hover:bg-muted transition-colors cursor-pointer"
-                        >
-                          <span className="text-sm">
-                            {getAttachmentName()}
-                          </span>
-                          <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                        </a>
-                      ) : (
-                        <div
-                          key={index}
-                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-md"
-                        >
-                          <span className="text-sm">
-                            {getAttachmentName()}
-                          </span>
-                        </div>
-                      );
-                    }
-                  )}
+                        return attachment.url ? (
+                          <a
+                            key={index}
+                            href={attachment.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-md hover:bg-muted transition-colors cursor-pointer"
+                          >
+                            <span className="text-sm">
+                              {getAttachmentName()}
+                            </span>
+                            <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                          </a>
+                        ) : (
+                          <div
+                            key={index}
+                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-md"
+                          >
+                            <span className="text-sm">
+                              {getAttachmentName()}
+                            </span>
+                          </div>
+                        );
+                      }
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
         )}
       </CardContent>

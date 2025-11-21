@@ -14,8 +14,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { DatePicker } from "@/components/ui/date-picker";
 import { ChevronLeft, Loader2, Plus, X } from "lucide-react";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 interface OutsideOpportunityFormProps {
   open: boolean;
@@ -40,12 +42,14 @@ export function OutsideOpportunityForm({
     opportunityAgency: "",
     opportunityDescription: "",
     opportunityEligibility: "",
-    opportunityCloseDate: "",
     opportunityTotalFunding: "",
     opportunityAwardMin: "",
     opportunityAwardMax: "",
     opportunityUrl: "",
   });
+  const [opportunityCloseDate, setOpportunityCloseDate] = useState<
+    Date | undefined
+  >(undefined);
   const [attachments, setAttachments] = useState<
     Array<{ url: string; title?: string; description?: string }>
   >([]);
@@ -104,7 +108,9 @@ export function OutsideOpportunityForm({
           opportunityAgency: formData.opportunityAgency || null,
           opportunityDescription: formData.opportunityDescription || null,
           opportunityEligibility: formData.opportunityEligibility || null,
-          opportunityCloseDate: formData.opportunityCloseDate || null,
+          opportunityCloseDate: opportunityCloseDate
+            ? format(opportunityCloseDate, "yyyy-MM-dd")
+            : null,
           opportunityTotalFunding: formData.opportunityTotalFunding
             ? Number(formData.opportunityTotalFunding)
             : null,
@@ -140,12 +146,12 @@ export function OutsideOpportunityForm({
         opportunityAgency: "",
         opportunityDescription: "",
         opportunityEligibility: "",
-        opportunityCloseDate: "",
         opportunityTotalFunding: "",
         opportunityAwardMin: "",
         opportunityAwardMax: "",
         opportunityUrl: "",
       });
+      setOpportunityCloseDate(undefined);
       setAttachments([]);
     } catch (error) {
       console.error("Error creating application:", error);
@@ -252,12 +258,10 @@ export function OutsideOpportunityForm({
             {/* Close Date */}
             <div className="space-y-2">
               <Label htmlFor="opportunityCloseDate">Application Deadline</Label>
-              <Input
-                id="opportunityCloseDate"
-                name="opportunityCloseDate"
-                type="date"
-                value={formData.opportunityCloseDate}
-                onChange={handleChange}
+              <DatePicker
+                date={opportunityCloseDate}
+                onDateChange={setOpportunityCloseDate}
+                placeholder="Select deadline"
               />
             </div>
 
@@ -411,4 +415,3 @@ export function OutsideOpportunityForm({
     </Dialog>
   );
 }
-
