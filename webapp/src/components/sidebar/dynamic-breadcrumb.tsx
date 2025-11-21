@@ -2,6 +2,7 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { useMemo, useEffect, useState } from "react";
+import Link from "next/link";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -313,89 +314,53 @@ export function DynamicBreadcrumb({
     return null;
   }
 
-  // Check if we're on documents route
-  const path = pathname.replace(`/private/${organizationSlug}`, "");
-  const segments = path.split("/").filter(Boolean);
-  const isDocumentsRoute = segments[0] === "documents";
+  // Render heading + breadcrumbs pattern for all routes
+  // First item (base) is the heading, remaining items are breadcrumbs
+  const baseItem = breadcrumbs[0];
+  const nestedBreadcrumbs = breadcrumbs.slice(1);
 
-  // For documents route, render heading + folder breadcrumbs
-  if (isDocumentsRoute) {
-    const documentsItem = breadcrumbs[0]; // "Documents" is always first
-    const folderBreadcrumbs = breadcrumbs.slice(1); // Remaining are folders
-
-    return (
-      <div className="flex items-center gap-3">
-        <h1 className="text-2xl font-semibold">Documents</h1>
-        {folderBreadcrumbs.length > 0 && (
-          <>
-            <BreadcrumbSeparator />
-            <Breadcrumb>
-              <BreadcrumbList>
-                {folderBreadcrumbs.map((item, index) => {
-                  const truncatedLabel = truncateText(item.label);
-                  return (
-                    <div
-                      key={item.href + index}
-                      className="flex items-center gap-2"
-                    >
-                      {index > 0 && <BreadcrumbSeparator />}
-                      <BreadcrumbItem>
-                        {item.isLast ? (
-                          <BreadcrumbPage
-                            title={item.label}
-                            isBase={item.isBase}
-                          >
-                            {truncatedLabel}
-                          </BreadcrumbPage>
-                        ) : (
-                          <BreadcrumbLink
-                            href={item.href}
-                            title={item.label}
-                            isBase={item.isBase}
-                          >
-                            {truncatedLabel}
-                          </BreadcrumbLink>
-                        )}
-                      </BreadcrumbItem>
-                    </div>
-                  );
-                })}
-              </BreadcrumbList>
-            </Breadcrumb>
-          </>
-        )}
-      </div>
-    );
-  }
-
-  // Standard breadcrumb rendering for other routes
   return (
-    <Breadcrumb>
-      <BreadcrumbList>
-        {breadcrumbs.map((item, index) => {
-          const truncatedLabel = truncateText(item.label);
-          return (
-            <div key={item.href + index} className="flex items-center gap-2">
-              {index > 0 && <BreadcrumbSeparator />}
-              <BreadcrumbItem>
-                {item.isLast ? (
-                  <BreadcrumbPage title={item.label} isBase={item.isBase}>
-                    {truncatedLabel}
-                  </BreadcrumbPage>
-                ) : (
-                  <BreadcrumbLink
-                    href={item.href}
-                    title={item.label}
-                    isBase={item.isBase}
+    <div className="flex items-center gap-3">
+      <Link href={baseItem.href}>
+        <h1 className="text-2xl font-semibold hover:text-foreground/80 transition-colors cursor-pointer">
+          {baseItem.label}
+        </h1>
+      </Link>
+      {nestedBreadcrumbs.length > 0 && (
+        <>
+          <span className="text-muted-foreground/40">/</span>
+          <Breadcrumb>
+            <BreadcrumbList>
+              {nestedBreadcrumbs.map((item, index) => {
+                const truncatedLabel = truncateText(item.label);
+                return (
+                  <div
+                    key={item.href + index}
+                    className="flex items-center gap-2"
                   >
-                    {truncatedLabel}
-                  </BreadcrumbLink>
-                )}
-              </BreadcrumbItem>
-            </div>
-          );
-        })}
-      </BreadcrumbList>
-    </Breadcrumb>
+                    {index > 0 && <BreadcrumbSeparator />}
+                    <BreadcrumbItem>
+                      {item.isLast ? (
+                        <BreadcrumbPage title={item.label} isBase={item.isBase}>
+                          {truncatedLabel}
+                        </BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink
+                          href={item.href}
+                          title={item.label}
+                          isBase={item.isBase}
+                        >
+                          {truncatedLabel}
+                        </BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                  </div>
+                );
+              })}
+            </BreadcrumbList>
+          </Breadcrumb>
+        </>
+      )}
+    </div>
   );
 }
