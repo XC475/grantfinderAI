@@ -62,10 +62,9 @@ export default function ApplicationsPage({
   if (applications.length === 0) {
     return (
       <>
-        <div className="container max-w-6xl py-8 p-4">
+        <div className="container max-w-6xl">
           <Card>
             <CardHeader>
-              <CardTitle>Applications</CardTitle>
               <CardDescription>Manage your grant applications</CardDescription>
             </CardHeader>
             <CardContent>
@@ -99,14 +98,11 @@ export default function ApplicationsPage({
   }
 
   return (
-    <div className="container max-w-full py-8 px-4 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Applications</h1>
-        <p className="text-muted-foreground">
-          {applications.length}{" "}
-          {applications.length === 1 ? "application" : "applications"}
-        </p>
-      </div>
+    <div className="container max-w-full space-y-6">
+      <p className="text-muted-foreground">
+        {applications.length}{" "}
+        {applications.length === 1 ? "application" : "applications"}
+      </p>
 
       <ApplicationsTable
         applications={applications}

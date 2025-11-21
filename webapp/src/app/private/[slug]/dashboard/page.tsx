@@ -147,7 +147,7 @@ export default function DashboardPage() {
   }, [userName, setHeaderContent]);
 
   return (
-    <div className="flex flex-col h-full overflow-hidden p-8 gap-6">
+    <div className="flex flex-col h-full overflow-hidden py-2 gap-6">
       {/* Feature Cards - 4 Columns */}
       <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 flex-shrink-0">
         <AIAssistantCard slug={organizationSlug} />

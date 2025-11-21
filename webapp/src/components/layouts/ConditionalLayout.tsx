@@ -196,21 +196,21 @@ function NormalLayoutContent({
       <AppSidebar />
       <SidebarInset>
         {showHeader && (
-          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
             <div className="flex items-center justify-between w-full px-4">
               <div className="flex items-center gap-2">
-                <Separator orientation="vertical" className="mr-2 h-4" />
-                {headerContent || (
-                  <DynamicBreadcrumb organizationSlug={organizationSlug} />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            {headerContent || (
+              <DynamicBreadcrumb organizationSlug={organizationSlug} />
                 )}
               </div>
               {headerActions && (
                 <div className="flex items-center gap-2">
                   {headerActions}
                 </div>
-              )}
-            </div>
-          </header>
+            )}
+          </div>
+        </header>
         )}
         <div className={`flex flex-1 flex-col gap-4 p-4 ${showHeader ? 'pt-0' : ''} overflow-hidden h-full`}>
           {children}
@@ -280,9 +280,9 @@ export function ConditionalLayout({
   return (
     <HeaderContentProvider>
       <HeaderActionsProvider>
-        <NormalLayoutContent organizationSlug={organizationSlug}>
-          {children}
-        </NormalLayoutContent>
+      <NormalLayoutContent organizationSlug={organizationSlug}>
+        {children}
+      </NormalLayoutContent>
       </HeaderActionsProvider>
     </HeaderContentProvider>
   );

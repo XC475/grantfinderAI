@@ -73,6 +73,8 @@ export default async function OrganizationLayout({
   }
 
   return (
-    <ConditionalLayout organizationSlug={slug}>{children}</ConditionalLayout>
+    <ConditionalLayout organizationSlug={slug}>
+      <div className="px-4">{children}</div>
+    </ConditionalLayout>
   );
 }
