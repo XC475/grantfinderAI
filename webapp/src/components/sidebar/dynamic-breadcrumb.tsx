@@ -23,12 +23,84 @@ interface BreadcrumbItemData {
   href: string;
   isLast: boolean;
   isBase: boolean;
+  isCollapsed?: boolean;
 }
 
-// Helper function to truncate text at 50 characters
-function truncateText(text: string, maxLength: number = 50): string {
+// Helper function to truncate text - very short for mobile
+function truncateText(text: string, maxLength: number = 15): string {
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength) + "...";
+}
+
+// Helper function to collapse breadcrumbs when there are too many
+function getCollapsedBreadcrumbs(
+  items: BreadcrumbItemData[],
+  maxVisible: number
+): BreadcrumbItemData[] {
+  // If we have fewer items than or equal to the max, just return everything
+  if (items.length <= maxVisible) return items;
+
+  // If maxVisible = 1, just show the last item
+  if (maxVisible === 1) {
+    return [items[items.length - 1]];
+  }
+
+  // Always show at least 2 (first and last)
+  const minVisible = Math.max(maxVisible, 2);
+
+  // If maxVisible = 2 → show first, "…", last
+  if (minVisible === 2) {
+    return [
+      items[0],
+      {
+        label: "…",
+        href: "#",
+        isLast: false,
+        isBase: false,
+        isCollapsed: true,
+      },
+      items[items.length - 1],
+    ];
+  }
+
+  // With 3 visible slots → show first, "…", last
+  if (minVisible === 3) {
+    return [
+      items[0],
+      {
+        label: "…",
+        href: "#",
+        isLast: false,
+        isBase: false,
+        isCollapsed: true,
+      },
+      items[items.length - 1],
+    ];
+  }
+
+  // For 4+ visible slots:
+  // Example: maxVisible = 4 → show first, "…", second-last, last
+  const output: BreadcrumbItemData[] = [];
+
+  output.push(items[0]); // First
+
+  output.push({
+    label: "…",
+    href: "#",
+    isLast: false,
+    isBase: false,
+    isCollapsed: true,
+  });
+
+  // Calculate how many tail items we can show
+  // We already took 2 (first + ellipsis)
+  const remainingSlots = minVisible - 2;
+
+  const tail = items.slice(-remainingSlots);
+
+  output.push(...tail);
+
+  return output;
 }
 
 export function DynamicBreadcrumb({
@@ -43,8 +115,33 @@ export function DynamicBreadcrumb({
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const [maxVisibleItems, setMaxVisibleItems] = useState(4);
 
   const fromBookmarks = searchParams.get("from") === "bookmarks";
+
+  // Simple window width based collapsing
+  useEffect(() => {
+    const updateMaxItems = () => {
+      const width = window.innerWidth;
+
+      // Very aggressive mobile collapsing
+      if (width < 1024) {
+        setMaxVisibleItems(1); // Mobile: ONLY current folder
+      } else if (width < 1200) {
+        setMaxVisibleItems(2); // Tablet: first ... last
+      } else {
+        setMaxVisibleItems(4); // Desktop: first ... secondLast last
+      }
+    };
+
+    // Initial check
+    updateMaxItems();
+
+    // Update on resize
+    window.addEventListener("resize", updateMaxItems);
+
+    return () => window.removeEventListener("resize", updateMaxItems);
+  }, []);
 
   // Handler for double-clicking document title to edit
   const handleDoubleClickTitle = () => {
@@ -380,16 +477,29 @@ export function DynamicBreadcrumb({
 
   // If no base heading (like editor page), render all as normal breadcrumbs
   if (!hasBaseHeading) {
+    const collapsedBreadcrumbs = getCollapsedBreadcrumbs(
+      breadcrumbs,
+      maxVisibleItems
+    );
+
     return (
       <Breadcrumb>
         <BreadcrumbList>
-          {breadcrumbs.map((item, index) => {
+          {collapsedBreadcrumbs.map((item, index) => {
             const truncatedLabel = truncateText(item.label);
             return (
               <div key={item.href + index} className="flex items-center gap-2">
                 {index > 0 && <BreadcrumbSeparator />}
                 <BreadcrumbItem>
-                  {item.isLast && isEditorPage ? (
+                  {item.isCollapsed ? (
+                    // Collapsed indicator
+                    <span
+                      className="text-muted-foreground cursor-default px-1"
+                      title="Some breadcrumbs are hidden"
+                    >
+                      {item.label}
+                    </span>
+                  ) : item.isLast && isEditorPage ? (
                     // Editable document title on editor page
                     <div className="flex items-center">
                       {isEditingTitle ? (
@@ -443,19 +553,25 @@ export function DynamicBreadcrumb({
   const baseItem = breadcrumbs[0];
   const nestedBreadcrumbs = breadcrumbs.slice(1);
 
+  // Apply aggressive collapsing to nested breadcrumbs
+  const collapsedNestedBreadcrumbs = getCollapsedBreadcrumbs(
+    nestedBreadcrumbs,
+    maxVisibleItems
+  );
+
   return (
     <div className="flex items-center gap-3">
-      <Link href={baseItem.href}>
+      <Link href={baseItem.href} className="shrink-0">
         <h1 className="text-2xl font-semibold hover:text-foreground/80 transition-colors cursor-pointer">
           {baseItem.label}
         </h1>
       </Link>
-      {nestedBreadcrumbs.length > 0 && (
+      {collapsedNestedBreadcrumbs.length > 0 && (
         <>
-          <span className="text-muted-foreground/40">/</span>
-          <Breadcrumb>
+          <span className="text-muted-foreground/40 shrink-0">/</span>
+          <Breadcrumb className="min-w-0 flex-1">
             <BreadcrumbList>
-              {nestedBreadcrumbs.map((item, index) => {
+              {collapsedNestedBreadcrumbs.map((item, index) => {
                 const truncatedLabel = truncateText(item.label);
                 return (
                   <div
@@ -464,7 +580,15 @@ export function DynamicBreadcrumb({
                   >
                     {index > 0 && <BreadcrumbSeparator />}
                     <BreadcrumbItem>
-                      {item.isLast ? (
+                      {item.isCollapsed ? (
+                        // Collapsed indicator
+                        <span
+                          className="text-muted-foreground cursor-default px-1"
+                          title="Some breadcrumbs are hidden"
+                        >
+                          {item.label}
+                        </span>
+                      ) : item.isLast ? (
                         <BreadcrumbPage title={item.label} isBase={item.isBase}>
                           {truncatedLabel}
                         </BreadcrumbPage>
