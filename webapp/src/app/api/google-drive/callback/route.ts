@@ -26,6 +26,19 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    // Decode state to get userId and returnTo path
+    let userId: string;
+    let returnTo: string = "";
+    
+    try {
+      const decodedState = JSON.parse(Buffer.from(state, "base64").toString());
+      userId = decodedState.userId;
+      returnTo = decodedState.returnTo || "";
+    } catch {
+      // Fallback for old state format (just user ID string)
+      userId = state;
+    }
+
     const { clientId, clientSecret } = getGoogleClientConfig();
     const redirectUri = `${baseUrl}/api/google-drive/callback`;
 
@@ -61,7 +74,7 @@ export async function GET(request: NextRequest) {
     }
 
     await prisma.user.update({
-      where: { id: state },
+      where: { id: userId },
       data: {
         googleAccessToken: encryptToken(tokens.access_token),
         googleRefreshToken: tokens.refresh_token
@@ -75,7 +88,7 @@ export async function GET(request: NextRequest) {
     });
 
     const dbUser = await prisma.user.findUnique({
-      where: { id: state },
+      where: { id: userId },
       select: {
         organization: {
           select: { slug: true },
@@ -84,9 +97,18 @@ export async function GET(request: NextRequest) {
     });
 
     const slug = dbUser?.organization?.slug;
-    const destination = slug
-      ? `/private/${slug}/documents?gdrive=connected`
-      : "/?gdrive=connected";
+    
+    // Determine destination: use returnTo if provided, otherwise default to documents
+    let destination: string;
+    if (returnTo && returnTo.startsWith("/")) {
+      // Use the provided returnTo path
+      destination = `${returnTo}${returnTo.includes("?") ? "&" : "?"}gdrive=connected`;
+    } else {
+      // Fallback to documents page
+      destination = slug
+        ? `/private/${slug}/documents?gdrive=connected`
+        : "/?gdrive=connected";
+    }
 
     return NextResponse.redirect(`${baseUrl}${destination}`);
   } catch (error) {
