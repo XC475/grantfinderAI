@@ -24,8 +24,36 @@ interface RecentActivity {
   id: string;
   title: string;
   timestamp: string;
-  type: string;
+  type: "application" | "document" | "folder" | "chat" | "bookmark";
   link: string;
+}
+
+// Format timestamp to relative time
+function formatRelativeTime(isoTimestamp: string): string {
+  const now = new Date();
+  const timestamp = new Date(isoTimestamp);
+  const diffMs = now.getTime() - timestamp.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60)
+    return `${diffMins} minute${diffMins === 1 ? "" : "s"} ago`;
+  if (diffHours < 24)
+    return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffDays < 30) {
+    const weeks = Math.floor(diffDays / 7);
+    return `${weeks} week${weeks === 1 ? "" : "s"} ago`;
+  }
+  if (diffDays < 365) {
+    const months = Math.floor(diffDays / 30);
+    return `${months} month${months === 1 ? "" : "s"} ago`;
+  }
+  const years = Math.floor(diffDays / 365);
+  return `${years} year${years === 1 ? "" : "s"} ago`;
 }
 
 export default function DashboardPage() {
@@ -37,40 +65,12 @@ export default function DashboardPage() {
   const [userName, setUserName] = useState<string>("");
   const [searchFilter, setSearchFilter] = useState("");
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [recentActivities, setRecentActivities] = useState<RecentActivity[]>(
+    []
+  );
+  const [activitiesLoading, setActivitiesLoading] = useState(true);
   const { setHeaderContent } = useHeaderContent();
   const hasSetHeaderRef = useRef(false);
-
-  // Recent activities data (mock data for now)
-  const recentActivities: RecentActivity[] = [
-    {
-      id: "1",
-      title: "STEM Education Grant Draft",
-      timestamp: "2 minutes ago",
-      type: "draft",
-      link: `/private/${organizationSlug}/applications`,
-    },
-    {
-      id: "2",
-      title: "Search: Special Education",
-      timestamp: "1 hour ago",
-      type: "search",
-      link: `/private/${organizationSlug}/grants?search=special+education`,
-    },
-    {
-      id: "3",
-      title: "Technology Infrastructure Proposal",
-      timestamp: "3 hours ago",
-      type: "draft",
-      link: `/private/${organizationSlug}/applications`,
-    },
-    {
-      id: "4",
-      title: "Chat: Grant Requirements",
-      timestamp: "Yesterday",
-      type: "chat",
-      link: `/private/${organizationSlug}/chat`,
-    },
-  ];
 
   const handleActivityClick = (activity: RecentActivity) => {
     router.push(activity.link);
@@ -111,9 +111,29 @@ export default function DashboardPage() {
     }
   };
 
+  // Fetch recent activities
+  const fetchRecentActivities = async () => {
+    try {
+      const response = await fetch(
+        `/api/activity/recent?organizationSlug=${organizationSlug}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setRecentActivities(data);
+      } else {
+        console.error("Failed to load recent activities");
+      }
+    } catch (error) {
+      console.error("Error fetching recent activities:", error);
+    } finally {
+      setActivitiesLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchUserData();
     fetchApplications();
+    fetchRecentActivities();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [organizationSlug]);
 
@@ -147,9 +167,9 @@ export default function DashboardPage() {
   }, [userName, setHeaderContent]);
 
   return (
-    <div className="flex flex-col h-full overflow-hidden py-2 gap-6">
+    <div className="flex flex-col h-full overflow-hidden py-2 gap-6 max-h-[calc(100vh-70px)]">
       {/* Feature Cards - 4 Columns */}
-      <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 flex-shrink-0">
+      <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <AIAssistantCard slug={organizationSlug} />
         <GrantsCard slug={organizationSlug} />
         <RecommendationsCard slug={organizationSlug} />
@@ -159,8 +179,8 @@ export default function DashboardPage() {
       {/* Jump Back In (1/4) + Applications (3/4) */}
       <div className="grid gap-5 grid-cols-1 md:grid-cols-4 flex-1 min-h-0 overflow-hidden">
         {/* Jump Back In - Left Side (1 column) - Claude-inspired styling */}
-        <Card className="md:col-span-1 flex flex-col overflow-hidden bg-card/60 border-muted-foreground/20 backdrop-blur-sm">
-          <CardHeader className="flex-shrink-0 pb-4">
+        <Card className="gap-1 md:col-span-1 flex flex-col overflow-hidden bg-card/60 border-muted-foreground/20 backdrop-blur-sm">
+          <CardHeader>
             <CardTitle className="flex items-center gap-3 text-lg font-normal text-foreground/90">
               <div className="w-8 h-8 rounded-lg bg-foreground/5 flex items-center justify-center">
                 <Clock
@@ -171,27 +191,37 @@ export default function DashboardPage() {
               Jump Back In
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex-1 overflow-auto space-y-1.5 px-4">
-            {recentActivities.map((activity) => (
-              <div
-                key={activity.id}
-                className="group flex items-start justify-between p-3 rounded-xl hover:bg-foreground/5 cursor-pointer transition-all duration-300 border border-transparent hover:border-foreground/10"
-                onClick={() => handleActivityClick(activity)}
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-normal text-foreground/80 truncate group-hover:text-foreground transition-colors">
-                    {activity.title}
-                  </p>
-                  <p className="text-xs text-foreground/50 mt-1 font-light">
-                    {activity.timestamp}
-                  </p>
-                </div>
-                <ChevronRight
-                  className="h-4 w-4 text-muted-foreground flex-shrink-0 ml-2 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5"
-                  strokeWidth={1.5}
-                />
+          <CardContent className="flex-1 overflow-auto px-4">
+            {activitiesLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-foreground/40" />
               </div>
-            ))}
+            ) : recentActivities.length === 0 ? (
+              <div className="text-center py-8 text-sm text-foreground/60 font-light">
+                No recent activity yet
+              </div>
+            ) : (
+              recentActivities.map((activity) => (
+                <div
+                  key={activity.id}
+                  className="group flex items-start justify-between p-3 rounded-xl hover:bg-foreground/5 cursor-pointer transition-all duration-300 border border-transparent hover:border-foreground/10"
+                  onClick={() => handleActivityClick(activity)}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-normal text-foreground/80 truncate group-hover:text-foreground transition-colors">
+                      {activity.title}
+                    </p>
+                    <p className="text-xs text-foreground/50 mt-1 font-light">
+                      {formatRelativeTime(activity.timestamp)}
+                    </p>
+                  </div>
+                  <ChevronRight
+                    className="h-4 w-4 text-muted-foreground ml-2 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5"
+                    strokeWidth={1.5}
+                  />
+                </div>
+              ))
+            )}
           </CardContent>
         </Card>
 
