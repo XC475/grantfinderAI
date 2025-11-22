@@ -14,6 +14,7 @@ import {
   ArrowUpDown,
   MoreVertical,
   Eye,
+  Pencil,
   Copy,
   Trash,
   GripVertical,
@@ -51,6 +52,7 @@ export interface Application {
 
 interface ColumnActions {
   onView: (id: string) => void;
+  onRename: (id: string, currentTitle: string) => void;
   onDuplicate: (id: string) => void;
   onDelete: (id: string, title: string | null) => void;
   onStatusChange: (id: string, newStatus: string) => void;
@@ -407,6 +409,15 @@ export function createColumns(
                 >
                   <Eye className="mr-2 h-4 w-4" />
                   View Details
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    actions.onRename(application.id, application.title || "");
+                  }}
+                >
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Rename
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={(e) => {
