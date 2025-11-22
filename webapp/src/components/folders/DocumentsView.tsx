@@ -717,53 +717,38 @@ export function DocumentsView({
     const draggedId = active.id as string;
     const dropTarget = over.data.current;
 
-    // Check if this is a reorder operation (same type, same level)
-    if (dropTarget && draggedType === dropTarget.type) {
-      // Reordering: dragging folder on folder or document on document
-      const draggedItem =
-        draggedType === "folder"
-          ? folders.find((f) => f.id === draggedId)
-          : documents.find((d) => d.id === draggedId);
-
-      const targetId =
-        draggedType === "folder" ? dropTarget.folderId : dropTarget.documentId;
-
-      const targetItem =
-        draggedType === "folder"
-          ? folders.find((f) => f.id === targetId)
-          : documents.find((d) => d.id === targetId);
+    // Check if this is a reorder operation (documents only - folders cannot be reordered)
+    if (
+      dropTarget &&
+      draggedType === dropTarget.type &&
+      draggedType === "document"
+    ) {
+      // Reordering: dragging document on document
+      const draggedItem = documents.find((d) => d.id === draggedId);
+      const targetId = dropTarget.documentId;
+      const targetItem = documents.find((d) => d.id === targetId);
 
       if (draggedItem && targetItem && draggedId !== targetItem.id) {
-        // Check if they're at the same level
-        // For folders, we need to check their parent folder (they're in the same currentFolderId)
-        // For documents, check if they have the same folderId
+        // Check if they're at the same level (same folderId)
         const sameLevel =
-          draggedType === "folder"
-            ? true // Folders in the same list are at the same level
-            : (draggedItem as Document).folderId ===
-              (targetItem as Document).folderId;
+          (draggedItem as Document).folderId ===
+          (targetItem as Document).folderId;
 
         if (sameLevel) {
           // Reorder: swap positions in the array
-          const items = draggedType === "folder" ? folders : documents;
-          const draggedIndex = items.findIndex((item) => item.id === draggedId);
-          const targetIndex = items.findIndex(
+          const draggedIndex = documents.findIndex(
+            (item) => item.id === draggedId
+          );
+          const targetIndex = documents.findIndex(
             (item) => item.id === targetItem.id
           );
 
           if (draggedIndex !== -1 && targetIndex !== -1) {
             // Optimistically update UI
-            if (draggedType === "folder") {
-              const newFolders = [...folders];
-              const [removed] = newFolders.splice(draggedIndex, 1);
-              newFolders.splice(targetIndex, 0, removed);
-              setFolders(newFolders);
-            } else {
-              const newDocuments = [...documents];
-              const [removed] = newDocuments.splice(draggedIndex, 1);
-              newDocuments.splice(targetIndex, 0, removed);
-              setDocuments(newDocuments);
-            }
+            const newDocuments = [...documents];
+            const [removed] = newDocuments.splice(draggedIndex, 1);
+            newDocuments.splice(targetIndex, 0, removed);
+            setDocuments(newDocuments);
 
             // Note: Without an order field in the database, this is just a UI reorder
             // The order will reset on refresh. To persist, we'd need to add an order field.

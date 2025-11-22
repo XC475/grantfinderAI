@@ -1,7 +1,18 @@
 "use client";
 
 import { useDraggable, useDroppable } from "@dnd-kit/core";
-import { FileText, MoreHorizontal, Trash2, GripVertical, Edit, Copy, FolderInput, File, Table, Download } from "lucide-react";
+import {
+  FileText,
+  MoreHorizontal,
+  Trash2,
+  GripVertical,
+  Edit,
+  Copy,
+  FolderInput,
+  File,
+  Table,
+  Download,
+} from "lucide-react";
 import { FolderIcon } from "./FolderIcon";
 import { Button } from "@/components/ui/button";
 import {
@@ -75,7 +86,10 @@ interface FolderListProps {
   onCopyDocument?: (documentId: string) => void;
   onMoveFolder?: (folderId: string) => void;
   onMoveDocument?: (documentId: string) => void;
-  onExportDocument?: (documentId: string, format: 'google-drive' | 'pdf' | 'docx') => void;
+  onExportDocument?: (
+    documentId: string,
+    format: "google-drive" | "pdf" | "docx"
+  ) => void;
   organizationSlug: string;
 }
 
@@ -99,9 +113,11 @@ function DraggableFolder({
     data: { type: "folder", folder },
   });
 
+  // Folders are only droppable for moving items inside, not for reordering
   const { setNodeRef: setDropRef, isOver } = useDroppable({
     id: `folder-drop-${folder.id}`,
     data: { type: "folder", folderId: folder.id },
+    disabled: false, // Allow dropping items into folders
   });
 
   return (
@@ -218,7 +234,7 @@ function DraggableDocument({
   onRename?: () => void;
   onCopy?: () => void;
   onMove?: () => void;
-  onExport?: (format: 'google-drive' | 'pdf' | 'docx') => void;
+  onExport?: (format: "google-drive" | "pdf" | "docx") => void;
   organizationSlug: string;
 }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
@@ -320,7 +336,7 @@ function DraggableDocument({
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        onExport('google-drive');
+                        onExport("google-drive");
                       }}
                     >
                       Google Drive
@@ -328,7 +344,7 @@ function DraggableDocument({
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        onExport('pdf');
+                        onExport("pdf");
                       }}
                     >
                       PDF
@@ -336,7 +352,7 @@ function DraggableDocument({
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        onExport('docx');
+                        onExport("docx");
                       }}
                     >
                       Word Doc
@@ -431,12 +447,8 @@ export function FolderList({
                   ? () => onRenameFolder(folder.id, folder.name)
                   : undefined
               }
-              onCopy={
-                onCopyFolder ? () => onCopyFolder(folder.id) : undefined
-              }
-              onMove={
-                onMoveFolder ? () => onMoveFolder(folder.id) : undefined
-              }
+              onCopy={onCopyFolder ? () => onCopyFolder(folder.id) : undefined}
+              onMove={onMoveFolder ? () => onMoveFolder(folder.id) : undefined}
             />
           ))}
 
