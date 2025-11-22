@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Search, Edit, FileText, BarChart, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 interface PromptSuggestionsProps {
@@ -11,60 +11,60 @@ interface PromptSuggestionsProps {
 }
 
 const categories = [
-  { 
-    id: 'search', 
-    label: 'Search', 
+  {
+    id: "search",
+    label: "Search",
     icon: Search,
     samplePrompts: [
-      'Search for grants related to STEM education programs',
-      'Find grants for improving student achievement in our district',
-      'Search for funding opportunities for technology upgrades',
-      'Look for grants supporting after-school programs',
-    ]
+      "Search for grants related to STEM education programs",
+      "Find grants for improving student achievement in our district",
+      "Search for funding opportunities for technology upgrades",
+      "Look for grants supporting after-school programs",
+    ],
   },
-  { 
-    id: 'write', 
-    label: 'Write', 
+  {
+    id: "write",
+    label: "Write",
     icon: Edit,
     samplePrompts: [
-      'Help me write a grant proposal for a library renovation project',
-      'Draft a compelling narrative for our early childhood education program',
-      'Write a needs statement for special education resources',
-      'Create a budget justification for STEM equipment',
-    ]
+      "Help me write a grant proposal for a library renovation project",
+      "Draft a compelling narrative for our early childhood education program",
+      "Write a needs statement for special education resources",
+      "Create a budget justification for STEM equipment",
+    ],
   },
-  { 
-    id: 'summarize', 
-    label: 'Summarize', 
+  {
+    id: "summarize",
+    label: "Summarize",
     icon: FileText,
     samplePrompts: [
-      'Summarize this 50-page grant application guidelines document',
-      'Provide a brief overview of this grant opportunity',
-      'Summarize the key eligibility requirements from this RFP',
-      'Give me the main points from this federal grant notice',
-    ]
+      "Summarize this 50-page grant application guidelines document",
+      "Provide a brief overview of this grant opportunity",
+      "Summarize the key eligibility requirements from this RFP",
+      "Give me the main points from this federal grant notice",
+    ],
   },
-  { 
-    id: 'analyze', 
-    label: 'Analyze', 
+  {
+    id: "analyze",
+    label: "Analyze",
     icon: BarChart,
     samplePrompts: [
-      'Analyze the eligibility requirements for this grant opportunity',
-      'Evaluate our chances of winning this competitive grant',
-      'Compare the requirements of these three grant opportunities',
-      'Assess the alignment between this grant and our needs',
-    ]
+      "Analyze the eligibility requirements for this grant opportunity",
+      "Evaluate our chances of winning this competitive grant",
+      "Compare the requirements of these three grant opportunities",
+      "Assess the alignment between this grant and our needs",
+    ],
   },
-  { 
-    id: 'recommend', 
-    label: 'Recommend', 
+  {
+    id: "recommend",
+    label: "Recommend",
     icon: Sparkles,
     samplePrompts: [
-      'Recommend grants for teacher professional development',
-      'Suggest funding opportunities for our music program',
-      'Find grants that would support our special education services',
-      'Recommend grants for mental health and counseling services',
-    ]
+      "Recommend grants for teacher professional development",
+      "Suggest funding opportunities for our music program",
+      "Find grants that would support our special education services",
+      "Recommend grants for mental health and counseling services",
+    ],
   },
 ];
 
@@ -73,23 +73,57 @@ export function PromptSuggestions({
   className,
 }: PromptSuggestionsProps) {
   const [openCategory, setOpenCategory] = useState<string | null>(null);
+  const containerRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   const handleCategoryClick = (categoryId: string) => {
     setOpenCategory(openCategory === categoryId ? null : categoryId);
   };
 
   const handlePromptHover = (prompt: string) => {
-    onCategorySelect('hover', prompt);
+    onCategorySelect("hover", prompt);
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!openCategory) return;
+
+      const clickedOutside = Array.from(containerRefs.current.values()).every(
+        (ref) => ref && !ref.contains(event.target as Node)
+      );
+
+      if (clickedOutside) {
+        setOpenCategory(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [openCategory]);
+
   return (
-    <div className={cn("flex flex-wrap items-center justify-center gap-3 mt-4", className)}>
+    <div
+      className={cn(
+        "flex flex-wrap items-center justify-center gap-3 mt-4",
+        className
+      )}
+    >
       {categories.map((category) => {
         const Icon = category.icon;
         const isOpen = openCategory === category.id;
-        
+
         return (
-          <div key={category.id} className="relative">
+          <div
+            key={category.id}
+            className="relative"
+            ref={(el) => {
+              if (el) {
+                containerRefs.current.set(category.id, el);
+              } else {
+                containerRefs.current.delete(category.id);
+              }
+            }}
+          >
             <button
               onClick={() => handleCategoryClick(category.id)}
               className={cn(
