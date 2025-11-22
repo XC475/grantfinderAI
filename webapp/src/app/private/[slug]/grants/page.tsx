@@ -1341,7 +1341,7 @@ function GrantsSearchPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => router.push(`/private/${slug}/profile`)}
+                      onClick={() => router.push(`/private/${slug}/settings/profile`)}
                     >
                       Go to Profile
                     </Button>
