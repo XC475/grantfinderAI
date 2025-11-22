@@ -24,6 +24,13 @@ import {
   useHeaderActions,
 } from "@/contexts/HeaderActionsContext";
 
+// ============================================================
+// AI ASSISTANT SIDEBAR DEFAULT WIDTH
+// ============================================================
+// Change this number to set the sidebar width when editor opens
+// (Percentage of screen: 25-60 recommended)
+const AI_SIDEBAR_DEFAULT_WIDTH = 30;
+
 interface ConditionalLayoutProps {
   children: React.ReactNode;
   organizationSlug: string;
@@ -96,7 +103,9 @@ function DocumentEditorLayoutContent({
               </Button>
             </div>
           </header>
-          <div className="flex-1 flex flex-col overflow-auto bg-white">{children}</div>
+          <div className="flex-1 flex flex-col overflow-auto bg-white">
+            {children}
+          </div>
         </div>
       </div>
     );
@@ -105,7 +114,10 @@ function DocumentEditorLayoutContent({
   return (
     <ResizablePanelGroup direction="horizontal" className="flex-1 w-full">
       {/* Main content panel with breadcrumbs */}
-      <ResizablePanel defaultSize={isSidebarOpen ? 60 : 100} minSize={30}>
+      <ResizablePanel
+        defaultSize={isSidebarOpen ? 100 - AI_SIDEBAR_DEFAULT_WIDTH : 100}
+        minSize={30}
+      >
         <SidebarInset className="flex flex-col h-full bg-white">
           <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 border-b bg-white">
             <div className="flex items-center gap-2 px-4">
@@ -130,7 +142,9 @@ function DocumentEditorLayoutContent({
               </Button>
             </div>
           </header>
-          <div className="flex-1 flex flex-col overflow-auto bg-white">{children}</div>
+          <div className="flex-1 flex flex-col overflow-auto bg-white">
+            {children}
+          </div>
         </SidebarInset>
       </ResizablePanel>
 
@@ -139,7 +153,11 @@ function DocumentEditorLayoutContent({
 
       {/* Document chat sidebar panel - at same level as main content */}
       {isSidebarOpen && (
-        <ResizablePanel defaultSize={40} minSize={25} maxSize={60}>
+        <ResizablePanel
+          defaultSize={AI_SIDEBAR_DEFAULT_WIDTH}
+          minSize={25}
+          maxSize={60}
+        >
           <div className="h-full flex flex-col border-l bg-background">
             {/* Header aligned with breadcrumbs */}
             <div className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
@@ -170,24 +188,19 @@ function NormalLayoutContent({
   const showHeader = useMemo(() => {
     // Always show if there's custom header content or actions
     if (headerContent || headerActions) return true;
-    
+
     // Check if current route would show breadcrumbs
     const path = pathname.replace(`/private/${organizationSlug}`, "");
     const segments = path.split("/").filter(Boolean);
-    
+
     // Pages that don't show breadcrumbs
-    const noBreadcrumbPages = [
-      "dashboard",
-      "chat", 
-      "settings",
-      "profile",
-    ];
-    
+    const noBreadcrumbPages = ["dashboard", "chat", "settings", "profile"];
+
     // If it's one of these base pages, don't show header
     if (segments.length === 0 || noBreadcrumbPages.includes(segments[0])) {
       return false;
     }
-    
+
     return true;
   }, [pathname, organizationSlug, headerContent, headerActions]);
 
@@ -196,23 +209,23 @@ function NormalLayoutContent({
       <AppSidebar />
       <SidebarInset>
         {showHeader && (
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
             <div className="flex items-center justify-between w-full px-4">
               <div className="flex items-center gap-2">
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            {headerContent || (
-              <DynamicBreadcrumb organizationSlug={organizationSlug} />
+                <Separator orientation="vertical" className="mr-2 h-4" />
+                {headerContent || (
+                  <DynamicBreadcrumb organizationSlug={organizationSlug} />
                 )}
               </div>
               {headerActions && (
-                <div className="flex items-center gap-2">
-                  {headerActions}
-                </div>
-            )}
-          </div>
-        </header>
+                <div className="flex items-center gap-2">{headerActions}</div>
+              )}
+            </div>
+          </header>
         )}
-        <div className={`flex flex-1 flex-col gap-4 p-4 ${showHeader ? 'pt-0' : ''} overflow-auto h-full`}>
+        <div
+          className={`flex flex-1 flex-col gap-4 p-4 ${showHeader ? "pt-0" : ""} overflow-auto h-full`}
+        >
           {children}
         </div>
       </SidebarInset>
@@ -280,9 +293,9 @@ export function ConditionalLayout({
   return (
     <HeaderContentProvider>
       <HeaderActionsProvider>
-      <NormalLayoutContent organizationSlug={organizationSlug}>
-        {children}
-      </NormalLayoutContent>
+        <NormalLayoutContent organizationSlug={organizationSlug}>
+          {children}
+        </NormalLayoutContent>
       </HeaderActionsProvider>
     </HeaderContentProvider>
   );
