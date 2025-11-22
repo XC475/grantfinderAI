@@ -38,6 +38,7 @@ import {
   Trash2,
   ShieldCheck,
   User,
+  Crown,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -75,6 +76,12 @@ export default function TeamSettingsPage() {
   );
   const [newRole, setNewRole] = useState<"ADMIN" | "MEMBER">("MEMBER");
   const [changingRole, setChangingRole] = useState(false);
+
+  // Transfer ownership state
+  const [transferDialogOpen, setTransferDialogOpen] = useState(false);
+  const [targetAdmin, setTargetAdmin] = useState<Member | null>(null);
+  const [ownerPassword, setOwnerPassword] = useState("");
+  const [transferring, setTransferring] = useState(false);
 
   useEffect(() => {
     fetchMembers();
@@ -296,6 +303,56 @@ export default function TeamSettingsPage() {
     return currentUserRole === "OWNER";
   };
 
+  // Handle ownership transfer
+  const handleTransferOwnership = async () => {
+    if (!targetAdmin || !ownerPassword) {
+      toast.error("Please enter your password to confirm");
+      return;
+    }
+
+    setTransferring(true);
+    try {
+      const response = await fetch("/api/organizations/transfer-ownership", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          targetUserId: targetAdmin.id,
+          password: ownerPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to transfer ownership");
+      }
+
+      toast.success(
+        `Ownership transferred to ${targetAdmin.name || targetAdmin.email}`
+      );
+      setTransferDialogOpen(false);
+      setTargetAdmin(null);
+      setOwnerPassword("");
+      fetchMembers(); // Refresh member list
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to transfer ownership"
+      );
+    } finally {
+      setTransferring(false);
+      setOwnerPassword(""); // Clear password regardless of success/failure
+    }
+  };
+
+  // Check if current user can transfer ownership to a member
+  const canTransferOwnership = (member: Member) => {
+    return (
+      currentUserRole === "OWNER" &&
+      member.role === "ADMIN" &&
+      member.id !== currentUserId
+    );
+  };
+
   return (
     <div className="space-y-6 p-4">
       <div className="flex items-center justify-between">
@@ -455,6 +512,21 @@ export default function TeamSettingsPage() {
                       <DropdownMenuLabel>Manage member</DropdownMenuLabel>
                       <DropdownMenuSeparator />
 
+                      {canTransferOwnership(member) && (
+                        <>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setTargetAdmin(member);
+                              setTransferDialogOpen(true);
+                            }}
+                          >
+                            <Crown className="h-4 w-4 mr-2" />
+                            Transfer Ownership
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                        </>
+                      )}
+
                       {canChangeRole(member) && (
                         <>
                           <DropdownMenuItem
@@ -611,6 +683,81 @@ export default function TeamSettingsPage() {
                 </>
               ) : (
                 "Update role"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Transfer Ownership Dialog */}
+      <Dialog open={transferDialogOpen} onOpenChange={(open) => {
+        setTransferDialogOpen(open);
+        if (!open) {
+          setOwnerPassword(""); // Clear password when dialog closes
+        }
+      }}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Crown className="h-5 w-5 text-yellow-500" />
+              Transfer Ownership
+            </DialogTitle>
+            <DialogDescription>
+              Transfer organization ownership to{" "}
+              <span className="font-semibold">
+                {targetAdmin?.name || targetAdmin?.email}
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3">
+                <p className="text-sm text-yellow-800">
+                  <strong>Warning:</strong> This action will transfer full ownership
+                  of the organization. You will become an admin and{" "}
+                  <strong>{targetAdmin?.name || targetAdmin?.email}</strong> will
+                  become the new owner.
+                </p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="owner-password">Confirm with your password</Label>
+              <Input
+                id="owner-password"
+                type="password"
+                value={ownerPassword}
+                onChange={(e) => setOwnerPassword(e.target.value)}
+                placeholder="Enter your password"
+                disabled={transferring}
+              />
+            </div>
+          </div>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setTransferDialogOpen(false);
+                setOwnerPassword("");
+              }}
+              disabled={transferring}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleTransferOwnership}
+              disabled={transferring || !ownerPassword}
+              className="bg-yellow-600 hover:bg-yellow-700"
+            >
+              {transferring ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Transferring...
+                </>
+              ) : (
+                <>
+                  <Crown className="h-4 w-4 mr-2" />
+                  Transfer Ownership
+                </>
               )}
             </Button>
           </DialogFooter>
