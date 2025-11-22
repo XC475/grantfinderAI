@@ -122,7 +122,9 @@ export function GoogleDriveImportPicker(props: GoogleDriveImportPickerProps) {
       if (!status.connected || !status.accessToken) {
         // Not connected - redirect to auth flow
         toast.info("Connecting to Google Drive...");
-        window.location.href = "/api/google-drive/auth";
+        // Pass current path so we can return here after authentication
+        const returnTo = encodeURIComponent(window.location.pathname + window.location.search);
+        window.location.href = `/api/google-drive/auth?returnTo=${returnTo}`;
         return;
       }
 
