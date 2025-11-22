@@ -342,13 +342,7 @@ export function ChatDemo(props: ChatDemoProps) {
   const isEmpty = messages.length === 0;
 
   return (
-    <div
-      className={cn(
-        "flex",
-        "flex-col",
-        isEmpty ? "min-h-[90vh] w-full" : "h-[calc(100vh-24px)] w-full"
-      )}
-    >
+    <div className={cn("flex", "flex-col", "w-full h-full")}>
       <Chat
         className="grow"
         messages={messages}
