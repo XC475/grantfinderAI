@@ -99,7 +99,9 @@ export async function POST(req: NextRequest) {
 
       // 4. Save file to temporary location for text extraction
       const buffer = Buffer.from(await file.arrayBuffer());
-      const tempFilePath = join(tmpdir(), `${randomUUID()}-${file.name}`);
+      // Sanitize filename by replacing invalid path characters
+      const sanitizedFileName = file.name.replace(/[/\\:*?"<>|]/g, '-');
+      const tempFilePath = join(tmpdir(), `${randomUUID()}-${sanitizedFileName}`);
       await writeFile(tempFilePath, buffer);
 
       let extractedText: string | undefined;
