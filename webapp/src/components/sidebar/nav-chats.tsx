@@ -215,37 +215,46 @@ export function NavChats({
             </div>
           ) : (
             <SidebarMenu>
-              {chats.map((chat) => (
-                <div
-                  key={chat.id}
-                  className="group flex items-center gap-2 p-2 text-sm hover:bg-muted rounded-md"
-                >
-                  <MessageSquare className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                  <Link
-                    href={
-                      organizationSlug
-                        ? `/private/${organizationSlug}/chat?chatId=${chat.id}`
-                        : `/private/chat?chatId=${chat.id}`
-                    }
-                    className="flex-1 min-w-0"
+              {chats.map((chat) => {
+                // Check if this chat is currently active
+                const isActive = pathname.includes(`chatId=${chat.id}`);
+                
+                return (
+                  <div
+                    key={chat.id}
+                    className={`group flex items-center gap-2 p-2 text-sm hover:bg-muted rounded-md ${
+                      isActive ? "bg-muted" : ""
+                    }`}
                   >
-                    <div className="font-medium truncate">{chat.title}</div>
-                    <div className="text-xs text-muted-foreground flex items-center gap-2">
-                      <span>{chat._count.messages} messages</span>
-                      <span>•</span>
-                      <span>{formatDate(chat.updatedAt)}</span>
-                    </div>
-                  </Link>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDeleteClick(chat)}
-                    className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </Button>
-                </div>
-              ))}
+                    <MessageSquare className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                    <Link
+                      href={
+                        organizationSlug
+                          ? `/private/${organizationSlug}/chat?chatId=${chat.id}`
+                          : `/private/chat?chatId=${chat.id}`
+                      }
+                      className="flex-1 min-w-0"
+                    >
+                      <div className={`font-medium truncate ${isActive ? "text-foreground" : ""}`}>
+                        {chat.title}
+                      </div>
+                      <div className="text-xs text-muted-foreground flex items-center gap-2">
+                        <span>{chat._count.messages} messages</span>
+                        <span>•</span>
+                        <span>{formatDate(chat.updatedAt)}</span>
+                      </div>
+                    </Link>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteClick(chat)}
+                      className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                );
+              })}
             </SidebarMenu>
           )}
         </>
