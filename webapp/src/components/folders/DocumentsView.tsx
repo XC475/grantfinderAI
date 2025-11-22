@@ -77,6 +77,7 @@ export function DocumentsView({
     type: "document" | "folder";
     id: string;
     currentName: string;
+    isApplicationFolder?: boolean;
   }>({ open: false, type: "document", id: "", currentName: "" });
 
   const [moveModal, setMoveModal] = useState<{
@@ -299,11 +300,15 @@ export function DocumentsView({
 
   // Rename handlers
   const handleRenameFolder = (folderId: string, currentName: string) => {
+    const folder = folders.find((f) => f.id === folderId);
+    const isApplicationFolder = folder?.applicationId != null;
+
     setRenameDialog({
       open: true,
       type: "folder",
       id: folderId,
       currentName,
+      isApplicationFolder,
     });
   };
 
@@ -749,6 +754,11 @@ export function DocumentsView({
         itemType={renameDialog.type}
         currentName={renameDialog.currentName}
         onRename={handleRenameSubmit}
+        warningMessage={
+          renameDialog.isApplicationFolder
+            ? "Renaming this folder will also rename its linked application."
+            : undefined
+        }
       />
 
       {/* Move Modal */}
