@@ -72,5 +72,5 @@ console.log(data.pageCount); // Number of pages
 
 ## Related Files
 - API Route: `/webapp/src/app/api/pdf-extract/route.ts`
-- Used in: `/webapp/src/app/private/[slug]/profile/page.tsx` (Strategic Plan upload)
+- Used in: `/webapp/src/app/private/[slug]/settings/profile/page.tsx` (Strategic Plan upload)
 
