@@ -11,7 +11,7 @@ import { FolderList } from "./FolderList";
 import { RenameDialog } from "./RenameDialog";
 import { MoveModal } from "./MoveModal";
 import { CopyDialog } from "./CopyDialog";
-import { Filter } from "lucide-react";
+import { Filter, Folder, FileText, File } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -815,6 +815,7 @@ export function DocumentsView({
                   );
                 }}
               >
+                <Folder />
                 Folder
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
@@ -827,6 +828,7 @@ export function DocumentsView({
                   );
                 }}
               >
+                <FileText />
                 Document
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
@@ -839,6 +841,7 @@ export function DocumentsView({
                   );
                 }}
               >
+                <File />
                 File
               </DropdownMenuCheckboxItem>
             </DropdownMenuContent>
