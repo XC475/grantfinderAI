@@ -66,6 +66,7 @@ import {
   createSimpleColumns,
   type Application,
 } from "./columns";
+import { RenameDialog } from "@/components/folders/RenameDialog";
 
 // Sortable Header Component
 function SortableHeader({
@@ -157,6 +158,13 @@ export function ApplicationsTable({
     title: string | null;
   } | null>(null);
 
+  // Rename dialog state
+  const [renameDialog, setRenameDialog] = useState<{
+    open: boolean;
+    applicationId: string;
+    currentTitle: string;
+  }>({ open: false, applicationId: "", currentTitle: "" });
+
   const confirmDelete = async () => {
     if (!applicationToDelete) return;
 
@@ -184,6 +192,29 @@ export function ApplicationsTable({
       setIsDeleting(false);
       setDeleteDialogOpen(false);
       setApplicationToDelete(null);
+    }
+  };
+
+  const handleRenameSubmit = async (newTitle: string) => {
+    try {
+      const response = await fetch(
+        `/api/applications/${renameDialog.applicationId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: newTitle }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to rename application");
+      }
+
+      toast.success("Application renamed successfully");
+      onRefresh?.();
+    } catch (error) {
+      console.error("Error renaming application:", error);
+      throw error;
     }
   };
 
@@ -223,19 +254,22 @@ export function ApplicationsTable({
     onView: (id: string) => {
       router.push(`/private/${slug}/applications/${id}`);
     },
+    onRename: (id: string, currentTitle: string) => {
+      setRenameDialog({ open: true, applicationId: id, currentTitle });
+    },
     onDuplicate: async (id: string) => {
       try {
         const response = await fetch(`/api/applications/${id}/copy`, {
           method: "POST",
         });
-        
+
         if (!response.ok) {
           throw new Error("Failed to copy application");
         }
-        
+
         const data = await response.json();
         toast.success("Application copied successfully");
-        onRefresh(); // Refresh the table
+        onRefresh?.(); // Refresh the table
         router.push(`/private/${slug}/applications/${data.application.id}`);
       } catch (error) {
         console.error("Error copying application:", error);
@@ -589,7 +623,7 @@ export function ApplicationsTable({
         </div>
 
         <TabsContent value={activeTab} className="mt-0">
-          <div className="rounded-md border [&_[data-slot=table-container]]:overflow-visible">
+          <div className="rounded-md border **:data-[slot=table-container]:overflow-visible">
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
@@ -753,6 +787,16 @@ export function ApplicationsTable({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Rename Dialog */}
+      <RenameDialog
+        open={renameDialog.open}
+        onOpenChange={(open) => setRenameDialog({ ...renameDialog, open })}
+        itemType="application"
+        currentName={renameDialog.currentTitle}
+        onRename={handleRenameSubmit}
+        warningMessage="Renaming this application will also rename its linked folder."
+      />
 
       {/* Add Application Modal */}
     </div>
