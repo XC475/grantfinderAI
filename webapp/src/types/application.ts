@@ -27,3 +27,4 @@ export interface CreateApplicationRequest extends OpportunityData {
 export interface UpdateApplicationOpportunityRequest extends OpportunityData {
   title?: string;
 }
+
