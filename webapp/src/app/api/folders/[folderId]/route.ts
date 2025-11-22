@@ -130,15 +130,12 @@ export async function PUT(
     const body = await req.json();
     const { name, parentFolderId } = body;
 
-    // Application-linked folders cannot be renamed
+    // If renaming an application-linked folder, also update the application title
     if (name && folder.applicationId) {
-      return NextResponse.json(
-        {
-          error:
-            "Cannot rename application-linked folders. Rename the application instead.",
-        },
-        { status: 400 }
-      );
+      await prisma.application.update({
+        where: { id: folder.applicationId },
+        data: { title: name },
+      });
     }
 
     // If moving, validate no circular references
