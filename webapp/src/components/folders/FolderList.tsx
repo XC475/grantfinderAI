@@ -150,7 +150,7 @@ function DraggableFolder({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {!folder.applicationId && onRename && (
+              {onRename && (
                 <DropdownMenuItem
                   onClick={(e) => {
                     e.stopPropagation();
