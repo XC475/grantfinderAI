@@ -618,56 +618,24 @@ export default function TeamSettingsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Role Change Dialog */}
+      {/* Role Change Confirmation Dialog */}
       <Dialog open={roleDialogOpen} onOpenChange={setRoleDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Change member role</DialogTitle>
+            <DialogTitle>Change member role?</DialogTitle>
             <DialogDescription>
-              Update the role for{" "}
-              <span className="font-semibold">
+              Change{" "}
+              <strong>
                 {memberToChangeRole?.name || memberToChangeRole?.email}
-              </span>
+              </strong>{" "}
+              from{" "}
+              <strong>
+                {memberToChangeRole?.role === "ADMIN" ? "Admin" : "Member"}
+              </strong>{" "}
+              to <strong>{newRole === "ADMIN" ? "Admin" : "Member"}</strong>?
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="new-role">New Role</Label>
-              <Select
-                value={newRole}
-                onValueChange={(value: "ADMIN" | "MEMBER") => setNewRole(value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="MEMBER">
-                    <div className="flex items-start gap-2">
-                      <User className="h-4 w-4 mt-0.5" />
-                      <div className="text-left">
-                        <div className="font-medium">Member</div>
-                        <div className="text-xs text-muted-foreground">
-                          Can view and collaborate on grants
-                        </div>
-                      </div>
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="ADMIN">
-                    <div className="flex items-start gap-2">
-                      <ShieldCheck className="h-4 w-4 mt-0.5" />
-                      <div className="text-left">
-                        <div className="font-medium">Admin</div>
-                        <div className="text-xs text-muted-foreground">
-                          Can manage members and settings
-                        </div>
-                      </div>
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
               variant="outline"
               onClick={() => setRoleDialogOpen(false)}
@@ -682,7 +650,7 @@ export default function TeamSettingsPage() {
                   Updating...
                 </>
               ) : (
-                "Update role"
+                "Confirm"
               )}
             </Button>
           </DialogFooter>
@@ -690,12 +658,15 @@ export default function TeamSettingsPage() {
       </Dialog>
 
       {/* Transfer Ownership Dialog */}
-      <Dialog open={transferDialogOpen} onOpenChange={(open) => {
-        setTransferDialogOpen(open);
-        if (!open) {
-          setOwnerPassword(""); // Clear password when dialog closes
-        }
-      }}>
+      <Dialog
+        open={transferDialogOpen}
+        onOpenChange={(open) => {
+          setTransferDialogOpen(open);
+          if (!open) {
+            setOwnerPassword(""); // Clear password when dialog closes
+          }
+        }}
+      >
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -713,10 +684,10 @@ export default function TeamSettingsPage() {
             <div className="space-y-2">
               <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3">
                 <p className="text-sm text-yellow-800">
-                  <strong>Warning:</strong> This action will transfer full ownership
-                  of the organization. You will become an admin and{" "}
-                  <strong>{targetAdmin?.name || targetAdmin?.email}</strong> will
-                  become the new owner.
+                  <strong>Warning:</strong> This action will transfer full
+                  ownership of the organization. You will become an admin and{" "}
+                  <strong>{targetAdmin?.name || targetAdmin?.email}</strong>{" "}
+                  will become the new owner.
                 </p>
               </div>
             </div>
