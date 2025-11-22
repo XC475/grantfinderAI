@@ -12,13 +12,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AlertCircle } from "lucide-react";
 
 interface RenameDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  itemType: "document" | "folder";
+  itemType: "document" | "folder" | "application";
   currentName: string;
   onRename: (newName: string) => Promise<void>;
+  warningMessage?: string; // Optional warning to display
 }
 
 export function RenameDialog({
@@ -27,6 +29,7 @@ export function RenameDialog({
   itemType,
   currentName,
   onRename,
+  warningMessage,
 }: RenameDialogProps) {
   const [newName, setNewName] = useState(currentName);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,6 +88,14 @@ export function RenameDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
+          {warningMessage && (
+            <div className="flex gap-2 rounded-lg border border-amber-500/50 bg-amber-500/10 p-3 text-sm">
+              <AlertCircle className="h-5 w-5 shrink-0 text-amber-500" />
+              <p className="text-amber-900 dark:text-amber-100">
+                {warningMessage}
+              </p>
+            </div>
+          )}
           <div className="grid gap-2">
             <Label htmlFor="name">Name</Label>
             <Input
