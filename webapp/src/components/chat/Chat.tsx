@@ -346,7 +346,7 @@ export function ChatDemo(props: ChatDemoProps) {
       className={cn(
         "flex",
         "flex-col",
-        isEmpty ? "min-h-[80vh] w-full" : "h-[calc(100vh-80px)] w-full"
+        isEmpty ? "min-h-[90vh] w-full" : "h-[calc(100vh-24px)] w-full"
       )}
     >
       <Chat
