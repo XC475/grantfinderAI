@@ -226,12 +226,21 @@ function DraggableDocument({
     data: { type: "document", document },
   });
 
+  const { setNodeRef: setDropRef, isOver } = useDroppable({
+    id: `document-drop-${document.id}`,
+    data: { type: "document", documentId: document.id },
+  });
+
   return (
     <tr
-      ref={setNodeRef}
+      ref={(node) => {
+        setNodeRef(node);
+        setDropRef(node);
+      }}
       className={cn(
         "border-b hover:bg-accent/50 transition-colors group",
-        isDragging && "opacity-50"
+        isDragging && "opacity-50",
+        isOver && "bg-accent/70"
       )}
     >
       <td className="py-3 px-4">
