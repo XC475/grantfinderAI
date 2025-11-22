@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { DragEndEvent } from "@dnd-kit/core";
@@ -11,6 +11,18 @@ import { FolderList } from "./FolderList";
 import { RenameDialog } from "./RenameDialog";
 import { MoveModal } from "./MoveModal";
 import { CopyDialog } from "./CopyDialog";
+import { Filter } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Folder {
   id: string;
@@ -110,6 +122,10 @@ export function DocumentsView({
 
   const [allFolders, setAllFolders] = useState<Folder[]>([]);
 
+  // Search and filter states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeFilters, setActiveFilters] = useState<string[]>([]); // 'folder', 'document', 'file'
+
   const fetchFolderContents = useCallback(
     async (folderId: string | null) => {
       try {
@@ -166,6 +182,56 @@ export function DocumentsView({
   useEffect(() => {
     fetchFolderContents(currentFolderId);
   }, [currentFolderId, fetchFolderContents]);
+
+  // Filtered folders based on search and filters
+  const filteredFolders = useMemo(() => {
+    return folders.filter((folder) => {
+      // If filters are active, check if "folder" filter is selected
+      if (activeFilters.length > 0 && !activeFilters.includes("folder")) {
+        return false; // Hide folders if filters are active but "folder" isn't selected
+      }
+
+      // Search term filter
+      if (
+        searchTerm &&
+        !folder.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [folders, searchTerm, activeFilters]);
+
+  // Filtered documents based on search and filters
+  const filteredDocuments = useMemo(() => {
+    return documents.filter((doc) => {
+      // If filters are active, check if document matches any selected filter
+      if (activeFilters.length > 0) {
+        const isDocument = !doc.fileUrl;
+        const isFile = !!doc.fileUrl;
+
+        const matchesDocumentFilter =
+          activeFilters.includes("document") && isDocument;
+        const matchesFileFilter = activeFilters.includes("file") && isFile;
+
+        // Must match at least one filter (OR logic)
+        if (!matchesDocumentFilter && !matchesFileFilter) {
+          return false;
+        }
+      }
+
+      // Search term filter
+      if (
+        searchTerm &&
+        !doc.title.toLowerCase().includes(searchTerm.toLowerCase())
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [documents, searchTerm, activeFilters]);
 
   const handleNavigate = (folderId: string | null) => {
     if (externalOnNavigate) {
@@ -705,33 +771,96 @@ export function DocumentsView({
 
   return (
     <div className="space-y-6">
-      {/* Only show internal breadcrumb and actions if not using external navigation */}
+      {/* Breadcrumb - only for internal navigation */}
       {!externalOnNavigate && (
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex-1 min-w-[200px]">
-            <FolderBreadcrumb
-              folderPath={folderPath}
-              rootLabel={rootLabel}
-              onNavigate={handleNavigate}
-            />
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <CreateMenu
-              currentFolderId={currentFolderId}
-              applicationId={applicationId}
-              onCreateFolder={handleCreateFolder}
-              onCreateDocument={handleCreateDocument}
-              onFileUpload={handleFileUpload}
-              onGoogleDriveImported={() => fetchFolderContents(currentFolderId)}
-            />
-          </div>
+        <div className="flex items-center">
+          <FolderBreadcrumb
+            folderPath={folderPath}
+            rootLabel={rootLabel}
+            onNavigate={handleNavigate}
+          />
         </div>
       )}
 
+      {/* Search and Filters - Always visible */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <Input
+            placeholder="Search documents and folders..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-[300px]"
+          />
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="border-dashed">
+                <Filter className="mr-2 h-4 w-4" />
+                Filters
+                {activeFilters.length > 0 && (
+                  <Badge variant="secondary" className="ml-2">
+                    {activeFilters.length}
+                  </Badge>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-[200px]">
+              <DropdownMenuCheckboxItem
+                checked={activeFilters.includes("folder")}
+                onCheckedChange={(checked) => {
+                  setActiveFilters((prev) =>
+                    checked
+                      ? [...prev, "folder"]
+                      : prev.filter((t) => t !== "folder")
+                  );
+                }}
+              >
+                Folder
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={activeFilters.includes("document")}
+                onCheckedChange={(checked) => {
+                  setActiveFilters((prev) =>
+                    checked
+                      ? [...prev, "document"]
+                      : prev.filter((t) => t !== "document")
+                  );
+                }}
+              >
+                Document
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={activeFilters.includes("file")}
+                onCheckedChange={(checked) => {
+                  setActiveFilters((prev) =>
+                    checked
+                      ? [...prev, "file"]
+                      : prev.filter((t) => t !== "file")
+                  );
+                }}
+              >
+                File
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {!externalOnNavigate && (
+          <CreateMenu
+            currentFolderId={currentFolderId}
+            applicationId={applicationId}
+            onCreateFolder={handleCreateFolder}
+            onCreateDocument={handleCreateDocument}
+            onFileUpload={handleFileUpload}
+            onGoogleDriveImported={() => fetchFolderContents(currentFolderId)}
+          />
+        )}
+      </div>
+
       <DragDropProvider onDragEnd={handleDragEnd}>
         <FolderList
-          folders={folders}
-          documents={documents}
+          folders={filteredFolders}
+          documents={filteredDocuments}
           onFolderClick={handleFolderClick}
           onDocumentClick={handleDocumentClick}
           onDeleteFolder={handleDeleteFolder}
