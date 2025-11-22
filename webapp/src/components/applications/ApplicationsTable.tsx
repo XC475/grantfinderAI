@@ -223,11 +223,24 @@ export function ApplicationsTable({
     onView: (id: string) => {
       router.push(`/private/${slug}/applications/${id}`);
     },
-    onEdit: (id: string) => {
-      router.push(`/private/${slug}/applications/${id}`);
-    },
-    onDuplicate: (_id: string) => {
-      toast.info("Duplicate feature coming soon!");
+    onDuplicate: async (id: string) => {
+      try {
+        const response = await fetch(`/api/applications/${id}/copy`, {
+          method: "POST",
+        });
+        
+        if (!response.ok) {
+          throw new Error("Failed to copy application");
+        }
+        
+        const data = await response.json();
+        toast.success("Application copied successfully");
+        onRefresh(); // Refresh the table
+        router.push(`/private/${slug}/applications/${data.application.id}`);
+      } catch (error) {
+        console.error("Error copying application:", error);
+        toast.error("Failed to copy application");
+      }
     },
     onDelete: (id: string, title: string | null) => {
       setApplicationToDelete({ id, title });
