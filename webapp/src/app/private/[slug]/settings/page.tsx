@@ -8,9 +8,9 @@ export default function SettingsPage() {
   const router = useRouter();
   const slug = params.slug as string;
 
-  // Redirect to account settings by default
+  // Redirect to organization profile by default
   useEffect(() => {
-    router.replace(`/private/${slug}/settings/account`);
+    router.replace(`/private/${slug}/settings/profile`);
   }, [slug, router]);
 
   return null; // Redirecting...
