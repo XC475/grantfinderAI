@@ -149,7 +149,7 @@ const data = {
     },
     {
       title: "Org Profile",
-      url: "/private/profile",
+      url: "/private/settings/profile",
       icon: Building2,
     },
   ],
