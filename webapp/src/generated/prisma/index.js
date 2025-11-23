@@ -494,7 +494,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/gabriellevicarneiroramos/Desktop/grantfinder/grantfinderAI/webapp/src/generated/prisma",
+      "value": "/Users/ryanrodriguez/Desktop/GrantWare AI/GrantWare AI - Dev/grantfinderAI-A2/grantfinderAI/webapp/src/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -512,12 +512,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/gabriellevicarneiroramos/Desktop/grantfinder/grantfinderAI/webapp/prisma/schema.prisma",
+    "sourceFilePath": "/Users/ryanrodriguez/Desktop/GrantWare AI/GrantWare AI - Dev/grantfinderAI-A2/grantfinderAI/webapp/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../../prisma",
   "clientVersion": "6.19.0",
@@ -526,6 +525,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
