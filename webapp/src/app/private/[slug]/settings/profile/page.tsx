@@ -165,21 +165,31 @@ export default function ProfilePage() {
 
   // Budget state
   const [budgetDisplayValue, setBudgetDisplayValue] = useState("");
-  const [fiscalYearEndDate, setFiscalYearEndDate] = useState<Date | undefined>(undefined);
+  const [fiscalYearEndDate, setFiscalYearEndDate] = useState<Date | undefined>(
+    undefined
+  );
 
   // Strategic Plan state
-  const [strategicPlanState, setStrategicPlanState] = useState<"empty" | "loading" | "success">("empty");
-  const [strategicPlanUploadDate, setStrategicPlanUploadDate] = useState<Date | null>(null);
-  const [strategicPlanFileName, setStrategicPlanFileName] = useState<string | null>(null);
+  const [strategicPlanState, setStrategicPlanState] = useState<
+    "empty" | "loading" | "success"
+  >("empty");
+  const [strategicPlanUploadDate, setStrategicPlanUploadDate] =
+    useState<Date | null>(null);
+  const [strategicPlanFileName, setStrategicPlanFileName] = useState<
+    string | null
+  >(null);
   const [showStrategicPlanModal, setShowStrategicPlanModal] = useState(false);
 
   // Knowledge Base state
-  const [knowledgeBaseDocs, setKnowledgeBaseDocs] = useState<KnowledgeBaseDocument[]>([]);
+  const [knowledgeBaseDocs, setKnowledgeBaseDocs] = useState<
+    KnowledgeBaseDocument[]
+  >([]);
   const [loadingDocs, setLoadingDocs] = useState(false);
   const [uploadingDoc, setUploadingDoc] = useState(false);
-  const [replacingDoc, setReplacingDoc] = useState<KnowledgeBaseDocument | null>(null);
+  const [replacingDoc, setReplacingDoc] =
+    useState<KnowledgeBaseDocument | null>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
-  
+
   // Track active tab to conditionally show Save Changes button
   const [activeTab, setActiveTab] = useState("basic-info");
 
@@ -241,11 +251,11 @@ export default function ProfilePage() {
   // Helper function to parse fiscal year end string to Date
   const parseFiscalYearEnd = (value: string): Date | undefined => {
     if (!value) return undefined;
-    
+
     // Try different formats
     const formats = ["MM/dd", "M/d", "MMMM d", "MMMM dd"];
     const currentYear = new Date().getFullYear();
-    
+
     for (const fmt of formats) {
       try {
         const parsed = parse(value, fmt, new Date(currentYear, 0, 1));
@@ -256,7 +266,7 @@ export default function ProfilePage() {
         // Try next format
       }
     }
-    
+
     return undefined;
   };
 
@@ -378,7 +388,7 @@ export default function ProfilePage() {
 
     setUploadingPdf(true);
     setStrategicPlanState("loading");
-    
+
     try {
       // Step 1: Extract text from PDF or DOCX
       const formData = new FormData();
@@ -399,18 +409,21 @@ export default function ProfilePage() {
 
       // Step 2: Automatically summarize with AI
       let finalText = extractedText;
-      
+
       if (extractedText && extractedText.length >= 100) {
         try {
-          const summarizeResponse = await fetch("/api/strategic-plan-summarize", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              strategicPlanText: extractedText,
-            }),
-          });
+          const summarizeResponse = await fetch(
+            "/api/strategic-plan-summarize",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                strategicPlanText: extractedText,
+              }),
+            }
+          );
 
           if (summarizeResponse.ok) {
             const summarizeData = await summarizeResponse.json();
@@ -457,9 +470,7 @@ export default function ProfilePage() {
       console.error("Error uploading PDF:", error);
       setStrategicPlanState("empty");
       toast.error(
-        error instanceof Error
-          ? error.message
-          : "Failed to process PDF"
+        error instanceof Error ? error.message : "Failed to process PDF"
       );
     } finally {
       setUploadingPdf(false);
@@ -541,7 +552,9 @@ export default function ProfilePage() {
       // Prepare organization data with formatted fiscal year end
       const dataToSave = {
         ...organization,
-        fiscalYearEnd: fiscalYearEndDate ? format(fiscalYearEndDate, "MM/dd") : organization.fiscalYearEnd,
+        fiscalYearEnd: fiscalYearEndDate
+          ? format(fiscalYearEndDate, "MM/dd")
+          : organization.fiscalYearEnd,
       };
 
       const response = await fetch(`/api/organizations/${organization.id}`, {
@@ -636,7 +649,9 @@ export default function ProfilePage() {
     ];
 
     if (!allowedTypes.includes(file.type)) {
-      toast.error("Unsupported file type. Please upload PDF, Word, or CSV files.");
+      toast.error(
+        "Unsupported file type. Please upload PDF, Word, or CSV files."
+      );
       return;
     }
 
@@ -648,7 +663,9 @@ export default function ProfilePage() {
 
     // Check document limit
     if (knowledgeBaseDocs.length >= 10) {
-      toast.error("Maximum 10 documents allowed. Delete a document to upload a new one.");
+      toast.error(
+        "Maximum 10 documents allowed. Delete a document to upload a new one."
+      );
       return;
     }
 
@@ -1005,7 +1022,7 @@ export default function ProfilePage() {
               <h3 className="font-semibold">Logo</h3>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="logo">Upload your organization's logo</Label>
+              <Label htmlFor="logo">Upload your organization&apos;s logo</Label>
               <div className="flex items-center gap-4">
                 {organization.logoUrl ? (
                   <div className="relative w-24 h-24 rounded-lg border-2 border-border overflow-hidden">
@@ -1102,7 +1119,8 @@ export default function ProfilePage() {
                       className="w-full justify-between h-auto min-h-10 py-2"
                     >
                       <div className="flex flex-wrap gap-1 flex-1">
-                        {organization.services && organization.services.length > 0 ? (
+                        {organization.services &&
+                        organization.services.length > 0 ? (
                           organization.services.map((serviceValue) => {
                             const service = SERVICES_OPTIONS.find(
                               (s) => s.value === serviceValue
@@ -1148,7 +1166,9 @@ export default function ProfilePage() {
                                   );
                                 } else {
                                   // Add service if not already present
-                                  if (!currentServices.includes(service.value)) {
+                                  if (
+                                    !currentServices.includes(service.value)
+                                  ) {
                                     newServices = [
                                       ...currentServices,
                                       service.value,
@@ -1366,14 +1386,17 @@ export default function ProfilePage() {
                 </Tooltip>
               </TooltipProvider>
             </div>
-            
+
             {/* Empty State */}
             {strategicPlanState === "empty" && (
               <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg">
                 <Upload className="h-12 w-12 text-muted-foreground mb-4" />
-                <h4 className="text-lg font-semibold mb-2">Upload your document</h4>
+                <h4 className="text-lg font-semibold mb-2">
+                  Upload your document
+                </h4>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Upload your strategic plan document (PDF or Word) to get started
+                  Upload your strategic plan document (PDF or Word) to get
+                  started
                 </p>
                 <input
                   ref={pdfInputRef}
@@ -1397,7 +1420,9 @@ export default function ProfilePage() {
             {strategicPlanState === "loading" && (
               <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg">
                 <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
-                <h4 className="text-lg font-semibold mb-2">Processing document...</h4>
+                <h4 className="text-lg font-semibold mb-2">
+                  Processing document...
+                </h4>
                 <p className="text-sm text-muted-foreground">
                   Extracting and summarizing your document with AI
                 </p>
@@ -1425,7 +1450,10 @@ export default function ProfilePage() {
                     )}
                     <p className="text-sm text-muted-foreground mb-4">
                       {strategicPlanUploadDate && (
-                        <>Uploaded and summarized on {format(strategicPlanUploadDate, "PPP")}</>
+                        <>
+                          Uploaded and summarized on{" "}
+                          {format(strategicPlanUploadDate, "PPP")}
+                        </>
                       )}
                     </p>
                     <div className="flex gap-2 flex-wrap">
@@ -1450,7 +1478,9 @@ export default function ProfilePage() {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          const input = document.getElementById("replace-pdf-input") as HTMLInputElement;
+                          const input = document.getElementById(
+                            "replace-pdf-input"
+                          ) as HTMLInputElement;
                           input?.click();
                         }}
                         disabled={uploadingPdf}
@@ -1494,7 +1524,9 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div className="grid gap-2">
-                  <Label htmlFor="missionStatement">Your organization's mission statement</Label>
+                  <Label htmlFor="missionStatement">
+                    Your organization&apos;s mission statement
+                  </Label>
                   <Textarea
                     id="missionStatement"
                     value={organization.missionStatement || ""}
@@ -1508,7 +1540,7 @@ export default function ProfilePage() {
                     placeholder="Enter your organization's mission statement..."
                   />
                   <p className="text-xs text-muted-foreground">
-                    Describe your organization's purpose, values, and goals
+                    Describe your organization&apos;s purpose, values, and goals
                   </p>
                 </div>
               )}
@@ -1545,7 +1577,9 @@ export default function ProfilePage() {
                       }}
                       onBlur={() => {
                         if (organization.annualOperatingBudget) {
-                          setBudgetDisplayValue(formatCurrency(organization.annualOperatingBudget));
+                          setBudgetDisplayValue(
+                            formatCurrency(organization.annualOperatingBudget)
+                          );
                         }
                       }}
                       placeholder="1,000,000"
@@ -1566,7 +1600,9 @@ export default function ProfilePage() {
                         {fiscalYearEndDate ? (
                           format(fiscalYearEndDate, "MM/dd")
                         ) : (
-                          <span className="text-muted-foreground">Select date</span>
+                          <span className="text-muted-foreground">
+                            Select date
+                          </span>
                         )}
                       </Button>
                     </PopoverTrigger>
@@ -1716,7 +1752,6 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
-
         </TabsContent>
 
         <TabsContent value="knowledge-base" className="space-y-8">
@@ -1725,11 +1760,12 @@ export default function ProfilePage() {
             <div>
               <h3 className="text-lg font-semibold">Knowledge Base</h3>
               <p className="text-sm text-muted-foreground">
-                Upload files to provide AI context throughout the application ({knowledgeBaseDocs.length}/10)
+                Upload files to provide AI context throughout the application (
+                {knowledgeBaseDocs.length}/10)
               </p>
             </div>
-            <Button 
-              onClick={() => docInputRef.current?.click()} 
+            <Button
+              onClick={() => docInputRef.current?.click()}
               disabled={knowledgeBaseDocs.length >= 10 || uploadingDoc}
             >
               {uploadingDoc ? (
@@ -1764,12 +1800,17 @@ export default function ProfilePage() {
             <div className="text-center py-12 border-2 border-dashed rounded-lg">
               <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground mb-4">
-                No files uploaded yet. Upload your first file to enhance AI context.
+                No files uploaded yet. Upload your first file to enhance AI
+                context.
               </p>
               <p className="text-xs text-muted-foreground mb-4">
-                Supported formats: PDF, Word (.docx), CSV • Max size: 10MB • Max files: 10
+                Supported formats: PDF, Word (.docx), CSV • Max size: 10MB • Max
+                files: 10
               </p>
-              <Button variant="outline" onClick={() => docInputRef.current?.click()}>
+              <Button
+                variant="outline"
+                onClick={() => docInputRef.current?.click()}
+              >
                 <Upload className="mr-2 h-4 w-4" />
                 Upload File
               </Button>
@@ -1779,7 +1820,7 @@ export default function ProfilePage() {
               {knowledgeBaseDocs.map((doc) => {
                 // Determine icon based on file type
                 const FileIcon = doc.fileType === "text/csv" ? Table : FileText;
-                
+
                 return (
                   <div
                     key={doc.id}
@@ -1791,17 +1832,23 @@ export default function ProfilePage() {
                         <div className="flex-shrink-0">
                           <FileIcon className="h-10 w-10 text-primary" />
                         </div>
-                        
+
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-base truncate">{doc.fileName}</h4>
+                          <h4 className="font-semibold text-base truncate">
+                            {doc.fileName}
+                          </h4>
                           <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-                            <span>{doc.fileType.split('/').pop()?.toUpperCase()}</span>
+                            <span>
+                              {doc.fileType.split("/").pop()?.toUpperCase()}
+                            </span>
                             <span>•</span>
                             <span>{formatFileSize(doc.fileSize)}</span>
                             <span>•</span>
-                            <span>{format(new Date(doc.createdAt), "MMM d, yyyy")}</span>
+                            <span>
+                              {format(new Date(doc.createdAt), "MMM d, yyyy")}
+                            </span>
                           </div>
-                          
+
                           {/* Active status badge */}
                           <div className="mt-2">
                             {doc.isActive ? (
@@ -1818,7 +1865,7 @@ export default function ProfilePage() {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-3 ml-4">
                         {/* Toggle switch with green styling */}
                         <TooltipProvider>
@@ -1827,25 +1874,29 @@ export default function ProfilePage() {
                               <div className="flex items-center">
                                 <Switch
                                   checked={doc.isActive}
-                                  onCheckedChange={() => handleToggleDocument(doc)}
+                                  onCheckedChange={() =>
+                                    handleToggleDocument(doc)
+                                  }
                                   className="data-[state=checked]:bg-green-600"
                                 />
                               </div>
                             </TooltipTrigger>
                             <TooltipContent>
-                              {doc.isActive ? "Disable AI context" : "Enable AI context"}
+                              {doc.isActive
+                                ? "Disable AI context"
+                                : "Enable AI context"}
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
-                        
+
                         <div className="h-8 w-px bg-border" />
-                        
+
                         {/* Replace button */}
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button 
-                                variant="ghost" 
+                              <Button
+                                variant="ghost"
                                 size="icon"
                                 className="h-8 w-8"
                                 onClick={() => handleReplaceDocument(doc)}
@@ -1857,13 +1908,13 @@ export default function ProfilePage() {
                             <TooltipContent>Replace document</TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
-                        
+
                         {/* Delete button */}
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button 
-                                variant="ghost" 
+                              <Button
+                                variant="ghost"
                                 size="icon"
                                 className="h-8 w-8 text-muted-foreground hover:text-destructive"
                                 onClick={() => handleDeleteDocument(doc)}
@@ -1893,19 +1944,24 @@ export default function ProfilePage() {
       />
 
       {/* Strategic Plan Modal */}
-      <Dialog open={showStrategicPlanModal} onOpenChange={setShowStrategicPlanModal}>
+      <Dialog
+        open={showStrategicPlanModal}
+        onOpenChange={setShowStrategicPlanModal}
+      >
         <DialogContent className="sm:max-w-[800px] max-h-[80vh]">
           <DialogHeader>
             <DialogTitle>Edit Strategic Plan</DialogTitle>
             <DialogDescription>
-              Review and edit your AI-summarized strategic plan. This summary was automatically generated from your uploaded document.
+              Review and edit your AI-summarized strategic plan. This summary
+              was automatically generated from your uploaded document.
             </DialogDescription>
           </DialogHeader>
           <div className="overflow-y-auto max-h-[50vh] py-4">
             <Textarea
               value={organization?.strategicPlan || ""}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                organization && setOrganization({
+                organization &&
+                setOrganization({
                   ...organization,
                   strategicPlan: e.target.value,
                 })
