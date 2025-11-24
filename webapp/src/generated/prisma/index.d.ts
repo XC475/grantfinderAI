@@ -39,6 +39,11 @@ export type Organization = $Result.DefaultSelection<Prisma.$OrganizationPayload>
  */
 export type CustomField = $Result.DefaultSelection<Prisma.$CustomFieldPayload>
 /**
+ * Model KnowledgeBaseDocument
+ * 
+ */
+export type KnowledgeBaseDocument = $Result.DefaultSelection<Prisma.$KnowledgeBaseDocumentPayload>
+/**
  * Model GrantBookmark
  * 
  */
@@ -458,6 +463,16 @@ export class PrismaClient<
     * ```
     */
   get customField(): Prisma.CustomFieldDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.knowledgeBaseDocument`: Exposes CRUD operations for the **KnowledgeBaseDocument** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more KnowledgeBaseDocuments
+    * const knowledgeBaseDocuments = await prisma.knowledgeBaseDocument.findMany()
+    * ```
+    */
+  get knowledgeBaseDocument(): Prisma.KnowledgeBaseDocumentDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.grantBookmark`: Exposes CRUD operations for the **GrantBookmark** model.
@@ -1004,6 +1019,7 @@ export namespace Prisma {
     User: 'User',
     Organization: 'Organization',
     CustomField: 'CustomField',
+    KnowledgeBaseDocument: 'KnowledgeBaseDocument',
     GrantBookmark: 'GrantBookmark',
     GrantEligibilityAnalysis: 'GrantEligibilityAnalysis',
     Application: 'Application',
@@ -1032,7 +1048,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "customField" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "vectorDocument" | "document" | "folder" | "k12_education_opportunities"
+      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "customField" | "knowledgeBaseDocument" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "vectorDocument" | "document" | "folder" | "k12_education_opportunities"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1403,6 +1419,80 @@ export namespace Prisma {
           count: {
             args: Prisma.CustomFieldCountArgs<ExtArgs>
             result: $Utils.Optional<CustomFieldCountAggregateOutputType> | number
+          }
+        }
+      }
+      KnowledgeBaseDocument: {
+        payload: Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>
+        fields: Prisma.KnowledgeBaseDocumentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.KnowledgeBaseDocumentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseDocumentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.KnowledgeBaseDocumentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseDocumentPayload>
+          }
+          findFirst: {
+            args: Prisma.KnowledgeBaseDocumentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseDocumentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.KnowledgeBaseDocumentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseDocumentPayload>
+          }
+          findMany: {
+            args: Prisma.KnowledgeBaseDocumentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseDocumentPayload>[]
+          }
+          create: {
+            args: Prisma.KnowledgeBaseDocumentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseDocumentPayload>
+          }
+          createMany: {
+            args: Prisma.KnowledgeBaseDocumentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.KnowledgeBaseDocumentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseDocumentPayload>[]
+          }
+          delete: {
+            args: Prisma.KnowledgeBaseDocumentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseDocumentPayload>
+          }
+          update: {
+            args: Prisma.KnowledgeBaseDocumentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseDocumentPayload>
+          }
+          deleteMany: {
+            args: Prisma.KnowledgeBaseDocumentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.KnowledgeBaseDocumentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.KnowledgeBaseDocumentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseDocumentPayload>[]
+          }
+          upsert: {
+            args: Prisma.KnowledgeBaseDocumentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseDocumentPayload>
+          }
+          aggregate: {
+            args: Prisma.KnowledgeBaseDocumentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateKnowledgeBaseDocument>
+          }
+          groupBy: {
+            args: Prisma.KnowledgeBaseDocumentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<KnowledgeBaseDocumentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.KnowledgeBaseDocumentCountArgs<ExtArgs>
+            result: $Utils.Optional<KnowledgeBaseDocumentCountAggregateOutputType> | number
           }
         }
       }
@@ -2247,6 +2337,7 @@ export namespace Prisma {
     user?: UserOmit
     organization?: OrganizationOmit
     customField?: CustomFieldOmit
+    knowledgeBaseDocument?: KnowledgeBaseDocumentOmit
     grantBookmark?: GrantBookmarkOmit
     grantEligibilityAnalysis?: GrantEligibilityAnalysisOmit
     application?: ApplicationOmit
@@ -2417,6 +2508,7 @@ export namespace Prisma {
     eligibilityAnalyses: number
     recommendations: number
     users: number
+    knowledgeBase: number
   }
 
   export type OrganizationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2429,6 +2521,7 @@ export namespace Prisma {
     eligibilityAnalyses?: boolean | OrganizationCountOutputTypeCountEligibilityAnalysesArgs
     recommendations?: boolean | OrganizationCountOutputTypeCountRecommendationsArgs
     users?: boolean | OrganizationCountOutputTypeCountUsersArgs
+    knowledgeBase?: boolean | OrganizationCountOutputTypeCountKnowledgeBaseArgs
   }
 
   // Custom InputTypes
@@ -2503,6 +2596,13 @@ export namespace Prisma {
    */
   export type OrganizationCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserWhereInput
+  }
+
+  /**
+   * OrganizationCountOutputType without action
+   */
+  export type OrganizationCountOutputTypeCountKnowledgeBaseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: KnowledgeBaseDocumentWhereInput
   }
 
 
@@ -6760,6 +6860,7 @@ export namespace Prisma {
     eligibilityAnalyses?: boolean | Organization$eligibilityAnalysesArgs<ExtArgs>
     recommendations?: boolean | Organization$recommendationsArgs<ExtArgs>
     users?: boolean | Organization$usersArgs<ExtArgs>
+    knowledgeBase?: boolean | Organization$knowledgeBaseArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["organization"]>
 
@@ -6873,6 +6974,7 @@ export namespace Prisma {
     eligibilityAnalyses?: boolean | Organization$eligibilityAnalysesArgs<ExtArgs>
     recommendations?: boolean | Organization$recommendationsArgs<ExtArgs>
     users?: boolean | Organization$usersArgs<ExtArgs>
+    knowledgeBase?: boolean | Organization$knowledgeBaseArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -6890,6 +6992,7 @@ export namespace Prisma {
       eligibilityAnalyses: Prisma.$GrantEligibilityAnalysisPayload<ExtArgs>[]
       recommendations: Prisma.$RecommendationPayload<ExtArgs>[]
       users: Prisma.$UserPayload<ExtArgs>[]
+      knowledgeBase: Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7325,6 +7428,7 @@ export namespace Prisma {
     eligibilityAnalyses<T extends Organization$eligibilityAnalysesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$eligibilityAnalysesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GrantEligibilityAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     recommendations<T extends Organization$recommendationsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$recommendationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecommendationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     users<T extends Organization$usersArgs<ExtArgs> = {}>(args?: Subset<T, Organization$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    knowledgeBase<T extends Organization$knowledgeBaseArgs<ExtArgs> = {}>(args?: Subset<T, Organization$knowledgeBaseArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7985,6 +8089,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+  }
+
+  /**
+   * Organization.knowledgeBase
+   */
+  export type Organization$knowledgeBaseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseDocument
+     */
+    select?: KnowledgeBaseDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseDocument
+     */
+    omit?: KnowledgeBaseDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseDocumentInclude<ExtArgs> | null
+    where?: KnowledgeBaseDocumentWhereInput
+    orderBy?: KnowledgeBaseDocumentOrderByWithRelationInput | KnowledgeBaseDocumentOrderByWithRelationInput[]
+    cursor?: KnowledgeBaseDocumentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: KnowledgeBaseDocumentScalarFieldEnum | KnowledgeBaseDocumentScalarFieldEnum[]
   }
 
   /**
@@ -9074,6 +9202,1163 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: CustomFieldInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model KnowledgeBaseDocument
+   */
+
+  export type AggregateKnowledgeBaseDocument = {
+    _count: KnowledgeBaseDocumentCountAggregateOutputType | null
+    _avg: KnowledgeBaseDocumentAvgAggregateOutputType | null
+    _sum: KnowledgeBaseDocumentSumAggregateOutputType | null
+    _min: KnowledgeBaseDocumentMinAggregateOutputType | null
+    _max: KnowledgeBaseDocumentMaxAggregateOutputType | null
+  }
+
+  export type KnowledgeBaseDocumentAvgAggregateOutputType = {
+    fileSize: number | null
+  }
+
+  export type KnowledgeBaseDocumentSumAggregateOutputType = {
+    fileSize: number | null
+  }
+
+  export type KnowledgeBaseDocumentMinAggregateOutputType = {
+    id: string | null
+    fileName: string | null
+    fileType: string | null
+    fileSize: number | null
+    fileUrl: string | null
+    extractedText: string | null
+    isActive: boolean | null
+    organizationId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type KnowledgeBaseDocumentMaxAggregateOutputType = {
+    id: string | null
+    fileName: string | null
+    fileType: string | null
+    fileSize: number | null
+    fileUrl: string | null
+    extractedText: string | null
+    isActive: boolean | null
+    organizationId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type KnowledgeBaseDocumentCountAggregateOutputType = {
+    id: number
+    fileName: number
+    fileType: number
+    fileSize: number
+    fileUrl: number
+    extractedText: number
+    isActive: number
+    organizationId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type KnowledgeBaseDocumentAvgAggregateInputType = {
+    fileSize?: true
+  }
+
+  export type KnowledgeBaseDocumentSumAggregateInputType = {
+    fileSize?: true
+  }
+
+  export type KnowledgeBaseDocumentMinAggregateInputType = {
+    id?: true
+    fileName?: true
+    fileType?: true
+    fileSize?: true
+    fileUrl?: true
+    extractedText?: true
+    isActive?: true
+    organizationId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type KnowledgeBaseDocumentMaxAggregateInputType = {
+    id?: true
+    fileName?: true
+    fileType?: true
+    fileSize?: true
+    fileUrl?: true
+    extractedText?: true
+    isActive?: true
+    organizationId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type KnowledgeBaseDocumentCountAggregateInputType = {
+    id?: true
+    fileName?: true
+    fileType?: true
+    fileSize?: true
+    fileUrl?: true
+    extractedText?: true
+    isActive?: true
+    organizationId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type KnowledgeBaseDocumentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which KnowledgeBaseDocument to aggregate.
+     */
+    where?: KnowledgeBaseDocumentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KnowledgeBaseDocuments to fetch.
+     */
+    orderBy?: KnowledgeBaseDocumentOrderByWithRelationInput | KnowledgeBaseDocumentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: KnowledgeBaseDocumentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KnowledgeBaseDocuments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KnowledgeBaseDocuments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned KnowledgeBaseDocuments
+    **/
+    _count?: true | KnowledgeBaseDocumentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: KnowledgeBaseDocumentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: KnowledgeBaseDocumentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: KnowledgeBaseDocumentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: KnowledgeBaseDocumentMaxAggregateInputType
+  }
+
+  export type GetKnowledgeBaseDocumentAggregateType<T extends KnowledgeBaseDocumentAggregateArgs> = {
+        [P in keyof T & keyof AggregateKnowledgeBaseDocument]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateKnowledgeBaseDocument[P]>
+      : GetScalarType<T[P], AggregateKnowledgeBaseDocument[P]>
+  }
+
+
+
+
+  export type KnowledgeBaseDocumentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: KnowledgeBaseDocumentWhereInput
+    orderBy?: KnowledgeBaseDocumentOrderByWithAggregationInput | KnowledgeBaseDocumentOrderByWithAggregationInput[]
+    by: KnowledgeBaseDocumentScalarFieldEnum[] | KnowledgeBaseDocumentScalarFieldEnum
+    having?: KnowledgeBaseDocumentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: KnowledgeBaseDocumentCountAggregateInputType | true
+    _avg?: KnowledgeBaseDocumentAvgAggregateInputType
+    _sum?: KnowledgeBaseDocumentSumAggregateInputType
+    _min?: KnowledgeBaseDocumentMinAggregateInputType
+    _max?: KnowledgeBaseDocumentMaxAggregateInputType
+  }
+
+  export type KnowledgeBaseDocumentGroupByOutputType = {
+    id: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    fileUrl: string | null
+    extractedText: string
+    isActive: boolean
+    organizationId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: KnowledgeBaseDocumentCountAggregateOutputType | null
+    _avg: KnowledgeBaseDocumentAvgAggregateOutputType | null
+    _sum: KnowledgeBaseDocumentSumAggregateOutputType | null
+    _min: KnowledgeBaseDocumentMinAggregateOutputType | null
+    _max: KnowledgeBaseDocumentMaxAggregateOutputType | null
+  }
+
+  type GetKnowledgeBaseDocumentGroupByPayload<T extends KnowledgeBaseDocumentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<KnowledgeBaseDocumentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof KnowledgeBaseDocumentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], KnowledgeBaseDocumentGroupByOutputType[P]>
+            : GetScalarType<T[P], KnowledgeBaseDocumentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type KnowledgeBaseDocumentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fileName?: boolean
+    fileType?: boolean
+    fileSize?: boolean
+    fileUrl?: boolean
+    extractedText?: boolean
+    isActive?: boolean
+    organizationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["knowledgeBaseDocument"]>
+
+  export type KnowledgeBaseDocumentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fileName?: boolean
+    fileType?: boolean
+    fileSize?: boolean
+    fileUrl?: boolean
+    extractedText?: boolean
+    isActive?: boolean
+    organizationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["knowledgeBaseDocument"]>
+
+  export type KnowledgeBaseDocumentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fileName?: boolean
+    fileType?: boolean
+    fileSize?: boolean
+    fileUrl?: boolean
+    extractedText?: boolean
+    isActive?: boolean
+    organizationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["knowledgeBaseDocument"]>
+
+  export type KnowledgeBaseDocumentSelectScalar = {
+    id?: boolean
+    fileName?: boolean
+    fileType?: boolean
+    fileSize?: boolean
+    fileUrl?: boolean
+    extractedText?: boolean
+    isActive?: boolean
+    organizationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type KnowledgeBaseDocumentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fileName" | "fileType" | "fileSize" | "fileUrl" | "extractedText" | "isActive" | "organizationId" | "createdAt" | "updatedAt", ExtArgs["result"]["knowledgeBaseDocument"]>
+  export type KnowledgeBaseDocumentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+  export type KnowledgeBaseDocumentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+  export type KnowledgeBaseDocumentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+
+  export type $KnowledgeBaseDocumentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "KnowledgeBaseDocument"
+    objects: {
+      organization: Prisma.$OrganizationPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      fileName: string
+      fileType: string
+      fileSize: number
+      fileUrl: string | null
+      extractedText: string
+      isActive: boolean
+      organizationId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["knowledgeBaseDocument"]>
+    composites: {}
+  }
+
+  type KnowledgeBaseDocumentGetPayload<S extends boolean | null | undefined | KnowledgeBaseDocumentDefaultArgs> = $Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload, S>
+
+  type KnowledgeBaseDocumentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<KnowledgeBaseDocumentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: KnowledgeBaseDocumentCountAggregateInputType | true
+    }
+
+  export interface KnowledgeBaseDocumentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['KnowledgeBaseDocument'], meta: { name: 'KnowledgeBaseDocument' } }
+    /**
+     * Find zero or one KnowledgeBaseDocument that matches the filter.
+     * @param {KnowledgeBaseDocumentFindUniqueArgs} args - Arguments to find a KnowledgeBaseDocument
+     * @example
+     * // Get one KnowledgeBaseDocument
+     * const knowledgeBaseDocument = await prisma.knowledgeBaseDocument.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends KnowledgeBaseDocumentFindUniqueArgs>(args: SelectSubset<T, KnowledgeBaseDocumentFindUniqueArgs<ExtArgs>>): Prisma__KnowledgeBaseDocumentClient<$Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one KnowledgeBaseDocument that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {KnowledgeBaseDocumentFindUniqueOrThrowArgs} args - Arguments to find a KnowledgeBaseDocument
+     * @example
+     * // Get one KnowledgeBaseDocument
+     * const knowledgeBaseDocument = await prisma.knowledgeBaseDocument.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends KnowledgeBaseDocumentFindUniqueOrThrowArgs>(args: SelectSubset<T, KnowledgeBaseDocumentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__KnowledgeBaseDocumentClient<$Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first KnowledgeBaseDocument that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeBaseDocumentFindFirstArgs} args - Arguments to find a KnowledgeBaseDocument
+     * @example
+     * // Get one KnowledgeBaseDocument
+     * const knowledgeBaseDocument = await prisma.knowledgeBaseDocument.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends KnowledgeBaseDocumentFindFirstArgs>(args?: SelectSubset<T, KnowledgeBaseDocumentFindFirstArgs<ExtArgs>>): Prisma__KnowledgeBaseDocumentClient<$Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first KnowledgeBaseDocument that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeBaseDocumentFindFirstOrThrowArgs} args - Arguments to find a KnowledgeBaseDocument
+     * @example
+     * // Get one KnowledgeBaseDocument
+     * const knowledgeBaseDocument = await prisma.knowledgeBaseDocument.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends KnowledgeBaseDocumentFindFirstOrThrowArgs>(args?: SelectSubset<T, KnowledgeBaseDocumentFindFirstOrThrowArgs<ExtArgs>>): Prisma__KnowledgeBaseDocumentClient<$Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more KnowledgeBaseDocuments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeBaseDocumentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all KnowledgeBaseDocuments
+     * const knowledgeBaseDocuments = await prisma.knowledgeBaseDocument.findMany()
+     * 
+     * // Get first 10 KnowledgeBaseDocuments
+     * const knowledgeBaseDocuments = await prisma.knowledgeBaseDocument.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const knowledgeBaseDocumentWithIdOnly = await prisma.knowledgeBaseDocument.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends KnowledgeBaseDocumentFindManyArgs>(args?: SelectSubset<T, KnowledgeBaseDocumentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a KnowledgeBaseDocument.
+     * @param {KnowledgeBaseDocumentCreateArgs} args - Arguments to create a KnowledgeBaseDocument.
+     * @example
+     * // Create one KnowledgeBaseDocument
+     * const KnowledgeBaseDocument = await prisma.knowledgeBaseDocument.create({
+     *   data: {
+     *     // ... data to create a KnowledgeBaseDocument
+     *   }
+     * })
+     * 
+     */
+    create<T extends KnowledgeBaseDocumentCreateArgs>(args: SelectSubset<T, KnowledgeBaseDocumentCreateArgs<ExtArgs>>): Prisma__KnowledgeBaseDocumentClient<$Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many KnowledgeBaseDocuments.
+     * @param {KnowledgeBaseDocumentCreateManyArgs} args - Arguments to create many KnowledgeBaseDocuments.
+     * @example
+     * // Create many KnowledgeBaseDocuments
+     * const knowledgeBaseDocument = await prisma.knowledgeBaseDocument.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends KnowledgeBaseDocumentCreateManyArgs>(args?: SelectSubset<T, KnowledgeBaseDocumentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many KnowledgeBaseDocuments and returns the data saved in the database.
+     * @param {KnowledgeBaseDocumentCreateManyAndReturnArgs} args - Arguments to create many KnowledgeBaseDocuments.
+     * @example
+     * // Create many KnowledgeBaseDocuments
+     * const knowledgeBaseDocument = await prisma.knowledgeBaseDocument.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many KnowledgeBaseDocuments and only return the `id`
+     * const knowledgeBaseDocumentWithIdOnly = await prisma.knowledgeBaseDocument.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends KnowledgeBaseDocumentCreateManyAndReturnArgs>(args?: SelectSubset<T, KnowledgeBaseDocumentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a KnowledgeBaseDocument.
+     * @param {KnowledgeBaseDocumentDeleteArgs} args - Arguments to delete one KnowledgeBaseDocument.
+     * @example
+     * // Delete one KnowledgeBaseDocument
+     * const KnowledgeBaseDocument = await prisma.knowledgeBaseDocument.delete({
+     *   where: {
+     *     // ... filter to delete one KnowledgeBaseDocument
+     *   }
+     * })
+     * 
+     */
+    delete<T extends KnowledgeBaseDocumentDeleteArgs>(args: SelectSubset<T, KnowledgeBaseDocumentDeleteArgs<ExtArgs>>): Prisma__KnowledgeBaseDocumentClient<$Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one KnowledgeBaseDocument.
+     * @param {KnowledgeBaseDocumentUpdateArgs} args - Arguments to update one KnowledgeBaseDocument.
+     * @example
+     * // Update one KnowledgeBaseDocument
+     * const knowledgeBaseDocument = await prisma.knowledgeBaseDocument.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends KnowledgeBaseDocumentUpdateArgs>(args: SelectSubset<T, KnowledgeBaseDocumentUpdateArgs<ExtArgs>>): Prisma__KnowledgeBaseDocumentClient<$Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more KnowledgeBaseDocuments.
+     * @param {KnowledgeBaseDocumentDeleteManyArgs} args - Arguments to filter KnowledgeBaseDocuments to delete.
+     * @example
+     * // Delete a few KnowledgeBaseDocuments
+     * const { count } = await prisma.knowledgeBaseDocument.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends KnowledgeBaseDocumentDeleteManyArgs>(args?: SelectSubset<T, KnowledgeBaseDocumentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more KnowledgeBaseDocuments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeBaseDocumentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many KnowledgeBaseDocuments
+     * const knowledgeBaseDocument = await prisma.knowledgeBaseDocument.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends KnowledgeBaseDocumentUpdateManyArgs>(args: SelectSubset<T, KnowledgeBaseDocumentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more KnowledgeBaseDocuments and returns the data updated in the database.
+     * @param {KnowledgeBaseDocumentUpdateManyAndReturnArgs} args - Arguments to update many KnowledgeBaseDocuments.
+     * @example
+     * // Update many KnowledgeBaseDocuments
+     * const knowledgeBaseDocument = await prisma.knowledgeBaseDocument.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more KnowledgeBaseDocuments and only return the `id`
+     * const knowledgeBaseDocumentWithIdOnly = await prisma.knowledgeBaseDocument.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends KnowledgeBaseDocumentUpdateManyAndReturnArgs>(args: SelectSubset<T, KnowledgeBaseDocumentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one KnowledgeBaseDocument.
+     * @param {KnowledgeBaseDocumentUpsertArgs} args - Arguments to update or create a KnowledgeBaseDocument.
+     * @example
+     * // Update or create a KnowledgeBaseDocument
+     * const knowledgeBaseDocument = await prisma.knowledgeBaseDocument.upsert({
+     *   create: {
+     *     // ... data to create a KnowledgeBaseDocument
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the KnowledgeBaseDocument we want to update
+     *   }
+     * })
+     */
+    upsert<T extends KnowledgeBaseDocumentUpsertArgs>(args: SelectSubset<T, KnowledgeBaseDocumentUpsertArgs<ExtArgs>>): Prisma__KnowledgeBaseDocumentClient<$Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of KnowledgeBaseDocuments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeBaseDocumentCountArgs} args - Arguments to filter KnowledgeBaseDocuments to count.
+     * @example
+     * // Count the number of KnowledgeBaseDocuments
+     * const count = await prisma.knowledgeBaseDocument.count({
+     *   where: {
+     *     // ... the filter for the KnowledgeBaseDocuments we want to count
+     *   }
+     * })
+    **/
+    count<T extends KnowledgeBaseDocumentCountArgs>(
+      args?: Subset<T, KnowledgeBaseDocumentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], KnowledgeBaseDocumentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a KnowledgeBaseDocument.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeBaseDocumentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends KnowledgeBaseDocumentAggregateArgs>(args: Subset<T, KnowledgeBaseDocumentAggregateArgs>): Prisma.PrismaPromise<GetKnowledgeBaseDocumentAggregateType<T>>
+
+    /**
+     * Group by KnowledgeBaseDocument.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeBaseDocumentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends KnowledgeBaseDocumentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: KnowledgeBaseDocumentGroupByArgs['orderBy'] }
+        : { orderBy?: KnowledgeBaseDocumentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, KnowledgeBaseDocumentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetKnowledgeBaseDocumentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the KnowledgeBaseDocument model
+   */
+  readonly fields: KnowledgeBaseDocumentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for KnowledgeBaseDocument.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__KnowledgeBaseDocumentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the KnowledgeBaseDocument model
+   */
+  interface KnowledgeBaseDocumentFieldRefs {
+    readonly id: FieldRef<"KnowledgeBaseDocument", 'String'>
+    readonly fileName: FieldRef<"KnowledgeBaseDocument", 'String'>
+    readonly fileType: FieldRef<"KnowledgeBaseDocument", 'String'>
+    readonly fileSize: FieldRef<"KnowledgeBaseDocument", 'Int'>
+    readonly fileUrl: FieldRef<"KnowledgeBaseDocument", 'String'>
+    readonly extractedText: FieldRef<"KnowledgeBaseDocument", 'String'>
+    readonly isActive: FieldRef<"KnowledgeBaseDocument", 'Boolean'>
+    readonly organizationId: FieldRef<"KnowledgeBaseDocument", 'String'>
+    readonly createdAt: FieldRef<"KnowledgeBaseDocument", 'DateTime'>
+    readonly updatedAt: FieldRef<"KnowledgeBaseDocument", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * KnowledgeBaseDocument findUnique
+   */
+  export type KnowledgeBaseDocumentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseDocument
+     */
+    select?: KnowledgeBaseDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseDocument
+     */
+    omit?: KnowledgeBaseDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseDocumentInclude<ExtArgs> | null
+    /**
+     * Filter, which KnowledgeBaseDocument to fetch.
+     */
+    where: KnowledgeBaseDocumentWhereUniqueInput
+  }
+
+  /**
+   * KnowledgeBaseDocument findUniqueOrThrow
+   */
+  export type KnowledgeBaseDocumentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseDocument
+     */
+    select?: KnowledgeBaseDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseDocument
+     */
+    omit?: KnowledgeBaseDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseDocumentInclude<ExtArgs> | null
+    /**
+     * Filter, which KnowledgeBaseDocument to fetch.
+     */
+    where: KnowledgeBaseDocumentWhereUniqueInput
+  }
+
+  /**
+   * KnowledgeBaseDocument findFirst
+   */
+  export type KnowledgeBaseDocumentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseDocument
+     */
+    select?: KnowledgeBaseDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseDocument
+     */
+    omit?: KnowledgeBaseDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseDocumentInclude<ExtArgs> | null
+    /**
+     * Filter, which KnowledgeBaseDocument to fetch.
+     */
+    where?: KnowledgeBaseDocumentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KnowledgeBaseDocuments to fetch.
+     */
+    orderBy?: KnowledgeBaseDocumentOrderByWithRelationInput | KnowledgeBaseDocumentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for KnowledgeBaseDocuments.
+     */
+    cursor?: KnowledgeBaseDocumentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KnowledgeBaseDocuments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KnowledgeBaseDocuments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KnowledgeBaseDocuments.
+     */
+    distinct?: KnowledgeBaseDocumentScalarFieldEnum | KnowledgeBaseDocumentScalarFieldEnum[]
+  }
+
+  /**
+   * KnowledgeBaseDocument findFirstOrThrow
+   */
+  export type KnowledgeBaseDocumentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseDocument
+     */
+    select?: KnowledgeBaseDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseDocument
+     */
+    omit?: KnowledgeBaseDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseDocumentInclude<ExtArgs> | null
+    /**
+     * Filter, which KnowledgeBaseDocument to fetch.
+     */
+    where?: KnowledgeBaseDocumentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KnowledgeBaseDocuments to fetch.
+     */
+    orderBy?: KnowledgeBaseDocumentOrderByWithRelationInput | KnowledgeBaseDocumentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for KnowledgeBaseDocuments.
+     */
+    cursor?: KnowledgeBaseDocumentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KnowledgeBaseDocuments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KnowledgeBaseDocuments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KnowledgeBaseDocuments.
+     */
+    distinct?: KnowledgeBaseDocumentScalarFieldEnum | KnowledgeBaseDocumentScalarFieldEnum[]
+  }
+
+  /**
+   * KnowledgeBaseDocument findMany
+   */
+  export type KnowledgeBaseDocumentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseDocument
+     */
+    select?: KnowledgeBaseDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseDocument
+     */
+    omit?: KnowledgeBaseDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseDocumentInclude<ExtArgs> | null
+    /**
+     * Filter, which KnowledgeBaseDocuments to fetch.
+     */
+    where?: KnowledgeBaseDocumentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KnowledgeBaseDocuments to fetch.
+     */
+    orderBy?: KnowledgeBaseDocumentOrderByWithRelationInput | KnowledgeBaseDocumentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing KnowledgeBaseDocuments.
+     */
+    cursor?: KnowledgeBaseDocumentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KnowledgeBaseDocuments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KnowledgeBaseDocuments.
+     */
+    skip?: number
+    distinct?: KnowledgeBaseDocumentScalarFieldEnum | KnowledgeBaseDocumentScalarFieldEnum[]
+  }
+
+  /**
+   * KnowledgeBaseDocument create
+   */
+  export type KnowledgeBaseDocumentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseDocument
+     */
+    select?: KnowledgeBaseDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseDocument
+     */
+    omit?: KnowledgeBaseDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseDocumentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a KnowledgeBaseDocument.
+     */
+    data: XOR<KnowledgeBaseDocumentCreateInput, KnowledgeBaseDocumentUncheckedCreateInput>
+  }
+
+  /**
+   * KnowledgeBaseDocument createMany
+   */
+  export type KnowledgeBaseDocumentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many KnowledgeBaseDocuments.
+     */
+    data: KnowledgeBaseDocumentCreateManyInput | KnowledgeBaseDocumentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * KnowledgeBaseDocument createManyAndReturn
+   */
+  export type KnowledgeBaseDocumentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseDocument
+     */
+    select?: KnowledgeBaseDocumentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseDocument
+     */
+    omit?: KnowledgeBaseDocumentOmit<ExtArgs> | null
+    /**
+     * The data used to create many KnowledgeBaseDocuments.
+     */
+    data: KnowledgeBaseDocumentCreateManyInput | KnowledgeBaseDocumentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseDocumentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * KnowledgeBaseDocument update
+   */
+  export type KnowledgeBaseDocumentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseDocument
+     */
+    select?: KnowledgeBaseDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseDocument
+     */
+    omit?: KnowledgeBaseDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseDocumentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a KnowledgeBaseDocument.
+     */
+    data: XOR<KnowledgeBaseDocumentUpdateInput, KnowledgeBaseDocumentUncheckedUpdateInput>
+    /**
+     * Choose, which KnowledgeBaseDocument to update.
+     */
+    where: KnowledgeBaseDocumentWhereUniqueInput
+  }
+
+  /**
+   * KnowledgeBaseDocument updateMany
+   */
+  export type KnowledgeBaseDocumentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update KnowledgeBaseDocuments.
+     */
+    data: XOR<KnowledgeBaseDocumentUpdateManyMutationInput, KnowledgeBaseDocumentUncheckedUpdateManyInput>
+    /**
+     * Filter which KnowledgeBaseDocuments to update
+     */
+    where?: KnowledgeBaseDocumentWhereInput
+    /**
+     * Limit how many KnowledgeBaseDocuments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * KnowledgeBaseDocument updateManyAndReturn
+   */
+  export type KnowledgeBaseDocumentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseDocument
+     */
+    select?: KnowledgeBaseDocumentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseDocument
+     */
+    omit?: KnowledgeBaseDocumentOmit<ExtArgs> | null
+    /**
+     * The data used to update KnowledgeBaseDocuments.
+     */
+    data: XOR<KnowledgeBaseDocumentUpdateManyMutationInput, KnowledgeBaseDocumentUncheckedUpdateManyInput>
+    /**
+     * Filter which KnowledgeBaseDocuments to update
+     */
+    where?: KnowledgeBaseDocumentWhereInput
+    /**
+     * Limit how many KnowledgeBaseDocuments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseDocumentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * KnowledgeBaseDocument upsert
+   */
+  export type KnowledgeBaseDocumentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseDocument
+     */
+    select?: KnowledgeBaseDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseDocument
+     */
+    omit?: KnowledgeBaseDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseDocumentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the KnowledgeBaseDocument to update in case it exists.
+     */
+    where: KnowledgeBaseDocumentWhereUniqueInput
+    /**
+     * In case the KnowledgeBaseDocument found by the `where` argument doesn't exist, create a new KnowledgeBaseDocument with this data.
+     */
+    create: XOR<KnowledgeBaseDocumentCreateInput, KnowledgeBaseDocumentUncheckedCreateInput>
+    /**
+     * In case the KnowledgeBaseDocument was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<KnowledgeBaseDocumentUpdateInput, KnowledgeBaseDocumentUncheckedUpdateInput>
+  }
+
+  /**
+   * KnowledgeBaseDocument delete
+   */
+  export type KnowledgeBaseDocumentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseDocument
+     */
+    select?: KnowledgeBaseDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseDocument
+     */
+    omit?: KnowledgeBaseDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseDocumentInclude<ExtArgs> | null
+    /**
+     * Filter which KnowledgeBaseDocument to delete.
+     */
+    where: KnowledgeBaseDocumentWhereUniqueInput
+  }
+
+  /**
+   * KnowledgeBaseDocument deleteMany
+   */
+  export type KnowledgeBaseDocumentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which KnowledgeBaseDocuments to delete
+     */
+    where?: KnowledgeBaseDocumentWhereInput
+    /**
+     * Limit how many KnowledgeBaseDocuments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * KnowledgeBaseDocument without action
+   */
+  export type KnowledgeBaseDocumentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseDocument
+     */
+    select?: KnowledgeBaseDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseDocument
+     */
+    omit?: KnowledgeBaseDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseDocumentInclude<ExtArgs> | null
   }
 
 
@@ -20773,6 +22058,22 @@ export namespace Prisma {
   export type CustomFieldScalarFieldEnum = (typeof CustomFieldScalarFieldEnum)[keyof typeof CustomFieldScalarFieldEnum]
 
 
+  export const KnowledgeBaseDocumentScalarFieldEnum: {
+    id: 'id',
+    fileName: 'fileName',
+    fileType: 'fileType',
+    fileSize: 'fileSize',
+    fileUrl: 'fileUrl',
+    extractedText: 'extractedText',
+    isActive: 'isActive',
+    organizationId: 'organizationId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type KnowledgeBaseDocumentScalarFieldEnum = (typeof KnowledgeBaseDocumentScalarFieldEnum)[keyof typeof KnowledgeBaseDocumentScalarFieldEnum]
+
+
   export const GrantBookmarkScalarFieldEnum: {
     id: 'id',
     notes: 'notes',
@@ -21612,6 +22913,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisListRelationFilter
     recommendations?: RecommendationListRelationFilter
     users?: UserListRelationFilter
+    knowledgeBase?: KnowledgeBaseDocumentListRelationFilter
   }
 
   export type OrganizationOrderByWithRelationInput = {
@@ -21654,6 +22956,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisOrderByRelationAggregateInput
     recommendations?: RecommendationOrderByRelationAggregateInput
     users?: UserOrderByRelationAggregateInput
+    knowledgeBase?: KnowledgeBaseDocumentOrderByRelationAggregateInput
   }
 
   export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -21699,6 +23002,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisListRelationFilter
     recommendations?: RecommendationListRelationFilter
     users?: UserListRelationFilter
+    knowledgeBase?: KnowledgeBaseDocumentListRelationFilter
   }, "id" | "slug" | "leaId">
 
   export type OrganizationOrderByWithAggregationInput = {
@@ -21833,6 +23137,88 @@ export namespace Prisma {
     organizationId?: StringWithAggregatesFilter<"CustomField"> | string
     createdAt?: DateTimeWithAggregatesFilter<"CustomField"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"CustomField"> | Date | string
+  }
+
+  export type KnowledgeBaseDocumentWhereInput = {
+    AND?: KnowledgeBaseDocumentWhereInput | KnowledgeBaseDocumentWhereInput[]
+    OR?: KnowledgeBaseDocumentWhereInput[]
+    NOT?: KnowledgeBaseDocumentWhereInput | KnowledgeBaseDocumentWhereInput[]
+    id?: StringFilter<"KnowledgeBaseDocument"> | string
+    fileName?: StringFilter<"KnowledgeBaseDocument"> | string
+    fileType?: StringFilter<"KnowledgeBaseDocument"> | string
+    fileSize?: IntFilter<"KnowledgeBaseDocument"> | number
+    fileUrl?: StringNullableFilter<"KnowledgeBaseDocument"> | string | null
+    extractedText?: StringFilter<"KnowledgeBaseDocument"> | string
+    isActive?: BoolFilter<"KnowledgeBaseDocument"> | boolean
+    organizationId?: StringFilter<"KnowledgeBaseDocument"> | string
+    createdAt?: DateTimeFilter<"KnowledgeBaseDocument"> | Date | string
+    updatedAt?: DateTimeFilter<"KnowledgeBaseDocument"> | Date | string
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+  }
+
+  export type KnowledgeBaseDocumentOrderByWithRelationInput = {
+    id?: SortOrder
+    fileName?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
+    fileUrl?: SortOrderInput | SortOrder
+    extractedText?: SortOrder
+    isActive?: SortOrder
+    organizationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    organization?: OrganizationOrderByWithRelationInput
+  }
+
+  export type KnowledgeBaseDocumentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: KnowledgeBaseDocumentWhereInput | KnowledgeBaseDocumentWhereInput[]
+    OR?: KnowledgeBaseDocumentWhereInput[]
+    NOT?: KnowledgeBaseDocumentWhereInput | KnowledgeBaseDocumentWhereInput[]
+    fileName?: StringFilter<"KnowledgeBaseDocument"> | string
+    fileType?: StringFilter<"KnowledgeBaseDocument"> | string
+    fileSize?: IntFilter<"KnowledgeBaseDocument"> | number
+    fileUrl?: StringNullableFilter<"KnowledgeBaseDocument"> | string | null
+    extractedText?: StringFilter<"KnowledgeBaseDocument"> | string
+    isActive?: BoolFilter<"KnowledgeBaseDocument"> | boolean
+    organizationId?: StringFilter<"KnowledgeBaseDocument"> | string
+    createdAt?: DateTimeFilter<"KnowledgeBaseDocument"> | Date | string
+    updatedAt?: DateTimeFilter<"KnowledgeBaseDocument"> | Date | string
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+  }, "id">
+
+  export type KnowledgeBaseDocumentOrderByWithAggregationInput = {
+    id?: SortOrder
+    fileName?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
+    fileUrl?: SortOrderInput | SortOrder
+    extractedText?: SortOrder
+    isActive?: SortOrder
+    organizationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: KnowledgeBaseDocumentCountOrderByAggregateInput
+    _avg?: KnowledgeBaseDocumentAvgOrderByAggregateInput
+    _max?: KnowledgeBaseDocumentMaxOrderByAggregateInput
+    _min?: KnowledgeBaseDocumentMinOrderByAggregateInput
+    _sum?: KnowledgeBaseDocumentSumOrderByAggregateInput
+  }
+
+  export type KnowledgeBaseDocumentScalarWhereWithAggregatesInput = {
+    AND?: KnowledgeBaseDocumentScalarWhereWithAggregatesInput | KnowledgeBaseDocumentScalarWhereWithAggregatesInput[]
+    OR?: KnowledgeBaseDocumentScalarWhereWithAggregatesInput[]
+    NOT?: KnowledgeBaseDocumentScalarWhereWithAggregatesInput | KnowledgeBaseDocumentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"KnowledgeBaseDocument"> | string
+    fileName?: StringWithAggregatesFilter<"KnowledgeBaseDocument"> | string
+    fileType?: StringWithAggregatesFilter<"KnowledgeBaseDocument"> | string
+    fileSize?: IntWithAggregatesFilter<"KnowledgeBaseDocument"> | number
+    fileUrl?: StringNullableWithAggregatesFilter<"KnowledgeBaseDocument"> | string | null
+    extractedText?: StringWithAggregatesFilter<"KnowledgeBaseDocument"> | string
+    isActive?: BoolWithAggregatesFilter<"KnowledgeBaseDocument"> | boolean
+    organizationId?: StringWithAggregatesFilter<"KnowledgeBaseDocument"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"KnowledgeBaseDocument"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"KnowledgeBaseDocument"> | Date | string
   }
 
   export type GrantBookmarkWhereInput = {
@@ -23097,6 +24483,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateInput = {
@@ -23139,6 +24526,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUpdateInput = {
@@ -23181,6 +24569,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateInput = {
@@ -23223,6 +24612,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationCreateManyInput = {
@@ -23381,6 +24771,96 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fieldName?: StringFieldUpdateOperationsInput | string
     fieldValue?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KnowledgeBaseDocumentCreateInput = {
+    id?: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    fileUrl?: string | null
+    extractedText: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutKnowledgeBaseInput
+  }
+
+  export type KnowledgeBaseDocumentUncheckedCreateInput = {
+    id?: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    fileUrl?: string | null
+    extractedText: string
+    isActive?: boolean
+    organizationId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type KnowledgeBaseDocumentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    extractedText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutKnowledgeBaseNestedInput
+  }
+
+  export type KnowledgeBaseDocumentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    extractedText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    organizationId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KnowledgeBaseDocumentCreateManyInput = {
+    id?: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    fileUrl?: string | null
+    extractedText: string
+    isActive?: boolean
+    organizationId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type KnowledgeBaseDocumentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    extractedText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KnowledgeBaseDocumentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    extractedText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     organizationId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24875,6 +26355,12 @@ export namespace Prisma {
     none?: UserWhereInput
   }
 
+  export type KnowledgeBaseDocumentListRelationFilter = {
+    every?: KnowledgeBaseDocumentWhereInput
+    some?: KnowledgeBaseDocumentWhereInput
+    none?: KnowledgeBaseDocumentWhereInput
+  }
+
   export type ApplicationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -24900,6 +26386,10 @@ export namespace Prisma {
   }
 
   export type UserOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type KnowledgeBaseDocumentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -25081,6 +26571,53 @@ export namespace Prisma {
     organizationId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type KnowledgeBaseDocumentCountOrderByAggregateInput = {
+    id?: SortOrder
+    fileName?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
+    fileUrl?: SortOrder
+    extractedText?: SortOrder
+    isActive?: SortOrder
+    organizationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type KnowledgeBaseDocumentAvgOrderByAggregateInput = {
+    fileSize?: SortOrder
+  }
+
+  export type KnowledgeBaseDocumentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    fileName?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
+    fileUrl?: SortOrder
+    extractedText?: SortOrder
+    isActive?: SortOrder
+    organizationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type KnowledgeBaseDocumentMinOrderByAggregateInput = {
+    id?: SortOrder
+    fileName?: SortOrder
+    fileType?: SortOrder
+    fileSize?: SortOrder
+    fileUrl?: SortOrder
+    extractedText?: SortOrder
+    isActive?: SortOrder
+    organizationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type KnowledgeBaseDocumentSumOrderByAggregateInput = {
+    fileSize?: SortOrder
   }
 
   export type UserScalarRelationFilter = {
@@ -25928,6 +27465,13 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
+  export type KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput> | KnowledgeBaseDocumentCreateWithoutOrganizationInput[] | KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput | KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput[]
+    createMany?: KnowledgeBaseDocumentCreateManyOrganizationInputEnvelope
+    connect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+  }
+
   export type AiChatUncheckedCreateNestedManyWithoutOrganizationInput = {
     create?: XOR<AiChatCreateWithoutOrganizationInput, AiChatUncheckedCreateWithoutOrganizationInput> | AiChatCreateWithoutOrganizationInput[] | AiChatUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: AiChatCreateOrConnectWithoutOrganizationInput | AiChatCreateOrConnectWithoutOrganizationInput[]
@@ -25989,6 +27533,13 @@ export namespace Prisma {
     connectOrCreate?: UserCreateOrConnectWithoutOrganizationInput | UserCreateOrConnectWithoutOrganizationInput[]
     createMany?: UserCreateManyOrganizationInputEnvelope
     connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput> | KnowledgeBaseDocumentCreateWithoutOrganizationInput[] | KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput | KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput[]
+    createMany?: KnowledgeBaseDocumentCreateManyOrganizationInputEnvelope
+    connect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
   }
 
   export type NullableDecimalFieldUpdateOperationsInput = {
@@ -26138,6 +27689,20 @@ export namespace Prisma {
     deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
+  export type KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput> | KnowledgeBaseDocumentCreateWithoutOrganizationInput[] | KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput | KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput[]
+    upsert?: KnowledgeBaseDocumentUpsertWithWhereUniqueWithoutOrganizationInput | KnowledgeBaseDocumentUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: KnowledgeBaseDocumentCreateManyOrganizationInputEnvelope
+    set?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    disconnect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    delete?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    connect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    update?: KnowledgeBaseDocumentUpdateWithWhereUniqueWithoutOrganizationInput | KnowledgeBaseDocumentUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: KnowledgeBaseDocumentUpdateManyWithWhereWithoutOrganizationInput | KnowledgeBaseDocumentUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: KnowledgeBaseDocumentScalarWhereInput | KnowledgeBaseDocumentScalarWhereInput[]
+  }
+
   export type AiChatUncheckedUpdateManyWithoutOrganizationNestedInput = {
     create?: XOR<AiChatCreateWithoutOrganizationInput, AiChatUncheckedCreateWithoutOrganizationInput> | AiChatCreateWithoutOrganizationInput[] | AiChatUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: AiChatCreateOrConnectWithoutOrganizationInput | AiChatCreateOrConnectWithoutOrganizationInput[]
@@ -26264,6 +27829,20 @@ export namespace Prisma {
     deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
+  export type KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput> | KnowledgeBaseDocumentCreateWithoutOrganizationInput[] | KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput | KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput[]
+    upsert?: KnowledgeBaseDocumentUpsertWithWhereUniqueWithoutOrganizationInput | KnowledgeBaseDocumentUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: KnowledgeBaseDocumentCreateManyOrganizationInputEnvelope
+    set?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    disconnect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    delete?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    connect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    update?: KnowledgeBaseDocumentUpdateWithWhereUniqueWithoutOrganizationInput | KnowledgeBaseDocumentUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: KnowledgeBaseDocumentUpdateManyWithWhereWithoutOrganizationInput | KnowledgeBaseDocumentUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: KnowledgeBaseDocumentScalarWhereInput | KnowledgeBaseDocumentScalarWhereInput[]
+  }
+
   export type OrganizationCreateNestedOneWithoutCustomFieldsInput = {
     create?: XOR<OrganizationCreateWithoutCustomFieldsInput, OrganizationUncheckedCreateWithoutCustomFieldsInput>
     connectOrCreate?: OrganizationCreateOrConnectWithoutCustomFieldsInput
@@ -26276,6 +27855,20 @@ export namespace Prisma {
     upsert?: OrganizationUpsertWithoutCustomFieldsInput
     connect?: OrganizationWhereUniqueInput
     update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutCustomFieldsInput, OrganizationUpdateWithoutCustomFieldsInput>, OrganizationUncheckedUpdateWithoutCustomFieldsInput>
+  }
+
+  export type OrganizationCreateNestedOneWithoutKnowledgeBaseInput = {
+    create?: XOR<OrganizationCreateWithoutKnowledgeBaseInput, OrganizationUncheckedCreateWithoutKnowledgeBaseInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutKnowledgeBaseInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutKnowledgeBaseNestedInput = {
+    create?: XOR<OrganizationCreateWithoutKnowledgeBaseInput, OrganizationUncheckedCreateWithoutKnowledgeBaseInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutKnowledgeBaseInput
+    upsert?: OrganizationUpsertWithoutKnowledgeBaseInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutKnowledgeBaseInput, OrganizationUpdateWithoutKnowledgeBaseInput>, OrganizationUncheckedUpdateWithoutKnowledgeBaseInput>
   }
 
   export type OrganizationCreateNestedOneWithoutGrantBookmarksInput = {
@@ -27417,6 +29010,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutUsersInput = {
@@ -27458,6 +29052,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutUsersInput = {
@@ -27574,6 +29169,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutUsersInput = {
@@ -27615,6 +29211,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type AiChatCreateWithoutOrganizationInput = {
@@ -27947,6 +29544,40 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type KnowledgeBaseDocumentCreateWithoutOrganizationInput = {
+    id?: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    fileUrl?: string | null
+    extractedText: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput = {
+    id?: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    fileUrl?: string | null
+    extractedText: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput = {
+    where: KnowledgeBaseDocumentWhereUniqueInput
+    create: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type KnowledgeBaseDocumentCreateManyOrganizationInputEnvelope = {
+    data: KnowledgeBaseDocumentCreateManyOrganizationInput | KnowledgeBaseDocumentCreateManyOrganizationInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AiChatUpsertWithWhereUniqueWithoutOrganizationInput = {
     where: AiChatWhereUniqueInput
     update: XOR<AiChatUpdateWithoutOrganizationInput, AiChatUncheckedUpdateWithoutOrganizationInput>
@@ -28212,6 +29843,38 @@ export namespace Prisma {
     googleTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
   }
 
+  export type KnowledgeBaseDocumentUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: KnowledgeBaseDocumentWhereUniqueInput
+    update: XOR<KnowledgeBaseDocumentUpdateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type KnowledgeBaseDocumentUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: KnowledgeBaseDocumentWhereUniqueInput
+    data: XOR<KnowledgeBaseDocumentUpdateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type KnowledgeBaseDocumentUpdateManyWithWhereWithoutOrganizationInput = {
+    where: KnowledgeBaseDocumentScalarWhereInput
+    data: XOR<KnowledgeBaseDocumentUpdateManyMutationInput, KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationInput>
+  }
+
+  export type KnowledgeBaseDocumentScalarWhereInput = {
+    AND?: KnowledgeBaseDocumentScalarWhereInput | KnowledgeBaseDocumentScalarWhereInput[]
+    OR?: KnowledgeBaseDocumentScalarWhereInput[]
+    NOT?: KnowledgeBaseDocumentScalarWhereInput | KnowledgeBaseDocumentScalarWhereInput[]
+    id?: StringFilter<"KnowledgeBaseDocument"> | string
+    fileName?: StringFilter<"KnowledgeBaseDocument"> | string
+    fileType?: StringFilter<"KnowledgeBaseDocument"> | string
+    fileSize?: IntFilter<"KnowledgeBaseDocument"> | number
+    fileUrl?: StringNullableFilter<"KnowledgeBaseDocument"> | string | null
+    extractedText?: StringFilter<"KnowledgeBaseDocument"> | string
+    isActive?: BoolFilter<"KnowledgeBaseDocument"> | boolean
+    organizationId?: StringFilter<"KnowledgeBaseDocument"> | string
+    createdAt?: DateTimeFilter<"KnowledgeBaseDocument"> | Date | string
+    updatedAt?: DateTimeFilter<"KnowledgeBaseDocument"> | Date | string
+  }
+
   export type OrganizationCreateWithoutCustomFieldsInput = {
     id?: string
     name: string
@@ -28251,6 +29914,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCustomFieldsInput = {
@@ -28292,6 +29956,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCustomFieldsInput = {
@@ -28349,6 +30014,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCustomFieldsInput = {
@@ -28384,6 +30050,191 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
+    grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
+    recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
+    users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationCreateWithoutKnowledgeBaseInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    slug: string
+    address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    phone?: string | null
+    state?: string | null
+    website?: string | null
+    zipCode?: string | null
+    strategicPlan?: string | null
+    countyName?: string | null
+    districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
+    logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
+    aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
+    applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentCreateNestedManyWithoutOrganizationInput
+    folders?: FolderCreateNestedManyWithoutOrganizationInput
+    grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
+    recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
+    users?: UserCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutKnowledgeBaseInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    slug: string
+    address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    phone?: string | null
+    state?: string | null
+    website?: string | null
+    zipCode?: string | null
+    strategicPlan?: string | null
+    countyName?: string | null
+    districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
+    logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
+    aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
+    applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
+    folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
+    grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
+    recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
+    users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutKnowledgeBaseInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutKnowledgeBaseInput, OrganizationUncheckedCreateWithoutKnowledgeBaseInput>
+  }
+
+  export type OrganizationUpsertWithoutKnowledgeBaseInput = {
+    update: XOR<OrganizationUpdateWithoutKnowledgeBaseInput, OrganizationUncheckedUpdateWithoutKnowledgeBaseInput>
+    create: XOR<OrganizationCreateWithoutKnowledgeBaseInput, OrganizationUncheckedCreateWithoutKnowledgeBaseInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutKnowledgeBaseInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutKnowledgeBaseInput, OrganizationUncheckedUpdateWithoutKnowledgeBaseInput>
+  }
+
+  export type OrganizationUpdateWithoutKnowledgeBaseInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slug?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
+    aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
+    applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUpdateManyWithoutOrganizationNestedInput
+    grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
+    recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
+    users?: UserUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutKnowledgeBaseInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slug?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
+    aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
+    applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -28431,6 +30282,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutGrantBookmarksInput = {
@@ -28472,6 +30324,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutGrantBookmarksInput = {
@@ -28574,6 +30427,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutGrantBookmarksInput = {
@@ -28615,6 +30469,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutGrantBookmarksInput = {
@@ -28707,6 +30562,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutEligibilityAnalysesInput = {
@@ -28748,6 +30604,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutEligibilityAnalysesInput = {
@@ -28805,6 +30662,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutEligibilityAnalysesInput = {
@@ -28846,6 +30704,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type AiChatCreateWithoutApplicationInput = {
@@ -28921,6 +30780,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutApplicationsInput = {
@@ -28962,6 +30822,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutApplicationsInput = {
@@ -29104,6 +30965,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutApplicationsInput = {
@@ -29145,6 +31007,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type DocumentUpsertWithWhereUniqueWithoutApplicationInput = {
@@ -29314,6 +31177,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutAiChatsInput = {
@@ -29355,6 +31219,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutAiChatsInput = {
@@ -29544,6 +31409,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutAiChatsInput = {
@@ -29585,6 +31451,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutAiChatsInput = {
@@ -29741,6 +31608,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutRecommendationsInput = {
@@ -29782,6 +31650,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutRecommendationsInput = {
@@ -29839,6 +31708,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutRecommendationsInput = {
@@ -29880,6 +31750,7 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type ApplicationCreateWithoutDocumentsInput = {
@@ -30001,6 +31872,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutDocumentsInput = {
@@ -30042,6 +31914,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutDocumentsInput = {
@@ -30191,6 +32064,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutDocumentsInput = {
@@ -30232,6 +32106,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type DocumentCreateWithoutFolderInput = {
@@ -30368,6 +32243,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutFoldersInput = {
@@ -30409,6 +32285,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutFoldersInput = {
@@ -30600,6 +32477,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutFoldersInput = {
@@ -30641,6 +32519,7 @@ export namespace Prisma {
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type FolderUpsertWithoutChildrenInput = {
@@ -31079,6 +32958,18 @@ export namespace Prisma {
     googleTokenExpiry?: Date | string | null
   }
 
+  export type KnowledgeBaseDocumentCreateManyOrganizationInput = {
+    id?: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    fileUrl?: string | null
+    extractedText: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type AiChatUpdateWithoutOrganizationInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31429,6 +33320,42 @@ export namespace Prisma {
     googleDriveConnected?: BoolFieldUpdateOperationsInput | boolean
     googleRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type KnowledgeBaseDocumentUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    extractedText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KnowledgeBaseDocumentUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    extractedText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    extractedText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AiChatCreateManyApplicationInput = {

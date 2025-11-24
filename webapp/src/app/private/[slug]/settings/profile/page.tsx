@@ -47,6 +47,8 @@ import {
   FileText,
   CheckCircle2,
   CalendarIcon,
+  XCircle,
+  Table,
 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -63,6 +65,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
 
 // Grade level options with numeric values
 const GRADE_OPTIONS = [
@@ -127,6 +130,17 @@ interface CustomField {
   updatedAt: string;
 }
 
+interface KnowledgeBaseDocument {
+  id: string;
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+  fileUrl: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export default function ProfilePage() {
   const params = useParams();
   const slug = params.slug as string;
@@ -158,6 +172,16 @@ export default function ProfilePage() {
   const [strategicPlanUploadDate, setStrategicPlanUploadDate] = useState<Date | null>(null);
   const [strategicPlanFileName, setStrategicPlanFileName] = useState<string | null>(null);
   const [showStrategicPlanModal, setShowStrategicPlanModal] = useState(false);
+
+  // Knowledge Base state
+  const [knowledgeBaseDocs, setKnowledgeBaseDocs] = useState<KnowledgeBaseDocument[]>([]);
+  const [loadingDocs, setLoadingDocs] = useState(false);
+  const [uploadingDoc, setUploadingDoc] = useState(false);
+  const [replacingDoc, setReplacingDoc] = useState<KnowledgeBaseDocument | null>(null);
+  const docInputRef = useRef<HTMLInputElement>(null);
+  
+  // Track active tab to conditionally show Save Changes button
+  const [activeTab, setActiveTab] = useState("basic-info");
 
   useEffect(() => {
     fetchOrganization();
@@ -565,8 +589,229 @@ export default function ProfilePage() {
   useEffect(() => {
     if (organization) {
       fetchCustomFields();
+      fetchKnowledgeBaseDocs();
     }
   }, [organization?.id]);
+
+  // File size formatter
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
+  // Fetch knowledge base documents
+  const fetchKnowledgeBaseDocs = async () => {
+    if (!organization) return;
+
+    setLoadingDocs(true);
+    try {
+      const response = await fetch(
+        `/api/organizations/${organization.id}/knowledge-base`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch knowledge base documents");
+      }
+
+      const data = await response.json();
+      setKnowledgeBaseDocs(data.documents);
+    } catch (error) {
+      console.error("Error fetching knowledge base documents:", error);
+      toast.error("Failed to load knowledge base documents");
+    } finally {
+      setLoadingDocs(false);
+    }
+  };
+
+  // Handle document upload
+  const handleUploadDocument = async (file: File) => {
+    if (!organization) return;
+
+    // Validate file type
+    const allowedTypes = [
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/csv",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Unsupported file type. Please upload PDF, Word, or CSV files.");
+      return;
+    }
+
+    // Validate file size (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File size exceeds 10MB limit");
+      return;
+    }
+
+    // Check document limit
+    if (knowledgeBaseDocs.length >= 10) {
+      toast.error("Maximum 10 documents allowed. Delete a document to upload a new one.");
+      return;
+    }
+
+    setUploadingDoc(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch(
+        `/api/organizations/${organization.id}/knowledge-base`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to upload document");
+      }
+
+      const data = await response.json();
+      setKnowledgeBaseDocs([data.document, ...knowledgeBaseDocs]);
+      toast.success("Document uploaded successfully");
+
+      // Reset file input
+      if (docInputRef.current) {
+        docInputRef.current.value = "";
+      }
+    } catch (error) {
+      console.error("Error uploading document:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to upload document"
+      );
+    } finally {
+      setUploadingDoc(false);
+    }
+  };
+
+  // Handle toggle document active/inactive
+  const handleToggleDocument = async (doc: KnowledgeBaseDocument) => {
+    if (!organization) return;
+
+    try {
+      const response = await fetch(
+        `/api/organizations/${organization.id}/knowledge-base/${doc.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            isActive: !doc.isActive,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to toggle document");
+      }
+
+      const data = await response.json();
+      setKnowledgeBaseDocs(
+        knowledgeBaseDocs.map((d) => (d.id === doc.id ? data.document : d))
+      );
+      toast.success(
+        `Document ${data.document.isActive ? "enabled" : "disabled"} in AI context`
+      );
+    } catch (error) {
+      console.error("Error toggling document:", error);
+      toast.error("Failed to toggle document");
+    }
+  };
+
+  // Handle replace document
+  const handleReplaceDocument = async (doc: KnowledgeBaseDocument) => {
+    setReplacingDoc(doc);
+    docInputRef.current?.click();
+  };
+
+  // Handle delete document
+  const handleDeleteDocument = async (doc: KnowledgeBaseDocument) => {
+    if (!organization) return;
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete '${doc.fileName}'? This will remove it from AI context.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch(
+        `/api/organizations/${organization.id}/knowledge-base/${doc.id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete document");
+      }
+
+      setKnowledgeBaseDocs(knowledgeBaseDocs.filter((d) => d.id !== doc.id));
+      toast.success("Document deleted successfully");
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      toast.error("Failed to delete document");
+    }
+  };
+
+  // Handle file input change
+  const handleDocumentFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (replacingDoc) {
+      // Replace existing document
+      if (!organization) return;
+
+      setUploadingDoc(true);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await fetch(
+          `/api/organizations/${organization.id}/knowledge-base/${replacingDoc.id}`,
+          {
+            method: "PATCH",
+            body: formData,
+          }
+        );
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Failed to replace document");
+        }
+
+        const data = await response.json();
+        setKnowledgeBaseDocs(
+          knowledgeBaseDocs.map((d) =>
+            d.id === replacingDoc.id ? data.document : d
+          )
+        );
+        toast.success("Document replaced successfully");
+        setReplacingDoc(null);
+      } catch (error) {
+        console.error("Error replacing document:", error);
+        toast.error(
+          error instanceof Error ? error.message : "Failed to replace document"
+        );
+      } finally {
+        setUploadingDoc(false);
+        if (docInputRef.current) {
+          docInputRef.current.value = "";
+        }
+      }
+    } else {
+      // Upload new document
+      await handleUploadDocument(file);
+    }
+  };
 
   // Handle create/update custom field
   const handleSaveCustomField = async (
@@ -728,26 +973,28 @@ export default function ProfilePage() {
             Manage your organization&apos;s information and settings
           </p>
         </div>
-        <Button onClick={handleSave} disabled={saving} size="lg">
-          {saving ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Saving...
-            </>
-          ) : (
-            <>
-              <Save className="mr-2 h-4 w-4" />
-              Save Changes
-            </>
-          )}
-        </Button>
+        {activeTab !== "knowledge-base" && (
+          <Button onClick={handleSave} disabled={saving} size="lg">
+            {saving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                Save Changes
+              </>
+            )}
+          </Button>
+        )}
       </div>
 
-      <Tabs defaultValue="basic-info" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 mb-8">
           <TabsTrigger value="basic-info">Basic Info</TabsTrigger>
           <TabsTrigger value="details">Details</TabsTrigger>
-          <TabsTrigger value="custom-fields">Custom Fields</TabsTrigger>
+          <TabsTrigger value="knowledge-base">Knowledge Base</TabsTrigger>
         </TabsList>
 
         <TabsContent value="basic-info" className="space-y-8">
@@ -1472,88 +1719,166 @@ export default function ProfilePage() {
 
         </TabsContent>
 
-        <TabsContent value="custom-fields" className="space-y-8">
-          {/* Custom Fields Header */}
+        <TabsContent value="knowledge-base" className="space-y-8">
+          {/* Knowledge Base Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold">Custom Fields</h3>
+              <h3 className="text-lg font-semibold">Knowledge Base</h3>
               <p className="text-sm text-muted-foreground">
-                Add custom information fields specific to your organization
+                Upload files to provide AI context throughout the application ({knowledgeBaseDocs.length}/10)
               </p>
             </div>
-            <Button onClick={handleAddField}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Custom Field
+            <Button 
+              onClick={() => docInputRef.current?.click()} 
+              disabled={knowledgeBaseDocs.length >= 10 || uploadingDoc}
+            >
+              {uploadingDoc ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Upload className="mr-2 h-4 w-4" />
+                  Upload File
+                </>
+              )}
             </Button>
           </div>
 
-          {/* Custom Fields List */}
-          {loadingCustomFields ? (
+          {/* Hidden file input */}
+          <input
+            ref={docInputRef}
+            type="file"
+            accept="application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/csv"
+            onChange={handleDocumentFileChange}
+            className="hidden"
+          />
+
+          {/* Knowledge Base Documents List */}
+          {loadingDocs ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
-          ) : customFields.length === 0 ? (
+          ) : knowledgeBaseDocs.length === 0 ? (
             <div className="text-center py-12 border-2 border-dashed rounded-lg">
+              <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground mb-4">
-                No custom fields yet. Add your first custom field to get
-                started.
+                No files uploaded yet. Upload your first file to enhance AI context.
               </p>
-              <Button variant="outline" onClick={handleAddField}>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Custom Field
+              <p className="text-xs text-muted-foreground mb-4">
+                Supported formats: PDF, Word (.docx), CSV • Max size: 10MB • Max files: 10
+              </p>
+              <Button variant="outline" onClick={() => docInputRef.current?.click()}>
+                <Upload className="mr-2 h-4 w-4" />
+                Upload File
               </Button>
             </div>
           ) : (
             <div className="grid gap-4">
-              {customFields.map((field) => (
-                <div
-                  key={field.id}
-                  className="border rounded-lg p-4 space-y-3 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-base">
-                        {field.fieldName}
-                      </h4>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {field.fieldValue ? (
-                          field.fieldValue.length > 200 ? (
-                            <>
-                              {field.fieldValue.substring(0, 200)}...
-                              <button
-                                className="text-primary hover:underline ml-1"
-                                onClick={() => handleEditField(field)}
+              {knowledgeBaseDocs.map((doc) => {
+                // Determine icon based on file type
+                const FileIcon = doc.fileType === "text/csv" ? Table : FileText;
+                
+                return (
+                  <div
+                    key={doc.id}
+                    className="border rounded-lg p-4 space-y-3 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-3 flex-1">
+                        {/* File icon */}
+                        <div className="flex-shrink-0">
+                          <FileIcon className="h-10 w-10 text-primary" />
+                        </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-base truncate">{doc.fileName}</h4>
+                          <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
+                            <span>{doc.fileType.split('/').pop()?.toUpperCase()}</span>
+                            <span>•</span>
+                            <span>{formatFileSize(doc.fileSize)}</span>
+                            <span>•</span>
+                            <span>{format(new Date(doc.createdAt), "MMM d, yyyy")}</span>
+                          </div>
+                          
+                          {/* Active status badge */}
+                          <div className="mt-2">
+                            {doc.isActive ? (
+                              <Badge className="text-xs bg-green-100 text-green-700 hover:bg-green-100 border-green-200">
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                Active in AI Context
+                              </Badge>
+                            ) : (
+                              <Badge variant="secondary" className="text-xs">
+                                <XCircle className="h-3 w-3 mr-1" />
+                                Inactive
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3 ml-4">
+                        {/* Toggle switch with green styling */}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="flex items-center">
+                                <Switch
+                                  checked={doc.isActive}
+                                  onCheckedChange={() => handleToggleDocument(doc)}
+                                  className="data-[state=checked]:bg-green-600"
+                                />
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {doc.isActive ? "Disable AI context" : "Enable AI context"}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        
+                        <div className="h-8 w-px bg-border" />
+                        
+                        {/* Replace button */}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => handleReplaceDocument(doc)}
+                                disabled={uploadingDoc}
                               >
-                                Show more
-                              </button>
-                            </>
-                          ) : (
-                            field.fieldValue
-                          )
-                        ) : (
-                          <span className="italic">No value set</span>
-                        )}
-                      </p>
-                    </div>
-                    <div className="flex gap-2 ml-4">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEditField(field)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteCustomField(field)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
+                                <Upload className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Replace document</TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        
+                        {/* Delete button */}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                onClick={() => handleDeleteDocument(doc)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Delete document</TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </TabsContent>
