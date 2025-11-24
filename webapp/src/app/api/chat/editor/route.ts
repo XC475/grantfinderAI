@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 import { getSourceDocumentContext } from "@/lib/documentContext";
+import { getActiveKnowledgeBase } from "@/lib/getOrgKnowledgeBase";
 
 interface FileAttachment {
   id: string;
@@ -180,6 +181,16 @@ ${opportunity.raw_text}`;
       sourceDocumentIds.length > 0
     ) {
       sourceContext = await getSourceDocumentContext(sourceDocumentIds);
+    }
+
+    // Get knowledge base context for organization
+    const knowledgeBaseContext = await getActiveKnowledgeBase(organization.id);
+    
+    // Combine source document context and knowledge base context
+    if (knowledgeBaseContext) {
+      sourceContext = sourceContext
+        ? `${sourceContext}\n\n## Organization Knowledge Base\n\n${knowledgeBaseContext}`
+        : `## Organization Knowledge Base\n\n${knowledgeBaseContext}`;
     }
 
     // Save user message with attachments

@@ -1,11 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { extractTextFromFile, cleanExtractedText } from "@/lib/fileExtraction";
+import { writeFile, unlink } from "fs/promises";
+import { join } from "path";
+import { tmpdir } from "os";
+import { randomUUID } from "crypto";
 import { extractText } from "unpdf";
 
 // Force Node.js runtime instead of Edge runtime
 export const runtime = "nodejs";
 
+// Allowed file types
+const ALLOWED_TYPES = [
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+];
+
 export async function POST(req: NextRequest) {
+  let tempFilePath: string | null = null;
+
   try {
     // Verify authentication
     const supabase = await createClient();
@@ -26,9 +39,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate file type
-    if (file.type !== "application/pdf") {
+    if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json(
-        { error: "Only PDF files are allowed" },
+        { error: "Only PDF and Word (.docx) files are allowed" },
         { status: 400 }
       );
     }
@@ -42,25 +55,38 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Convert file to Uint8Array (required by unpdf)
-    const arrayBuffer = await file.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
+    // Save file to temporary location for text extraction
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const sanitizedFileName = file.name.replace(/[/\\:*?"<>|]/g, "-");
+    tempFilePath = join(tmpdir(), `${randomUUID()}-${sanitizedFileName}`);
+    await writeFile(tempFilePath, buffer);
 
-    // Use unpdf - designed for serverless environments without canvas dependencies
-    const { text, totalPages } = await extractText(uint8Array);
+    // Extract text using shared utility
+    let extractedText: string;
+    let pageCount: number | undefined;
 
-    // unpdf returns text as an array (one per page), join them
-    const joinedText = Array.isArray(text) ? text.join("\n\n") : text;
+    if (file.type === "application/pdf") {
+      // For PDFs, use unpdf directly to get page count
+      const uint8Array = new Uint8Array(buffer);
+      const { text, totalPages } = await extractText(uint8Array);
+      const joinedText = Array.isArray(text) ? text.join("\n\n") : text;
+      extractedText = joinedText || "";
+      pageCount = totalPages;
+    } else {
+      // For DOCX and other types, use the shared utility
+      extractedText = await extractTextFromFile(tempFilePath, file.type);
+      // DOCX doesn't have pages, so we'll estimate based on content length
+      // Rough estimate: ~500 words per page
+      const wordCount = extractedText.split(/\s+/).length;
+      pageCount = Math.max(1, Math.ceil(wordCount / 500));
+    }
 
-    // Basic text cleaning
-    const extractedText = joinedText
-      .replace(/\s+/g, " ") // Normalize whitespace
-      .replace(/\n{3,}/g, "\n\n") // Remove excessive line breaks
-      .trim();
+    // Clean extracted text
+    extractedText = cleanExtractedText(extractedText);
 
     if (!extractedText || extractedText.length === 0) {
       return NextResponse.json(
-        { error: "No text could be extracted from the PDF" },
+        { error: "No text could be extracted from the file" },
         { status: 400 }
       );
     }
@@ -68,16 +94,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       text: extractedText,
-      pageCount: totalPages,
+      pageCount: pageCount || 1,
     });
   } catch (error) {
-    console.error("Error extracting PDF text:", error);
+    console.error("Error extracting text from file:", error);
     return NextResponse.json(
       {
-        error: "Failed to extract text from PDF",
+        error: "Failed to extract text from file",
         details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }
     );
+  } finally {
+    // Clean up temporary file
+    if (tempFilePath) {
+      try {
+        await unlink(tempFilePath);
+      } catch (cleanupError) {
+        console.warn("Failed to clean up temporary file:", cleanupError);
+      }
+    }
   }
 }

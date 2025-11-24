@@ -224,6 +224,19 @@ exports.Prisma.CustomFieldScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.KnowledgeBaseDocumentScalarFieldEnum = {
+  id: 'id',
+  fileName: 'fileName',
+  fileType: 'fileType',
+  fileSize: 'fileSize',
+  fileUrl: 'fileUrl',
+  extractedText: 'extractedText',
+  isActive: 'isActive',
+  organizationId: 'organizationId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.GrantBookmarkScalarFieldEnum = {
   id: 'id',
   notes: 'notes',
@@ -499,6 +512,7 @@ exports.Prisma.ModelName = {
   User: 'User',
   Organization: 'Organization',
   CustomField: 'CustomField',
+  KnowledgeBaseDocument: 'KnowledgeBaseDocument',
   GrantBookmark: 'GrantBookmark',
   GrantEligibilityAnalysis: 'GrantEligibilityAnalysis',
   Application: 'Application',

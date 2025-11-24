@@ -6,6 +6,7 @@ import { createGrantsAgent } from "@/lib/ai/agent";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { DistrictInfo } from "@/lib/ai/prompts/grants-assistant";
 import { getSourceDocumentContext } from "@/lib/documentContext";
+import { getActiveKnowledgeBase } from "@/lib/getOrgKnowledgeBase";
 
 interface FileAttachment {
   id: string;
@@ -94,6 +95,16 @@ export async function POST(req: NextRequest) {
       sourceDocumentIds.length > 0
     ) {
       sourceContext = await getSourceDocumentContext(sourceDocumentIds);
+    }
+
+    // Get knowledge base context for organization
+    const knowledgeBaseContext = await getActiveKnowledgeBase(userOrgId);
+    
+    // Combine source document context and knowledge base context
+    if (knowledgeBaseContext) {
+      sourceContext = sourceContext
+        ? `${sourceContext}\n\n## Organization Knowledge Base\n\n${knowledgeBaseContext}`
+        : `## Organization Knowledge Base\n\n${knowledgeBaseContext}`;
     }
 
     // 6. Save user message with attachments

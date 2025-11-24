@@ -7,7 +7,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  // directUrl = env("DIRECT_URL")  // Commented out - not needed for this migration
   schemas   = ["app", "public"]
 }
 
@@ -127,6 +127,7 @@ model Organization {
   eligibilityAnalyses    GrantEligibilityAnalysis[]
   recommendations        Recommendation[]
   users                  User[]                      @relation("UserOrganization")
+  knowledgeBase          KnowledgeBaseDocument[]     @relation("OrganizationKnowledgeBase")
 
   @@index([leaId])
   @@index([state])
@@ -145,6 +146,25 @@ model CustomField {
 
   @@index([organizationId])
   @@map("custom_fields")
+  @@schema("app")
+}
+
+model KnowledgeBaseDocument {
+  id             String       @id @default(cuid())
+  fileName       String
+  fileType       String
+  fileSize       Int
+  fileUrl        String?
+  extractedText  String       @db.Text
+  isActive       Boolean      @default(true)
+  organizationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation("OrganizationKnowledgeBase", fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([organizationId, isActive])
+  @@map("knowledge_base_documents")
   @@schema("app")
 }
 
