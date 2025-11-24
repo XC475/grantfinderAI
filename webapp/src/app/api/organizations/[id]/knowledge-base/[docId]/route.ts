@@ -54,7 +54,10 @@ export async function PATCH(
     });
 
     if (!existingDoc) {
-      return NextResponse.json({ error: "Document not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Document not found" },
+        { status: 404 }
+      );
     }
 
     const contentType = req.headers.get("content-type");
@@ -65,13 +68,19 @@ export async function PATCH(
       const file = formData.get("file") as File;
 
       if (!file) {
-        return NextResponse.json({ error: "No file provided" }, { status: 400 });
+        return NextResponse.json(
+          { error: "No file provided" },
+          { status: 400 }
+        );
       }
 
       // Validate file type
       if (!ALLOWED_TYPES.includes(file.type)) {
         return NextResponse.json(
-          { error: "Unsupported file type. Please upload PDF, Word, or CSV files." },
+          {
+            error:
+              "Unsupported file type. Please upload PDF, Word, or CSV files.",
+          },
           { status: 400 }
         );
       }
@@ -87,7 +96,10 @@ export async function PATCH(
       // Save file to temporary location
       const buffer = Buffer.from(await file.arrayBuffer());
       const sanitizedFileName = file.name.replace(/[/\\:*?"<>|]/g, "-");
-      const tempFilePath = join(tmpdir(), `${randomUUID()}-${sanitizedFileName}`);
+      const tempFilePath = join(
+        tmpdir(),
+        `${randomUUID()}-${sanitizedFileName}`
+      );
       await writeFile(tempFilePath, buffer);
 
       let extractedText: string | undefined;
@@ -140,7 +152,11 @@ export async function PATCH(
 
     // Handle JSON updates (toggle isActive, rename)
     const body = await req.json();
-    const updateData: any = {};
+    const updateData: {
+      isActive?: boolean;
+      fileName?: string;
+      updatedAt?: Date;
+    } = {};
 
     if (typeof body.isActive === "boolean") {
       updateData.isActive = body.isActive;
@@ -224,7 +240,10 @@ export async function DELETE(
     });
 
     if (!existingDoc) {
-      return NextResponse.json({ error: "Document not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Document not found" },
+        { status: 404 }
+      );
     }
 
     // Delete the document
@@ -244,4 +263,3 @@ export async function DELETE(
     );
   }
 }
-
