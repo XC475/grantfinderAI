@@ -284,11 +284,12 @@ export async function POST(req: NextRequest) {
               }
             } else if (chunk && typeof chunk === "object") {
               // Handle non-tuple chunks (fallback for compatibility)
-              if (chunk.content) {
-                content = chunk.content;
+              const chunkObj = chunk as any;
+              if (chunkObj.content) {
+                content = chunkObj.content;
                 shouldStream = true;
-              } else if (chunk.output) {
-                content = chunk.output;
+              } else if (chunkObj.output) {
+                content = chunkObj.output;
                 shouldStream = true;
               }
             } else if (typeof chunk === "string") {
