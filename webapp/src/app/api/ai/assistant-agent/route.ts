@@ -4,9 +4,9 @@ import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 import { createGrantsAgent } from "@/lib/ai/agent";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
-import { DistrictInfo } from "@/lib/ai/prompts/grants-assistant";
+import { DistrictInfo } from "@/lib/ai/prompts/chat-assistant";
 import { getSourceDocumentContext } from "@/lib/documentContext";
-import { getActiveKnowledgeBase } from "@/lib/getOrgKnowledgeBase";
+import { searchKnowledgeBase } from "@/lib/ai/knowledgeBaseRAG";
 
 interface FileAttachment {
   id: string;
@@ -97,9 +97,13 @@ export async function POST(req: NextRequest) {
       sourceContext = await getSourceDocumentContext(sourceDocumentIds);
     }
 
-    // Get knowledge base context for organization
-    const knowledgeBaseContext = await getActiveKnowledgeBase(userOrgId);
-    
+    // Get knowledge base context for organization using RAG
+    const knowledgeBaseContext = await searchKnowledgeBase(
+      lastUserMessage.content,
+      userOrgId,
+      { topK: 5 }
+    );
+
     // Combine source document context and knowledge base context
     if (knowledgeBaseContext) {
       sourceContext = sourceContext
