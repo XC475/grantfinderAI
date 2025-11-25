@@ -88,7 +88,8 @@ webapp/src/
     ├── agent.ts              # Agent factory & configuration
     ├── vector-store.ts       # Supabase vector search
     ├── prompts/
-    │   └── grants-assistant.ts  # System prompts & district context
+    │   ├── chat-assistant.ts    # Chat assistant system prompts & district context
+    │   └── chat-editor.ts       # Editor assistant system prompts
     └── tools/
         └── grant-search-tool.ts # Vector search tool definition
 ```
@@ -436,7 +437,7 @@ CREATE FUNCTION match_documents(
 
 ---
 
-### 5. System Prompts (`lib/ai/prompts/grants-assistant.ts`)
+### 5. System Prompts (`lib/ai/prompts/chat-assistant.ts`)
 
 **Purpose:** Configure agent behavior, response formatting, and district-specific context.
 
