@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { useDocument } from "@/contexts/DocumentContext";
+import { useEditorInstance } from "@/contexts/EditorInstanceContext";
 import "./editor-overrides.css";
 
 interface Document {
@@ -33,6 +34,7 @@ export function DocumentEditor({
   organizationSlug,
 }: DocumentEditorProps) {
   const { setDocumentTitle, setDocumentContent, setSaveStatus } = useDocument();
+  const { setEditor } = useEditorInstance();
   const router = useRouter();
   const [title, setTitle] = useState(document.title);
   const [content, setContent] = useState(() => {
@@ -147,6 +149,7 @@ export function DocumentEditor({
                 onSelectionAddToChat={handleSelectionAddToChat}
                 onSelectionAskAI={handleSelectionAskAI}
                 onSelectionImproveWriting={handleSelectionImproveWriting}
+                onEditorReady={setEditor}
               />
             </div>
           </div>

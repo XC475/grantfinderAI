@@ -144,7 +144,14 @@ export const FontFamilyDropdownMenu = React.forwardRef<
         })
       }
       
-      return font?.label || currentFontFamily.split(",")[0].replace(/['"]/g, "") || "Font"
+      const fullLabel = font?.label || currentFontFamily.split(",")[0].replace(/['"]/g, "") || "Font"
+      
+      // Truncate multi-word font names to show only first word + "..."
+      const words = fullLabel.split(" ")
+      if (words.length > 1) {
+        return words[0] + "..."
+      }
+      return fullLabel
     }, [currentFontFamily])
 
     if (!editor) {
@@ -170,7 +177,7 @@ export const FontFamilyDropdownMenu = React.forwardRef<
           </Button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="start" portal={portal} className="max-h-[200px] overflow-y-auto w-[200px]">
+        <DropdownMenuContent align="start" portal={portal} className="max-h-[150px] overflow-y-auto w-[250px] max-w-[250px]">
           <Card>
             <CardBody className="p-1">
               <div className="flex flex-col gap-0.5">

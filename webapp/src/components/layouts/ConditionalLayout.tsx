@@ -23,6 +23,10 @@ import {
   HeaderActionsProvider,
   useHeaderActions,
 } from "@/contexts/HeaderActionsContext";
+import { EditorInstanceProvider, useEditorInstance } from "@/contexts/EditorInstanceContext";
+import { EditorToolbar } from "@/components/tiptap-templates/simple/simple-editor";
+import { EditorContext } from "@tiptap/react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // ============================================================
 // AI ASSISTANT SIDEBAR DEFAULT WIDTH
@@ -71,6 +75,8 @@ function DocumentEditorLayoutContent({
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
+  const { editor } = useEditorInstance();
+  const isMobile = useIsMobile();
 
   // Only render ResizablePanelGroup on client to avoid hydration mismatches
   useEffect(() => {
@@ -82,12 +88,20 @@ function DocumentEditorLayoutContent({
     return (
       <div className="flex-1 w-full flex">
         <div className="flex-1 flex flex-col h-full bg-white">
-          <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b bg-white">
-            <div className="flex items-center gap-2 px-4">
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b bg-white">
+            {/* Left section: Document name */}
+            <div className="flex items-center gap-2 px-4 flex-shrink-0">
               <Separator orientation="vertical" className="mr-2 h-4" />
               <DynamicBreadcrumb organizationSlug={organizationSlug} />
             </div>
-            <div className="flex items-center gap-3 px-4">
+
+            {/* Center section: Toolbar placeholder */}
+            <div className="flex-1 min-w-0 overflow-hidden">
+              {/* Toolbar will render on client */}
+            </div>
+
+            {/* Right section: Saved status + panel toggle */}
+            <div className="flex items-center gap-3 px-4 flex-shrink-0">
               <SaveStatusIndicator />
               <Separator orientation="vertical" className="h-4" />
               <Button
@@ -119,12 +133,22 @@ function DocumentEditorLayoutContent({
         minSize={30}
       >
         <SidebarInset className="flex flex-col h-full bg-white">
-          <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white">
-            <div className="flex items-center gap-2 px-4">
+          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white">
+            {/* Left section: Document name */}
+            <div className="flex items-center gap-2 px-4 flex-shrink-0">
               <Separator orientation="vertical" className="mr-2 h-4" />
               <DynamicBreadcrumb organizationSlug={organizationSlug} />
             </div>
-            <div className="flex items-center gap-3 px-4">
+
+            {/* Center section: Toolbar (responsive width) */}
+            <div className="flex-1 min-w-0 overflow-hidden">
+              <EditorContext.Provider value={{ editor }}>
+                <EditorToolbar editor={editor} isMobile={isMobile} />
+              </EditorContext.Provider>
+            </div>
+
+            {/* Right section: Saved status + panel toggle */}
+            <div className="flex items-center gap-3 px-4 flex-shrink-0">
               <SaveStatusIndicator />
               <Separator orientation="vertical" className="h-4" />
               <Button
@@ -276,15 +300,17 @@ export function ConditionalLayout({
     // Document editor/viewer layout with assistant sidebar
     return (
       <DocumentProvider>
-        <SidebarProvider className="h-screen">
-          <AppSidebar />
-          <DocumentEditorLayoutContent
-            organizationSlug={organizationSlug}
-            documentId={documentId}
-          >
-            {children}
-          </DocumentEditorLayoutContent>
-        </SidebarProvider>
+        <EditorInstanceProvider>
+          <SidebarProvider className="h-screen">
+            <AppSidebar />
+            <DocumentEditorLayoutContent
+              organizationSlug={organizationSlug}
+              documentId={documentId}
+            >
+              {children}
+            </DocumentEditorLayoutContent>
+          </SidebarProvider>
+        </EditorInstanceProvider>
       </DocumentProvider>
     );
   }

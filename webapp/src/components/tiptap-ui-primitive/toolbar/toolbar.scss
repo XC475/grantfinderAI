@@ -38,15 +38,51 @@
     min-height: var(--tt-toolbar-height);
     background: var(--tt-toolbar-bg-color);
     border-bottom: 1px solid var(--tt-toolbar-border-color);
-    padding: 0 0.5rem;
+    padding: 0 0.5rem 6px;
     overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
     overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     -ms-overflow-style: none;
 
+    // Hide scrollbar by default
     &::-webkit-scrollbar {
+      height: 6px;
       display: none;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .dark & {
+      &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      &::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+    }
+
+    // Show scrollbar on hover
+    &:hover {
+      scrollbar-width: thin;
+
+      &::-webkit-scrollbar {
+        display: block;
+      }
     }
 
     @media (max-width: 480px) {

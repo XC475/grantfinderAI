@@ -71,6 +71,8 @@ import { FontSizeDropdownMenu } from "@/components/tiptap-ui/font-size-dropdown-
 import { TextColorPopover } from "@/components/tiptap-ui/text-color-popover";
 import { BackgroundColorPopover } from "@/components/tiptap-ui/background-color-popover";
 import { SelectionToolbar } from "@/components/tiptap-ui/selection-toolbar";
+import { OverflowMenu } from "@/components/tiptap-ui/overflow-menu";
+import { AlignIndentDropdownMenu } from "@/components/tiptap-ui/align-indent-dropdown-menu";
 
 // --- Icons ---
 import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon";
@@ -81,6 +83,7 @@ import { LinkIcon } from "@/components/tiptap-icons/link-icon";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
+import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
 
 // --- Components ---
 
@@ -89,6 +92,48 @@ import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss";
+
+// Extracted EditorToolbar component for use in header
+export interface EditorToolbarProps {
+  editor?: Editor | null;
+  isMobile?: boolean;
+}
+
+export const EditorToolbar = React.forwardRef<HTMLDivElement, EditorToolbarProps>(
+  ({ editor: providedEditor, isMobile = false }, ref) => {
+    const { editor } = useTiptapEditor(providedEditor);
+    const [mobileView, setMobileView] = React.useState<"main" | "highlighter" | "link">("main");
+
+  // Reset mobile view when switching between mobile and desktop
+  React.useEffect(() => {
+    if (!isMobile && mobileView !== "main") {
+      setMobileView("main");
+    }
+  }, [isMobile, mobileView]);
+
+  // Show toolbar immediately, even if editor isn't ready yet
+  // Buttons will be disabled automatically when editor is null
+  const isEditorReady = Boolean(editor);
+
+  return (
+    <Toolbar ref={ref} variant="fixed" data-editor-ready={isEditorReady}>
+      {mobileView === "main" ? (
+        <MainToolbarContent
+          onHighlighterClick={() => setMobileView("highlighter")}
+          onLinkClick={() => setMobileView("link")}
+          isMobile={isMobile}
+        />
+      ) : (
+        <MobileToolbarContent
+          type={mobileView === "highlighter" ? "highlighter" : "link"}
+          onBack={() => setMobileView("main")}
+        />
+      )}
+    </Toolbar>
+  );
+}
+);
+EditorToolbar.displayName = "EditorToolbar";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -103,6 +148,7 @@ const MainToolbarContent = ({
     <>
       <Spacer />
 
+      {/* Group 1: Undo/Redo */}
       <ToolbarGroup>
         <UndoRedoButton action="undo" />
         <UndoRedoButton action="redo" />
@@ -110,19 +156,14 @@ const MainToolbarContent = ({
 
       <ToolbarSeparator />
 
+      {/* Group 2: Text Style */}
       <ToolbarGroup>
         <HeadingDropdownMenu levels={[1, 2, 3, 4]} portal={isMobile} />
-        <ListDropdownMenu
-          types={["bulletList", "orderedList", "taskList"]}
-          portal={isMobile}
-        />
-        <BlockquoteButton />
-        <CodeBlockButton />
-        <PageBreakButton />
       </ToolbarGroup>
 
       <ToolbarSeparator />
 
+      {/* Group 3: Font and Size */}
       <ToolbarGroup>
         <FontFamilyDropdownMenu portal={isMobile} />
         <FontSizeDropdownMenu portal={isMobile} />
@@ -130,44 +171,66 @@ const MainToolbarContent = ({
 
       <ToolbarSeparator />
 
+      {/* Group 4: Text Formatting */}
       <ToolbarGroup>
         <MarkButton type="bold" />
         <MarkButton type="italic" />
-        <MarkButton type="strike" />
-        <MarkButton type="code" />
         <MarkButton type="underline" />
+        <MarkButton type="strike" />
+      </ToolbarGroup>
+
+      <ToolbarSeparator />
+
+      {/* Group 5: Text Color and Highlight */}
+      <ToolbarGroup>
         {!isMobile ? (
           <>
             <TextColorPopover />
-            <BackgroundColorPopover />
             <ColorHighlightPopover />
           </>
         ) : (
           <ColorHighlightPopoverButton onClick={onHighlighterClick} />
         )}
+      </ToolbarGroup>
+
+      <ToolbarSeparator />
+
+      {/* Group 6: Link */}
+      <ToolbarGroup>
         {!isMobile ? <LinkPopover /> : <LinkButton onClick={onLinkClick} />}
       </ToolbarGroup>
 
       <ToolbarSeparator />
 
+      {/* Group 7: Alignment and Indent */}
       <ToolbarGroup>
-        <MarkButton type="superscript" />
-        <MarkButton type="subscript" />
+        <AlignIndentDropdownMenu portal={isMobile} />
       </ToolbarGroup>
 
       <ToolbarSeparator />
 
+      {/* Group 8: Lists */}
       <ToolbarGroup>
-        <TextAlignButton align="left" />
-        <TextAlignButton align="center" />
-        <TextAlignButton align="right" />
-        <TextAlignButton align="justify" />
+        <ListDropdownMenu
+          types={["bulletList", "orderedList", "taskList"]}
+          portal={isMobile}
+        />
       </ToolbarGroup>
 
       <ToolbarSeparator />
 
+      {/* Group 9: Insert Options */}
       <ToolbarGroup>
         <ImageUploadButton text="Add" />
+        <BlockquoteButton />
+        <PageBreakButton />
+      </ToolbarGroup>
+
+      <ToolbarSeparator />
+
+      {/* Group 10: More Options */}
+      <ToolbarGroup>
+        <OverflowMenu isMobile={isMobile} />
       </ToolbarGroup>
 
       <Spacer />
@@ -285,6 +348,7 @@ interface SimpleEditorProps {
   onSelectionAddToChat?: (text: string) => void;
   onSelectionAskAI?: (text: string) => void;
   onSelectionImproveWriting?: (text: string) => void;
+  onEditorReady?: (editor: Editor | null) => void;
 }
 
 export function SimpleEditor({
@@ -293,6 +357,7 @@ export function SimpleEditor({
   onSelectionAddToChat,
   onSelectionAskAI,
   onSelectionImproveWriting,
+  onEditorReady,
 }: SimpleEditorProps = {}) {
   const isMobile = useIsMobile();
   const { height } = useWindowSize();
@@ -372,33 +437,16 @@ export function SimpleEditor({
     }
   }, [isMobile, mobileView]);
 
+  // Notify parent when editor is ready
+  React.useEffect(() => {
+    if (editor && onEditorReady) {
+      onEditorReady(editor);
+    }
+  }, [editor, onEditorReady]);
+
   return (
     <div className="simple-editor-wrapper">
       <EditorContext.Provider value={{ editor }}>
-        <Toolbar
-          ref={toolbarRef}
-          style={{
-            ...(isMobile
-              ? {
-                  bottom: `calc(100% - ${height - rect.y}px)`,
-                }
-              : {}),
-          }}
-        >
-          {mobileView === "main" ? (
-            <MainToolbarContent
-              onHighlighterClick={() => setMobileView("highlighter")}
-              onLinkClick={() => setMobileView("link")}
-              isMobile={isMobile}
-            />
-          ) : (
-            <MobileToolbarContent
-              type={mobileView === "highlighter" ? "highlighter" : "link"}
-              onBack={() => setMobileView("main")}
-            />
-          )}
-        </Toolbar>
-
         {editor && (
           <SelectionToolbar
             editor={editor}
