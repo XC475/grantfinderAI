@@ -125,7 +125,7 @@ export async function PATCH(
         );
       }
 
-      // Update document with new file
+      // Update document with new file and reset vectorization status
       const updatedDoc = await prisma.knowledgeBaseDocument.update({
         where: { id: docId },
         data: {
@@ -133,6 +133,10 @@ export async function PATCH(
           fileType: file.type,
           fileSize: file.size,
           extractedText,
+          vectorizationStatus: "PENDING",
+          vectorizedAt: null,
+          vectorizationError: null,
+          chunkCount: null,
           updatedAt: new Date(),
         },
         select: {
@@ -142,10 +146,24 @@ export async function PATCH(
           fileSize: true,
           fileUrl: true,
           isActive: true,
+          vectorizationStatus: true,
+          vectorizedAt: true,
+          vectorizationError: true,
+          chunkCount: true,
           createdAt: true,
           updatedAt: true,
         },
       });
+
+      // Trigger re-vectorization
+      const protocol = req.headers.get("x-forwarded-proto") || "http";
+      const host = req.headers.get("host") || "localhost:3000";
+      const vectorizeUrl = `${protocol}://${host}/api/organizations/${organizationId}/knowledge-base/vectorize`;
+
+      fetch(vectorizeUrl, {
+        method: "POST",
+        headers: { "x-api-key": process.env.INTERNAL_API_KEY! },
+      }).catch((err) => console.error("Failed to trigger vectorization:", err));
 
       return NextResponse.json({ document: updatedDoc });
     }
@@ -185,6 +203,10 @@ export async function PATCH(
         fileSize: true,
         fileUrl: true,
         isActive: true,
+        vectorizationStatus: true,
+        vectorizedAt: true,
+        vectorizationError: true,
+        chunkCount: true,
         createdAt: true,
         updatedAt: true,
       },
