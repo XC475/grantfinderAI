@@ -12,6 +12,7 @@ import { Typography } from "@tiptap/extension-typography";
 import { Highlight } from "@tiptap/extension-highlight";
 import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
+import { Underline } from "@tiptap/extension-underline";
 import { Selection } from "@tiptap/extensions";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { FontFamily } from "@tiptap/extension-font-family";
@@ -69,6 +70,7 @@ import { FontFamilyDropdownMenu } from "@/components/tiptap-ui/font-family-dropd
 import { FontSizeDropdownMenu } from "@/components/tiptap-ui/font-size-dropdown-menu";
 import { TextColorPopover } from "@/components/tiptap-ui/text-color-popover";
 import { BackgroundColorPopover } from "@/components/tiptap-ui/background-color-popover";
+import { SelectionToolbar } from "@/components/tiptap-ui/selection-toolbar";
 
 // --- Icons ---
 import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon";
@@ -280,11 +282,17 @@ const MarkdownPaste = Extension.create({
 interface SimpleEditorProps {
   initialContent?: string;
   onContentChange?: (content: string) => void;
+  onSelectionAddToChat?: (text: string) => void;
+  onSelectionAskAI?: (text: string) => void;
+  onSelectionImproveWriting?: (text: string) => void;
 }
 
 export function SimpleEditor({
   initialContent,
   onContentChange,
+  onSelectionAddToChat,
+  onSelectionAskAI,
+  onSelectionImproveWriting,
 }: SimpleEditorProps = {}) {
   const isMobile = useIsMobile();
   const { height } = useWindowSize();
@@ -325,6 +333,7 @@ export function SimpleEditor({
       Typography,
       Superscript,
       Subscript,
+      Underline,
       Selection,
       TextStyle,
       FontFamily,
@@ -389,6 +398,15 @@ export function SimpleEditor({
             />
           )}
         </Toolbar>
+
+        {editor && (
+          <SelectionToolbar
+            editor={editor}
+            onAddToChat={onSelectionAddToChat}
+            onAskAI={onSelectionAskAI}
+            onImproveWriting={onSelectionImproveWriting}
+          />
+        )}
 
         <EditorContent
           editor={editor}

@@ -110,6 +110,30 @@ export function DocumentEditor({
     // Title changes are handled separately if needed
   };
 
+  const handleSelectionAddToChat = useCallback((text: string) => {
+    window.dispatchEvent(
+      new CustomEvent("editor-selection-add-to-chat", {
+        detail: { text },
+      })
+    );
+  }, []);
+
+  const handleSelectionAskAI = useCallback((text: string) => {
+    window.dispatchEvent(
+      new CustomEvent("editor-selection-ask-ai", {
+        detail: { text, prompt: `Tell me about this section: ${text}` },
+      })
+    );
+  }, []);
+
+  const handleSelectionImproveWriting = useCallback((text: string) => {
+    window.dispatchEvent(
+      new CustomEvent("editor-selection-improve-writing", {
+        detail: { text, prompt: `Rewrite this section to be more persuasive: ${text}` },
+      })
+    );
+  }, []);
+
   return (
     <div className="h-full bg-white">
       {/* Main editor */}
@@ -120,6 +144,9 @@ export function DocumentEditor({
               <SimpleEditor
                 initialContent={content}
                 onContentChange={handleContentChange}
+                onSelectionAddToChat={handleSelectionAddToChat}
+                onSelectionAskAI={handleSelectionAskAI}
+                onSelectionImproveWriting={handleSelectionImproveWriting}
               />
             </div>
           </div>

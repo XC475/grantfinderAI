@@ -297,6 +297,14 @@ export function HeroChatInput({
             <ArrowUp className="h-5 w-5 text-white" />
           </Button>
         </div>
+
+        {/* Drag & Drop Overlay */}
+        {isDragging && (
+          <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center space-x-2 rounded-3xl border border-dashed border-primary bg-primary/5 text-sm text-muted-foreground">
+            <Paperclip className="h-4 w-4" />
+            <span>Drop your files here to attach them.</span>
+          </div>
+        )}
       </div>
 
       {/* Sources Modal */}
