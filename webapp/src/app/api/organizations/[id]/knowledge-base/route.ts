@@ -57,6 +57,10 @@ export async function GET(
         fileSize: true,
         fileUrl: true,
         isActive: true,
+        vectorizationStatus: true,
+        vectorizedAt: true,
+        vectorizationError: true,
+        chunkCount: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -124,7 +128,10 @@ export async function POST(
     // Validate file type
     if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json(
-        { error: "Unsupported file type. Please upload PDF, Word, or CSV files." },
+        {
+          error:
+            "Unsupported file type. Please upload PDF, Word, or CSV files.",
+        },
         { status: 400 }
       );
     }
@@ -175,6 +182,7 @@ export async function POST(
         extractedText,
         organizationId,
         isActive: true,
+        vectorizationStatus: "PENDING",
       },
       select: {
         id: true,
@@ -183,10 +191,23 @@ export async function POST(
         fileSize: true,
         fileUrl: true,
         isActive: true,
+        vectorizationStatus: true,
+        vectorizedAt: true,
+        chunkCount: true,
         createdAt: true,
         updatedAt: true,
       },
     });
+
+    // Trigger async vectorization (fire-and-forget)
+    const protocol = req.headers.get("x-forwarded-proto") || "http";
+    const host = req.headers.get("host") || "localhost:3000";
+    const vectorizeUrl = `${protocol}://${host}/api/organizations/${organizationId}/knowledge-base/vectorize`;
+
+    fetch(vectorizeUrl, {
+      method: "POST",
+      headers: { "x-api-key": process.env.INTERNAL_API_KEY! },
+    }).catch((err) => console.error("Failed to trigger vectorization:", err));
 
     return NextResponse.json({ document }, { status: 201 });
   } catch (error) {
@@ -200,4 +221,3 @@ export async function POST(
     );
   }
 }
-
