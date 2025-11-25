@@ -5,7 +5,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { ToolMessage } from "@langchain/core/messages";
 import type { ToolCall } from "@langchain/core/messages/tool";
 import { createGrantSearchTool } from "@/lib/ai/tools/grant-search-tool";
-import { DistrictInfo } from "@/lib/ai/prompts/grants-assistant";
+import { DistrictInfo } from "@/lib/ai/prompts/chat-assistant";
 
 interface RecommendationResult {
   opportunity_id: number;
@@ -93,10 +93,13 @@ export async function POST(_req: NextRequest) {
             : null,
           fiscalYearEnd: organization.fiscalYearEnd,
           customFields: organization.customFields
-            ? organization.customFields.reduce((acc, field) => {
-                acc[field.fieldName] = field.fieldValue;
-                return acc;
-              }, {} as Record<string, string | null>)
+            ? organization.customFields.reduce(
+                (acc, field) => {
+                  acc[field.fieldName] = field.fieldValue;
+                  return acc;
+                },
+                {} as Record<string, string | null>
+              )
             : {},
         }
       : null;
@@ -121,10 +124,13 @@ export async function POST(_req: NextRequest) {
           : null,
         fiscalYearEnd: organization.fiscalYearEnd,
         customFields: organization.customFields
-          ? organization.customFields.reduce((acc, field) => {
-              acc[field.fieldName] = field.fieldValue;
-              return acc;
-            }, {} as Record<string, string | null>)
+          ? organization.customFields.reduce(
+              (acc, field) => {
+                acc[field.fieldName] = field.fieldValue;
+                return acc;
+              },
+              {} as Record<string, string | null>
+            )
           : {},
       }
     );
