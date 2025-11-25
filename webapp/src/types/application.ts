@@ -29,3 +29,4 @@ export interface UpdateApplicationOpportunityRequest extends OpportunityData {
 }
 
 
+
