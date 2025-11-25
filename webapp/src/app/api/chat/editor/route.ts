@@ -3,7 +3,8 @@ import OpenAI from "openai";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 import { getSourceDocumentContext } from "@/lib/documentContext";
-import { getActiveKnowledgeBase } from "@/lib/getOrgKnowledgeBase";
+import { searchKnowledgeBase } from "@/lib/ai/knowledgeBaseRAG";
+import { buildEditorSystemPrompt } from "@/lib/ai/prompts/chat-editor";
 
 interface FileAttachment {
   id: string;
@@ -183,9 +184,13 @@ ${opportunity.raw_text}`;
       sourceContext = await getSourceDocumentContext(sourceDocumentIds);
     }
 
-    // Get knowledge base context for organization
-    const knowledgeBaseContext = await getActiveKnowledgeBase(organization.id);
-    
+    // Get knowledge base context for organization using RAG
+    const knowledgeBaseContext = await searchKnowledgeBase(
+      lastUserMessage.content,
+      organization.id,
+      { topK: 5 }
+    );
+
     // Combine source document context and knowledge base context
     if (knowledgeBaseContext) {
       sourceContext = sourceContext
@@ -223,46 +228,16 @@ ${opportunity.raw_text}`;
       });
     }
 
-    // Build organization context for system prompt
-    let organizationContext = "";
-    if (organization) {
-      organizationContext = `
-
-ORGANIZATION CONTEXT:
-You are assisting ${organization.name}${organization.city && organization.state ? ` located in ${organization.city}, ${organization.state}` : ""}.
-${organization.enrollment ? `Enrollment: ${organization.enrollment.toLocaleString()} students` : ""}
-${organization.numberOfSchools ? `Number of Schools: ${organization.numberOfSchools}` : ""}
-${organization.lowestGrade && organization.highestGrade ? `Grade Range: ${organization.lowestGrade} - ${organization.highestGrade}` : ""}
-${organization.missionStatement ? `\nMission Statement: ${organization.missionStatement}` : ""}
-${organization.strategicPlan ? `\nStrategic Plan: ${organization.strategicPlan}` : ""}
-${organization.annualOperatingBudget ? `\nAnnual Operating Budget: $${Number(organization.annualOperatingBudget).toLocaleString()}` : ""}
-${organization.fiscalYearEnd ? `Fiscal Year End: ${organization.fiscalYearEnd}` : ""}
-${organization.customFields && organization.customFields.length > 0 ? `\n\nCUSTOM FIELDS:\n${organization.customFields.map(field => `${field.fieldName}: ${field.fieldValue || 'N/A'}`).join('\n')}` : ""}`;
-    }
-
-    // Build system prompt with document context, organization info, application context, attachments, and source documents
-    const systemPrompt = `You are a helpful assistant for a grant writing application called GrantWare. 
-You are helping the user with their document titled "${documentTitle || document.title || "Untitled Document"}".
-${organizationContext}
-${applicationContext}
-
-CURRENT DOCUMENT CONTENT:
-${documentContent || "No content yet."}${attachmentContext}
-${sourceContext ? `\n\n${sourceContext}` : ""}
-
-Provide helpful, concise responses about the document content, suggest improvements, 
-answer questions, and help with grant writing tasks. Be specific and reference the 
-actual content when relevant. Use the organization context to provide tailored suggestions 
-that align with the organization's mission, size, and needs. When application context is 
-available, ensure your suggestions align with the grant opportunity's requirements and guidelines.
-
-OUTPUT FORMAT:
-Use **clean, well-structured markdown** with clear visual hierarchy.
-- Use \`#\` for the **main title**
-- Use \`##\` or \`###\` for **section headers**
-- Use \`**bold**\` for important data, field names, and emphasis.
-- Use bullet points (\`-\`) or numbered lists when listing actions, insights, or recommendations.
-`;
+    // Build system prompt using the chat-editor prompt builder
+    const systemPrompt = buildEditorSystemPrompt({
+      documentTitle: documentTitle || document.title || "Untitled Document",
+      documentContent: documentContent || "No content yet.",
+      organizationInfo: organization,
+      applicationContext,
+      attachmentContext,
+      sourceContext,
+      knowledgeBaseContext,
+    });
 
     // Prepare messages for OpenAI
     // Append attachment text to user messages (same as normal chat)
