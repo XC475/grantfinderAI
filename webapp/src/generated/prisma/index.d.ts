@@ -44,6 +44,11 @@ export type CustomField = $Result.DefaultSelection<Prisma.$CustomFieldPayload>
  */
 export type KnowledgeBaseDocument = $Result.DefaultSelection<Prisma.$KnowledgeBaseDocumentPayload>
 /**
+ * Model KnowledgeBaseVector
+ * 
+ */
+export type KnowledgeBaseVector = $Result.DefaultSelection<Prisma.$KnowledgeBaseVectorPayload>
+/**
  * Model GrantBookmark
  * 
  */
@@ -158,6 +163,16 @@ export const OrganizationRole: {
 };
 
 export type OrganizationRole = (typeof OrganizationRole)[keyof typeof OrganizationRole]
+
+
+export const VectorizationStatus: {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+};
+
+export type VectorizationStatus = (typeof VectorizationStatus)[keyof typeof VectorizationStatus]
 
 
 export const funding_type_enum: {
@@ -279,6 +294,10 @@ export const MessageRole: typeof $Enums.MessageRole
 export type OrganizationRole = $Enums.OrganizationRole
 
 export const OrganizationRole: typeof $Enums.OrganizationRole
+
+export type VectorizationStatus = $Enums.VectorizationStatus
+
+export const VectorizationStatus: typeof $Enums.VectorizationStatus
 
 export type funding_type_enum = $Enums.funding_type_enum
 
@@ -473,6 +492,16 @@ export class PrismaClient<
     * ```
     */
   get knowledgeBaseDocument(): Prisma.KnowledgeBaseDocumentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.knowledgeBaseVector`: Exposes CRUD operations for the **KnowledgeBaseVector** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more KnowledgeBaseVectors
+    * const knowledgeBaseVectors = await prisma.knowledgeBaseVector.findMany()
+    * ```
+    */
+  get knowledgeBaseVector(): Prisma.KnowledgeBaseVectorDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.grantBookmark`: Exposes CRUD operations for the **GrantBookmark** model.
@@ -1020,6 +1049,7 @@ export namespace Prisma {
     Organization: 'Organization',
     CustomField: 'CustomField',
     KnowledgeBaseDocument: 'KnowledgeBaseDocument',
+    KnowledgeBaseVector: 'KnowledgeBaseVector',
     GrantBookmark: 'GrantBookmark',
     GrantEligibilityAnalysis: 'GrantEligibilityAnalysis',
     Application: 'Application',
@@ -1048,7 +1078,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "customField" | "knowledgeBaseDocument" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "vectorDocument" | "document" | "folder" | "k12_education_opportunities"
+      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "customField" | "knowledgeBaseDocument" | "knowledgeBaseVector" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "vectorDocument" | "document" | "folder" | "k12_education_opportunities"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1493,6 +1523,80 @@ export namespace Prisma {
           count: {
             args: Prisma.KnowledgeBaseDocumentCountArgs<ExtArgs>
             result: $Utils.Optional<KnowledgeBaseDocumentCountAggregateOutputType> | number
+          }
+        }
+      }
+      KnowledgeBaseVector: {
+        payload: Prisma.$KnowledgeBaseVectorPayload<ExtArgs>
+        fields: Prisma.KnowledgeBaseVectorFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.KnowledgeBaseVectorFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseVectorPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.KnowledgeBaseVectorFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseVectorPayload>
+          }
+          findFirst: {
+            args: Prisma.KnowledgeBaseVectorFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseVectorPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.KnowledgeBaseVectorFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseVectorPayload>
+          }
+          findMany: {
+            args: Prisma.KnowledgeBaseVectorFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseVectorPayload>[]
+          }
+          create: {
+            args: Prisma.KnowledgeBaseVectorCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseVectorPayload>
+          }
+          createMany: {
+            args: Prisma.KnowledgeBaseVectorCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.KnowledgeBaseVectorCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseVectorPayload>[]
+          }
+          delete: {
+            args: Prisma.KnowledgeBaseVectorDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseVectorPayload>
+          }
+          update: {
+            args: Prisma.KnowledgeBaseVectorUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseVectorPayload>
+          }
+          deleteMany: {
+            args: Prisma.KnowledgeBaseVectorDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.KnowledgeBaseVectorUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.KnowledgeBaseVectorUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseVectorPayload>[]
+          }
+          upsert: {
+            args: Prisma.KnowledgeBaseVectorUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KnowledgeBaseVectorPayload>
+          }
+          aggregate: {
+            args: Prisma.KnowledgeBaseVectorAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateKnowledgeBaseVector>
+          }
+          groupBy: {
+            args: Prisma.KnowledgeBaseVectorGroupByArgs<ExtArgs>
+            result: $Utils.Optional<KnowledgeBaseVectorGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.KnowledgeBaseVectorCountArgs<ExtArgs>
+            result: $Utils.Optional<KnowledgeBaseVectorCountAggregateOutputType> | number
           }
         }
       }
@@ -2338,6 +2442,7 @@ export namespace Prisma {
     organization?: OrganizationOmit
     customField?: CustomFieldOmit
     knowledgeBaseDocument?: KnowledgeBaseDocumentOmit
+    knowledgeBaseVector?: KnowledgeBaseVectorOmit
     grantBookmark?: GrantBookmarkOmit
     grantEligibilityAnalysis?: GrantEligibilityAnalysisOmit
     application?: ApplicationOmit
@@ -2506,9 +2611,9 @@ export namespace Prisma {
     folders: number
     grantBookmarks: number
     eligibilityAnalyses: number
+    knowledgeBase: number
     recommendations: number
     users: number
-    knowledgeBase: number
   }
 
   export type OrganizationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2519,9 +2624,9 @@ export namespace Prisma {
     folders?: boolean | OrganizationCountOutputTypeCountFoldersArgs
     grantBookmarks?: boolean | OrganizationCountOutputTypeCountGrantBookmarksArgs
     eligibilityAnalyses?: boolean | OrganizationCountOutputTypeCountEligibilityAnalysesArgs
+    knowledgeBase?: boolean | OrganizationCountOutputTypeCountKnowledgeBaseArgs
     recommendations?: boolean | OrganizationCountOutputTypeCountRecommendationsArgs
     users?: boolean | OrganizationCountOutputTypeCountUsersArgs
-    knowledgeBase?: boolean | OrganizationCountOutputTypeCountKnowledgeBaseArgs
   }
 
   // Custom InputTypes
@@ -2587,6 +2692,13 @@ export namespace Prisma {
   /**
    * OrganizationCountOutputType without action
    */
+  export type OrganizationCountOutputTypeCountKnowledgeBaseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: KnowledgeBaseDocumentWhereInput
+  }
+
+  /**
+   * OrganizationCountOutputType without action
+   */
   export type OrganizationCountOutputTypeCountRecommendationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RecommendationWhereInput
   }
@@ -2598,11 +2710,35 @@ export namespace Prisma {
     where?: UserWhereInput
   }
 
+
   /**
-   * OrganizationCountOutputType without action
+   * Count Type KnowledgeBaseDocumentCountOutputType
    */
-  export type OrganizationCountOutputTypeCountKnowledgeBaseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: KnowledgeBaseDocumentWhereInput
+
+  export type KnowledgeBaseDocumentCountOutputType = {
+    vectors: number
+  }
+
+  export type KnowledgeBaseDocumentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    vectors?: boolean | KnowledgeBaseDocumentCountOutputTypeCountVectorsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * KnowledgeBaseDocumentCountOutputType without action
+   */
+  export type KnowledgeBaseDocumentCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseDocumentCountOutputType
+     */
+    select?: KnowledgeBaseDocumentCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * KnowledgeBaseDocumentCountOutputType without action
+   */
+  export type KnowledgeBaseDocumentCountOutputTypeCountVectorsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: KnowledgeBaseVectorWhereInput
   }
 
 
@@ -6858,9 +6994,9 @@ export namespace Prisma {
     folders?: boolean | Organization$foldersArgs<ExtArgs>
     grantBookmarks?: boolean | Organization$grantBookmarksArgs<ExtArgs>
     eligibilityAnalyses?: boolean | Organization$eligibilityAnalysesArgs<ExtArgs>
+    knowledgeBase?: boolean | Organization$knowledgeBaseArgs<ExtArgs>
     recommendations?: boolean | Organization$recommendationsArgs<ExtArgs>
     users?: boolean | Organization$usersArgs<ExtArgs>
-    knowledgeBase?: boolean | Organization$knowledgeBaseArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["organization"]>
 
@@ -6972,9 +7108,9 @@ export namespace Prisma {
     folders?: boolean | Organization$foldersArgs<ExtArgs>
     grantBookmarks?: boolean | Organization$grantBookmarksArgs<ExtArgs>
     eligibilityAnalyses?: boolean | Organization$eligibilityAnalysesArgs<ExtArgs>
+    knowledgeBase?: boolean | Organization$knowledgeBaseArgs<ExtArgs>
     recommendations?: boolean | Organization$recommendationsArgs<ExtArgs>
     users?: boolean | Organization$usersArgs<ExtArgs>
-    knowledgeBase?: boolean | Organization$knowledgeBaseArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -6990,9 +7126,9 @@ export namespace Prisma {
       folders: Prisma.$FolderPayload<ExtArgs>[]
       grantBookmarks: Prisma.$GrantBookmarkPayload<ExtArgs>[]
       eligibilityAnalyses: Prisma.$GrantEligibilityAnalysisPayload<ExtArgs>[]
+      knowledgeBase: Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>[]
       recommendations: Prisma.$RecommendationPayload<ExtArgs>[]
       users: Prisma.$UserPayload<ExtArgs>[]
-      knowledgeBase: Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7426,9 +7562,9 @@ export namespace Prisma {
     folders<T extends Organization$foldersArgs<ExtArgs> = {}>(args?: Subset<T, Organization$foldersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     grantBookmarks<T extends Organization$grantBookmarksArgs<ExtArgs> = {}>(args?: Subset<T, Organization$grantBookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GrantBookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     eligibilityAnalyses<T extends Organization$eligibilityAnalysesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$eligibilityAnalysesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GrantEligibilityAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    knowledgeBase<T extends Organization$knowledgeBaseArgs<ExtArgs> = {}>(args?: Subset<T, Organization$knowledgeBaseArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     recommendations<T extends Organization$recommendationsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$recommendationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecommendationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     users<T extends Organization$usersArgs<ExtArgs> = {}>(args?: Subset<T, Organization$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    knowledgeBase<T extends Organization$knowledgeBaseArgs<ExtArgs> = {}>(args?: Subset<T, Organization$knowledgeBaseArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8044,6 +8180,30 @@ export namespace Prisma {
   }
 
   /**
+   * Organization.knowledgeBase
+   */
+  export type Organization$knowledgeBaseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseDocument
+     */
+    select?: KnowledgeBaseDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseDocument
+     */
+    omit?: KnowledgeBaseDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseDocumentInclude<ExtArgs> | null
+    where?: KnowledgeBaseDocumentWhereInput
+    orderBy?: KnowledgeBaseDocumentOrderByWithRelationInput | KnowledgeBaseDocumentOrderByWithRelationInput[]
+    cursor?: KnowledgeBaseDocumentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: KnowledgeBaseDocumentScalarFieldEnum | KnowledgeBaseDocumentScalarFieldEnum[]
+  }
+
+  /**
    * Organization.recommendations
    */
   export type Organization$recommendationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8089,30 +8249,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
-  }
-
-  /**
-   * Organization.knowledgeBase
-   */
-  export type Organization$knowledgeBaseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeBaseDocument
-     */
-    select?: KnowledgeBaseDocumentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the KnowledgeBaseDocument
-     */
-    omit?: KnowledgeBaseDocumentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeBaseDocumentInclude<ExtArgs> | null
-    where?: KnowledgeBaseDocumentWhereInput
-    orderBy?: KnowledgeBaseDocumentOrderByWithRelationInput | KnowledgeBaseDocumentOrderByWithRelationInput[]
-    cursor?: KnowledgeBaseDocumentWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: KnowledgeBaseDocumentScalarFieldEnum | KnowledgeBaseDocumentScalarFieldEnum[]
   }
 
   /**
@@ -9219,10 +9355,12 @@ export namespace Prisma {
 
   export type KnowledgeBaseDocumentAvgAggregateOutputType = {
     fileSize: number | null
+    chunkCount: number | null
   }
 
   export type KnowledgeBaseDocumentSumAggregateOutputType = {
     fileSize: number | null
+    chunkCount: number | null
   }
 
   export type KnowledgeBaseDocumentMinAggregateOutputType = {
@@ -9236,6 +9374,10 @@ export namespace Prisma {
     organizationId: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    chunkCount: number | null
+    vectorizationError: string | null
+    vectorizationStatus: $Enums.VectorizationStatus | null
+    vectorizedAt: Date | null
   }
 
   export type KnowledgeBaseDocumentMaxAggregateOutputType = {
@@ -9249,6 +9391,10 @@ export namespace Prisma {
     organizationId: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    chunkCount: number | null
+    vectorizationError: string | null
+    vectorizationStatus: $Enums.VectorizationStatus | null
+    vectorizedAt: Date | null
   }
 
   export type KnowledgeBaseDocumentCountAggregateOutputType = {
@@ -9262,16 +9408,22 @@ export namespace Prisma {
     organizationId: number
     createdAt: number
     updatedAt: number
+    chunkCount: number
+    vectorizationError: number
+    vectorizationStatus: number
+    vectorizedAt: number
     _all: number
   }
 
 
   export type KnowledgeBaseDocumentAvgAggregateInputType = {
     fileSize?: true
+    chunkCount?: true
   }
 
   export type KnowledgeBaseDocumentSumAggregateInputType = {
     fileSize?: true
+    chunkCount?: true
   }
 
   export type KnowledgeBaseDocumentMinAggregateInputType = {
@@ -9285,6 +9437,10 @@ export namespace Prisma {
     organizationId?: true
     createdAt?: true
     updatedAt?: true
+    chunkCount?: true
+    vectorizationError?: true
+    vectorizationStatus?: true
+    vectorizedAt?: true
   }
 
   export type KnowledgeBaseDocumentMaxAggregateInputType = {
@@ -9298,6 +9454,10 @@ export namespace Prisma {
     organizationId?: true
     createdAt?: true
     updatedAt?: true
+    chunkCount?: true
+    vectorizationError?: true
+    vectorizationStatus?: true
+    vectorizedAt?: true
   }
 
   export type KnowledgeBaseDocumentCountAggregateInputType = {
@@ -9311,6 +9471,10 @@ export namespace Prisma {
     organizationId?: true
     createdAt?: true
     updatedAt?: true
+    chunkCount?: true
+    vectorizationError?: true
+    vectorizationStatus?: true
+    vectorizedAt?: true
     _all?: true
   }
 
@@ -9411,6 +9575,10 @@ export namespace Prisma {
     organizationId: string
     createdAt: Date
     updatedAt: Date
+    chunkCount: number | null
+    vectorizationError: string | null
+    vectorizationStatus: $Enums.VectorizationStatus
+    vectorizedAt: Date | null
     _count: KnowledgeBaseDocumentCountAggregateOutputType | null
     _avg: KnowledgeBaseDocumentAvgAggregateOutputType | null
     _sum: KnowledgeBaseDocumentSumAggregateOutputType | null
@@ -9443,7 +9611,13 @@ export namespace Prisma {
     organizationId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    chunkCount?: boolean
+    vectorizationError?: boolean
+    vectorizationStatus?: boolean
+    vectorizedAt?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    vectors?: boolean | KnowledgeBaseDocument$vectorsArgs<ExtArgs>
+    _count?: boolean | KnowledgeBaseDocumentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["knowledgeBaseDocument"]>
 
   export type KnowledgeBaseDocumentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9457,6 +9631,10 @@ export namespace Prisma {
     organizationId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    chunkCount?: boolean
+    vectorizationError?: boolean
+    vectorizationStatus?: boolean
+    vectorizedAt?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["knowledgeBaseDocument"]>
 
@@ -9471,6 +9649,10 @@ export namespace Prisma {
     organizationId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    chunkCount?: boolean
+    vectorizationError?: boolean
+    vectorizationStatus?: boolean
+    vectorizedAt?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["knowledgeBaseDocument"]>
 
@@ -9485,11 +9667,17 @@ export namespace Prisma {
     organizationId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    chunkCount?: boolean
+    vectorizationError?: boolean
+    vectorizationStatus?: boolean
+    vectorizedAt?: boolean
   }
 
-  export type KnowledgeBaseDocumentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fileName" | "fileType" | "fileSize" | "fileUrl" | "extractedText" | "isActive" | "organizationId" | "createdAt" | "updatedAt", ExtArgs["result"]["knowledgeBaseDocument"]>
+  export type KnowledgeBaseDocumentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fileName" | "fileType" | "fileSize" | "fileUrl" | "extractedText" | "isActive" | "organizationId" | "createdAt" | "updatedAt" | "chunkCount" | "vectorizationError" | "vectorizationStatus" | "vectorizedAt", ExtArgs["result"]["knowledgeBaseDocument"]>
   export type KnowledgeBaseDocumentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    vectors?: boolean | KnowledgeBaseDocument$vectorsArgs<ExtArgs>
+    _count?: boolean | KnowledgeBaseDocumentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type KnowledgeBaseDocumentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -9502,6 +9690,7 @@ export namespace Prisma {
     name: "KnowledgeBaseDocument"
     objects: {
       organization: Prisma.$OrganizationPayload<ExtArgs>
+      vectors: Prisma.$KnowledgeBaseVectorPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9514,6 +9703,10 @@ export namespace Prisma {
       organizationId: string
       createdAt: Date
       updatedAt: Date
+      chunkCount: number | null
+      vectorizationError: string | null
+      vectorizationStatus: $Enums.VectorizationStatus
+      vectorizedAt: Date | null
     }, ExtArgs["result"]["knowledgeBaseDocument"]>
     composites: {}
   }
@@ -9909,6 +10102,7 @@ export namespace Prisma {
   export interface Prisma__KnowledgeBaseDocumentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    vectors<T extends KnowledgeBaseDocument$vectorsArgs<ExtArgs> = {}>(args?: Subset<T, KnowledgeBaseDocument$vectorsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeBaseVectorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9948,6 +10142,10 @@ export namespace Prisma {
     readonly organizationId: FieldRef<"KnowledgeBaseDocument", 'String'>
     readonly createdAt: FieldRef<"KnowledgeBaseDocument", 'DateTime'>
     readonly updatedAt: FieldRef<"KnowledgeBaseDocument", 'DateTime'>
+    readonly chunkCount: FieldRef<"KnowledgeBaseDocument", 'Int'>
+    readonly vectorizationError: FieldRef<"KnowledgeBaseDocument", 'String'>
+    readonly vectorizationStatus: FieldRef<"KnowledgeBaseDocument", 'VectorizationStatus'>
+    readonly vectorizedAt: FieldRef<"KnowledgeBaseDocument", 'DateTime'>
   }
     
 
@@ -10344,6 +10542,30 @@ export namespace Prisma {
   }
 
   /**
+   * KnowledgeBaseDocument.vectors
+   */
+  export type KnowledgeBaseDocument$vectorsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseVector
+     */
+    select?: KnowledgeBaseVectorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseVector
+     */
+    omit?: KnowledgeBaseVectorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseVectorInclude<ExtArgs> | null
+    where?: KnowledgeBaseVectorWhereInput
+    orderBy?: KnowledgeBaseVectorOrderByWithRelationInput | KnowledgeBaseVectorOrderByWithRelationInput[]
+    cursor?: KnowledgeBaseVectorWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: KnowledgeBaseVectorScalarFieldEnum | KnowledgeBaseVectorScalarFieldEnum[]
+  }
+
+  /**
    * KnowledgeBaseDocument without action
    */
   export type KnowledgeBaseDocumentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10359,6 +10581,1184 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: KnowledgeBaseDocumentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model KnowledgeBaseVector
+   */
+
+  export type AggregateKnowledgeBaseVector = {
+    _count: KnowledgeBaseVectorCountAggregateOutputType | null
+    _avg: KnowledgeBaseVectorAvgAggregateOutputType | null
+    _sum: KnowledgeBaseVectorSumAggregateOutputType | null
+    _min: KnowledgeBaseVectorMinAggregateOutputType | null
+    _max: KnowledgeBaseVectorMaxAggregateOutputType | null
+  }
+
+  export type KnowledgeBaseVectorAvgAggregateOutputType = {
+    id: number | null
+    chunkIndex: number | null
+    totalChunks: number | null
+  }
+
+  export type KnowledgeBaseVectorSumAggregateOutputType = {
+    id: bigint | null
+    chunkIndex: number | null
+    totalChunks: number | null
+  }
+
+  export type KnowledgeBaseVectorMinAggregateOutputType = {
+    id: bigint | null
+    kbDocumentId: string | null
+    organizationId: string | null
+    chunkIndex: number | null
+    totalChunks: number | null
+    content: string | null
+    fileName: string | null
+    fileType: string | null
+    contentHash: string | null
+    vectorizedAt: Date | null
+    model: string | null
+  }
+
+  export type KnowledgeBaseVectorMaxAggregateOutputType = {
+    id: bigint | null
+    kbDocumentId: string | null
+    organizationId: string | null
+    chunkIndex: number | null
+    totalChunks: number | null
+    content: string | null
+    fileName: string | null
+    fileType: string | null
+    contentHash: string | null
+    vectorizedAt: Date | null
+    model: string | null
+  }
+
+  export type KnowledgeBaseVectorCountAggregateOutputType = {
+    id: number
+    kbDocumentId: number
+    organizationId: number
+    chunkIndex: number
+    totalChunks: number
+    content: number
+    fileName: number
+    fileType: number
+    contentHash: number
+    vectorizedAt: number
+    model: number
+    _all: number
+  }
+
+
+  export type KnowledgeBaseVectorAvgAggregateInputType = {
+    id?: true
+    chunkIndex?: true
+    totalChunks?: true
+  }
+
+  export type KnowledgeBaseVectorSumAggregateInputType = {
+    id?: true
+    chunkIndex?: true
+    totalChunks?: true
+  }
+
+  export type KnowledgeBaseVectorMinAggregateInputType = {
+    id?: true
+    kbDocumentId?: true
+    organizationId?: true
+    chunkIndex?: true
+    totalChunks?: true
+    content?: true
+    fileName?: true
+    fileType?: true
+    contentHash?: true
+    vectorizedAt?: true
+    model?: true
+  }
+
+  export type KnowledgeBaseVectorMaxAggregateInputType = {
+    id?: true
+    kbDocumentId?: true
+    organizationId?: true
+    chunkIndex?: true
+    totalChunks?: true
+    content?: true
+    fileName?: true
+    fileType?: true
+    contentHash?: true
+    vectorizedAt?: true
+    model?: true
+  }
+
+  export type KnowledgeBaseVectorCountAggregateInputType = {
+    id?: true
+    kbDocumentId?: true
+    organizationId?: true
+    chunkIndex?: true
+    totalChunks?: true
+    content?: true
+    fileName?: true
+    fileType?: true
+    contentHash?: true
+    vectorizedAt?: true
+    model?: true
+    _all?: true
+  }
+
+  export type KnowledgeBaseVectorAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which KnowledgeBaseVector to aggregate.
+     */
+    where?: KnowledgeBaseVectorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KnowledgeBaseVectors to fetch.
+     */
+    orderBy?: KnowledgeBaseVectorOrderByWithRelationInput | KnowledgeBaseVectorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: KnowledgeBaseVectorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KnowledgeBaseVectors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KnowledgeBaseVectors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned KnowledgeBaseVectors
+    **/
+    _count?: true | KnowledgeBaseVectorCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: KnowledgeBaseVectorAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: KnowledgeBaseVectorSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: KnowledgeBaseVectorMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: KnowledgeBaseVectorMaxAggregateInputType
+  }
+
+  export type GetKnowledgeBaseVectorAggregateType<T extends KnowledgeBaseVectorAggregateArgs> = {
+        [P in keyof T & keyof AggregateKnowledgeBaseVector]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateKnowledgeBaseVector[P]>
+      : GetScalarType<T[P], AggregateKnowledgeBaseVector[P]>
+  }
+
+
+
+
+  export type KnowledgeBaseVectorGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: KnowledgeBaseVectorWhereInput
+    orderBy?: KnowledgeBaseVectorOrderByWithAggregationInput | KnowledgeBaseVectorOrderByWithAggregationInput[]
+    by: KnowledgeBaseVectorScalarFieldEnum[] | KnowledgeBaseVectorScalarFieldEnum
+    having?: KnowledgeBaseVectorScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: KnowledgeBaseVectorCountAggregateInputType | true
+    _avg?: KnowledgeBaseVectorAvgAggregateInputType
+    _sum?: KnowledgeBaseVectorSumAggregateInputType
+    _min?: KnowledgeBaseVectorMinAggregateInputType
+    _max?: KnowledgeBaseVectorMaxAggregateInputType
+  }
+
+  export type KnowledgeBaseVectorGroupByOutputType = {
+    id: bigint
+    kbDocumentId: string
+    organizationId: string
+    chunkIndex: number
+    totalChunks: number
+    content: string
+    fileName: string
+    fileType: string
+    contentHash: string
+    vectorizedAt: Date
+    model: string
+    _count: KnowledgeBaseVectorCountAggregateOutputType | null
+    _avg: KnowledgeBaseVectorAvgAggregateOutputType | null
+    _sum: KnowledgeBaseVectorSumAggregateOutputType | null
+    _min: KnowledgeBaseVectorMinAggregateOutputType | null
+    _max: KnowledgeBaseVectorMaxAggregateOutputType | null
+  }
+
+  type GetKnowledgeBaseVectorGroupByPayload<T extends KnowledgeBaseVectorGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<KnowledgeBaseVectorGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof KnowledgeBaseVectorGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], KnowledgeBaseVectorGroupByOutputType[P]>
+            : GetScalarType<T[P], KnowledgeBaseVectorGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type KnowledgeBaseVectorSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    kbDocumentId?: boolean
+    organizationId?: boolean
+    chunkIndex?: boolean
+    totalChunks?: boolean
+    content?: boolean
+    fileName?: boolean
+    fileType?: boolean
+    contentHash?: boolean
+    vectorizedAt?: boolean
+    model?: boolean
+    kbDocument?: boolean | KnowledgeBaseDocumentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["knowledgeBaseVector"]>
+
+  export type KnowledgeBaseVectorSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    kbDocumentId?: boolean
+    organizationId?: boolean
+    chunkIndex?: boolean
+    totalChunks?: boolean
+    content?: boolean
+    fileName?: boolean
+    fileType?: boolean
+    contentHash?: boolean
+    vectorizedAt?: boolean
+    model?: boolean
+    kbDocument?: boolean | KnowledgeBaseDocumentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["knowledgeBaseVector"]>
+
+  export type KnowledgeBaseVectorSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    kbDocumentId?: boolean
+    organizationId?: boolean
+    chunkIndex?: boolean
+    totalChunks?: boolean
+    content?: boolean
+    fileName?: boolean
+    fileType?: boolean
+    contentHash?: boolean
+    vectorizedAt?: boolean
+    model?: boolean
+    kbDocument?: boolean | KnowledgeBaseDocumentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["knowledgeBaseVector"]>
+
+  export type KnowledgeBaseVectorSelectScalar = {
+    id?: boolean
+    kbDocumentId?: boolean
+    organizationId?: boolean
+    chunkIndex?: boolean
+    totalChunks?: boolean
+    content?: boolean
+    fileName?: boolean
+    fileType?: boolean
+    contentHash?: boolean
+    vectorizedAt?: boolean
+    model?: boolean
+  }
+
+  export type KnowledgeBaseVectorOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "kbDocumentId" | "organizationId" | "chunkIndex" | "totalChunks" | "content" | "fileName" | "fileType" | "contentHash" | "vectorizedAt" | "model", ExtArgs["result"]["knowledgeBaseVector"]>
+  export type KnowledgeBaseVectorInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    kbDocument?: boolean | KnowledgeBaseDocumentDefaultArgs<ExtArgs>
+  }
+  export type KnowledgeBaseVectorIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    kbDocument?: boolean | KnowledgeBaseDocumentDefaultArgs<ExtArgs>
+  }
+  export type KnowledgeBaseVectorIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    kbDocument?: boolean | KnowledgeBaseDocumentDefaultArgs<ExtArgs>
+  }
+
+  export type $KnowledgeBaseVectorPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "KnowledgeBaseVector"
+    objects: {
+      kbDocument: Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: bigint
+      kbDocumentId: string
+      organizationId: string
+      chunkIndex: number
+      totalChunks: number
+      content: string
+      fileName: string
+      fileType: string
+      contentHash: string
+      vectorizedAt: Date
+      model: string
+    }, ExtArgs["result"]["knowledgeBaseVector"]>
+    composites: {}
+  }
+
+  type KnowledgeBaseVectorGetPayload<S extends boolean | null | undefined | KnowledgeBaseVectorDefaultArgs> = $Result.GetResult<Prisma.$KnowledgeBaseVectorPayload, S>
+
+  type KnowledgeBaseVectorCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<KnowledgeBaseVectorFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: KnowledgeBaseVectorCountAggregateInputType | true
+    }
+
+  export interface KnowledgeBaseVectorDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['KnowledgeBaseVector'], meta: { name: 'KnowledgeBaseVector' } }
+    /**
+     * Find zero or one KnowledgeBaseVector that matches the filter.
+     * @param {KnowledgeBaseVectorFindUniqueArgs} args - Arguments to find a KnowledgeBaseVector
+     * @example
+     * // Get one KnowledgeBaseVector
+     * const knowledgeBaseVector = await prisma.knowledgeBaseVector.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends KnowledgeBaseVectorFindUniqueArgs>(args: SelectSubset<T, KnowledgeBaseVectorFindUniqueArgs<ExtArgs>>): Prisma__KnowledgeBaseVectorClient<$Result.GetResult<Prisma.$KnowledgeBaseVectorPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one KnowledgeBaseVector that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {KnowledgeBaseVectorFindUniqueOrThrowArgs} args - Arguments to find a KnowledgeBaseVector
+     * @example
+     * // Get one KnowledgeBaseVector
+     * const knowledgeBaseVector = await prisma.knowledgeBaseVector.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends KnowledgeBaseVectorFindUniqueOrThrowArgs>(args: SelectSubset<T, KnowledgeBaseVectorFindUniqueOrThrowArgs<ExtArgs>>): Prisma__KnowledgeBaseVectorClient<$Result.GetResult<Prisma.$KnowledgeBaseVectorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first KnowledgeBaseVector that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeBaseVectorFindFirstArgs} args - Arguments to find a KnowledgeBaseVector
+     * @example
+     * // Get one KnowledgeBaseVector
+     * const knowledgeBaseVector = await prisma.knowledgeBaseVector.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends KnowledgeBaseVectorFindFirstArgs>(args?: SelectSubset<T, KnowledgeBaseVectorFindFirstArgs<ExtArgs>>): Prisma__KnowledgeBaseVectorClient<$Result.GetResult<Prisma.$KnowledgeBaseVectorPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first KnowledgeBaseVector that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeBaseVectorFindFirstOrThrowArgs} args - Arguments to find a KnowledgeBaseVector
+     * @example
+     * // Get one KnowledgeBaseVector
+     * const knowledgeBaseVector = await prisma.knowledgeBaseVector.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends KnowledgeBaseVectorFindFirstOrThrowArgs>(args?: SelectSubset<T, KnowledgeBaseVectorFindFirstOrThrowArgs<ExtArgs>>): Prisma__KnowledgeBaseVectorClient<$Result.GetResult<Prisma.$KnowledgeBaseVectorPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more KnowledgeBaseVectors that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeBaseVectorFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all KnowledgeBaseVectors
+     * const knowledgeBaseVectors = await prisma.knowledgeBaseVector.findMany()
+     * 
+     * // Get first 10 KnowledgeBaseVectors
+     * const knowledgeBaseVectors = await prisma.knowledgeBaseVector.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const knowledgeBaseVectorWithIdOnly = await prisma.knowledgeBaseVector.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends KnowledgeBaseVectorFindManyArgs>(args?: SelectSubset<T, KnowledgeBaseVectorFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeBaseVectorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a KnowledgeBaseVector.
+     * @param {KnowledgeBaseVectorCreateArgs} args - Arguments to create a KnowledgeBaseVector.
+     * @example
+     * // Create one KnowledgeBaseVector
+     * const KnowledgeBaseVector = await prisma.knowledgeBaseVector.create({
+     *   data: {
+     *     // ... data to create a KnowledgeBaseVector
+     *   }
+     * })
+     * 
+     */
+    create<T extends KnowledgeBaseVectorCreateArgs>(args: SelectSubset<T, KnowledgeBaseVectorCreateArgs<ExtArgs>>): Prisma__KnowledgeBaseVectorClient<$Result.GetResult<Prisma.$KnowledgeBaseVectorPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many KnowledgeBaseVectors.
+     * @param {KnowledgeBaseVectorCreateManyArgs} args - Arguments to create many KnowledgeBaseVectors.
+     * @example
+     * // Create many KnowledgeBaseVectors
+     * const knowledgeBaseVector = await prisma.knowledgeBaseVector.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends KnowledgeBaseVectorCreateManyArgs>(args?: SelectSubset<T, KnowledgeBaseVectorCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many KnowledgeBaseVectors and returns the data saved in the database.
+     * @param {KnowledgeBaseVectorCreateManyAndReturnArgs} args - Arguments to create many KnowledgeBaseVectors.
+     * @example
+     * // Create many KnowledgeBaseVectors
+     * const knowledgeBaseVector = await prisma.knowledgeBaseVector.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many KnowledgeBaseVectors and only return the `id`
+     * const knowledgeBaseVectorWithIdOnly = await prisma.knowledgeBaseVector.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends KnowledgeBaseVectorCreateManyAndReturnArgs>(args?: SelectSubset<T, KnowledgeBaseVectorCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeBaseVectorPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a KnowledgeBaseVector.
+     * @param {KnowledgeBaseVectorDeleteArgs} args - Arguments to delete one KnowledgeBaseVector.
+     * @example
+     * // Delete one KnowledgeBaseVector
+     * const KnowledgeBaseVector = await prisma.knowledgeBaseVector.delete({
+     *   where: {
+     *     // ... filter to delete one KnowledgeBaseVector
+     *   }
+     * })
+     * 
+     */
+    delete<T extends KnowledgeBaseVectorDeleteArgs>(args: SelectSubset<T, KnowledgeBaseVectorDeleteArgs<ExtArgs>>): Prisma__KnowledgeBaseVectorClient<$Result.GetResult<Prisma.$KnowledgeBaseVectorPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one KnowledgeBaseVector.
+     * @param {KnowledgeBaseVectorUpdateArgs} args - Arguments to update one KnowledgeBaseVector.
+     * @example
+     * // Update one KnowledgeBaseVector
+     * const knowledgeBaseVector = await prisma.knowledgeBaseVector.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends KnowledgeBaseVectorUpdateArgs>(args: SelectSubset<T, KnowledgeBaseVectorUpdateArgs<ExtArgs>>): Prisma__KnowledgeBaseVectorClient<$Result.GetResult<Prisma.$KnowledgeBaseVectorPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more KnowledgeBaseVectors.
+     * @param {KnowledgeBaseVectorDeleteManyArgs} args - Arguments to filter KnowledgeBaseVectors to delete.
+     * @example
+     * // Delete a few KnowledgeBaseVectors
+     * const { count } = await prisma.knowledgeBaseVector.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends KnowledgeBaseVectorDeleteManyArgs>(args?: SelectSubset<T, KnowledgeBaseVectorDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more KnowledgeBaseVectors.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeBaseVectorUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many KnowledgeBaseVectors
+     * const knowledgeBaseVector = await prisma.knowledgeBaseVector.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends KnowledgeBaseVectorUpdateManyArgs>(args: SelectSubset<T, KnowledgeBaseVectorUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more KnowledgeBaseVectors and returns the data updated in the database.
+     * @param {KnowledgeBaseVectorUpdateManyAndReturnArgs} args - Arguments to update many KnowledgeBaseVectors.
+     * @example
+     * // Update many KnowledgeBaseVectors
+     * const knowledgeBaseVector = await prisma.knowledgeBaseVector.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more KnowledgeBaseVectors and only return the `id`
+     * const knowledgeBaseVectorWithIdOnly = await prisma.knowledgeBaseVector.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends KnowledgeBaseVectorUpdateManyAndReturnArgs>(args: SelectSubset<T, KnowledgeBaseVectorUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeBaseVectorPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one KnowledgeBaseVector.
+     * @param {KnowledgeBaseVectorUpsertArgs} args - Arguments to update or create a KnowledgeBaseVector.
+     * @example
+     * // Update or create a KnowledgeBaseVector
+     * const knowledgeBaseVector = await prisma.knowledgeBaseVector.upsert({
+     *   create: {
+     *     // ... data to create a KnowledgeBaseVector
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the KnowledgeBaseVector we want to update
+     *   }
+     * })
+     */
+    upsert<T extends KnowledgeBaseVectorUpsertArgs>(args: SelectSubset<T, KnowledgeBaseVectorUpsertArgs<ExtArgs>>): Prisma__KnowledgeBaseVectorClient<$Result.GetResult<Prisma.$KnowledgeBaseVectorPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of KnowledgeBaseVectors.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeBaseVectorCountArgs} args - Arguments to filter KnowledgeBaseVectors to count.
+     * @example
+     * // Count the number of KnowledgeBaseVectors
+     * const count = await prisma.knowledgeBaseVector.count({
+     *   where: {
+     *     // ... the filter for the KnowledgeBaseVectors we want to count
+     *   }
+     * })
+    **/
+    count<T extends KnowledgeBaseVectorCountArgs>(
+      args?: Subset<T, KnowledgeBaseVectorCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], KnowledgeBaseVectorCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a KnowledgeBaseVector.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeBaseVectorAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends KnowledgeBaseVectorAggregateArgs>(args: Subset<T, KnowledgeBaseVectorAggregateArgs>): Prisma.PrismaPromise<GetKnowledgeBaseVectorAggregateType<T>>
+
+    /**
+     * Group by KnowledgeBaseVector.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KnowledgeBaseVectorGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends KnowledgeBaseVectorGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: KnowledgeBaseVectorGroupByArgs['orderBy'] }
+        : { orderBy?: KnowledgeBaseVectorGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, KnowledgeBaseVectorGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetKnowledgeBaseVectorGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the KnowledgeBaseVector model
+   */
+  readonly fields: KnowledgeBaseVectorFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for KnowledgeBaseVector.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__KnowledgeBaseVectorClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    kbDocument<T extends KnowledgeBaseDocumentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, KnowledgeBaseDocumentDefaultArgs<ExtArgs>>): Prisma__KnowledgeBaseDocumentClient<$Result.GetResult<Prisma.$KnowledgeBaseDocumentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the KnowledgeBaseVector model
+   */
+  interface KnowledgeBaseVectorFieldRefs {
+    readonly id: FieldRef<"KnowledgeBaseVector", 'BigInt'>
+    readonly kbDocumentId: FieldRef<"KnowledgeBaseVector", 'String'>
+    readonly organizationId: FieldRef<"KnowledgeBaseVector", 'String'>
+    readonly chunkIndex: FieldRef<"KnowledgeBaseVector", 'Int'>
+    readonly totalChunks: FieldRef<"KnowledgeBaseVector", 'Int'>
+    readonly content: FieldRef<"KnowledgeBaseVector", 'String'>
+    readonly fileName: FieldRef<"KnowledgeBaseVector", 'String'>
+    readonly fileType: FieldRef<"KnowledgeBaseVector", 'String'>
+    readonly contentHash: FieldRef<"KnowledgeBaseVector", 'String'>
+    readonly vectorizedAt: FieldRef<"KnowledgeBaseVector", 'DateTime'>
+    readonly model: FieldRef<"KnowledgeBaseVector", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * KnowledgeBaseVector findUnique
+   */
+  export type KnowledgeBaseVectorFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseVector
+     */
+    select?: KnowledgeBaseVectorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseVector
+     */
+    omit?: KnowledgeBaseVectorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseVectorInclude<ExtArgs> | null
+    /**
+     * Filter, which KnowledgeBaseVector to fetch.
+     */
+    where: KnowledgeBaseVectorWhereUniqueInput
+  }
+
+  /**
+   * KnowledgeBaseVector findUniqueOrThrow
+   */
+  export type KnowledgeBaseVectorFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseVector
+     */
+    select?: KnowledgeBaseVectorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseVector
+     */
+    omit?: KnowledgeBaseVectorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseVectorInclude<ExtArgs> | null
+    /**
+     * Filter, which KnowledgeBaseVector to fetch.
+     */
+    where: KnowledgeBaseVectorWhereUniqueInput
+  }
+
+  /**
+   * KnowledgeBaseVector findFirst
+   */
+  export type KnowledgeBaseVectorFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseVector
+     */
+    select?: KnowledgeBaseVectorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseVector
+     */
+    omit?: KnowledgeBaseVectorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseVectorInclude<ExtArgs> | null
+    /**
+     * Filter, which KnowledgeBaseVector to fetch.
+     */
+    where?: KnowledgeBaseVectorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KnowledgeBaseVectors to fetch.
+     */
+    orderBy?: KnowledgeBaseVectorOrderByWithRelationInput | KnowledgeBaseVectorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for KnowledgeBaseVectors.
+     */
+    cursor?: KnowledgeBaseVectorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KnowledgeBaseVectors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KnowledgeBaseVectors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KnowledgeBaseVectors.
+     */
+    distinct?: KnowledgeBaseVectorScalarFieldEnum | KnowledgeBaseVectorScalarFieldEnum[]
+  }
+
+  /**
+   * KnowledgeBaseVector findFirstOrThrow
+   */
+  export type KnowledgeBaseVectorFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseVector
+     */
+    select?: KnowledgeBaseVectorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseVector
+     */
+    omit?: KnowledgeBaseVectorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseVectorInclude<ExtArgs> | null
+    /**
+     * Filter, which KnowledgeBaseVector to fetch.
+     */
+    where?: KnowledgeBaseVectorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KnowledgeBaseVectors to fetch.
+     */
+    orderBy?: KnowledgeBaseVectorOrderByWithRelationInput | KnowledgeBaseVectorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for KnowledgeBaseVectors.
+     */
+    cursor?: KnowledgeBaseVectorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KnowledgeBaseVectors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KnowledgeBaseVectors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KnowledgeBaseVectors.
+     */
+    distinct?: KnowledgeBaseVectorScalarFieldEnum | KnowledgeBaseVectorScalarFieldEnum[]
+  }
+
+  /**
+   * KnowledgeBaseVector findMany
+   */
+  export type KnowledgeBaseVectorFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseVector
+     */
+    select?: KnowledgeBaseVectorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseVector
+     */
+    omit?: KnowledgeBaseVectorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseVectorInclude<ExtArgs> | null
+    /**
+     * Filter, which KnowledgeBaseVectors to fetch.
+     */
+    where?: KnowledgeBaseVectorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KnowledgeBaseVectors to fetch.
+     */
+    orderBy?: KnowledgeBaseVectorOrderByWithRelationInput | KnowledgeBaseVectorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing KnowledgeBaseVectors.
+     */
+    cursor?: KnowledgeBaseVectorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KnowledgeBaseVectors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KnowledgeBaseVectors.
+     */
+    skip?: number
+    distinct?: KnowledgeBaseVectorScalarFieldEnum | KnowledgeBaseVectorScalarFieldEnum[]
+  }
+
+  /**
+   * KnowledgeBaseVector create
+   */
+  export type KnowledgeBaseVectorCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseVector
+     */
+    select?: KnowledgeBaseVectorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseVector
+     */
+    omit?: KnowledgeBaseVectorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseVectorInclude<ExtArgs> | null
+    /**
+     * The data needed to create a KnowledgeBaseVector.
+     */
+    data: XOR<KnowledgeBaseVectorCreateInput, KnowledgeBaseVectorUncheckedCreateInput>
+  }
+
+  /**
+   * KnowledgeBaseVector createMany
+   */
+  export type KnowledgeBaseVectorCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many KnowledgeBaseVectors.
+     */
+    data: KnowledgeBaseVectorCreateManyInput | KnowledgeBaseVectorCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * KnowledgeBaseVector createManyAndReturn
+   */
+  export type KnowledgeBaseVectorCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseVector
+     */
+    select?: KnowledgeBaseVectorSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseVector
+     */
+    omit?: KnowledgeBaseVectorOmit<ExtArgs> | null
+    /**
+     * The data used to create many KnowledgeBaseVectors.
+     */
+    data: KnowledgeBaseVectorCreateManyInput | KnowledgeBaseVectorCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseVectorIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * KnowledgeBaseVector update
+   */
+  export type KnowledgeBaseVectorUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseVector
+     */
+    select?: KnowledgeBaseVectorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseVector
+     */
+    omit?: KnowledgeBaseVectorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseVectorInclude<ExtArgs> | null
+    /**
+     * The data needed to update a KnowledgeBaseVector.
+     */
+    data: XOR<KnowledgeBaseVectorUpdateInput, KnowledgeBaseVectorUncheckedUpdateInput>
+    /**
+     * Choose, which KnowledgeBaseVector to update.
+     */
+    where: KnowledgeBaseVectorWhereUniqueInput
+  }
+
+  /**
+   * KnowledgeBaseVector updateMany
+   */
+  export type KnowledgeBaseVectorUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update KnowledgeBaseVectors.
+     */
+    data: XOR<KnowledgeBaseVectorUpdateManyMutationInput, KnowledgeBaseVectorUncheckedUpdateManyInput>
+    /**
+     * Filter which KnowledgeBaseVectors to update
+     */
+    where?: KnowledgeBaseVectorWhereInput
+    /**
+     * Limit how many KnowledgeBaseVectors to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * KnowledgeBaseVector updateManyAndReturn
+   */
+  export type KnowledgeBaseVectorUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseVector
+     */
+    select?: KnowledgeBaseVectorSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseVector
+     */
+    omit?: KnowledgeBaseVectorOmit<ExtArgs> | null
+    /**
+     * The data used to update KnowledgeBaseVectors.
+     */
+    data: XOR<KnowledgeBaseVectorUpdateManyMutationInput, KnowledgeBaseVectorUncheckedUpdateManyInput>
+    /**
+     * Filter which KnowledgeBaseVectors to update
+     */
+    where?: KnowledgeBaseVectorWhereInput
+    /**
+     * Limit how many KnowledgeBaseVectors to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseVectorIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * KnowledgeBaseVector upsert
+   */
+  export type KnowledgeBaseVectorUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseVector
+     */
+    select?: KnowledgeBaseVectorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseVector
+     */
+    omit?: KnowledgeBaseVectorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseVectorInclude<ExtArgs> | null
+    /**
+     * The filter to search for the KnowledgeBaseVector to update in case it exists.
+     */
+    where: KnowledgeBaseVectorWhereUniqueInput
+    /**
+     * In case the KnowledgeBaseVector found by the `where` argument doesn't exist, create a new KnowledgeBaseVector with this data.
+     */
+    create: XOR<KnowledgeBaseVectorCreateInput, KnowledgeBaseVectorUncheckedCreateInput>
+    /**
+     * In case the KnowledgeBaseVector was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<KnowledgeBaseVectorUpdateInput, KnowledgeBaseVectorUncheckedUpdateInput>
+  }
+
+  /**
+   * KnowledgeBaseVector delete
+   */
+  export type KnowledgeBaseVectorDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseVector
+     */
+    select?: KnowledgeBaseVectorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseVector
+     */
+    omit?: KnowledgeBaseVectorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseVectorInclude<ExtArgs> | null
+    /**
+     * Filter which KnowledgeBaseVector to delete.
+     */
+    where: KnowledgeBaseVectorWhereUniqueInput
+  }
+
+  /**
+   * KnowledgeBaseVector deleteMany
+   */
+  export type KnowledgeBaseVectorDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which KnowledgeBaseVectors to delete
+     */
+    where?: KnowledgeBaseVectorWhereInput
+    /**
+     * Limit how many KnowledgeBaseVectors to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * KnowledgeBaseVector without action
+   */
+  export type KnowledgeBaseVectorDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KnowledgeBaseVector
+     */
+    select?: KnowledgeBaseVectorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KnowledgeBaseVector
+     */
+    omit?: KnowledgeBaseVectorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KnowledgeBaseVectorInclude<ExtArgs> | null
   }
 
 
@@ -12641,16 +14041,16 @@ export namespace Prisma {
 
   export type ApplicationAvgAggregateOutputType = {
     opportunityId: number | null
-    opportunityTotalFunding: number | null
-    opportunityAwardMin: number | null
     opportunityAwardMax: number | null
+    opportunityAwardMin: number | null
+    opportunityTotalFunding: number | null
   }
 
   export type ApplicationSumAggregateOutputType = {
     opportunityId: number | null
-    opportunityTotalFunding: bigint | null
-    opportunityAwardMin: bigint | null
     opportunityAwardMax: bigint | null
+    opportunityAwardMin: bigint | null
+    opportunityTotalFunding: bigint | null
   }
 
   export type ApplicationMinAggregateOutputType = {
@@ -12663,14 +14063,14 @@ export namespace Prisma {
     submittedAt: Date | null
     lastEditedAt: Date | null
     organizationId: string | null
-    opportunityTitle: string | null
+    opportunityAgency: string | null
+    opportunityAwardMax: bigint | null
+    opportunityAwardMin: bigint | null
+    opportunityCloseDate: Date | null
     opportunityDescription: string | null
     opportunityEligibility: string | null
-    opportunityAgency: string | null
-    opportunityCloseDate: Date | null
+    opportunityTitle: string | null
     opportunityTotalFunding: bigint | null
-    opportunityAwardMin: bigint | null
-    opportunityAwardMax: bigint | null
     opportunityUrl: string | null
   }
 
@@ -12684,14 +14084,14 @@ export namespace Prisma {
     submittedAt: Date | null
     lastEditedAt: Date | null
     organizationId: string | null
-    opportunityTitle: string | null
+    opportunityAgency: string | null
+    opportunityAwardMax: bigint | null
+    opportunityAwardMin: bigint | null
+    opportunityCloseDate: Date | null
     opportunityDescription: string | null
     opportunityEligibility: string | null
-    opportunityAgency: string | null
-    opportunityCloseDate: Date | null
+    opportunityTitle: string | null
     opportunityTotalFunding: bigint | null
-    opportunityAwardMin: bigint | null
-    opportunityAwardMax: bigint | null
     opportunityUrl: string | null
   }
 
@@ -12705,32 +14105,32 @@ export namespace Prisma {
     submittedAt: number
     lastEditedAt: number
     organizationId: number
-    opportunityTitle: number
+    opportunityAgency: number
+    opportunityAttachments: number
+    opportunityAwardMax: number
+    opportunityAwardMin: number
+    opportunityCloseDate: number
     opportunityDescription: number
     opportunityEligibility: number
-    opportunityAgency: number
-    opportunityCloseDate: number
+    opportunityTitle: number
     opportunityTotalFunding: number
-    opportunityAwardMin: number
-    opportunityAwardMax: number
     opportunityUrl: number
-    opportunityAttachments: number
     _all: number
   }
 
 
   export type ApplicationAvgAggregateInputType = {
     opportunityId?: true
-    opportunityTotalFunding?: true
-    opportunityAwardMin?: true
     opportunityAwardMax?: true
+    opportunityAwardMin?: true
+    opportunityTotalFunding?: true
   }
 
   export type ApplicationSumAggregateInputType = {
     opportunityId?: true
-    opportunityTotalFunding?: true
-    opportunityAwardMin?: true
     opportunityAwardMax?: true
+    opportunityAwardMin?: true
+    opportunityTotalFunding?: true
   }
 
   export type ApplicationMinAggregateInputType = {
@@ -12743,14 +14143,14 @@ export namespace Prisma {
     submittedAt?: true
     lastEditedAt?: true
     organizationId?: true
-    opportunityTitle?: true
+    opportunityAgency?: true
+    opportunityAwardMax?: true
+    opportunityAwardMin?: true
+    opportunityCloseDate?: true
     opportunityDescription?: true
     opportunityEligibility?: true
-    opportunityAgency?: true
-    opportunityCloseDate?: true
+    opportunityTitle?: true
     opportunityTotalFunding?: true
-    opportunityAwardMin?: true
-    opportunityAwardMax?: true
     opportunityUrl?: true
   }
 
@@ -12764,14 +14164,14 @@ export namespace Prisma {
     submittedAt?: true
     lastEditedAt?: true
     organizationId?: true
-    opportunityTitle?: true
+    opportunityAgency?: true
+    opportunityAwardMax?: true
+    opportunityAwardMin?: true
+    opportunityCloseDate?: true
     opportunityDescription?: true
     opportunityEligibility?: true
-    opportunityAgency?: true
-    opportunityCloseDate?: true
+    opportunityTitle?: true
     opportunityTotalFunding?: true
-    opportunityAwardMin?: true
-    opportunityAwardMax?: true
     opportunityUrl?: true
   }
 
@@ -12785,16 +14185,16 @@ export namespace Prisma {
     submittedAt?: true
     lastEditedAt?: true
     organizationId?: true
-    opportunityTitle?: true
+    opportunityAgency?: true
+    opportunityAttachments?: true
+    opportunityAwardMax?: true
+    opportunityAwardMin?: true
+    opportunityCloseDate?: true
     opportunityDescription?: true
     opportunityEligibility?: true
-    opportunityAgency?: true
-    opportunityCloseDate?: true
+    opportunityTitle?: true
     opportunityTotalFunding?: true
-    opportunityAwardMin?: true
-    opportunityAwardMax?: true
     opportunityUrl?: true
-    opportunityAttachments?: true
     _all?: true
   }
 
@@ -12894,16 +14294,16 @@ export namespace Prisma {
     submittedAt: Date | null
     lastEditedAt: Date
     organizationId: string
-    opportunityTitle: string | null
+    opportunityAgency: string | null
+    opportunityAttachments: JsonValue | null
+    opportunityAwardMax: bigint | null
+    opportunityAwardMin: bigint | null
+    opportunityCloseDate: Date | null
     opportunityDescription: string | null
     opportunityEligibility: string | null
-    opportunityAgency: string | null
-    opportunityCloseDate: Date | null
+    opportunityTitle: string | null
     opportunityTotalFunding: bigint | null
-    opportunityAwardMin: bigint | null
-    opportunityAwardMax: bigint | null
     opportunityUrl: string | null
-    opportunityAttachments: JsonValue | null
     _count: ApplicationCountAggregateOutputType | null
     _avg: ApplicationAvgAggregateOutputType | null
     _sum: ApplicationSumAggregateOutputType | null
@@ -12935,16 +14335,16 @@ export namespace Prisma {
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
-    opportunityTitle?: boolean
+    opportunityAgency?: boolean
+    opportunityAttachments?: boolean
+    opportunityAwardMax?: boolean
+    opportunityAwardMin?: boolean
+    opportunityCloseDate?: boolean
     opportunityDescription?: boolean
     opportunityEligibility?: boolean
-    opportunityAgency?: boolean
-    opportunityCloseDate?: boolean
+    opportunityTitle?: boolean
     opportunityTotalFunding?: boolean
-    opportunityAwardMin?: boolean
-    opportunityAwardMax?: boolean
     opportunityUrl?: boolean
-    opportunityAttachments?: boolean
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     documents?: boolean | Application$documentsArgs<ExtArgs>
@@ -12962,16 +14362,16 @@ export namespace Prisma {
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
-    opportunityTitle?: boolean
+    opportunityAgency?: boolean
+    opportunityAttachments?: boolean
+    opportunityAwardMax?: boolean
+    opportunityAwardMin?: boolean
+    opportunityCloseDate?: boolean
     opportunityDescription?: boolean
     opportunityEligibility?: boolean
-    opportunityAgency?: boolean
-    opportunityCloseDate?: boolean
+    opportunityTitle?: boolean
     opportunityTotalFunding?: boolean
-    opportunityAwardMin?: boolean
-    opportunityAwardMax?: boolean
     opportunityUrl?: boolean
-    opportunityAttachments?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
 
@@ -12985,16 +14385,16 @@ export namespace Prisma {
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
-    opportunityTitle?: boolean
+    opportunityAgency?: boolean
+    opportunityAttachments?: boolean
+    opportunityAwardMax?: boolean
+    opportunityAwardMin?: boolean
+    opportunityCloseDate?: boolean
     opportunityDescription?: boolean
     opportunityEligibility?: boolean
-    opportunityAgency?: boolean
-    opportunityCloseDate?: boolean
+    opportunityTitle?: boolean
     opportunityTotalFunding?: boolean
-    opportunityAwardMin?: boolean
-    opportunityAwardMax?: boolean
     opportunityUrl?: boolean
-    opportunityAttachments?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
 
@@ -13008,19 +14408,19 @@ export namespace Prisma {
     submittedAt?: boolean
     lastEditedAt?: boolean
     organizationId?: boolean
-    opportunityTitle?: boolean
+    opportunityAgency?: boolean
+    opportunityAttachments?: boolean
+    opportunityAwardMax?: boolean
+    opportunityAwardMin?: boolean
+    opportunityCloseDate?: boolean
     opportunityDescription?: boolean
     opportunityEligibility?: boolean
-    opportunityAgency?: boolean
-    opportunityCloseDate?: boolean
+    opportunityTitle?: boolean
     opportunityTotalFunding?: boolean
-    opportunityAwardMin?: boolean
-    opportunityAwardMax?: boolean
     opportunityUrl?: boolean
-    opportunityAttachments?: boolean
   }
 
-  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "title" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId" | "opportunityTitle" | "opportunityDescription" | "opportunityEligibility" | "opportunityAgency" | "opportunityCloseDate" | "opportunityTotalFunding" | "opportunityAwardMin" | "opportunityAwardMax" | "opportunityUrl" | "opportunityAttachments", ExtArgs["result"]["application"]>
+  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "title" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId" | "opportunityAgency" | "opportunityAttachments" | "opportunityAwardMax" | "opportunityAwardMin" | "opportunityCloseDate" | "opportunityDescription" | "opportunityEligibility" | "opportunityTitle" | "opportunityTotalFunding" | "opportunityUrl", ExtArgs["result"]["application"]>
   export type ApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -13053,16 +14453,16 @@ export namespace Prisma {
       submittedAt: Date | null
       lastEditedAt: Date
       organizationId: string
-      opportunityTitle: string | null
+      opportunityAgency: string | null
+      opportunityAttachments: Prisma.JsonValue | null
+      opportunityAwardMax: bigint | null
+      opportunityAwardMin: bigint | null
+      opportunityCloseDate: Date | null
       opportunityDescription: string | null
       opportunityEligibility: string | null
-      opportunityAgency: string | null
-      opportunityCloseDate: Date | null
+      opportunityTitle: string | null
       opportunityTotalFunding: bigint | null
-      opportunityAwardMin: bigint | null
-      opportunityAwardMax: bigint | null
       opportunityUrl: string | null
-      opportunityAttachments: Prisma.JsonValue | null
     }, ExtArgs["result"]["application"]>
     composites: {}
   }
@@ -13499,16 +14899,16 @@ export namespace Prisma {
     readonly submittedAt: FieldRef<"Application", 'DateTime'>
     readonly lastEditedAt: FieldRef<"Application", 'DateTime'>
     readonly organizationId: FieldRef<"Application", 'String'>
-    readonly opportunityTitle: FieldRef<"Application", 'String'>
+    readonly opportunityAgency: FieldRef<"Application", 'String'>
+    readonly opportunityAttachments: FieldRef<"Application", 'Json'>
+    readonly opportunityAwardMax: FieldRef<"Application", 'BigInt'>
+    readonly opportunityAwardMin: FieldRef<"Application", 'BigInt'>
+    readonly opportunityCloseDate: FieldRef<"Application", 'DateTime'>
     readonly opportunityDescription: FieldRef<"Application", 'String'>
     readonly opportunityEligibility: FieldRef<"Application", 'String'>
-    readonly opportunityAgency: FieldRef<"Application", 'String'>
-    readonly opportunityCloseDate: FieldRef<"Application", 'DateTime'>
+    readonly opportunityTitle: FieldRef<"Application", 'String'>
     readonly opportunityTotalFunding: FieldRef<"Application", 'BigInt'>
-    readonly opportunityAwardMin: FieldRef<"Application", 'BigInt'>
-    readonly opportunityAwardMax: FieldRef<"Application", 'BigInt'>
     readonly opportunityUrl: FieldRef<"Application", 'String'>
-    readonly opportunityAttachments: FieldRef<"Application", 'Json'>
   }
     
 
@@ -22068,10 +23468,31 @@ export namespace Prisma {
     isActive: 'isActive',
     organizationId: 'organizationId',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    chunkCount: 'chunkCount',
+    vectorizationError: 'vectorizationError',
+    vectorizationStatus: 'vectorizationStatus',
+    vectorizedAt: 'vectorizedAt'
   };
 
   export type KnowledgeBaseDocumentScalarFieldEnum = (typeof KnowledgeBaseDocumentScalarFieldEnum)[keyof typeof KnowledgeBaseDocumentScalarFieldEnum]
+
+
+  export const KnowledgeBaseVectorScalarFieldEnum: {
+    id: 'id',
+    kbDocumentId: 'kbDocumentId',
+    organizationId: 'organizationId',
+    chunkIndex: 'chunkIndex',
+    totalChunks: 'totalChunks',
+    content: 'content',
+    fileName: 'fileName',
+    fileType: 'fileType',
+    contentHash: 'contentHash',
+    vectorizedAt: 'vectorizedAt',
+    model: 'model'
+  };
+
+  export type KnowledgeBaseVectorScalarFieldEnum = (typeof KnowledgeBaseVectorScalarFieldEnum)[keyof typeof KnowledgeBaseVectorScalarFieldEnum]
 
 
   export const GrantBookmarkScalarFieldEnum: {
@@ -22111,16 +23532,16 @@ export namespace Prisma {
     submittedAt: 'submittedAt',
     lastEditedAt: 'lastEditedAt',
     organizationId: 'organizationId',
-    opportunityTitle: 'opportunityTitle',
+    opportunityAgency: 'opportunityAgency',
+    opportunityAttachments: 'opportunityAttachments',
+    opportunityAwardMax: 'opportunityAwardMax',
+    opportunityAwardMin: 'opportunityAwardMin',
+    opportunityCloseDate: 'opportunityCloseDate',
     opportunityDescription: 'opportunityDescription',
     opportunityEligibility: 'opportunityEligibility',
-    opportunityAgency: 'opportunityAgency',
-    opportunityCloseDate: 'opportunityCloseDate',
+    opportunityTitle: 'opportunityTitle',
     opportunityTotalFunding: 'opportunityTotalFunding',
-    opportunityAwardMin: 'opportunityAwardMin',
-    opportunityAwardMax: 'opportunityAwardMax',
-    opportunityUrl: 'opportunityUrl',
-    opportunityAttachments: 'opportunityAttachments'
+    opportunityUrl: 'opportunityUrl'
   };
 
   export type ApplicationScalarFieldEnum = (typeof ApplicationScalarFieldEnum)[keyof typeof ApplicationScalarFieldEnum]
@@ -22439,6 +23860,20 @@ export namespace Prisma {
    * Reference to a field of type 'Float[]'
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'VectorizationStatus'
+   */
+  export type EnumVectorizationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VectorizationStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'VectorizationStatus[]'
+   */
+  export type ListEnumVectorizationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VectorizationStatus[]'>
     
 
 
@@ -22911,9 +24346,9 @@ export namespace Prisma {
     folders?: FolderListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
     eligibilityAnalyses?: GrantEligibilityAnalysisListRelationFilter
+    knowledgeBase?: KnowledgeBaseDocumentListRelationFilter
     recommendations?: RecommendationListRelationFilter
     users?: UserListRelationFilter
-    knowledgeBase?: KnowledgeBaseDocumentListRelationFilter
   }
 
   export type OrganizationOrderByWithRelationInput = {
@@ -22954,9 +24389,9 @@ export namespace Prisma {
     folders?: FolderOrderByRelationAggregateInput
     grantBookmarks?: GrantBookmarkOrderByRelationAggregateInput
     eligibilityAnalyses?: GrantEligibilityAnalysisOrderByRelationAggregateInput
+    knowledgeBase?: KnowledgeBaseDocumentOrderByRelationAggregateInput
     recommendations?: RecommendationOrderByRelationAggregateInput
     users?: UserOrderByRelationAggregateInput
-    knowledgeBase?: KnowledgeBaseDocumentOrderByRelationAggregateInput
   }
 
   export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -23000,9 +24435,9 @@ export namespace Prisma {
     folders?: FolderListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
     eligibilityAnalyses?: GrantEligibilityAnalysisListRelationFilter
+    knowledgeBase?: KnowledgeBaseDocumentListRelationFilter
     recommendations?: RecommendationListRelationFilter
     users?: UserListRelationFilter
-    knowledgeBase?: KnowledgeBaseDocumentListRelationFilter
   }, "id" | "slug" | "leaId">
 
   export type OrganizationOrderByWithAggregationInput = {
@@ -23153,7 +24588,12 @@ export namespace Prisma {
     organizationId?: StringFilter<"KnowledgeBaseDocument"> | string
     createdAt?: DateTimeFilter<"KnowledgeBaseDocument"> | Date | string
     updatedAt?: DateTimeFilter<"KnowledgeBaseDocument"> | Date | string
+    chunkCount?: IntNullableFilter<"KnowledgeBaseDocument"> | number | null
+    vectorizationError?: StringNullableFilter<"KnowledgeBaseDocument"> | string | null
+    vectorizationStatus?: EnumVectorizationStatusFilter<"KnowledgeBaseDocument"> | $Enums.VectorizationStatus
+    vectorizedAt?: DateTimeNullableFilter<"KnowledgeBaseDocument"> | Date | string | null
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    vectors?: KnowledgeBaseVectorListRelationFilter
   }
 
   export type KnowledgeBaseDocumentOrderByWithRelationInput = {
@@ -23167,7 +24607,12 @@ export namespace Prisma {
     organizationId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    chunkCount?: SortOrderInput | SortOrder
+    vectorizationError?: SortOrderInput | SortOrder
+    vectorizationStatus?: SortOrder
+    vectorizedAt?: SortOrderInput | SortOrder
     organization?: OrganizationOrderByWithRelationInput
+    vectors?: KnowledgeBaseVectorOrderByRelationAggregateInput
   }
 
   export type KnowledgeBaseDocumentWhereUniqueInput = Prisma.AtLeast<{
@@ -23184,7 +24629,12 @@ export namespace Prisma {
     organizationId?: StringFilter<"KnowledgeBaseDocument"> | string
     createdAt?: DateTimeFilter<"KnowledgeBaseDocument"> | Date | string
     updatedAt?: DateTimeFilter<"KnowledgeBaseDocument"> | Date | string
+    chunkCount?: IntNullableFilter<"KnowledgeBaseDocument"> | number | null
+    vectorizationError?: StringNullableFilter<"KnowledgeBaseDocument"> | string | null
+    vectorizationStatus?: EnumVectorizationStatusFilter<"KnowledgeBaseDocument"> | $Enums.VectorizationStatus
+    vectorizedAt?: DateTimeNullableFilter<"KnowledgeBaseDocument"> | Date | string | null
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    vectors?: KnowledgeBaseVectorListRelationFilter
   }, "id">
 
   export type KnowledgeBaseDocumentOrderByWithAggregationInput = {
@@ -23198,6 +24648,10 @@ export namespace Prisma {
     organizationId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    chunkCount?: SortOrderInput | SortOrder
+    vectorizationError?: SortOrderInput | SortOrder
+    vectorizationStatus?: SortOrder
+    vectorizedAt?: SortOrderInput | SortOrder
     _count?: KnowledgeBaseDocumentCountOrderByAggregateInput
     _avg?: KnowledgeBaseDocumentAvgOrderByAggregateInput
     _max?: KnowledgeBaseDocumentMaxOrderByAggregateInput
@@ -23219,6 +24673,97 @@ export namespace Prisma {
     organizationId?: StringWithAggregatesFilter<"KnowledgeBaseDocument"> | string
     createdAt?: DateTimeWithAggregatesFilter<"KnowledgeBaseDocument"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"KnowledgeBaseDocument"> | Date | string
+    chunkCount?: IntNullableWithAggregatesFilter<"KnowledgeBaseDocument"> | number | null
+    vectorizationError?: StringNullableWithAggregatesFilter<"KnowledgeBaseDocument"> | string | null
+    vectorizationStatus?: EnumVectorizationStatusWithAggregatesFilter<"KnowledgeBaseDocument"> | $Enums.VectorizationStatus
+    vectorizedAt?: DateTimeNullableWithAggregatesFilter<"KnowledgeBaseDocument"> | Date | string | null
+  }
+
+  export type KnowledgeBaseVectorWhereInput = {
+    AND?: KnowledgeBaseVectorWhereInput | KnowledgeBaseVectorWhereInput[]
+    OR?: KnowledgeBaseVectorWhereInput[]
+    NOT?: KnowledgeBaseVectorWhereInput | KnowledgeBaseVectorWhereInput[]
+    id?: BigIntFilter<"KnowledgeBaseVector"> | bigint | number
+    kbDocumentId?: StringFilter<"KnowledgeBaseVector"> | string
+    organizationId?: StringFilter<"KnowledgeBaseVector"> | string
+    chunkIndex?: IntFilter<"KnowledgeBaseVector"> | number
+    totalChunks?: IntFilter<"KnowledgeBaseVector"> | number
+    content?: StringFilter<"KnowledgeBaseVector"> | string
+    fileName?: StringFilter<"KnowledgeBaseVector"> | string
+    fileType?: StringFilter<"KnowledgeBaseVector"> | string
+    contentHash?: StringFilter<"KnowledgeBaseVector"> | string
+    vectorizedAt?: DateTimeFilter<"KnowledgeBaseVector"> | Date | string
+    model?: StringFilter<"KnowledgeBaseVector"> | string
+    kbDocument?: XOR<KnowledgeBaseDocumentScalarRelationFilter, KnowledgeBaseDocumentWhereInput>
+  }
+
+  export type KnowledgeBaseVectorOrderByWithRelationInput = {
+    id?: SortOrder
+    kbDocumentId?: SortOrder
+    organizationId?: SortOrder
+    chunkIndex?: SortOrder
+    totalChunks?: SortOrder
+    content?: SortOrder
+    fileName?: SortOrder
+    fileType?: SortOrder
+    contentHash?: SortOrder
+    vectorizedAt?: SortOrder
+    model?: SortOrder
+    kbDocument?: KnowledgeBaseDocumentOrderByWithRelationInput
+  }
+
+  export type KnowledgeBaseVectorWhereUniqueInput = Prisma.AtLeast<{
+    id?: bigint | number
+    AND?: KnowledgeBaseVectorWhereInput | KnowledgeBaseVectorWhereInput[]
+    OR?: KnowledgeBaseVectorWhereInput[]
+    NOT?: KnowledgeBaseVectorWhereInput | KnowledgeBaseVectorWhereInput[]
+    kbDocumentId?: StringFilter<"KnowledgeBaseVector"> | string
+    organizationId?: StringFilter<"KnowledgeBaseVector"> | string
+    chunkIndex?: IntFilter<"KnowledgeBaseVector"> | number
+    totalChunks?: IntFilter<"KnowledgeBaseVector"> | number
+    content?: StringFilter<"KnowledgeBaseVector"> | string
+    fileName?: StringFilter<"KnowledgeBaseVector"> | string
+    fileType?: StringFilter<"KnowledgeBaseVector"> | string
+    contentHash?: StringFilter<"KnowledgeBaseVector"> | string
+    vectorizedAt?: DateTimeFilter<"KnowledgeBaseVector"> | Date | string
+    model?: StringFilter<"KnowledgeBaseVector"> | string
+    kbDocument?: XOR<KnowledgeBaseDocumentScalarRelationFilter, KnowledgeBaseDocumentWhereInput>
+  }, "id">
+
+  export type KnowledgeBaseVectorOrderByWithAggregationInput = {
+    id?: SortOrder
+    kbDocumentId?: SortOrder
+    organizationId?: SortOrder
+    chunkIndex?: SortOrder
+    totalChunks?: SortOrder
+    content?: SortOrder
+    fileName?: SortOrder
+    fileType?: SortOrder
+    contentHash?: SortOrder
+    vectorizedAt?: SortOrder
+    model?: SortOrder
+    _count?: KnowledgeBaseVectorCountOrderByAggregateInput
+    _avg?: KnowledgeBaseVectorAvgOrderByAggregateInput
+    _max?: KnowledgeBaseVectorMaxOrderByAggregateInput
+    _min?: KnowledgeBaseVectorMinOrderByAggregateInput
+    _sum?: KnowledgeBaseVectorSumOrderByAggregateInput
+  }
+
+  export type KnowledgeBaseVectorScalarWhereWithAggregatesInput = {
+    AND?: KnowledgeBaseVectorScalarWhereWithAggregatesInput | KnowledgeBaseVectorScalarWhereWithAggregatesInput[]
+    OR?: KnowledgeBaseVectorScalarWhereWithAggregatesInput[]
+    NOT?: KnowledgeBaseVectorScalarWhereWithAggregatesInput | KnowledgeBaseVectorScalarWhereWithAggregatesInput[]
+    id?: BigIntWithAggregatesFilter<"KnowledgeBaseVector"> | bigint | number
+    kbDocumentId?: StringWithAggregatesFilter<"KnowledgeBaseVector"> | string
+    organizationId?: StringWithAggregatesFilter<"KnowledgeBaseVector"> | string
+    chunkIndex?: IntWithAggregatesFilter<"KnowledgeBaseVector"> | number
+    totalChunks?: IntWithAggregatesFilter<"KnowledgeBaseVector"> | number
+    content?: StringWithAggregatesFilter<"KnowledgeBaseVector"> | string
+    fileName?: StringWithAggregatesFilter<"KnowledgeBaseVector"> | string
+    fileType?: StringWithAggregatesFilter<"KnowledgeBaseVector"> | string
+    contentHash?: StringWithAggregatesFilter<"KnowledgeBaseVector"> | string
+    vectorizedAt?: DateTimeWithAggregatesFilter<"KnowledgeBaseVector"> | Date | string
+    model?: StringWithAggregatesFilter<"KnowledgeBaseVector"> | string
   }
 
   export type GrantBookmarkWhereInput = {
@@ -23378,16 +24923,16 @@ export namespace Prisma {
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
     organizationId?: StringFilter<"Application"> | string
-    opportunityTitle?: StringNullableFilter<"Application"> | string | null
+    opportunityAgency?: StringNullableFilter<"Application"> | string | null
+    opportunityAttachments?: JsonNullableFilter<"Application">
+    opportunityAwardMax?: BigIntNullableFilter<"Application"> | bigint | number | null
+    opportunityAwardMin?: BigIntNullableFilter<"Application"> | bigint | number | null
+    opportunityCloseDate?: DateTimeNullableFilter<"Application"> | Date | string | null
     opportunityDescription?: StringNullableFilter<"Application"> | string | null
     opportunityEligibility?: StringNullableFilter<"Application"> | string | null
-    opportunityAgency?: StringNullableFilter<"Application"> | string | null
-    opportunityCloseDate?: DateTimeNullableFilter<"Application"> | Date | string | null
+    opportunityTitle?: StringNullableFilter<"Application"> | string | null
     opportunityTotalFunding?: BigIntNullableFilter<"Application"> | bigint | number | null
-    opportunityAwardMin?: BigIntNullableFilter<"Application"> | bigint | number | null
-    opportunityAwardMax?: BigIntNullableFilter<"Application"> | bigint | number | null
     opportunityUrl?: StringNullableFilter<"Application"> | string | null
-    opportunityAttachments?: JsonNullableFilter<"Application">
     aiChats?: AiChatListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     documents?: DocumentListRelationFilter
@@ -23404,16 +24949,16 @@ export namespace Prisma {
     submittedAt?: SortOrderInput | SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
-    opportunityTitle?: SortOrderInput | SortOrder
+    opportunityAgency?: SortOrderInput | SortOrder
+    opportunityAttachments?: SortOrderInput | SortOrder
+    opportunityAwardMax?: SortOrderInput | SortOrder
+    opportunityAwardMin?: SortOrderInput | SortOrder
+    opportunityCloseDate?: SortOrderInput | SortOrder
     opportunityDescription?: SortOrderInput | SortOrder
     opportunityEligibility?: SortOrderInput | SortOrder
-    opportunityAgency?: SortOrderInput | SortOrder
-    opportunityCloseDate?: SortOrderInput | SortOrder
+    opportunityTitle?: SortOrderInput | SortOrder
     opportunityTotalFunding?: SortOrderInput | SortOrder
-    opportunityAwardMin?: SortOrderInput | SortOrder
-    opportunityAwardMax?: SortOrderInput | SortOrder
     opportunityUrl?: SortOrderInput | SortOrder
-    opportunityAttachments?: SortOrderInput | SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     organization?: OrganizationOrderByWithRelationInput
     documents?: DocumentOrderByRelationAggregateInput
@@ -23433,16 +24978,16 @@ export namespace Prisma {
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
     organizationId?: StringFilter<"Application"> | string
-    opportunityTitle?: StringNullableFilter<"Application"> | string | null
+    opportunityAgency?: StringNullableFilter<"Application"> | string | null
+    opportunityAttachments?: JsonNullableFilter<"Application">
+    opportunityAwardMax?: BigIntNullableFilter<"Application"> | bigint | number | null
+    opportunityAwardMin?: BigIntNullableFilter<"Application"> | bigint | number | null
+    opportunityCloseDate?: DateTimeNullableFilter<"Application"> | Date | string | null
     opportunityDescription?: StringNullableFilter<"Application"> | string | null
     opportunityEligibility?: StringNullableFilter<"Application"> | string | null
-    opportunityAgency?: StringNullableFilter<"Application"> | string | null
-    opportunityCloseDate?: DateTimeNullableFilter<"Application"> | Date | string | null
+    opportunityTitle?: StringNullableFilter<"Application"> | string | null
     opportunityTotalFunding?: BigIntNullableFilter<"Application"> | bigint | number | null
-    opportunityAwardMin?: BigIntNullableFilter<"Application"> | bigint | number | null
-    opportunityAwardMax?: BigIntNullableFilter<"Application"> | bigint | number | null
     opportunityUrl?: StringNullableFilter<"Application"> | string | null
-    opportunityAttachments?: JsonNullableFilter<"Application">
     aiChats?: AiChatListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     documents?: DocumentListRelationFilter
@@ -23459,16 +25004,16 @@ export namespace Prisma {
     submittedAt?: SortOrderInput | SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
-    opportunityTitle?: SortOrderInput | SortOrder
+    opportunityAgency?: SortOrderInput | SortOrder
+    opportunityAttachments?: SortOrderInput | SortOrder
+    opportunityAwardMax?: SortOrderInput | SortOrder
+    opportunityAwardMin?: SortOrderInput | SortOrder
+    opportunityCloseDate?: SortOrderInput | SortOrder
     opportunityDescription?: SortOrderInput | SortOrder
     opportunityEligibility?: SortOrderInput | SortOrder
-    opportunityAgency?: SortOrderInput | SortOrder
-    opportunityCloseDate?: SortOrderInput | SortOrder
+    opportunityTitle?: SortOrderInput | SortOrder
     opportunityTotalFunding?: SortOrderInput | SortOrder
-    opportunityAwardMin?: SortOrderInput | SortOrder
-    opportunityAwardMax?: SortOrderInput | SortOrder
     opportunityUrl?: SortOrderInput | SortOrder
-    opportunityAttachments?: SortOrderInput | SortOrder
     _count?: ApplicationCountOrderByAggregateInput
     _avg?: ApplicationAvgOrderByAggregateInput
     _max?: ApplicationMaxOrderByAggregateInput
@@ -23489,16 +25034,16 @@ export namespace Prisma {
     submittedAt?: DateTimeNullableWithAggregatesFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
     organizationId?: StringWithAggregatesFilter<"Application"> | string
-    opportunityTitle?: StringNullableWithAggregatesFilter<"Application"> | string | null
+    opportunityAgency?: StringNullableWithAggregatesFilter<"Application"> | string | null
+    opportunityAttachments?: JsonNullableWithAggregatesFilter<"Application">
+    opportunityAwardMax?: BigIntNullableWithAggregatesFilter<"Application"> | bigint | number | null
+    opportunityAwardMin?: BigIntNullableWithAggregatesFilter<"Application"> | bigint | number | null
+    opportunityCloseDate?: DateTimeNullableWithAggregatesFilter<"Application"> | Date | string | null
     opportunityDescription?: StringNullableWithAggregatesFilter<"Application"> | string | null
     opportunityEligibility?: StringNullableWithAggregatesFilter<"Application"> | string | null
-    opportunityAgency?: StringNullableWithAggregatesFilter<"Application"> | string | null
-    opportunityCloseDate?: DateTimeNullableWithAggregatesFilter<"Application"> | Date | string | null
+    opportunityTitle?: StringNullableWithAggregatesFilter<"Application"> | string | null
     opportunityTotalFunding?: BigIntNullableWithAggregatesFilter<"Application"> | bigint | number | null
-    opportunityAwardMin?: BigIntNullableWithAggregatesFilter<"Application"> | bigint | number | null
-    opportunityAwardMax?: BigIntNullableWithAggregatesFilter<"Application"> | bigint | number | null
     opportunityUrl?: StringNullableWithAggregatesFilter<"Application"> | string | null
-    opportunityAttachments?: JsonNullableWithAggregatesFilter<"Application">
   }
 
   export type AiChatWhereInput = {
@@ -24481,9 +26026,9 @@ export namespace Prisma {
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateInput = {
@@ -24524,9 +26069,9 @@ export namespace Prisma {
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUpdateInput = {
@@ -24567,9 +26112,9 @@ export namespace Prisma {
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateInput = {
@@ -24610,9 +26155,9 @@ export namespace Prisma {
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationCreateManyInput = {
@@ -24786,7 +26331,12 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    chunkCount?: number | null
+    vectorizationError?: string | null
+    vectorizationStatus?: $Enums.VectorizationStatus
+    vectorizedAt?: Date | string | null
     organization: OrganizationCreateNestedOneWithoutKnowledgeBaseInput
+    vectors?: KnowledgeBaseVectorCreateNestedManyWithoutKbDocumentInput
   }
 
   export type KnowledgeBaseDocumentUncheckedCreateInput = {
@@ -24800,6 +26350,11 @@ export namespace Prisma {
     organizationId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    chunkCount?: number | null
+    vectorizationError?: string | null
+    vectorizationStatus?: $Enums.VectorizationStatus
+    vectorizedAt?: Date | string | null
+    vectors?: KnowledgeBaseVectorUncheckedCreateNestedManyWithoutKbDocumentInput
   }
 
   export type KnowledgeBaseDocumentUpdateInput = {
@@ -24812,7 +26367,12 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
+    vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     organization?: OrganizationUpdateOneRequiredWithoutKnowledgeBaseNestedInput
+    vectors?: KnowledgeBaseVectorUpdateManyWithoutKbDocumentNestedInput
   }
 
   export type KnowledgeBaseDocumentUncheckedUpdateInput = {
@@ -24826,6 +26386,11 @@ export namespace Prisma {
     organizationId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
+    vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    vectors?: KnowledgeBaseVectorUncheckedUpdateManyWithoutKbDocumentNestedInput
   }
 
   export type KnowledgeBaseDocumentCreateManyInput = {
@@ -24839,6 +26404,10 @@ export namespace Prisma {
     organizationId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    chunkCount?: number | null
+    vectorizationError?: string | null
+    vectorizationStatus?: $Enums.VectorizationStatus
+    vectorizedAt?: Date | string | null
   }
 
   export type KnowledgeBaseDocumentUpdateManyMutationInput = {
@@ -24851,6 +26420,10 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
+    vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type KnowledgeBaseDocumentUncheckedUpdateManyInput = {
@@ -24864,6 +26437,107 @@ export namespace Prisma {
     organizationId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
+    vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type KnowledgeBaseVectorCreateInput = {
+    id?: bigint | number
+    organizationId: string
+    chunkIndex: number
+    totalChunks: number
+    content: string
+    fileName: string
+    fileType: string
+    contentHash: string
+    vectorizedAt?: Date | string
+    model?: string
+    kbDocument: KnowledgeBaseDocumentCreateNestedOneWithoutVectorsInput
+  }
+
+  export type KnowledgeBaseVectorUncheckedCreateInput = {
+    id?: bigint | number
+    kbDocumentId: string
+    organizationId: string
+    chunkIndex: number
+    totalChunks: number
+    content: string
+    fileName: string
+    fileType: string
+    contentHash: string
+    vectorizedAt?: Date | string
+    model?: string
+  }
+
+  export type KnowledgeBaseVectorUpdateInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    organizationId?: StringFieldUpdateOperationsInput | string
+    chunkIndex?: IntFieldUpdateOperationsInput | number
+    totalChunks?: IntFieldUpdateOperationsInput | number
+    content?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    contentHash?: StringFieldUpdateOperationsInput | string
+    vectorizedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    model?: StringFieldUpdateOperationsInput | string
+    kbDocument?: KnowledgeBaseDocumentUpdateOneRequiredWithoutVectorsNestedInput
+  }
+
+  export type KnowledgeBaseVectorUncheckedUpdateInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    kbDocumentId?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    chunkIndex?: IntFieldUpdateOperationsInput | number
+    totalChunks?: IntFieldUpdateOperationsInput | number
+    content?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    contentHash?: StringFieldUpdateOperationsInput | string
+    vectorizedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    model?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type KnowledgeBaseVectorCreateManyInput = {
+    id?: bigint | number
+    kbDocumentId: string
+    organizationId: string
+    chunkIndex: number
+    totalChunks: number
+    content: string
+    fileName: string
+    fileType: string
+    contentHash: string
+    vectorizedAt?: Date | string
+    model?: string
+  }
+
+  export type KnowledgeBaseVectorUpdateManyMutationInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    organizationId?: StringFieldUpdateOperationsInput | string
+    chunkIndex?: IntFieldUpdateOperationsInput | number
+    totalChunks?: IntFieldUpdateOperationsInput | number
+    content?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    contentHash?: StringFieldUpdateOperationsInput | string
+    vectorizedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    model?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type KnowledgeBaseVectorUncheckedUpdateManyInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    kbDocumentId?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    chunkIndex?: IntFieldUpdateOperationsInput | number
+    totalChunks?: IntFieldUpdateOperationsInput | number
+    content?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    contentHash?: StringFieldUpdateOperationsInput | string
+    vectorizedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    model?: StringFieldUpdateOperationsInput | string
   }
 
   export type GrantBookmarkCreateInput = {
@@ -25019,16 +26693,16 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    opportunityTitle?: string | null
+    opportunityAgency?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityCloseDate?: Date | string | null
     opportunityDescription?: string | null
     opportunityEligibility?: string | null
-    opportunityAgency?: string | null
-    opportunityCloseDate?: Date | string | null
+    opportunityTitle?: string | null
     opportunityTotalFunding?: bigint | number | null
-    opportunityAwardMin?: bigint | number | null
-    opportunityAwardMax?: bigint | number | null
     opportunityUrl?: string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
@@ -25045,16 +26719,16 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
-    opportunityTitle?: string | null
+    opportunityAgency?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityCloseDate?: Date | string | null
     opportunityDescription?: string | null
     opportunityEligibility?: string | null
-    opportunityAgency?: string | null
-    opportunityCloseDate?: Date | string | null
+    opportunityTitle?: string | null
     opportunityTotalFunding?: bigint | number | null
-    opportunityAwardMin?: bigint | number | null
-    opportunityAwardMax?: bigint | number | null
     opportunityUrl?: string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
     folder?: FolderUncheckedCreateNestedOneWithoutApplicationInput
@@ -25069,16 +26743,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
@@ -25095,16 +26769,16 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
-    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
     folder?: FolderUncheckedUpdateOneWithoutApplicationNestedInput
@@ -25120,16 +26794,16 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
-    opportunityTitle?: string | null
+    opportunityAgency?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityCloseDate?: Date | string | null
     opportunityDescription?: string | null
     opportunityEligibility?: string | null
-    opportunityAgency?: string | null
-    opportunityCloseDate?: Date | string | null
+    opportunityTitle?: string | null
     opportunityTotalFunding?: bigint | number | null
-    opportunityAwardMin?: bigint | number | null
-    opportunityAwardMax?: bigint | number | null
     opportunityUrl?: string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type ApplicationUpdateManyMutationInput = {
@@ -25141,16 +26815,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type ApplicationUncheckedUpdateManyInput = {
@@ -25163,16 +26837,16 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
-    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type AiChatCreateInput = {
@@ -26343,6 +28017,12 @@ export namespace Prisma {
     none?: GrantEligibilityAnalysisWhereInput
   }
 
+  export type KnowledgeBaseDocumentListRelationFilter = {
+    every?: KnowledgeBaseDocumentWhereInput
+    some?: KnowledgeBaseDocumentWhereInput
+    none?: KnowledgeBaseDocumentWhereInput
+  }
+
   export type RecommendationListRelationFilter = {
     every?: RecommendationWhereInput
     some?: RecommendationWhereInput
@@ -26353,12 +28033,6 @@ export namespace Prisma {
     every?: UserWhereInput
     some?: UserWhereInput
     none?: UserWhereInput
-  }
-
-  export type KnowledgeBaseDocumentListRelationFilter = {
-    every?: KnowledgeBaseDocumentWhereInput
-    some?: KnowledgeBaseDocumentWhereInput
-    none?: KnowledgeBaseDocumentWhereInput
   }
 
   export type ApplicationOrderByRelationAggregateInput = {
@@ -26381,15 +28055,15 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type KnowledgeBaseDocumentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type RecommendationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type UserOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type KnowledgeBaseDocumentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -26573,6 +28247,23 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type EnumVectorizationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.VectorizationStatus | EnumVectorizationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VectorizationStatus[] | ListEnumVectorizationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VectorizationStatus[] | ListEnumVectorizationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVectorizationStatusFilter<$PrismaModel> | $Enums.VectorizationStatus
+  }
+
+  export type KnowledgeBaseVectorListRelationFilter = {
+    every?: KnowledgeBaseVectorWhereInput
+    some?: KnowledgeBaseVectorWhereInput
+    none?: KnowledgeBaseVectorWhereInput
+  }
+
+  export type KnowledgeBaseVectorOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type KnowledgeBaseDocumentCountOrderByAggregateInput = {
     id?: SortOrder
     fileName?: SortOrder
@@ -26584,10 +28275,15 @@ export namespace Prisma {
     organizationId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    chunkCount?: SortOrder
+    vectorizationError?: SortOrder
+    vectorizationStatus?: SortOrder
+    vectorizedAt?: SortOrder
   }
 
   export type KnowledgeBaseDocumentAvgOrderByAggregateInput = {
     fileSize?: SortOrder
+    chunkCount?: SortOrder
   }
 
   export type KnowledgeBaseDocumentMaxOrderByAggregateInput = {
@@ -26601,6 +28297,10 @@ export namespace Prisma {
     organizationId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    chunkCount?: SortOrder
+    vectorizationError?: SortOrder
+    vectorizationStatus?: SortOrder
+    vectorizedAt?: SortOrder
   }
 
   export type KnowledgeBaseDocumentMinOrderByAggregateInput = {
@@ -26614,10 +28314,111 @@ export namespace Prisma {
     organizationId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    chunkCount?: SortOrder
+    vectorizationError?: SortOrder
+    vectorizationStatus?: SortOrder
+    vectorizedAt?: SortOrder
   }
 
   export type KnowledgeBaseDocumentSumOrderByAggregateInput = {
     fileSize?: SortOrder
+    chunkCount?: SortOrder
+  }
+
+  export type EnumVectorizationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.VectorizationStatus | EnumVectorizationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VectorizationStatus[] | ListEnumVectorizationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VectorizationStatus[] | ListEnumVectorizationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVectorizationStatusWithAggregatesFilter<$PrismaModel> | $Enums.VectorizationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumVectorizationStatusFilter<$PrismaModel>
+    _max?: NestedEnumVectorizationStatusFilter<$PrismaModel>
+  }
+
+  export type BigIntFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntFilter<$PrismaModel> | bigint | number
+  }
+
+  export type KnowledgeBaseDocumentScalarRelationFilter = {
+    is?: KnowledgeBaseDocumentWhereInput
+    isNot?: KnowledgeBaseDocumentWhereInput
+  }
+
+  export type KnowledgeBaseVectorCountOrderByAggregateInput = {
+    id?: SortOrder
+    kbDocumentId?: SortOrder
+    organizationId?: SortOrder
+    chunkIndex?: SortOrder
+    totalChunks?: SortOrder
+    content?: SortOrder
+    fileName?: SortOrder
+    fileType?: SortOrder
+    contentHash?: SortOrder
+    vectorizedAt?: SortOrder
+    model?: SortOrder
+  }
+
+  export type KnowledgeBaseVectorAvgOrderByAggregateInput = {
+    id?: SortOrder
+    chunkIndex?: SortOrder
+    totalChunks?: SortOrder
+  }
+
+  export type KnowledgeBaseVectorMaxOrderByAggregateInput = {
+    id?: SortOrder
+    kbDocumentId?: SortOrder
+    organizationId?: SortOrder
+    chunkIndex?: SortOrder
+    totalChunks?: SortOrder
+    content?: SortOrder
+    fileName?: SortOrder
+    fileType?: SortOrder
+    contentHash?: SortOrder
+    vectorizedAt?: SortOrder
+    model?: SortOrder
+  }
+
+  export type KnowledgeBaseVectorMinOrderByAggregateInput = {
+    id?: SortOrder
+    kbDocumentId?: SortOrder
+    organizationId?: SortOrder
+    chunkIndex?: SortOrder
+    totalChunks?: SortOrder
+    content?: SortOrder
+    fileName?: SortOrder
+    fileType?: SortOrder
+    contentHash?: SortOrder
+    vectorizedAt?: SortOrder
+    model?: SortOrder
+  }
+
+  export type KnowledgeBaseVectorSumOrderByAggregateInput = {
+    id?: SortOrder
+    chunkIndex?: SortOrder
+    totalChunks?: SortOrder
+  }
+
+  export type BigIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntWithAggregatesFilter<$PrismaModel> | bigint | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedBigIntFilter<$PrismaModel>
+    _min?: NestedBigIntFilter<$PrismaModel>
+    _max?: NestedBigIntFilter<$PrismaModel>
   }
 
   export type UserScalarRelationFilter = {
@@ -26758,23 +28559,23 @@ export namespace Prisma {
     submittedAt?: SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
-    opportunityTitle?: SortOrder
+    opportunityAgency?: SortOrder
+    opportunityAttachments?: SortOrder
+    opportunityAwardMax?: SortOrder
+    opportunityAwardMin?: SortOrder
+    opportunityCloseDate?: SortOrder
     opportunityDescription?: SortOrder
     opportunityEligibility?: SortOrder
-    opportunityAgency?: SortOrder
-    opportunityCloseDate?: SortOrder
+    opportunityTitle?: SortOrder
     opportunityTotalFunding?: SortOrder
-    opportunityAwardMin?: SortOrder
-    opportunityAwardMax?: SortOrder
     opportunityUrl?: SortOrder
-    opportunityAttachments?: SortOrder
   }
 
   export type ApplicationAvgOrderByAggregateInput = {
     opportunityId?: SortOrder
-    opportunityTotalFunding?: SortOrder
-    opportunityAwardMin?: SortOrder
     opportunityAwardMax?: SortOrder
+    opportunityAwardMin?: SortOrder
+    opportunityTotalFunding?: SortOrder
   }
 
   export type ApplicationMaxOrderByAggregateInput = {
@@ -26787,14 +28588,14 @@ export namespace Prisma {
     submittedAt?: SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
-    opportunityTitle?: SortOrder
+    opportunityAgency?: SortOrder
+    opportunityAwardMax?: SortOrder
+    opportunityAwardMin?: SortOrder
+    opportunityCloseDate?: SortOrder
     opportunityDescription?: SortOrder
     opportunityEligibility?: SortOrder
-    opportunityAgency?: SortOrder
-    opportunityCloseDate?: SortOrder
+    opportunityTitle?: SortOrder
     opportunityTotalFunding?: SortOrder
-    opportunityAwardMin?: SortOrder
-    opportunityAwardMax?: SortOrder
     opportunityUrl?: SortOrder
   }
 
@@ -26808,22 +28609,22 @@ export namespace Prisma {
     submittedAt?: SortOrder
     lastEditedAt?: SortOrder
     organizationId?: SortOrder
-    opportunityTitle?: SortOrder
+    opportunityAgency?: SortOrder
+    opportunityAwardMax?: SortOrder
+    opportunityAwardMin?: SortOrder
+    opportunityCloseDate?: SortOrder
     opportunityDescription?: SortOrder
     opportunityEligibility?: SortOrder
-    opportunityAgency?: SortOrder
-    opportunityCloseDate?: SortOrder
+    opportunityTitle?: SortOrder
     opportunityTotalFunding?: SortOrder
-    opportunityAwardMin?: SortOrder
-    opportunityAwardMax?: SortOrder
     opportunityUrl?: SortOrder
   }
 
   export type ApplicationSumOrderByAggregateInput = {
     opportunityId?: SortOrder
-    opportunityTotalFunding?: SortOrder
-    opportunityAwardMin?: SortOrder
     opportunityAwardMax?: SortOrder
+    opportunityAwardMin?: SortOrder
+    opportunityTotalFunding?: SortOrder
   }
 
   export type EnumApplicationStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -26990,17 +28791,6 @@ export namespace Prisma {
     fitScore?: SortOrder
   }
 
-  export type BigIntFilter<$PrismaModel = never> = {
-    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    not?: NestedBigIntFilter<$PrismaModel> | bigint | number
-  }
-
   export type VectorDocumentCountOrderByAggregateInput = {
     id?: SortOrder
     content?: SortOrder
@@ -27023,22 +28813,6 @@ export namespace Prisma {
 
   export type VectorDocumentSumOrderByAggregateInput = {
     id?: SortOrder
-  }
-
-  export type BigIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    not?: NestedBigIntWithAggregatesFilter<$PrismaModel> | bigint | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedBigIntFilter<$PrismaModel>
-    _min?: NestedBigIntFilter<$PrismaModel>
-    _max?: NestedBigIntFilter<$PrismaModel>
   }
 
   export type DocumentCountOrderByAggregateInput = {
@@ -27451,6 +29225,13 @@ export namespace Prisma {
     connect?: GrantEligibilityAnalysisWhereUniqueInput | GrantEligibilityAnalysisWhereUniqueInput[]
   }
 
+  export type KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput> | KnowledgeBaseDocumentCreateWithoutOrganizationInput[] | KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput | KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput[]
+    createMany?: KnowledgeBaseDocumentCreateManyOrganizationInputEnvelope
+    connect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+  }
+
   export type RecommendationCreateNestedManyWithoutOrganizationInput = {
     create?: XOR<RecommendationCreateWithoutOrganizationInput, RecommendationUncheckedCreateWithoutOrganizationInput> | RecommendationCreateWithoutOrganizationInput[] | RecommendationUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: RecommendationCreateOrConnectWithoutOrganizationInput | RecommendationCreateOrConnectWithoutOrganizationInput[]
@@ -27463,13 +29244,6 @@ export namespace Prisma {
     connectOrCreate?: UserCreateOrConnectWithoutOrganizationInput | UserCreateOrConnectWithoutOrganizationInput[]
     createMany?: UserCreateManyOrganizationInputEnvelope
     connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
-  }
-
-  export type KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput = {
-    create?: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput> | KnowledgeBaseDocumentCreateWithoutOrganizationInput[] | KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput[]
-    connectOrCreate?: KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput | KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput[]
-    createMany?: KnowledgeBaseDocumentCreateManyOrganizationInputEnvelope
-    connect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
   }
 
   export type AiChatUncheckedCreateNestedManyWithoutOrganizationInput = {
@@ -27521,6 +29295,13 @@ export namespace Prisma {
     connect?: GrantEligibilityAnalysisWhereUniqueInput | GrantEligibilityAnalysisWhereUniqueInput[]
   }
 
+  export type KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput> | KnowledgeBaseDocumentCreateWithoutOrganizationInput[] | KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput | KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput[]
+    createMany?: KnowledgeBaseDocumentCreateManyOrganizationInputEnvelope
+    connect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+  }
+
   export type RecommendationUncheckedCreateNestedManyWithoutOrganizationInput = {
     create?: XOR<RecommendationCreateWithoutOrganizationInput, RecommendationUncheckedCreateWithoutOrganizationInput> | RecommendationCreateWithoutOrganizationInput[] | RecommendationUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: RecommendationCreateOrConnectWithoutOrganizationInput | RecommendationCreateOrConnectWithoutOrganizationInput[]
@@ -27533,13 +29314,6 @@ export namespace Prisma {
     connectOrCreate?: UserCreateOrConnectWithoutOrganizationInput | UserCreateOrConnectWithoutOrganizationInput[]
     createMany?: UserCreateManyOrganizationInputEnvelope
     connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
-  }
-
-  export type KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput = {
-    create?: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput> | KnowledgeBaseDocumentCreateWithoutOrganizationInput[] | KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput[]
-    connectOrCreate?: KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput | KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput[]
-    createMany?: KnowledgeBaseDocumentCreateManyOrganizationInputEnvelope
-    connect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
   }
 
   export type NullableDecimalFieldUpdateOperationsInput = {
@@ -27661,6 +29435,20 @@ export namespace Prisma {
     deleteMany?: GrantEligibilityAnalysisScalarWhereInput | GrantEligibilityAnalysisScalarWhereInput[]
   }
 
+  export type KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput> | KnowledgeBaseDocumentCreateWithoutOrganizationInput[] | KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput | KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput[]
+    upsert?: KnowledgeBaseDocumentUpsertWithWhereUniqueWithoutOrganizationInput | KnowledgeBaseDocumentUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: KnowledgeBaseDocumentCreateManyOrganizationInputEnvelope
+    set?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    disconnect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    delete?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    connect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    update?: KnowledgeBaseDocumentUpdateWithWhereUniqueWithoutOrganizationInput | KnowledgeBaseDocumentUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: KnowledgeBaseDocumentUpdateManyWithWhereWithoutOrganizationInput | KnowledgeBaseDocumentUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: KnowledgeBaseDocumentScalarWhereInput | KnowledgeBaseDocumentScalarWhereInput[]
+  }
+
   export type RecommendationUpdateManyWithoutOrganizationNestedInput = {
     create?: XOR<RecommendationCreateWithoutOrganizationInput, RecommendationUncheckedCreateWithoutOrganizationInput> | RecommendationCreateWithoutOrganizationInput[] | RecommendationUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: RecommendationCreateOrConnectWithoutOrganizationInput | RecommendationCreateOrConnectWithoutOrganizationInput[]
@@ -27687,20 +29475,6 @@ export namespace Prisma {
     update?: UserUpdateWithWhereUniqueWithoutOrganizationInput | UserUpdateWithWhereUniqueWithoutOrganizationInput[]
     updateMany?: UserUpdateManyWithWhereWithoutOrganizationInput | UserUpdateManyWithWhereWithoutOrganizationInput[]
     deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
-  }
-
-  export type KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput = {
-    create?: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput> | KnowledgeBaseDocumentCreateWithoutOrganizationInput[] | KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput[]
-    connectOrCreate?: KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput | KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput[]
-    upsert?: KnowledgeBaseDocumentUpsertWithWhereUniqueWithoutOrganizationInput | KnowledgeBaseDocumentUpsertWithWhereUniqueWithoutOrganizationInput[]
-    createMany?: KnowledgeBaseDocumentCreateManyOrganizationInputEnvelope
-    set?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
-    disconnect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
-    delete?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
-    connect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
-    update?: KnowledgeBaseDocumentUpdateWithWhereUniqueWithoutOrganizationInput | KnowledgeBaseDocumentUpdateWithWhereUniqueWithoutOrganizationInput[]
-    updateMany?: KnowledgeBaseDocumentUpdateManyWithWhereWithoutOrganizationInput | KnowledgeBaseDocumentUpdateManyWithWhereWithoutOrganizationInput[]
-    deleteMany?: KnowledgeBaseDocumentScalarWhereInput | KnowledgeBaseDocumentScalarWhereInput[]
   }
 
   export type AiChatUncheckedUpdateManyWithoutOrganizationNestedInput = {
@@ -27801,6 +29575,20 @@ export namespace Prisma {
     deleteMany?: GrantEligibilityAnalysisScalarWhereInput | GrantEligibilityAnalysisScalarWhereInput[]
   }
 
+  export type KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput> | KnowledgeBaseDocumentCreateWithoutOrganizationInput[] | KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput | KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput[]
+    upsert?: KnowledgeBaseDocumentUpsertWithWhereUniqueWithoutOrganizationInput | KnowledgeBaseDocumentUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: KnowledgeBaseDocumentCreateManyOrganizationInputEnvelope
+    set?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    disconnect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    delete?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    connect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
+    update?: KnowledgeBaseDocumentUpdateWithWhereUniqueWithoutOrganizationInput | KnowledgeBaseDocumentUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: KnowledgeBaseDocumentUpdateManyWithWhereWithoutOrganizationInput | KnowledgeBaseDocumentUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: KnowledgeBaseDocumentScalarWhereInput | KnowledgeBaseDocumentScalarWhereInput[]
+  }
+
   export type RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput = {
     create?: XOR<RecommendationCreateWithoutOrganizationInput, RecommendationUncheckedCreateWithoutOrganizationInput> | RecommendationCreateWithoutOrganizationInput[] | RecommendationUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: RecommendationCreateOrConnectWithoutOrganizationInput | RecommendationCreateOrConnectWithoutOrganizationInput[]
@@ -27829,20 +29617,6 @@ export namespace Prisma {
     deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
-  export type KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput = {
-    create?: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput> | KnowledgeBaseDocumentCreateWithoutOrganizationInput[] | KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput[]
-    connectOrCreate?: KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput | KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput[]
-    upsert?: KnowledgeBaseDocumentUpsertWithWhereUniqueWithoutOrganizationInput | KnowledgeBaseDocumentUpsertWithWhereUniqueWithoutOrganizationInput[]
-    createMany?: KnowledgeBaseDocumentCreateManyOrganizationInputEnvelope
-    set?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
-    disconnect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
-    delete?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
-    connect?: KnowledgeBaseDocumentWhereUniqueInput | KnowledgeBaseDocumentWhereUniqueInput[]
-    update?: KnowledgeBaseDocumentUpdateWithWhereUniqueWithoutOrganizationInput | KnowledgeBaseDocumentUpdateWithWhereUniqueWithoutOrganizationInput[]
-    updateMany?: KnowledgeBaseDocumentUpdateManyWithWhereWithoutOrganizationInput | KnowledgeBaseDocumentUpdateManyWithWhereWithoutOrganizationInput[]
-    deleteMany?: KnowledgeBaseDocumentScalarWhereInput | KnowledgeBaseDocumentScalarWhereInput[]
-  }
-
   export type OrganizationCreateNestedOneWithoutCustomFieldsInput = {
     create?: XOR<OrganizationCreateWithoutCustomFieldsInput, OrganizationUncheckedCreateWithoutCustomFieldsInput>
     connectOrCreate?: OrganizationCreateOrConnectWithoutCustomFieldsInput
@@ -27863,12 +29637,80 @@ export namespace Prisma {
     connect?: OrganizationWhereUniqueInput
   }
 
+  export type KnowledgeBaseVectorCreateNestedManyWithoutKbDocumentInput = {
+    create?: XOR<KnowledgeBaseVectorCreateWithoutKbDocumentInput, KnowledgeBaseVectorUncheckedCreateWithoutKbDocumentInput> | KnowledgeBaseVectorCreateWithoutKbDocumentInput[] | KnowledgeBaseVectorUncheckedCreateWithoutKbDocumentInput[]
+    connectOrCreate?: KnowledgeBaseVectorCreateOrConnectWithoutKbDocumentInput | KnowledgeBaseVectorCreateOrConnectWithoutKbDocumentInput[]
+    createMany?: KnowledgeBaseVectorCreateManyKbDocumentInputEnvelope
+    connect?: KnowledgeBaseVectorWhereUniqueInput | KnowledgeBaseVectorWhereUniqueInput[]
+  }
+
+  export type KnowledgeBaseVectorUncheckedCreateNestedManyWithoutKbDocumentInput = {
+    create?: XOR<KnowledgeBaseVectorCreateWithoutKbDocumentInput, KnowledgeBaseVectorUncheckedCreateWithoutKbDocumentInput> | KnowledgeBaseVectorCreateWithoutKbDocumentInput[] | KnowledgeBaseVectorUncheckedCreateWithoutKbDocumentInput[]
+    connectOrCreate?: KnowledgeBaseVectorCreateOrConnectWithoutKbDocumentInput | KnowledgeBaseVectorCreateOrConnectWithoutKbDocumentInput[]
+    createMany?: KnowledgeBaseVectorCreateManyKbDocumentInputEnvelope
+    connect?: KnowledgeBaseVectorWhereUniqueInput | KnowledgeBaseVectorWhereUniqueInput[]
+  }
+
+  export type EnumVectorizationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.VectorizationStatus
+  }
+
   export type OrganizationUpdateOneRequiredWithoutKnowledgeBaseNestedInput = {
     create?: XOR<OrganizationCreateWithoutKnowledgeBaseInput, OrganizationUncheckedCreateWithoutKnowledgeBaseInput>
     connectOrCreate?: OrganizationCreateOrConnectWithoutKnowledgeBaseInput
     upsert?: OrganizationUpsertWithoutKnowledgeBaseInput
     connect?: OrganizationWhereUniqueInput
     update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutKnowledgeBaseInput, OrganizationUpdateWithoutKnowledgeBaseInput>, OrganizationUncheckedUpdateWithoutKnowledgeBaseInput>
+  }
+
+  export type KnowledgeBaseVectorUpdateManyWithoutKbDocumentNestedInput = {
+    create?: XOR<KnowledgeBaseVectorCreateWithoutKbDocumentInput, KnowledgeBaseVectorUncheckedCreateWithoutKbDocumentInput> | KnowledgeBaseVectorCreateWithoutKbDocumentInput[] | KnowledgeBaseVectorUncheckedCreateWithoutKbDocumentInput[]
+    connectOrCreate?: KnowledgeBaseVectorCreateOrConnectWithoutKbDocumentInput | KnowledgeBaseVectorCreateOrConnectWithoutKbDocumentInput[]
+    upsert?: KnowledgeBaseVectorUpsertWithWhereUniqueWithoutKbDocumentInput | KnowledgeBaseVectorUpsertWithWhereUniqueWithoutKbDocumentInput[]
+    createMany?: KnowledgeBaseVectorCreateManyKbDocumentInputEnvelope
+    set?: KnowledgeBaseVectorWhereUniqueInput | KnowledgeBaseVectorWhereUniqueInput[]
+    disconnect?: KnowledgeBaseVectorWhereUniqueInput | KnowledgeBaseVectorWhereUniqueInput[]
+    delete?: KnowledgeBaseVectorWhereUniqueInput | KnowledgeBaseVectorWhereUniqueInput[]
+    connect?: KnowledgeBaseVectorWhereUniqueInput | KnowledgeBaseVectorWhereUniqueInput[]
+    update?: KnowledgeBaseVectorUpdateWithWhereUniqueWithoutKbDocumentInput | KnowledgeBaseVectorUpdateWithWhereUniqueWithoutKbDocumentInput[]
+    updateMany?: KnowledgeBaseVectorUpdateManyWithWhereWithoutKbDocumentInput | KnowledgeBaseVectorUpdateManyWithWhereWithoutKbDocumentInput[]
+    deleteMany?: KnowledgeBaseVectorScalarWhereInput | KnowledgeBaseVectorScalarWhereInput[]
+  }
+
+  export type KnowledgeBaseVectorUncheckedUpdateManyWithoutKbDocumentNestedInput = {
+    create?: XOR<KnowledgeBaseVectorCreateWithoutKbDocumentInput, KnowledgeBaseVectorUncheckedCreateWithoutKbDocumentInput> | KnowledgeBaseVectorCreateWithoutKbDocumentInput[] | KnowledgeBaseVectorUncheckedCreateWithoutKbDocumentInput[]
+    connectOrCreate?: KnowledgeBaseVectorCreateOrConnectWithoutKbDocumentInput | KnowledgeBaseVectorCreateOrConnectWithoutKbDocumentInput[]
+    upsert?: KnowledgeBaseVectorUpsertWithWhereUniqueWithoutKbDocumentInput | KnowledgeBaseVectorUpsertWithWhereUniqueWithoutKbDocumentInput[]
+    createMany?: KnowledgeBaseVectorCreateManyKbDocumentInputEnvelope
+    set?: KnowledgeBaseVectorWhereUniqueInput | KnowledgeBaseVectorWhereUniqueInput[]
+    disconnect?: KnowledgeBaseVectorWhereUniqueInput | KnowledgeBaseVectorWhereUniqueInput[]
+    delete?: KnowledgeBaseVectorWhereUniqueInput | KnowledgeBaseVectorWhereUniqueInput[]
+    connect?: KnowledgeBaseVectorWhereUniqueInput | KnowledgeBaseVectorWhereUniqueInput[]
+    update?: KnowledgeBaseVectorUpdateWithWhereUniqueWithoutKbDocumentInput | KnowledgeBaseVectorUpdateWithWhereUniqueWithoutKbDocumentInput[]
+    updateMany?: KnowledgeBaseVectorUpdateManyWithWhereWithoutKbDocumentInput | KnowledgeBaseVectorUpdateManyWithWhereWithoutKbDocumentInput[]
+    deleteMany?: KnowledgeBaseVectorScalarWhereInput | KnowledgeBaseVectorScalarWhereInput[]
+  }
+
+  export type KnowledgeBaseDocumentCreateNestedOneWithoutVectorsInput = {
+    create?: XOR<KnowledgeBaseDocumentCreateWithoutVectorsInput, KnowledgeBaseDocumentUncheckedCreateWithoutVectorsInput>
+    connectOrCreate?: KnowledgeBaseDocumentCreateOrConnectWithoutVectorsInput
+    connect?: KnowledgeBaseDocumentWhereUniqueInput
+  }
+
+  export type BigIntFieldUpdateOperationsInput = {
+    set?: bigint | number
+    increment?: bigint | number
+    decrement?: bigint | number
+    multiply?: bigint | number
+    divide?: bigint | number
+  }
+
+  export type KnowledgeBaseDocumentUpdateOneRequiredWithoutVectorsNestedInput = {
+    create?: XOR<KnowledgeBaseDocumentCreateWithoutVectorsInput, KnowledgeBaseDocumentUncheckedCreateWithoutVectorsInput>
+    connectOrCreate?: KnowledgeBaseDocumentCreateOrConnectWithoutVectorsInput
+    upsert?: KnowledgeBaseDocumentUpsertWithoutVectorsInput
+    connect?: KnowledgeBaseDocumentWhereUniqueInput
+    update?: XOR<XOR<KnowledgeBaseDocumentUpdateToOneWithWhereWithoutVectorsInput, KnowledgeBaseDocumentUpdateWithoutVectorsInput>, KnowledgeBaseDocumentUncheckedUpdateWithoutVectorsInput>
   }
 
   export type OrganizationCreateNestedOneWithoutGrantBookmarksInput = {
@@ -28171,14 +30013,6 @@ export namespace Prisma {
     upsert?: OrganizationUpsertWithoutRecommendationsInput
     connect?: OrganizationWhereUniqueInput
     update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutRecommendationsInput, OrganizationUpdateWithoutRecommendationsInput>, OrganizationUncheckedUpdateWithoutRecommendationsInput>
-  }
-
-  export type BigIntFieldUpdateOperationsInput = {
-    set?: bigint | number
-    increment?: bigint | number
-    decrement?: bigint | number
-    multiply?: bigint | number
-    divide?: bigint | number
   }
 
   export type ApplicationCreateNestedOneWithoutDocumentsInput = {
@@ -28763,6 +30597,50 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumVectorizationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.VectorizationStatus | EnumVectorizationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VectorizationStatus[] | ListEnumVectorizationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VectorizationStatus[] | ListEnumVectorizationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVectorizationStatusFilter<$PrismaModel> | $Enums.VectorizationStatus
+  }
+
+  export type NestedEnumVectorizationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.VectorizationStatus | EnumVectorizationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VectorizationStatus[] | ListEnumVectorizationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VectorizationStatus[] | ListEnumVectorizationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVectorizationStatusWithAggregatesFilter<$PrismaModel> | $Enums.VectorizationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumVectorizationStatusFilter<$PrismaModel>
+    _max?: NestedEnumVectorizationStatusFilter<$PrismaModel>
+  }
+
+  export type NestedBigIntFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntFilter<$PrismaModel> | bigint | number
+  }
+
+  export type NestedBigIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntWithAggregatesFilter<$PrismaModel> | bigint | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedBigIntFilter<$PrismaModel>
+    _min?: NestedBigIntFilter<$PrismaModel>
+    _max?: NestedBigIntFilter<$PrismaModel>
+  }
+
   export type NestedEnumGoNoGoDecisionFilter<$PrismaModel = never> = {
     equals?: $Enums.GoNoGoDecision | EnumGoNoGoDecisionFieldRefInput<$PrismaModel>
     in?: $Enums.GoNoGoDecision[] | ListEnumGoNoGoDecisionFieldRefInput<$PrismaModel>
@@ -28829,33 +30707,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumMessageRoleFilter<$PrismaModel>
     _max?: NestedEnumMessageRoleFilter<$PrismaModel>
-  }
-
-  export type NestedBigIntFilter<$PrismaModel = never> = {
-    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    not?: NestedBigIntFilter<$PrismaModel> | bigint | number
-  }
-
-  export type NestedBigIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    not?: NestedBigIntWithAggregatesFilter<$PrismaModel> | bigint | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedBigIntFilter<$PrismaModel>
-    _min?: NestedBigIntFilter<$PrismaModel>
-    _max?: NestedBigIntFilter<$PrismaModel>
   }
 
   export type k12_education_opportunitiesCreateWithoutOpportunitiesInput = {
@@ -29009,8 +30860,8 @@ export namespace Prisma {
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
-    recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
+    recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutUsersInput = {
@@ -29051,8 +30902,8 @@ export namespace Prisma {
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
-    recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
+    recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutUsersInput = {
@@ -29168,8 +31019,8 @@ export namespace Prisma {
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
-    recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
+    recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutUsersInput = {
@@ -29210,8 +31061,8 @@ export namespace Prisma {
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
-    recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+    recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type AiChatCreateWithoutOrganizationInput = {
@@ -29257,16 +31108,16 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    opportunityTitle?: string | null
+    opportunityAgency?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityCloseDate?: Date | string | null
     opportunityDescription?: string | null
     opportunityEligibility?: string | null
-    opportunityAgency?: string | null
-    opportunityCloseDate?: Date | string | null
+    opportunityTitle?: string | null
     opportunityTotalFunding?: bigint | number | null
-    opportunityAwardMin?: bigint | number | null
-    opportunityAwardMax?: bigint | number | null
     opportunityUrl?: string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
     folder?: FolderCreateNestedOneWithoutApplicationInput
@@ -29281,16 +31132,16 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    opportunityTitle?: string | null
+    opportunityAgency?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityCloseDate?: Date | string | null
     opportunityDescription?: string | null
     opportunityEligibility?: string | null
-    opportunityAgency?: string | null
-    opportunityCloseDate?: Date | string | null
+    opportunityTitle?: string | null
     opportunityTotalFunding?: bigint | number | null
-    opportunityAwardMin?: bigint | number | null
-    opportunityAwardMax?: bigint | number | null
     opportunityUrl?: string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
     folder?: FolderUncheckedCreateNestedOneWithoutApplicationInput
@@ -29464,6 +31315,50 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type KnowledgeBaseDocumentCreateWithoutOrganizationInput = {
+    id?: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    fileUrl?: string | null
+    extractedText: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chunkCount?: number | null
+    vectorizationError?: string | null
+    vectorizationStatus?: $Enums.VectorizationStatus
+    vectorizedAt?: Date | string | null
+    vectors?: KnowledgeBaseVectorCreateNestedManyWithoutKbDocumentInput
+  }
+
+  export type KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput = {
+    id?: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    fileUrl?: string | null
+    extractedText: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chunkCount?: number | null
+    vectorizationError?: string | null
+    vectorizationStatus?: $Enums.VectorizationStatus
+    vectorizedAt?: Date | string | null
+    vectors?: KnowledgeBaseVectorUncheckedCreateNestedManyWithoutKbDocumentInput
+  }
+
+  export type KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput = {
+    where: KnowledgeBaseDocumentWhereUniqueInput
+    create: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type KnowledgeBaseDocumentCreateManyOrganizationInputEnvelope = {
+    data: KnowledgeBaseDocumentCreateManyOrganizationInput | KnowledgeBaseDocumentCreateManyOrganizationInput[]
+    skipDuplicates?: boolean
+  }
+
   export type RecommendationCreateWithoutOrganizationInput = {
     id?: string
     opportunityId: string
@@ -29544,40 +31439,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type KnowledgeBaseDocumentCreateWithoutOrganizationInput = {
-    id?: string
-    fileName: string
-    fileType: string
-    fileSize: number
-    fileUrl?: string | null
-    extractedText: string
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput = {
-    id?: string
-    fileName: string
-    fileType: string
-    fileSize: number
-    fileUrl?: string | null
-    extractedText: string
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type KnowledgeBaseDocumentCreateOrConnectWithoutOrganizationInput = {
-    where: KnowledgeBaseDocumentWhereUniqueInput
-    create: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput>
-  }
-
-  export type KnowledgeBaseDocumentCreateManyOrganizationInputEnvelope = {
-    data: KnowledgeBaseDocumentCreateManyOrganizationInput | KnowledgeBaseDocumentCreateManyOrganizationInput[]
-    skipDuplicates?: boolean
-  }
-
   export type AiChatUpsertWithWhereUniqueWithoutOrganizationInput = {
     where: AiChatWhereUniqueInput
     update: XOR<AiChatUpdateWithoutOrganizationInput, AiChatUncheckedUpdateWithoutOrganizationInput>
@@ -29623,16 +31484,16 @@ export namespace Prisma {
     submittedAt?: DateTimeNullableFilter<"Application"> | Date | string | null
     lastEditedAt?: DateTimeFilter<"Application"> | Date | string
     organizationId?: StringFilter<"Application"> | string
-    opportunityTitle?: StringNullableFilter<"Application"> | string | null
+    opportunityAgency?: StringNullableFilter<"Application"> | string | null
+    opportunityAttachments?: JsonNullableFilter<"Application">
+    opportunityAwardMax?: BigIntNullableFilter<"Application"> | bigint | number | null
+    opportunityAwardMin?: BigIntNullableFilter<"Application"> | bigint | number | null
+    opportunityCloseDate?: DateTimeNullableFilter<"Application"> | Date | string | null
     opportunityDescription?: StringNullableFilter<"Application"> | string | null
     opportunityEligibility?: StringNullableFilter<"Application"> | string | null
-    opportunityAgency?: StringNullableFilter<"Application"> | string | null
-    opportunityCloseDate?: DateTimeNullableFilter<"Application"> | Date | string | null
+    opportunityTitle?: StringNullableFilter<"Application"> | string | null
     opportunityTotalFunding?: BigIntNullableFilter<"Application"> | bigint | number | null
-    opportunityAwardMin?: BigIntNullableFilter<"Application"> | bigint | number | null
-    opportunityAwardMax?: BigIntNullableFilter<"Application"> | bigint | number | null
     opportunityUrl?: StringNullableFilter<"Application"> | string | null
-    opportunityAttachments?: JsonNullableFilter<"Application">
   }
 
   export type CustomFieldUpsertWithWhereUniqueWithoutOrganizationInput = {
@@ -29775,6 +31636,42 @@ export namespace Prisma {
     organizationId?: StringFilter<"GrantEligibilityAnalysis"> | string
   }
 
+  export type KnowledgeBaseDocumentUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: KnowledgeBaseDocumentWhereUniqueInput
+    update: XOR<KnowledgeBaseDocumentUpdateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type KnowledgeBaseDocumentUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: KnowledgeBaseDocumentWhereUniqueInput
+    data: XOR<KnowledgeBaseDocumentUpdateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type KnowledgeBaseDocumentUpdateManyWithWhereWithoutOrganizationInput = {
+    where: KnowledgeBaseDocumentScalarWhereInput
+    data: XOR<KnowledgeBaseDocumentUpdateManyMutationInput, KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationInput>
+  }
+
+  export type KnowledgeBaseDocumentScalarWhereInput = {
+    AND?: KnowledgeBaseDocumentScalarWhereInput | KnowledgeBaseDocumentScalarWhereInput[]
+    OR?: KnowledgeBaseDocumentScalarWhereInput[]
+    NOT?: KnowledgeBaseDocumentScalarWhereInput | KnowledgeBaseDocumentScalarWhereInput[]
+    id?: StringFilter<"KnowledgeBaseDocument"> | string
+    fileName?: StringFilter<"KnowledgeBaseDocument"> | string
+    fileType?: StringFilter<"KnowledgeBaseDocument"> | string
+    fileSize?: IntFilter<"KnowledgeBaseDocument"> | number
+    fileUrl?: StringNullableFilter<"KnowledgeBaseDocument"> | string | null
+    extractedText?: StringFilter<"KnowledgeBaseDocument"> | string
+    isActive?: BoolFilter<"KnowledgeBaseDocument"> | boolean
+    organizationId?: StringFilter<"KnowledgeBaseDocument"> | string
+    createdAt?: DateTimeFilter<"KnowledgeBaseDocument"> | Date | string
+    updatedAt?: DateTimeFilter<"KnowledgeBaseDocument"> | Date | string
+    chunkCount?: IntNullableFilter<"KnowledgeBaseDocument"> | number | null
+    vectorizationError?: StringNullableFilter<"KnowledgeBaseDocument"> | string | null
+    vectorizationStatus?: EnumVectorizationStatusFilter<"KnowledgeBaseDocument"> | $Enums.VectorizationStatus
+    vectorizedAt?: DateTimeNullableFilter<"KnowledgeBaseDocument"> | Date | string | null
+  }
+
   export type RecommendationUpsertWithWhereUniqueWithoutOrganizationInput = {
     where: RecommendationWhereUniqueInput
     update: XOR<RecommendationUpdateWithoutOrganizationInput, RecommendationUncheckedUpdateWithoutOrganizationInput>
@@ -29843,38 +31740,6 @@ export namespace Prisma {
     googleTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
   }
 
-  export type KnowledgeBaseDocumentUpsertWithWhereUniqueWithoutOrganizationInput = {
-    where: KnowledgeBaseDocumentWhereUniqueInput
-    update: XOR<KnowledgeBaseDocumentUpdateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedUpdateWithoutOrganizationInput>
-    create: XOR<KnowledgeBaseDocumentCreateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedCreateWithoutOrganizationInput>
-  }
-
-  export type KnowledgeBaseDocumentUpdateWithWhereUniqueWithoutOrganizationInput = {
-    where: KnowledgeBaseDocumentWhereUniqueInput
-    data: XOR<KnowledgeBaseDocumentUpdateWithoutOrganizationInput, KnowledgeBaseDocumentUncheckedUpdateWithoutOrganizationInput>
-  }
-
-  export type KnowledgeBaseDocumentUpdateManyWithWhereWithoutOrganizationInput = {
-    where: KnowledgeBaseDocumentScalarWhereInput
-    data: XOR<KnowledgeBaseDocumentUpdateManyMutationInput, KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationInput>
-  }
-
-  export type KnowledgeBaseDocumentScalarWhereInput = {
-    AND?: KnowledgeBaseDocumentScalarWhereInput | KnowledgeBaseDocumentScalarWhereInput[]
-    OR?: KnowledgeBaseDocumentScalarWhereInput[]
-    NOT?: KnowledgeBaseDocumentScalarWhereInput | KnowledgeBaseDocumentScalarWhereInput[]
-    id?: StringFilter<"KnowledgeBaseDocument"> | string
-    fileName?: StringFilter<"KnowledgeBaseDocument"> | string
-    fileType?: StringFilter<"KnowledgeBaseDocument"> | string
-    fileSize?: IntFilter<"KnowledgeBaseDocument"> | number
-    fileUrl?: StringNullableFilter<"KnowledgeBaseDocument"> | string | null
-    extractedText?: StringFilter<"KnowledgeBaseDocument"> | string
-    isActive?: BoolFilter<"KnowledgeBaseDocument"> | boolean
-    organizationId?: StringFilter<"KnowledgeBaseDocument"> | string
-    createdAt?: DateTimeFilter<"KnowledgeBaseDocument"> | Date | string
-    updatedAt?: DateTimeFilter<"KnowledgeBaseDocument"> | Date | string
-  }
-
   export type OrganizationCreateWithoutCustomFieldsInput = {
     id?: string
     name: string
@@ -29912,9 +31777,9 @@ export namespace Prisma {
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCustomFieldsInput = {
@@ -29954,9 +31819,9 @@ export namespace Prisma {
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCustomFieldsInput = {
@@ -30012,9 +31877,9 @@ export namespace Prisma {
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCustomFieldsInput = {
@@ -30054,9 +31919,9 @@ export namespace Prisma {
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationCreateWithoutKnowledgeBaseInput = {
@@ -30146,6 +32011,42 @@ export namespace Prisma {
   export type OrganizationCreateOrConnectWithoutKnowledgeBaseInput = {
     where: OrganizationWhereUniqueInput
     create: XOR<OrganizationCreateWithoutKnowledgeBaseInput, OrganizationUncheckedCreateWithoutKnowledgeBaseInput>
+  }
+
+  export type KnowledgeBaseVectorCreateWithoutKbDocumentInput = {
+    id?: bigint | number
+    organizationId: string
+    chunkIndex: number
+    totalChunks: number
+    content: string
+    fileName: string
+    fileType: string
+    contentHash: string
+    vectorizedAt?: Date | string
+    model?: string
+  }
+
+  export type KnowledgeBaseVectorUncheckedCreateWithoutKbDocumentInput = {
+    id?: bigint | number
+    organizationId: string
+    chunkIndex: number
+    totalChunks: number
+    content: string
+    fileName: string
+    fileType: string
+    contentHash: string
+    vectorizedAt?: Date | string
+    model?: string
+  }
+
+  export type KnowledgeBaseVectorCreateOrConnectWithoutKbDocumentInput = {
+    where: KnowledgeBaseVectorWhereUniqueInput
+    create: XOR<KnowledgeBaseVectorCreateWithoutKbDocumentInput, KnowledgeBaseVectorUncheckedCreateWithoutKbDocumentInput>
+  }
+
+  export type KnowledgeBaseVectorCreateManyKbDocumentInputEnvelope = {
+    data: KnowledgeBaseVectorCreateManyKbDocumentInput | KnowledgeBaseVectorCreateManyKbDocumentInput[]
+    skipDuplicates?: boolean
   }
 
   export type OrganizationUpsertWithoutKnowledgeBaseInput = {
@@ -30243,6 +32144,123 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
+  export type KnowledgeBaseVectorUpsertWithWhereUniqueWithoutKbDocumentInput = {
+    where: KnowledgeBaseVectorWhereUniqueInput
+    update: XOR<KnowledgeBaseVectorUpdateWithoutKbDocumentInput, KnowledgeBaseVectorUncheckedUpdateWithoutKbDocumentInput>
+    create: XOR<KnowledgeBaseVectorCreateWithoutKbDocumentInput, KnowledgeBaseVectorUncheckedCreateWithoutKbDocumentInput>
+  }
+
+  export type KnowledgeBaseVectorUpdateWithWhereUniqueWithoutKbDocumentInput = {
+    where: KnowledgeBaseVectorWhereUniqueInput
+    data: XOR<KnowledgeBaseVectorUpdateWithoutKbDocumentInput, KnowledgeBaseVectorUncheckedUpdateWithoutKbDocumentInput>
+  }
+
+  export type KnowledgeBaseVectorUpdateManyWithWhereWithoutKbDocumentInput = {
+    where: KnowledgeBaseVectorScalarWhereInput
+    data: XOR<KnowledgeBaseVectorUpdateManyMutationInput, KnowledgeBaseVectorUncheckedUpdateManyWithoutKbDocumentInput>
+  }
+
+  export type KnowledgeBaseVectorScalarWhereInput = {
+    AND?: KnowledgeBaseVectorScalarWhereInput | KnowledgeBaseVectorScalarWhereInput[]
+    OR?: KnowledgeBaseVectorScalarWhereInput[]
+    NOT?: KnowledgeBaseVectorScalarWhereInput | KnowledgeBaseVectorScalarWhereInput[]
+    id?: BigIntFilter<"KnowledgeBaseVector"> | bigint | number
+    kbDocumentId?: StringFilter<"KnowledgeBaseVector"> | string
+    organizationId?: StringFilter<"KnowledgeBaseVector"> | string
+    chunkIndex?: IntFilter<"KnowledgeBaseVector"> | number
+    totalChunks?: IntFilter<"KnowledgeBaseVector"> | number
+    content?: StringFilter<"KnowledgeBaseVector"> | string
+    fileName?: StringFilter<"KnowledgeBaseVector"> | string
+    fileType?: StringFilter<"KnowledgeBaseVector"> | string
+    contentHash?: StringFilter<"KnowledgeBaseVector"> | string
+    vectorizedAt?: DateTimeFilter<"KnowledgeBaseVector"> | Date | string
+    model?: StringFilter<"KnowledgeBaseVector"> | string
+  }
+
+  export type KnowledgeBaseDocumentCreateWithoutVectorsInput = {
+    id?: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    fileUrl?: string | null
+    extractedText: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chunkCount?: number | null
+    vectorizationError?: string | null
+    vectorizationStatus?: $Enums.VectorizationStatus
+    vectorizedAt?: Date | string | null
+    organization: OrganizationCreateNestedOneWithoutKnowledgeBaseInput
+  }
+
+  export type KnowledgeBaseDocumentUncheckedCreateWithoutVectorsInput = {
+    id?: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    fileUrl?: string | null
+    extractedText: string
+    isActive?: boolean
+    organizationId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chunkCount?: number | null
+    vectorizationError?: string | null
+    vectorizationStatus?: $Enums.VectorizationStatus
+    vectorizedAt?: Date | string | null
+  }
+
+  export type KnowledgeBaseDocumentCreateOrConnectWithoutVectorsInput = {
+    where: KnowledgeBaseDocumentWhereUniqueInput
+    create: XOR<KnowledgeBaseDocumentCreateWithoutVectorsInput, KnowledgeBaseDocumentUncheckedCreateWithoutVectorsInput>
+  }
+
+  export type KnowledgeBaseDocumentUpsertWithoutVectorsInput = {
+    update: XOR<KnowledgeBaseDocumentUpdateWithoutVectorsInput, KnowledgeBaseDocumentUncheckedUpdateWithoutVectorsInput>
+    create: XOR<KnowledgeBaseDocumentCreateWithoutVectorsInput, KnowledgeBaseDocumentUncheckedCreateWithoutVectorsInput>
+    where?: KnowledgeBaseDocumentWhereInput
+  }
+
+  export type KnowledgeBaseDocumentUpdateToOneWithWhereWithoutVectorsInput = {
+    where?: KnowledgeBaseDocumentWhereInput
+    data: XOR<KnowledgeBaseDocumentUpdateWithoutVectorsInput, KnowledgeBaseDocumentUncheckedUpdateWithoutVectorsInput>
+  }
+
+  export type KnowledgeBaseDocumentUpdateWithoutVectorsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    extractedText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
+    vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    organization?: OrganizationUpdateOneRequiredWithoutKnowledgeBaseNestedInput
+  }
+
+  export type KnowledgeBaseDocumentUncheckedUpdateWithoutVectorsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    extractedText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    organizationId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
+    vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type OrganizationCreateWithoutGrantBookmarksInput = {
     id?: string
     name: string
@@ -30280,9 +32298,9 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutGrantBookmarksInput = {
@@ -30322,9 +32340,9 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutGrantBookmarksInput = {
@@ -30425,9 +32443,9 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutGrantBookmarksInput = {
@@ -30467,9 +32485,9 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutGrantBookmarksInput = {
@@ -30560,9 +32578,9 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutEligibilityAnalysesInput = {
@@ -30602,9 +32620,9 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutEligibilityAnalysesInput = {
@@ -30660,9 +32678,9 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutEligibilityAnalysesInput = {
@@ -30702,9 +32720,9 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type AiChatCreateWithoutApplicationInput = {
@@ -30778,9 +32796,9 @@ export namespace Prisma {
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutApplicationsInput = {
@@ -30820,9 +32838,9 @@ export namespace Prisma {
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutApplicationsInput = {
@@ -30963,9 +32981,9 @@ export namespace Prisma {
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutApplicationsInput = {
@@ -31005,9 +33023,9 @@ export namespace Prisma {
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type DocumentUpsertWithWhereUniqueWithoutApplicationInput = {
@@ -31094,16 +33112,16 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    opportunityTitle?: string | null
+    opportunityAgency?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityCloseDate?: Date | string | null
     opportunityDescription?: string | null
     opportunityEligibility?: string | null
-    opportunityAgency?: string | null
-    opportunityCloseDate?: Date | string | null
+    opportunityTitle?: string | null
     opportunityTotalFunding?: bigint | number | null
-    opportunityAwardMin?: bigint | number | null
-    opportunityAwardMax?: bigint | number | null
     opportunityUrl?: string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
     folder?: FolderCreateNestedOneWithoutApplicationInput
@@ -31119,16 +33137,16 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
-    opportunityTitle?: string | null
+    opportunityAgency?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityCloseDate?: Date | string | null
     opportunityDescription?: string | null
     opportunityEligibility?: string | null
-    opportunityAgency?: string | null
-    opportunityCloseDate?: Date | string | null
+    opportunityTitle?: string | null
     opportunityTotalFunding?: bigint | number | null
-    opportunityAwardMin?: bigint | number | null
-    opportunityAwardMax?: bigint | number | null
     opportunityUrl?: string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
     folder?: FolderUncheckedCreateNestedOneWithoutApplicationInput
   }
@@ -31175,9 +33193,9 @@ export namespace Prisma {
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutAiChatsInput = {
@@ -31217,9 +33235,9 @@ export namespace Prisma {
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutAiChatsInput = {
@@ -31320,16 +33338,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
     folder?: FolderUpdateOneWithoutApplicationNestedInput
@@ -31345,16 +33363,16 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
-    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
     folder?: FolderUncheckedUpdateOneWithoutApplicationNestedInput
   }
@@ -31407,9 +33425,9 @@ export namespace Prisma {
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutAiChatsInput = {
@@ -31449,9 +33467,9 @@ export namespace Prisma {
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type UserUpsertWithoutAiChatsInput = {
@@ -31607,8 +33625,8 @@ export namespace Prisma {
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
-    users?: UserCreateNestedManyWithoutOrganizationInput
     knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
+    users?: UserCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutRecommendationsInput = {
@@ -31649,8 +33667,8 @@ export namespace Prisma {
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
-    users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
+    users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutRecommendationsInput = {
@@ -31707,8 +33725,8 @@ export namespace Prisma {
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
-    users?: UserUpdateManyWithoutOrganizationNestedInput
     knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
+    users?: UserUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutRecommendationsInput = {
@@ -31749,8 +33767,8 @@ export namespace Prisma {
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
-    users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+    users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type ApplicationCreateWithoutDocumentsInput = {
@@ -31762,16 +33780,16 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    opportunityTitle?: string | null
+    opportunityAgency?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityCloseDate?: Date | string | null
     opportunityDescription?: string | null
     opportunityEligibility?: string | null
-    opportunityAgency?: string | null
-    opportunityCloseDate?: Date | string | null
+    opportunityTitle?: string | null
     opportunityTotalFunding?: bigint | number | null
-    opportunityAwardMin?: bigint | number | null
-    opportunityAwardMax?: bigint | number | null
     opportunityUrl?: string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
     folder?: FolderCreateNestedOneWithoutApplicationInput
@@ -31787,16 +33805,16 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
-    opportunityTitle?: string | null
+    opportunityAgency?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityCloseDate?: Date | string | null
     opportunityDescription?: string | null
     opportunityEligibility?: string | null
-    opportunityAgency?: string | null
-    opportunityCloseDate?: Date | string | null
+    opportunityTitle?: string | null
     opportunityTotalFunding?: bigint | number | null
-    opportunityAwardMin?: bigint | number | null
-    opportunityAwardMax?: bigint | number | null
     opportunityUrl?: string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
     folder?: FolderUncheckedCreateNestedOneWithoutApplicationInput
   }
@@ -31870,9 +33888,9 @@ export namespace Prisma {
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutDocumentsInput = {
@@ -31912,9 +33930,9 @@ export namespace Prisma {
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutDocumentsInput = {
@@ -31942,16 +33960,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
     folder?: FolderUpdateOneWithoutApplicationNestedInput
@@ -31967,16 +33985,16 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
-    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
     folder?: FolderUncheckedUpdateOneWithoutApplicationNestedInput
   }
@@ -32062,9 +34080,9 @@ export namespace Prisma {
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutDocumentsInput = {
@@ -32104,9 +34122,9 @@ export namespace Prisma {
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type DocumentCreateWithoutFolderInput = {
@@ -32160,16 +34178,16 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    opportunityTitle?: string | null
+    opportunityAgency?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityCloseDate?: Date | string | null
     opportunityDescription?: string | null
     opportunityEligibility?: string | null
-    opportunityAgency?: string | null
-    opportunityCloseDate?: Date | string | null
+    opportunityTitle?: string | null
     opportunityTotalFunding?: bigint | number | null
-    opportunityAwardMin?: bigint | number | null
-    opportunityAwardMax?: bigint | number | null
     opportunityUrl?: string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
@@ -32185,16 +34203,16 @@ export namespace Prisma {
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
     organizationId: string
-    opportunityTitle?: string | null
+    opportunityAgency?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityCloseDate?: Date | string | null
     opportunityDescription?: string | null
     opportunityEligibility?: string | null
-    opportunityAgency?: string | null
-    opportunityCloseDate?: Date | string | null
+    opportunityTitle?: string | null
     opportunityTotalFunding?: bigint | number | null
-    opportunityAwardMin?: bigint | number | null
-    opportunityAwardMax?: bigint | number | null
     opportunityUrl?: string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
   }
@@ -32241,9 +34259,9 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
     users?: UserCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutFoldersInput = {
@@ -32283,9 +34301,9 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
     recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutFoldersInput = {
@@ -32388,16 +34406,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
@@ -32413,16 +34431,16 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organizationId?: StringFieldUpdateOperationsInput | string
-    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
   }
@@ -32475,9 +34493,9 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
     users?: UserUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutFoldersInput = {
@@ -32517,9 +34535,9 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type FolderUpsertWithoutChildrenInput = {
@@ -32866,16 +34884,16 @@ export namespace Prisma {
     updatedAt?: Date | string
     submittedAt?: Date | string | null
     lastEditedAt?: Date | string
-    opportunityTitle?: string | null
+    opportunityAgency?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityCloseDate?: Date | string | null
     opportunityDescription?: string | null
     opportunityEligibility?: string | null
-    opportunityAgency?: string | null
-    opportunityCloseDate?: Date | string | null
+    opportunityTitle?: string | null
     opportunityTotalFunding?: bigint | number | null
-    opportunityAwardMin?: bigint | number | null
-    opportunityAwardMax?: bigint | number | null
     opportunityUrl?: string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type CustomFieldCreateManyOrganizationInput = {
@@ -32930,6 +34948,22 @@ export namespace Prisma {
     opportunityId: number
   }
 
+  export type KnowledgeBaseDocumentCreateManyOrganizationInput = {
+    id?: string
+    fileName: string
+    fileType: string
+    fileSize: number
+    fileUrl?: string | null
+    extractedText: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chunkCount?: number | null
+    vectorizationError?: string | null
+    vectorizationStatus?: $Enums.VectorizationStatus
+    vectorizedAt?: Date | string | null
+  }
+
   export type RecommendationCreateManyOrganizationInput = {
     id?: string
     opportunityId: string
@@ -32956,18 +34990,6 @@ export namespace Prisma {
     googleDriveConnected?: boolean
     googleRefreshToken?: string | null
     googleTokenExpiry?: Date | string | null
-  }
-
-  export type KnowledgeBaseDocumentCreateManyOrganizationInput = {
-    id?: string
-    fileName: string
-    fileType: string
-    fileSize: number
-    fileUrl?: string | null
-    extractedText: string
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
   export type AiChatUpdateWithoutOrganizationInput = {
@@ -33014,16 +35036,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
     folder?: FolderUpdateOneWithoutApplicationNestedInput
@@ -33038,16 +35060,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
     folder?: FolderUncheckedUpdateOneWithoutApplicationNestedInput
@@ -33062,16 +35084,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type CustomFieldUpdateWithoutOrganizationInput = {
@@ -33234,6 +35256,56 @@ export namespace Prisma {
     opportunityId?: IntFieldUpdateOperationsInput | number
   }
 
+  export type KnowledgeBaseDocumentUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    extractedText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
+    vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    vectors?: KnowledgeBaseVectorUpdateManyWithoutKbDocumentNestedInput
+  }
+
+  export type KnowledgeBaseDocumentUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    extractedText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
+    vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    vectors?: KnowledgeBaseVectorUncheckedUpdateManyWithoutKbDocumentNestedInput
+  }
+
+  export type KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    extractedText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
+    vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type RecommendationUpdateWithoutOrganizationInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: StringFieldUpdateOperationsInput | string
@@ -33322,40 +35394,56 @@ export namespace Prisma {
     googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
-  export type KnowledgeBaseDocumentUpdateWithoutOrganizationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    fileName?: StringFieldUpdateOperationsInput | string
-    fileType?: StringFieldUpdateOperationsInput | string
-    fileSize?: IntFieldUpdateOperationsInput | number
-    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    extractedText?: StringFieldUpdateOperationsInput | string
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type KnowledgeBaseVectorCreateManyKbDocumentInput = {
+    id?: bigint | number
+    organizationId: string
+    chunkIndex: number
+    totalChunks: number
+    content: string
+    fileName: string
+    fileType: string
+    contentHash: string
+    vectorizedAt?: Date | string
+    model?: string
   }
 
-  export type KnowledgeBaseDocumentUncheckedUpdateWithoutOrganizationInput = {
-    id?: StringFieldUpdateOperationsInput | string
+  export type KnowledgeBaseVectorUpdateWithoutKbDocumentInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    organizationId?: StringFieldUpdateOperationsInput | string
+    chunkIndex?: IntFieldUpdateOperationsInput | number
+    totalChunks?: IntFieldUpdateOperationsInput | number
+    content?: StringFieldUpdateOperationsInput | string
     fileName?: StringFieldUpdateOperationsInput | string
     fileType?: StringFieldUpdateOperationsInput | string
-    fileSize?: IntFieldUpdateOperationsInput | number
-    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    extractedText?: StringFieldUpdateOperationsInput | string
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentHash?: StringFieldUpdateOperationsInput | string
+    vectorizedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    model?: StringFieldUpdateOperationsInput | string
   }
 
-  export type KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationInput = {
-    id?: StringFieldUpdateOperationsInput | string
+  export type KnowledgeBaseVectorUncheckedUpdateWithoutKbDocumentInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    organizationId?: StringFieldUpdateOperationsInput | string
+    chunkIndex?: IntFieldUpdateOperationsInput | number
+    totalChunks?: IntFieldUpdateOperationsInput | number
+    content?: StringFieldUpdateOperationsInput | string
     fileName?: StringFieldUpdateOperationsInput | string
     fileType?: StringFieldUpdateOperationsInput | string
-    fileSize?: IntFieldUpdateOperationsInput | number
-    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    extractedText?: StringFieldUpdateOperationsInput | string
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentHash?: StringFieldUpdateOperationsInput | string
+    vectorizedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    model?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type KnowledgeBaseVectorUncheckedUpdateManyWithoutKbDocumentInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    organizationId?: StringFieldUpdateOperationsInput | string
+    chunkIndex?: IntFieldUpdateOperationsInput | number
+    totalChunks?: IntFieldUpdateOperationsInput | number
+    content?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileType?: StringFieldUpdateOperationsInput | string
+    contentHash?: StringFieldUpdateOperationsInput | string
+    vectorizedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    model?: StringFieldUpdateOperationsInput | string
   }
 
   export type AiChatCreateManyApplicationInput = {

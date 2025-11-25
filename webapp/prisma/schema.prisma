@@ -7,7 +7,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  // directUrl = env("DIRECT_URL")  // Commented out - not needed for this migration
+  directUrl = env("DIRECT_URL")
   schemas   = ["app", "public"]
 }
 
@@ -125,9 +125,9 @@ model Organization {
   folders                Folder[]                    @relation("OrganizationFolders")
   grantBookmarks         GrantBookmark[]
   eligibilityAnalyses    GrantEligibilityAnalysis[]
+  knowledgeBase          KnowledgeBaseDocument[]     @relation("OrganizationKnowledgeBase")
   recommendations        Recommendation[]
   users                  User[]                      @relation("UserOrganization")
-  knowledgeBase          KnowledgeBaseDocument[]     @relation("OrganizationKnowledgeBase")
 
   @@index([leaId])
   @@index([state])
@@ -150,21 +150,50 @@ model CustomField {
 }
 
 model KnowledgeBaseDocument {
-  id             String       @id @default(cuid())
-  fileName       String
-  fileType       String
-  fileSize       Int
-  fileUrl        String?
-  extractedText  String       @db.Text
-  isActive       Boolean      @default(true)
-  organizationId String
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  organization   Organization @relation("OrganizationKnowledgeBase", fields: [organizationId], references: [id], onDelete: Cascade)
+  id                  String                @id @default(cuid())
+  fileName            String
+  fileType            String
+  fileSize            Int
+  fileUrl             String?
+  extractedText       String
+  isActive            Boolean               @default(true)
+  organizationId      String
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @default(now()) @updatedAt
+  chunkCount          Int?
+  vectorizationError  String?
+  vectorizationStatus VectorizationStatus   @default(PENDING)
+  vectorizedAt        DateTime?
+  organization        Organization          @relation("OrganizationKnowledgeBase", fields: [organizationId], references: [id], onDelete: Cascade)
+  vectors             KnowledgeBaseVector[] @relation("KBDocumentVectors")
 
   @@index([organizationId])
   @@index([organizationId, isActive])
+  @@index([vectorizationStatus])
   @@map("knowledge_base_documents")
+  @@schema("app")
+}
+
+model KnowledgeBaseVector {
+  id             BigInt                 @id @default(autoincrement())
+  kbDocumentId   String                 @map("kb_document_id")
+  organizationId String                 @map("organization_id")
+  chunkIndex     Int                    @map("chunk_index")
+  totalChunks    Int                    @map("total_chunks")
+  content        String
+  embedding      Unsupported("vector")?
+  fileName       String                 @map("file_name")
+  fileType       String                 @map("file_type")
+  contentHash    String                 @map("content_hash")
+  vectorizedAt   DateTime               @default(now()) @map("vectorized_at")
+  model          String                 @default("text-embedding-3-small")
+  kbDocument     KnowledgeBaseDocument  @relation("KBDocumentVectors", fields: [kbDocumentId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([kbDocumentId])
+  @@index([organizationId, kbDocumentId])
+  @@index([embedding], map: "idx_kb_vectors_embedding")
+  @@map("knowledge_base_vectors")
   @@schema("app")
 }
 
@@ -210,16 +239,16 @@ model Application {
   submittedAt             DateTime?
   lastEditedAt            DateTime          @default(now())
   organizationId          String
-  opportunityTitle        String?
+  opportunityAgency       String?
+  opportunityAttachments  Json?
+  opportunityAwardMax     BigInt?
+  opportunityAwardMin     BigInt?
+  opportunityCloseDate    DateTime?
   opportunityDescription  String?
   opportunityEligibility  String?
-  opportunityAgency       String?
-  opportunityCloseDate    DateTime?
+  opportunityTitle        String?
   opportunityTotalFunding BigInt?
-  opportunityAwardMin     BigInt?
-  opportunityAwardMax     BigInt?
   opportunityUrl          String?
-  opportunityAttachments  Json?
   aiChats                 AiChat[]
   organization            Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   documents               Document[]
@@ -404,6 +433,15 @@ enum OrganizationRole {
   OWNER
   ADMIN
   MEMBER
+
+  @@schema("app")
+}
+
+enum VectorizationStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
 
   @@schema("app")
 }

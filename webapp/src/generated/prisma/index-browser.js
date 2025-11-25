@@ -234,7 +234,25 @@ exports.Prisma.KnowledgeBaseDocumentScalarFieldEnum = {
   isActive: 'isActive',
   organizationId: 'organizationId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  chunkCount: 'chunkCount',
+  vectorizationError: 'vectorizationError',
+  vectorizationStatus: 'vectorizationStatus',
+  vectorizedAt: 'vectorizedAt'
+};
+
+exports.Prisma.KnowledgeBaseVectorScalarFieldEnum = {
+  id: 'id',
+  kbDocumentId: 'kbDocumentId',
+  organizationId: 'organizationId',
+  chunkIndex: 'chunkIndex',
+  totalChunks: 'totalChunks',
+  content: 'content',
+  fileName: 'fileName',
+  fileType: 'fileType',
+  contentHash: 'contentHash',
+  vectorizedAt: 'vectorizedAt',
+  model: 'model'
 };
 
 exports.Prisma.GrantBookmarkScalarFieldEnum = {
@@ -268,16 +286,16 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   submittedAt: 'submittedAt',
   lastEditedAt: 'lastEditedAt',
   organizationId: 'organizationId',
-  opportunityTitle: 'opportunityTitle',
+  opportunityAgency: 'opportunityAgency',
+  opportunityAttachments: 'opportunityAttachments',
+  opportunityAwardMax: 'opportunityAwardMax',
+  opportunityAwardMin: 'opportunityAwardMin',
+  opportunityCloseDate: 'opportunityCloseDate',
   opportunityDescription: 'opportunityDescription',
   opportunityEligibility: 'opportunityEligibility',
-  opportunityAgency: 'opportunityAgency',
-  opportunityCloseDate: 'opportunityCloseDate',
+  opportunityTitle: 'opportunityTitle',
   opportunityTotalFunding: 'opportunityTotalFunding',
-  opportunityAwardMin: 'opportunityAwardMin',
-  opportunityAwardMax: 'opportunityAwardMax',
-  opportunityUrl: 'opportunityUrl',
-  opportunityAttachments: 'opportunityAttachments'
+  opportunityUrl: 'opportunityUrl'
 };
 
 exports.Prisma.AiChatScalarFieldEnum = {
@@ -441,6 +459,13 @@ exports.OrganizationRole = exports.$Enums.OrganizationRole = {
   MEMBER: 'MEMBER'
 };
 
+exports.VectorizationStatus = exports.$Enums.VectorizationStatus = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+};
+
 exports.GoNoGoDecision = exports.$Enums.GoNoGoDecision = {
   GO: 'GO',
   NO_GO: 'NO_GO',
@@ -513,6 +538,7 @@ exports.Prisma.ModelName = {
   Organization: 'Organization',
   CustomField: 'CustomField',
   KnowledgeBaseDocument: 'KnowledgeBaseDocument',
+  KnowledgeBaseVector: 'KnowledgeBaseVector',
   GrantBookmark: 'GrantBookmark',
   GrantEligibilityAnalysis: 'GrantEligibilityAnalysis',
   Application: 'Application',
