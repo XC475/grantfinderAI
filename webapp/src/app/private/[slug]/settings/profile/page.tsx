@@ -189,7 +189,6 @@ export default function ProfilePage() {
     KnowledgeBaseDocument[]
   >([]);
   const [loadingDocs, setLoadingDocs] = useState(false);
-  const pollingRef = useRef<NodeJS.Timeout | null>(null);
   const [uploadingDoc, setUploadingDoc] = useState(false);
   const [replacingDoc, setReplacingDoc] =
     useState<KnowledgeBaseDocument | null>(null);
@@ -610,34 +609,6 @@ export default function ProfilePage() {
       fetchKnowledgeBaseDocs();
     }
   }, [organization?.id]);
-
-  // Poll for knowledge base document processing status
-  useEffect(() => {
-    const hasProcessing = knowledgeBaseDocs.some(
-      (doc) => doc.vectorizationStatus === "PROCESSING"
-    );
-
-    // Start polling if needed and not already polling
-    if (hasProcessing && !pollingRef.current) {
-      pollingRef.current = setInterval(() => {
-        fetchKnowledgeBaseDocs();
-      }, 5000);
-    }
-
-    // Stop polling if no more processing documents
-    if (!hasProcessing && pollingRef.current) {
-      clearInterval(pollingRef.current);
-      pollingRef.current = null;
-    }
-
-    // Cleanup on unmount
-    return () => {
-      if (pollingRef.current) {
-        clearInterval(pollingRef.current);
-        pollingRef.current = null;
-      }
-    };
-  }, [knowledgeBaseDocs]);
 
   // File size formatter
   const formatFileSize = (bytes: number): string => {

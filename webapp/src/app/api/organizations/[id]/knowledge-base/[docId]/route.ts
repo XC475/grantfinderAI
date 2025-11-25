@@ -155,17 +155,42 @@ export async function PATCH(
         },
       });
 
-      // Trigger re-vectorization
+      // Trigger re-vectorization and wait for completion
       const protocol = req.headers.get("x-forwarded-proto") || "http";
       const host = req.headers.get("host") || "localhost:3000";
       const vectorizeUrl = `${protocol}://${host}/api/organizations/${organizationId}/knowledge-base/vectorize`;
 
-      fetch(vectorizeUrl, {
-        method: "POST",
-        headers: { "x-api-key": process.env.INTERNAL_API_KEY! },
-      }).catch((err) => console.error("Failed to trigger vectorization:", err));
+      try {
+        await fetch(vectorizeUrl, {
+          method: "POST",
+          headers: { "x-api-key": process.env.INTERNAL_API_KEY! },
+        });
 
-      return NextResponse.json({ document: updatedDoc });
+        // Fetch updated document with vectorization status
+        const finalDoc = await prisma.knowledgeBaseDocument.findUnique({
+          where: { id: docId },
+          select: {
+            id: true,
+            fileName: true,
+            fileType: true,
+            fileSize: true,
+            fileUrl: true,
+            isActive: true,
+            vectorizationStatus: true,
+            vectorizedAt: true,
+            vectorizationError: true,
+            chunkCount: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        });
+
+        return NextResponse.json({ document: finalDoc || updatedDoc });
+      } catch (err) {
+        console.error("Failed to vectorize document:", err);
+        // Return document even if vectorization failed
+        return NextResponse.json({ document: updatedDoc });
+      }
     }
 
     // Handle JSON updates (toggle isActive, rename)

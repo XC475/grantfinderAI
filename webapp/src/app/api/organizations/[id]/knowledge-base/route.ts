@@ -199,17 +199,44 @@ export async function POST(
       },
     });
 
-    // Trigger async vectorization (fire-and-forget)
+    // Trigger vectorization and wait for completion
     const protocol = req.headers.get("x-forwarded-proto") || "http";
     const host = req.headers.get("host") || "localhost:3000";
     const vectorizeUrl = `${protocol}://${host}/api/organizations/${organizationId}/knowledge-base/vectorize`;
 
-    fetch(vectorizeUrl, {
-      method: "POST",
-      headers: { "x-api-key": process.env.INTERNAL_API_KEY! },
-    }).catch((err) => console.error("Failed to trigger vectorization:", err));
+    try {
+      await fetch(vectorizeUrl, {
+        method: "POST",
+        headers: { "x-api-key": process.env.INTERNAL_API_KEY! },
+      });
 
-    return NextResponse.json({ document }, { status: 201 });
+      // Fetch updated document with vectorization status
+      const updatedDoc = await prisma.knowledgeBaseDocument.findUnique({
+        where: { id: document.id },
+        select: {
+          id: true,
+          fileName: true,
+          fileType: true,
+          fileSize: true,
+          fileUrl: true,
+          isActive: true,
+          createdAt: true,
+          updatedAt: true,
+          vectorizationStatus: true,
+          vectorizedAt: true,
+          chunkCount: true,
+        },
+      });
+
+      return NextResponse.json(
+        { document: updatedDoc || document },
+        { status: 201 }
+      );
+    } catch (err) {
+      console.error("Failed to vectorize document:", err);
+      // Return document even if vectorization failed
+      return NextResponse.json({ document }, { status: 201 });
+    }
   } catch (error) {
     console.error("Error uploading knowledge base document:", error);
     return NextResponse.json(
