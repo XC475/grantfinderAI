@@ -189,6 +189,7 @@ export default function ProfilePage() {
     KnowledgeBaseDocument[]
   >([]);
   const [loadingDocs, setLoadingDocs] = useState(false);
+  const pollingRef = useRef<NodeJS.Timeout | null>(null);
   const [uploadingDoc, setUploadingDoc] = useState(false);
   const [replacingDoc, setReplacingDoc] =
     useState<KnowledgeBaseDocument | null>(null);
@@ -616,13 +617,26 @@ export default function ProfilePage() {
       (doc) => doc.vectorizationStatus === "PROCESSING"
     );
 
-    if (!hasProcessing) return;
+    // Start polling if needed and not already polling
+    if (hasProcessing && !pollingRef.current) {
+      pollingRef.current = setInterval(() => {
+        fetchKnowledgeBaseDocs();
+      }, 5000);
+    }
 
-    const interval = setInterval(() => {
-      fetchKnowledgeBaseDocs();
-    }, 5000); // Poll every 5 seconds
+    // Stop polling if no more processing documents
+    if (!hasProcessing && pollingRef.current) {
+      clearInterval(pollingRef.current);
+      pollingRef.current = null;
+    }
 
-    return () => clearInterval(interval);
+    // Cleanup on unmount
+    return () => {
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+      }
+    };
   }, [knowledgeBaseDocs]);
 
   // File size formatter
