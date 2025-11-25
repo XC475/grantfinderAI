@@ -137,6 +137,10 @@ interface KnowledgeBaseDocument {
   fileSize: number;
   fileUrl: string | null;
   isActive: boolean;
+  vectorizationStatus: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
+  vectorizedAt: string | null;
+  vectorizationError: string | null;
+  chunkCount: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -605,6 +609,21 @@ export default function ProfilePage() {
       fetchKnowledgeBaseDocs();
     }
   }, [organization?.id]);
+
+  // Poll for knowledge base document processing status
+  useEffect(() => {
+    const hasProcessing = knowledgeBaseDocs.some(
+      (doc) => doc.vectorizationStatus === "PROCESSING"
+    );
+
+    if (!hasProcessing) return;
+
+    const interval = setInterval(() => {
+      fetchKnowledgeBaseDocs();
+    }, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [knowledgeBaseDocs]);
 
   // File size formatter
   const formatFileSize = (bytes: number): string => {
@@ -1849,17 +1868,38 @@ export default function ProfilePage() {
                             </span>
                           </div>
 
-                          {/* Active status badge */}
+                          {/* Vectorization status badge */}
                           <div className="mt-2">
-                            {doc.isActive ? (
-                              <Badge className="text-xs bg-green-100 text-green-700 hover:bg-green-100 border-green-200">
-                                <CheckCircle2 className="h-3 w-3 mr-1" />
-                                Active in AI Context
-                              </Badge>
-                            ) : (
+                            {doc.vectorizationStatus === "PROCESSING" && (
                               <Badge variant="secondary" className="text-xs">
+                                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                Processing...
+                              </Badge>
+                            )}
+                            {doc.vectorizationStatus === "COMPLETED" &&
+                              doc.isActive && (
+                                <Badge className="text-xs bg-green-100 text-green-700 hover:bg-green-100 border-green-200">
+                                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                                  Active ({doc.chunkCount} chunks)
+                                </Badge>
+                              )}
+                            {doc.vectorizationStatus === "COMPLETED" &&
+                              !doc.isActive && (
+                                <Badge variant="secondary" className="text-xs">
+                                  <XCircle className="h-3 w-3 mr-1" />
+                                  Inactive ({doc.chunkCount} chunks)
+                                </Badge>
+                              )}
+                            {doc.vectorizationStatus === "FAILED" && (
+                              <Badge variant="destructive" className="text-xs">
                                 <XCircle className="h-3 w-3 mr-1" />
-                                Inactive
+                                Processing Failed
+                              </Badge>
+                            )}
+                            {doc.vectorizationStatus === "PENDING" && (
+                              <Badge variant="outline" className="text-xs">
+                                <Loader2 className="h-3 w-3 mr-1" />
+                                Waiting...
                               </Badge>
                             )}
                           </div>
