@@ -23,6 +23,11 @@ interface ChatMessage {
   attachments?: FileAttachment[];
 }
 
+interface StreamChunk {
+  content?: string;
+  output?: string;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { messages, chatId, organizationId, sourceDocumentIds } =
@@ -284,7 +289,7 @@ export async function POST(req: NextRequest) {
               }
             } else if (chunk && typeof chunk === "object") {
               // Handle non-tuple chunks (fallback for compatibility)
-              const chunkObj = chunk as any;
+              const chunkObj = chunk as StreamChunk;
               if (chunkObj.content) {
                 content = chunkObj.content;
                 shouldStream = true;
