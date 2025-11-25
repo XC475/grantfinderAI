@@ -68,6 +68,8 @@ export default function ChatPage() {
   }, []);
 
   useEffect(() => {
+    let pollInterval: NodeJS.Timeout | null = null;
+
     if (chatId) {
       setLoading(true);
 
@@ -141,6 +143,61 @@ export default function ChatPage() {
               setInitialSourceDocuments(validSourceDocs);
             });
           }
+
+          // Check if last message is from user (pending response)
+          const lastMessage = messages[messages.length - 1];
+          if (lastMessage && lastMessage.role === "user") {
+            // Poll for new messages every 2 seconds for up to 60 seconds
+            let pollCount = 0;
+            const maxPolls = 30; // 60 seconds
+
+            pollInterval = setInterval(() => {
+              pollCount++;
+
+              fetch(`/api/chats/${chatId}`)
+                .then((res) => res.json())
+                .then((updatedChat: ChatData) => {
+                  const updatedMessages: Message[] = updatedChat.messages.map(
+                    (msg) => ({
+                      id: msg.id,
+                      role: msg.role.toLowerCase() as "user" | "assistant",
+                      content: msg.content,
+                      createdAt: new Date(msg.createdAt),
+                      experimental_attachments:
+                        msg.metadata?.attachments &&
+                        msg.metadata.attachments.length > 0
+                          ? msg.metadata.attachments.map((attachment) => ({
+                              id: attachment.id,
+                              name: attachment.name,
+                              type: attachment.type,
+                              size: attachment.size,
+                              url: attachment.url,
+                              extractedText: attachment.extractedText,
+                              contentType: attachment.contentType,
+                            }))
+                          : undefined,
+                    })
+                  );
+
+                  // Check if we got a new assistant message
+                  const lastUpdatedMessage =
+                    updatedMessages[updatedMessages.length - 1];
+                  if (
+                    lastUpdatedMessage &&
+                    lastUpdatedMessage.role === "assistant"
+                  ) {
+                    setInitialMessages(updatedMessages);
+                    if (pollInterval) clearInterval(pollInterval);
+                  } else if (pollCount >= maxPolls) {
+                    // Stop polling after max attempts
+                    if (pollInterval) clearInterval(pollInterval);
+                  }
+                })
+                .catch(() => {
+                  if (pollInterval) clearInterval(pollInterval);
+                });
+            }, 2000);
+          }
         })
         .catch((error) => {
           console.error("Error loading chat:", error);
@@ -156,6 +213,11 @@ export default function ChatPage() {
       setInitialMessages([]);
       setCurrentChatId(undefined);
     }
+
+    // Cleanup interval on unmount
+    return () => {
+      if (pollInterval) clearInterval(pollInterval);
+    };
   }, [chatId]);
 
   const handleChatIdChange = (newChatId: string) => {
