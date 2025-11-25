@@ -1,7 +1,7 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { createAgent } from "langchain";
 import { createGrantSearchTool } from "./tools/grant-search-tool";
-import { buildSystemPrompt, DistrictInfo } from "./prompts/grants-assistant";
+import { buildSystemPrompt, DistrictInfo } from "./prompts/chat-assistant";
 
 export async function createGrantsAgent(
   districtInfo: DistrictInfo | null,
