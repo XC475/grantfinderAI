@@ -215,15 +215,6 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   services: 'services'
 };
 
-exports.Prisma.CustomFieldScalarFieldEnum = {
-  id: 'id',
-  fieldName: 'fieldName',
-  fieldValue: 'fieldValue',
-  organizationId: 'organizationId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.KnowledgeBaseDocumentScalarFieldEnum = {
   id: 'id',
   fileName: 'fileName',
@@ -536,7 +527,6 @@ exports.Prisma.ModelName = {
   opportunities: 'opportunities',
   User: 'User',
   Organization: 'Organization',
-  CustomField: 'CustomField',
   KnowledgeBaseDocument: 'KnowledgeBaseDocument',
   KnowledgeBaseVector: 'KnowledgeBaseVector',
   GrantBookmark: 'GrantBookmark',

@@ -34,11 +34,6 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type Organization = $Result.DefaultSelection<Prisma.$OrganizationPayload>
 /**
- * Model CustomField
- * 
- */
-export type CustomField = $Result.DefaultSelection<Prisma.$CustomFieldPayload>
-/**
  * Model KnowledgeBaseDocument
  * 
  */
@@ -472,16 +467,6 @@ export class PrismaClient<
     * ```
     */
   get organization(): Prisma.OrganizationDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.customField`: Exposes CRUD operations for the **CustomField** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more CustomFields
-    * const customFields = await prisma.customField.findMany()
-    * ```
-    */
-  get customField(): Prisma.CustomFieldDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.knowledgeBaseDocument`: Exposes CRUD operations for the **KnowledgeBaseDocument** model.
@@ -1047,7 +1032,6 @@ export namespace Prisma {
     opportunities: 'opportunities',
     User: 'User',
     Organization: 'Organization',
-    CustomField: 'CustomField',
     KnowledgeBaseDocument: 'KnowledgeBaseDocument',
     KnowledgeBaseVector: 'KnowledgeBaseVector',
     GrantBookmark: 'GrantBookmark',
@@ -1078,7 +1062,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "customField" | "knowledgeBaseDocument" | "knowledgeBaseVector" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "vectorDocument" | "document" | "folder" | "k12_education_opportunities"
+      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "knowledgeBaseDocument" | "knowledgeBaseVector" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "vectorDocument" | "document" | "folder" | "k12_education_opportunities"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1375,80 +1359,6 @@ export namespace Prisma {
           count: {
             args: Prisma.OrganizationCountArgs<ExtArgs>
             result: $Utils.Optional<OrganizationCountAggregateOutputType> | number
-          }
-        }
-      }
-      CustomField: {
-        payload: Prisma.$CustomFieldPayload<ExtArgs>
-        fields: Prisma.CustomFieldFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.CustomFieldFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CustomFieldPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.CustomFieldFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CustomFieldPayload>
-          }
-          findFirst: {
-            args: Prisma.CustomFieldFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CustomFieldPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.CustomFieldFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CustomFieldPayload>
-          }
-          findMany: {
-            args: Prisma.CustomFieldFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CustomFieldPayload>[]
-          }
-          create: {
-            args: Prisma.CustomFieldCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CustomFieldPayload>
-          }
-          createMany: {
-            args: Prisma.CustomFieldCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.CustomFieldCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CustomFieldPayload>[]
-          }
-          delete: {
-            args: Prisma.CustomFieldDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CustomFieldPayload>
-          }
-          update: {
-            args: Prisma.CustomFieldUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CustomFieldPayload>
-          }
-          deleteMany: {
-            args: Prisma.CustomFieldDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.CustomFieldUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.CustomFieldUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CustomFieldPayload>[]
-          }
-          upsert: {
-            args: Prisma.CustomFieldUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CustomFieldPayload>
-          }
-          aggregate: {
-            args: Prisma.CustomFieldAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateCustomField>
-          }
-          groupBy: {
-            args: Prisma.CustomFieldGroupByArgs<ExtArgs>
-            result: $Utils.Optional<CustomFieldGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.CustomFieldCountArgs<ExtArgs>
-            result: $Utils.Optional<CustomFieldCountAggregateOutputType> | number
           }
         }
       }
@@ -2440,7 +2350,6 @@ export namespace Prisma {
     opportunities?: opportunitiesOmit
     user?: UserOmit
     organization?: OrganizationOmit
-    customField?: CustomFieldOmit
     knowledgeBaseDocument?: KnowledgeBaseDocumentOmit
     knowledgeBaseVector?: KnowledgeBaseVectorOmit
     grantBookmark?: GrantBookmarkOmit
@@ -2606,7 +2515,6 @@ export namespace Prisma {
   export type OrganizationCountOutputType = {
     aiChats: number
     applications: number
-    customFields: number
     documents: number
     folders: number
     grantBookmarks: number
@@ -2619,7 +2527,6 @@ export namespace Prisma {
   export type OrganizationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | OrganizationCountOutputTypeCountAiChatsArgs
     applications?: boolean | OrganizationCountOutputTypeCountApplicationsArgs
-    customFields?: boolean | OrganizationCountOutputTypeCountCustomFieldsArgs
     documents?: boolean | OrganizationCountOutputTypeCountDocumentsArgs
     folders?: boolean | OrganizationCountOutputTypeCountFoldersArgs
     grantBookmarks?: boolean | OrganizationCountOutputTypeCountGrantBookmarksArgs
@@ -2652,13 +2559,6 @@ export namespace Prisma {
    */
   export type OrganizationCountOutputTypeCountApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ApplicationWhereInput
-  }
-
-  /**
-   * OrganizationCountOutputType without action
-   */
-  export type OrganizationCountOutputTypeCountCustomFieldsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: CustomFieldWhereInput
   }
 
   /**
@@ -6989,7 +6889,6 @@ export namespace Prisma {
     services?: boolean
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
-    customFields?: boolean | Organization$customFieldsArgs<ExtArgs>
     documents?: boolean | Organization$documentsArgs<ExtArgs>
     folders?: boolean | Organization$foldersArgs<ExtArgs>
     grantBookmarks?: boolean | Organization$grantBookmarksArgs<ExtArgs>
@@ -7103,7 +7002,6 @@ export namespace Prisma {
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
-    customFields?: boolean | Organization$customFieldsArgs<ExtArgs>
     documents?: boolean | Organization$documentsArgs<ExtArgs>
     folders?: boolean | Organization$foldersArgs<ExtArgs>
     grantBookmarks?: boolean | Organization$grantBookmarksArgs<ExtArgs>
@@ -7121,7 +7019,6 @@ export namespace Prisma {
     objects: {
       aiChats: Prisma.$AiChatPayload<ExtArgs>[]
       applications: Prisma.$ApplicationPayload<ExtArgs>[]
-      customFields: Prisma.$CustomFieldPayload<ExtArgs>[]
       documents: Prisma.$DocumentPayload<ExtArgs>[]
       folders: Prisma.$FolderPayload<ExtArgs>[]
       grantBookmarks: Prisma.$GrantBookmarkPayload<ExtArgs>[]
@@ -7557,7 +7454,6 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     aiChats<T extends Organization$aiChatsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$aiChatsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     applications<T extends Organization$applicationsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$applicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    customFields<T extends Organization$customFieldsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$customFieldsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomFieldPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     documents<T extends Organization$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     folders<T extends Organization$foldersArgs<ExtArgs> = {}>(args?: Subset<T, Organization$foldersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     grantBookmarks<T extends Organization$grantBookmarksArgs<ExtArgs> = {}>(args?: Subset<T, Organization$grantBookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GrantBookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -8060,30 +7956,6 @@ export namespace Prisma {
   }
 
   /**
-   * Organization.customFields
-   */
-  export type Organization$customFieldsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CustomField
-     */
-    select?: CustomFieldSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the CustomField
-     */
-    omit?: CustomFieldOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CustomFieldInclude<ExtArgs> | null
-    where?: CustomFieldWhereInput
-    orderBy?: CustomFieldOrderByWithRelationInput | CustomFieldOrderByWithRelationInput[]
-    cursor?: CustomFieldWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: CustomFieldScalarFieldEnum | CustomFieldScalarFieldEnum[]
-  }
-
-  /**
    * Organization.documents
    */
   export type Organization$documentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8267,1077 +8139,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: OrganizationInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model CustomField
-   */
-
-  export type AggregateCustomField = {
-    _count: CustomFieldCountAggregateOutputType | null
-    _min: CustomFieldMinAggregateOutputType | null
-    _max: CustomFieldMaxAggregateOutputType | null
-  }
-
-  export type CustomFieldMinAggregateOutputType = {
-    id: string | null
-    fieldName: string | null
-    fieldValue: string | null
-    organizationId: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type CustomFieldMaxAggregateOutputType = {
-    id: string | null
-    fieldName: string | null
-    fieldValue: string | null
-    organizationId: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type CustomFieldCountAggregateOutputType = {
-    id: number
-    fieldName: number
-    fieldValue: number
-    organizationId: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type CustomFieldMinAggregateInputType = {
-    id?: true
-    fieldName?: true
-    fieldValue?: true
-    organizationId?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type CustomFieldMaxAggregateInputType = {
-    id?: true
-    fieldName?: true
-    fieldValue?: true
-    organizationId?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type CustomFieldCountAggregateInputType = {
-    id?: true
-    fieldName?: true
-    fieldValue?: true
-    organizationId?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type CustomFieldAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which CustomField to aggregate.
-     */
-    where?: CustomFieldWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of CustomFields to fetch.
-     */
-    orderBy?: CustomFieldOrderByWithRelationInput | CustomFieldOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: CustomFieldWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` CustomFields from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` CustomFields.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned CustomFields
-    **/
-    _count?: true | CustomFieldCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: CustomFieldMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: CustomFieldMaxAggregateInputType
-  }
-
-  export type GetCustomFieldAggregateType<T extends CustomFieldAggregateArgs> = {
-        [P in keyof T & keyof AggregateCustomField]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateCustomField[P]>
-      : GetScalarType<T[P], AggregateCustomField[P]>
-  }
-
-
-
-
-  export type CustomFieldGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: CustomFieldWhereInput
-    orderBy?: CustomFieldOrderByWithAggregationInput | CustomFieldOrderByWithAggregationInput[]
-    by: CustomFieldScalarFieldEnum[] | CustomFieldScalarFieldEnum
-    having?: CustomFieldScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: CustomFieldCountAggregateInputType | true
-    _min?: CustomFieldMinAggregateInputType
-    _max?: CustomFieldMaxAggregateInputType
-  }
-
-  export type CustomFieldGroupByOutputType = {
-    id: string
-    fieldName: string
-    fieldValue: string | null
-    organizationId: string
-    createdAt: Date
-    updatedAt: Date
-    _count: CustomFieldCountAggregateOutputType | null
-    _min: CustomFieldMinAggregateOutputType | null
-    _max: CustomFieldMaxAggregateOutputType | null
-  }
-
-  type GetCustomFieldGroupByPayload<T extends CustomFieldGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<CustomFieldGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof CustomFieldGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], CustomFieldGroupByOutputType[P]>
-            : GetScalarType<T[P], CustomFieldGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type CustomFieldSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    fieldName?: boolean
-    fieldValue?: boolean
-    organizationId?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["customField"]>
-
-  export type CustomFieldSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    fieldName?: boolean
-    fieldValue?: boolean
-    organizationId?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["customField"]>
-
-  export type CustomFieldSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    fieldName?: boolean
-    fieldValue?: boolean
-    organizationId?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["customField"]>
-
-  export type CustomFieldSelectScalar = {
-    id?: boolean
-    fieldName?: boolean
-    fieldValue?: boolean
-    organizationId?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type CustomFieldOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fieldName" | "fieldValue" | "organizationId" | "createdAt" | "updatedAt", ExtArgs["result"]["customField"]>
-  export type CustomFieldInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
-  }
-  export type CustomFieldIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
-  }
-  export type CustomFieldIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
-  }
-
-  export type $CustomFieldPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "CustomField"
-    objects: {
-      organization: Prisma.$OrganizationPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      fieldName: string
-      fieldValue: string | null
-      organizationId: string
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["customField"]>
-    composites: {}
-  }
-
-  type CustomFieldGetPayload<S extends boolean | null | undefined | CustomFieldDefaultArgs> = $Result.GetResult<Prisma.$CustomFieldPayload, S>
-
-  type CustomFieldCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<CustomFieldFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: CustomFieldCountAggregateInputType | true
-    }
-
-  export interface CustomFieldDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CustomField'], meta: { name: 'CustomField' } }
-    /**
-     * Find zero or one CustomField that matches the filter.
-     * @param {CustomFieldFindUniqueArgs} args - Arguments to find a CustomField
-     * @example
-     * // Get one CustomField
-     * const customField = await prisma.customField.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends CustomFieldFindUniqueArgs>(args: SelectSubset<T, CustomFieldFindUniqueArgs<ExtArgs>>): Prisma__CustomFieldClient<$Result.GetResult<Prisma.$CustomFieldPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one CustomField that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {CustomFieldFindUniqueOrThrowArgs} args - Arguments to find a CustomField
-     * @example
-     * // Get one CustomField
-     * const customField = await prisma.customField.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends CustomFieldFindUniqueOrThrowArgs>(args: SelectSubset<T, CustomFieldFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CustomFieldClient<$Result.GetResult<Prisma.$CustomFieldPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first CustomField that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CustomFieldFindFirstArgs} args - Arguments to find a CustomField
-     * @example
-     * // Get one CustomField
-     * const customField = await prisma.customField.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends CustomFieldFindFirstArgs>(args?: SelectSubset<T, CustomFieldFindFirstArgs<ExtArgs>>): Prisma__CustomFieldClient<$Result.GetResult<Prisma.$CustomFieldPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first CustomField that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CustomFieldFindFirstOrThrowArgs} args - Arguments to find a CustomField
-     * @example
-     * // Get one CustomField
-     * const customField = await prisma.customField.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends CustomFieldFindFirstOrThrowArgs>(args?: SelectSubset<T, CustomFieldFindFirstOrThrowArgs<ExtArgs>>): Prisma__CustomFieldClient<$Result.GetResult<Prisma.$CustomFieldPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more CustomFields that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CustomFieldFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all CustomFields
-     * const customFields = await prisma.customField.findMany()
-     * 
-     * // Get first 10 CustomFields
-     * const customFields = await prisma.customField.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const customFieldWithIdOnly = await prisma.customField.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends CustomFieldFindManyArgs>(args?: SelectSubset<T, CustomFieldFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomFieldPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a CustomField.
-     * @param {CustomFieldCreateArgs} args - Arguments to create a CustomField.
-     * @example
-     * // Create one CustomField
-     * const CustomField = await prisma.customField.create({
-     *   data: {
-     *     // ... data to create a CustomField
-     *   }
-     * })
-     * 
-     */
-    create<T extends CustomFieldCreateArgs>(args: SelectSubset<T, CustomFieldCreateArgs<ExtArgs>>): Prisma__CustomFieldClient<$Result.GetResult<Prisma.$CustomFieldPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many CustomFields.
-     * @param {CustomFieldCreateManyArgs} args - Arguments to create many CustomFields.
-     * @example
-     * // Create many CustomFields
-     * const customField = await prisma.customField.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends CustomFieldCreateManyArgs>(args?: SelectSubset<T, CustomFieldCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many CustomFields and returns the data saved in the database.
-     * @param {CustomFieldCreateManyAndReturnArgs} args - Arguments to create many CustomFields.
-     * @example
-     * // Create many CustomFields
-     * const customField = await prisma.customField.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many CustomFields and only return the `id`
-     * const customFieldWithIdOnly = await prisma.customField.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends CustomFieldCreateManyAndReturnArgs>(args?: SelectSubset<T, CustomFieldCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomFieldPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a CustomField.
-     * @param {CustomFieldDeleteArgs} args - Arguments to delete one CustomField.
-     * @example
-     * // Delete one CustomField
-     * const CustomField = await prisma.customField.delete({
-     *   where: {
-     *     // ... filter to delete one CustomField
-     *   }
-     * })
-     * 
-     */
-    delete<T extends CustomFieldDeleteArgs>(args: SelectSubset<T, CustomFieldDeleteArgs<ExtArgs>>): Prisma__CustomFieldClient<$Result.GetResult<Prisma.$CustomFieldPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one CustomField.
-     * @param {CustomFieldUpdateArgs} args - Arguments to update one CustomField.
-     * @example
-     * // Update one CustomField
-     * const customField = await prisma.customField.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends CustomFieldUpdateArgs>(args: SelectSubset<T, CustomFieldUpdateArgs<ExtArgs>>): Prisma__CustomFieldClient<$Result.GetResult<Prisma.$CustomFieldPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more CustomFields.
-     * @param {CustomFieldDeleteManyArgs} args - Arguments to filter CustomFields to delete.
-     * @example
-     * // Delete a few CustomFields
-     * const { count } = await prisma.customField.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends CustomFieldDeleteManyArgs>(args?: SelectSubset<T, CustomFieldDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more CustomFields.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CustomFieldUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many CustomFields
-     * const customField = await prisma.customField.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends CustomFieldUpdateManyArgs>(args: SelectSubset<T, CustomFieldUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more CustomFields and returns the data updated in the database.
-     * @param {CustomFieldUpdateManyAndReturnArgs} args - Arguments to update many CustomFields.
-     * @example
-     * // Update many CustomFields
-     * const customField = await prisma.customField.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more CustomFields and only return the `id`
-     * const customFieldWithIdOnly = await prisma.customField.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends CustomFieldUpdateManyAndReturnArgs>(args: SelectSubset<T, CustomFieldUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomFieldPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one CustomField.
-     * @param {CustomFieldUpsertArgs} args - Arguments to update or create a CustomField.
-     * @example
-     * // Update or create a CustomField
-     * const customField = await prisma.customField.upsert({
-     *   create: {
-     *     // ... data to create a CustomField
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the CustomField we want to update
-     *   }
-     * })
-     */
-    upsert<T extends CustomFieldUpsertArgs>(args: SelectSubset<T, CustomFieldUpsertArgs<ExtArgs>>): Prisma__CustomFieldClient<$Result.GetResult<Prisma.$CustomFieldPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of CustomFields.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CustomFieldCountArgs} args - Arguments to filter CustomFields to count.
-     * @example
-     * // Count the number of CustomFields
-     * const count = await prisma.customField.count({
-     *   where: {
-     *     // ... the filter for the CustomFields we want to count
-     *   }
-     * })
-    **/
-    count<T extends CustomFieldCountArgs>(
-      args?: Subset<T, CustomFieldCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], CustomFieldCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a CustomField.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CustomFieldAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends CustomFieldAggregateArgs>(args: Subset<T, CustomFieldAggregateArgs>): Prisma.PrismaPromise<GetCustomFieldAggregateType<T>>
-
-    /**
-     * Group by CustomField.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CustomFieldGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends CustomFieldGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: CustomFieldGroupByArgs['orderBy'] }
-        : { orderBy?: CustomFieldGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, CustomFieldGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCustomFieldGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the CustomField model
-   */
-  readonly fields: CustomFieldFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for CustomField.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__CustomFieldClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the CustomField model
-   */
-  interface CustomFieldFieldRefs {
-    readonly id: FieldRef<"CustomField", 'String'>
-    readonly fieldName: FieldRef<"CustomField", 'String'>
-    readonly fieldValue: FieldRef<"CustomField", 'String'>
-    readonly organizationId: FieldRef<"CustomField", 'String'>
-    readonly createdAt: FieldRef<"CustomField", 'DateTime'>
-    readonly updatedAt: FieldRef<"CustomField", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * CustomField findUnique
-   */
-  export type CustomFieldFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CustomField
-     */
-    select?: CustomFieldSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the CustomField
-     */
-    omit?: CustomFieldOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CustomFieldInclude<ExtArgs> | null
-    /**
-     * Filter, which CustomField to fetch.
-     */
-    where: CustomFieldWhereUniqueInput
-  }
-
-  /**
-   * CustomField findUniqueOrThrow
-   */
-  export type CustomFieldFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CustomField
-     */
-    select?: CustomFieldSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the CustomField
-     */
-    omit?: CustomFieldOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CustomFieldInclude<ExtArgs> | null
-    /**
-     * Filter, which CustomField to fetch.
-     */
-    where: CustomFieldWhereUniqueInput
-  }
-
-  /**
-   * CustomField findFirst
-   */
-  export type CustomFieldFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CustomField
-     */
-    select?: CustomFieldSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the CustomField
-     */
-    omit?: CustomFieldOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CustomFieldInclude<ExtArgs> | null
-    /**
-     * Filter, which CustomField to fetch.
-     */
-    where?: CustomFieldWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of CustomFields to fetch.
-     */
-    orderBy?: CustomFieldOrderByWithRelationInput | CustomFieldOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for CustomFields.
-     */
-    cursor?: CustomFieldWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` CustomFields from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` CustomFields.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of CustomFields.
-     */
-    distinct?: CustomFieldScalarFieldEnum | CustomFieldScalarFieldEnum[]
-  }
-
-  /**
-   * CustomField findFirstOrThrow
-   */
-  export type CustomFieldFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CustomField
-     */
-    select?: CustomFieldSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the CustomField
-     */
-    omit?: CustomFieldOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CustomFieldInclude<ExtArgs> | null
-    /**
-     * Filter, which CustomField to fetch.
-     */
-    where?: CustomFieldWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of CustomFields to fetch.
-     */
-    orderBy?: CustomFieldOrderByWithRelationInput | CustomFieldOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for CustomFields.
-     */
-    cursor?: CustomFieldWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` CustomFields from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` CustomFields.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of CustomFields.
-     */
-    distinct?: CustomFieldScalarFieldEnum | CustomFieldScalarFieldEnum[]
-  }
-
-  /**
-   * CustomField findMany
-   */
-  export type CustomFieldFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CustomField
-     */
-    select?: CustomFieldSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the CustomField
-     */
-    omit?: CustomFieldOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CustomFieldInclude<ExtArgs> | null
-    /**
-     * Filter, which CustomFields to fetch.
-     */
-    where?: CustomFieldWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of CustomFields to fetch.
-     */
-    orderBy?: CustomFieldOrderByWithRelationInput | CustomFieldOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing CustomFields.
-     */
-    cursor?: CustomFieldWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` CustomFields from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` CustomFields.
-     */
-    skip?: number
-    distinct?: CustomFieldScalarFieldEnum | CustomFieldScalarFieldEnum[]
-  }
-
-  /**
-   * CustomField create
-   */
-  export type CustomFieldCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CustomField
-     */
-    select?: CustomFieldSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the CustomField
-     */
-    omit?: CustomFieldOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CustomFieldInclude<ExtArgs> | null
-    /**
-     * The data needed to create a CustomField.
-     */
-    data: XOR<CustomFieldCreateInput, CustomFieldUncheckedCreateInput>
-  }
-
-  /**
-   * CustomField createMany
-   */
-  export type CustomFieldCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many CustomFields.
-     */
-    data: CustomFieldCreateManyInput | CustomFieldCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * CustomField createManyAndReturn
-   */
-  export type CustomFieldCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CustomField
-     */
-    select?: CustomFieldSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the CustomField
-     */
-    omit?: CustomFieldOmit<ExtArgs> | null
-    /**
-     * The data used to create many CustomFields.
-     */
-    data: CustomFieldCreateManyInput | CustomFieldCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CustomFieldIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * CustomField update
-   */
-  export type CustomFieldUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CustomField
-     */
-    select?: CustomFieldSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the CustomField
-     */
-    omit?: CustomFieldOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CustomFieldInclude<ExtArgs> | null
-    /**
-     * The data needed to update a CustomField.
-     */
-    data: XOR<CustomFieldUpdateInput, CustomFieldUncheckedUpdateInput>
-    /**
-     * Choose, which CustomField to update.
-     */
-    where: CustomFieldWhereUniqueInput
-  }
-
-  /**
-   * CustomField updateMany
-   */
-  export type CustomFieldUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update CustomFields.
-     */
-    data: XOR<CustomFieldUpdateManyMutationInput, CustomFieldUncheckedUpdateManyInput>
-    /**
-     * Filter which CustomFields to update
-     */
-    where?: CustomFieldWhereInput
-    /**
-     * Limit how many CustomFields to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * CustomField updateManyAndReturn
-   */
-  export type CustomFieldUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CustomField
-     */
-    select?: CustomFieldSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the CustomField
-     */
-    omit?: CustomFieldOmit<ExtArgs> | null
-    /**
-     * The data used to update CustomFields.
-     */
-    data: XOR<CustomFieldUpdateManyMutationInput, CustomFieldUncheckedUpdateManyInput>
-    /**
-     * Filter which CustomFields to update
-     */
-    where?: CustomFieldWhereInput
-    /**
-     * Limit how many CustomFields to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CustomFieldIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * CustomField upsert
-   */
-  export type CustomFieldUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CustomField
-     */
-    select?: CustomFieldSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the CustomField
-     */
-    omit?: CustomFieldOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CustomFieldInclude<ExtArgs> | null
-    /**
-     * The filter to search for the CustomField to update in case it exists.
-     */
-    where: CustomFieldWhereUniqueInput
-    /**
-     * In case the CustomField found by the `where` argument doesn't exist, create a new CustomField with this data.
-     */
-    create: XOR<CustomFieldCreateInput, CustomFieldUncheckedCreateInput>
-    /**
-     * In case the CustomField was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<CustomFieldUpdateInput, CustomFieldUncheckedUpdateInput>
-  }
-
-  /**
-   * CustomField delete
-   */
-  export type CustomFieldDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CustomField
-     */
-    select?: CustomFieldSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the CustomField
-     */
-    omit?: CustomFieldOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CustomFieldInclude<ExtArgs> | null
-    /**
-     * Filter which CustomField to delete.
-     */
-    where: CustomFieldWhereUniqueInput
-  }
-
-  /**
-   * CustomField deleteMany
-   */
-  export type CustomFieldDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which CustomFields to delete
-     */
-    where?: CustomFieldWhereInput
-    /**
-     * Limit how many CustomFields to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * CustomField without action
-   */
-  export type CustomFieldDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CustomField
-     */
-    select?: CustomFieldSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the CustomField
-     */
-    omit?: CustomFieldOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CustomFieldInclude<ExtArgs> | null
   }
 
 
@@ -23446,18 +22247,6 @@ export namespace Prisma {
   export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
 
 
-  export const CustomFieldScalarFieldEnum: {
-    id: 'id',
-    fieldName: 'fieldName',
-    fieldValue: 'fieldValue',
-    organizationId: 'organizationId',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type CustomFieldScalarFieldEnum = (typeof CustomFieldScalarFieldEnum)[keyof typeof CustomFieldScalarFieldEnum]
-
-
   export const KnowledgeBaseDocumentScalarFieldEnum: {
     id: 'id',
     fileName: 'fileName',
@@ -24341,7 +23130,6 @@ export namespace Prisma {
     services?: Enumopportunity_services_enumNullableListFilter<"Organization">
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
-    customFields?: CustomFieldListRelationFilter
     documents?: DocumentListRelationFilter
     folders?: FolderListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
@@ -24384,7 +23172,6 @@ export namespace Prisma {
     services?: SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     applications?: ApplicationOrderByRelationAggregateInput
-    customFields?: CustomFieldOrderByRelationAggregateInput
     documents?: DocumentOrderByRelationAggregateInput
     folders?: FolderOrderByRelationAggregateInput
     grantBookmarks?: GrantBookmarkOrderByRelationAggregateInput
@@ -24430,7 +23217,6 @@ export namespace Prisma {
     services?: Enumopportunity_services_enumNullableListFilter<"Organization">
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
-    customFields?: CustomFieldListRelationFilter
     documents?: DocumentListRelationFilter
     folders?: FolderListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
@@ -24512,66 +23298,6 @@ export namespace Prisma {
     urbanCentricLocale?: IntNullableWithAggregatesFilter<"Organization"> | number | null
     logoUrl?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     services?: Enumopportunity_services_enumNullableListFilter<"Organization">
-  }
-
-  export type CustomFieldWhereInput = {
-    AND?: CustomFieldWhereInput | CustomFieldWhereInput[]
-    OR?: CustomFieldWhereInput[]
-    NOT?: CustomFieldWhereInput | CustomFieldWhereInput[]
-    id?: StringFilter<"CustomField"> | string
-    fieldName?: StringFilter<"CustomField"> | string
-    fieldValue?: StringNullableFilter<"CustomField"> | string | null
-    organizationId?: StringFilter<"CustomField"> | string
-    createdAt?: DateTimeFilter<"CustomField"> | Date | string
-    updatedAt?: DateTimeFilter<"CustomField"> | Date | string
-    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
-  }
-
-  export type CustomFieldOrderByWithRelationInput = {
-    id?: SortOrder
-    fieldName?: SortOrder
-    fieldValue?: SortOrderInput | SortOrder
-    organizationId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    organization?: OrganizationOrderByWithRelationInput
-  }
-
-  export type CustomFieldWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: CustomFieldWhereInput | CustomFieldWhereInput[]
-    OR?: CustomFieldWhereInput[]
-    NOT?: CustomFieldWhereInput | CustomFieldWhereInput[]
-    fieldName?: StringFilter<"CustomField"> | string
-    fieldValue?: StringNullableFilter<"CustomField"> | string | null
-    organizationId?: StringFilter<"CustomField"> | string
-    createdAt?: DateTimeFilter<"CustomField"> | Date | string
-    updatedAt?: DateTimeFilter<"CustomField"> | Date | string
-    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
-  }, "id">
-
-  export type CustomFieldOrderByWithAggregationInput = {
-    id?: SortOrder
-    fieldName?: SortOrder
-    fieldValue?: SortOrderInput | SortOrder
-    organizationId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: CustomFieldCountOrderByAggregateInput
-    _max?: CustomFieldMaxOrderByAggregateInput
-    _min?: CustomFieldMinOrderByAggregateInput
-  }
-
-  export type CustomFieldScalarWhereWithAggregatesInput = {
-    AND?: CustomFieldScalarWhereWithAggregatesInput | CustomFieldScalarWhereWithAggregatesInput[]
-    OR?: CustomFieldScalarWhereWithAggregatesInput[]
-    NOT?: CustomFieldScalarWhereWithAggregatesInput | CustomFieldScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"CustomField"> | string
-    fieldName?: StringWithAggregatesFilter<"CustomField"> | string
-    fieldValue?: StringNullableWithAggregatesFilter<"CustomField"> | string | null
-    organizationId?: StringWithAggregatesFilter<"CustomField"> | string
-    createdAt?: DateTimeWithAggregatesFilter<"CustomField"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"CustomField"> | Date | string
   }
 
   export type KnowledgeBaseDocumentWhereInput = {
@@ -26021,7 +24747,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -26064,7 +24789,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -26107,7 +24831,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -26150,7 +24873,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26257,68 +24979,6 @@ export namespace Prisma {
     urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
-  }
-
-  export type CustomFieldCreateInput = {
-    id?: string
-    fieldName: string
-    fieldValue?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    organization: OrganizationCreateNestedOneWithoutCustomFieldsInput
-  }
-
-  export type CustomFieldUncheckedCreateInput = {
-    id?: string
-    fieldName: string
-    fieldValue?: string | null
-    organizationId: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type CustomFieldUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    fieldName?: StringFieldUpdateOperationsInput | string
-    fieldValue?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organization?: OrganizationUpdateOneRequiredWithoutCustomFieldsNestedInput
-  }
-
-  export type CustomFieldUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    fieldName?: StringFieldUpdateOperationsInput | string
-    fieldValue?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CustomFieldCreateManyInput = {
-    id?: string
-    fieldName: string
-    fieldValue?: string | null
-    organizationId: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type CustomFieldUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    fieldName?: StringFieldUpdateOperationsInput | string
-    fieldValue?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CustomFieldUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    fieldName?: StringFieldUpdateOperationsInput | string
-    fieldValue?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type KnowledgeBaseDocumentCreateInput = {
@@ -27993,12 +26653,6 @@ export namespace Prisma {
     none?: ApplicationWhereInput
   }
 
-  export type CustomFieldListRelationFilter = {
-    every?: CustomFieldWhereInput
-    some?: CustomFieldWhereInput
-    none?: CustomFieldWhereInput
-  }
-
   export type DocumentListRelationFilter = {
     every?: DocumentWhereInput
     some?: DocumentWhereInput
@@ -28036,10 +26690,6 @@ export namespace Prisma {
   }
 
   export type ApplicationOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type CustomFieldOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -28218,33 +26868,6 @@ export namespace Prisma {
     _sum?: NestedFloatNullableFilter<$PrismaModel>
     _min?: NestedFloatNullableFilter<$PrismaModel>
     _max?: NestedFloatNullableFilter<$PrismaModel>
-  }
-
-  export type CustomFieldCountOrderByAggregateInput = {
-    id?: SortOrder
-    fieldName?: SortOrder
-    fieldValue?: SortOrder
-    organizationId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type CustomFieldMaxOrderByAggregateInput = {
-    id?: SortOrder
-    fieldName?: SortOrder
-    fieldValue?: SortOrder
-    organizationId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type CustomFieldMinOrderByAggregateInput = {
-    id?: SortOrder
-    fieldName?: SortOrder
-    fieldValue?: SortOrder
-    organizationId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
   }
 
   export type EnumVectorizationStatusFilter<$PrismaModel = never> = {
@@ -29190,13 +27813,6 @@ export namespace Prisma {
     connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
   }
 
-  export type CustomFieldCreateNestedManyWithoutOrganizationInput = {
-    create?: XOR<CustomFieldCreateWithoutOrganizationInput, CustomFieldUncheckedCreateWithoutOrganizationInput> | CustomFieldCreateWithoutOrganizationInput[] | CustomFieldUncheckedCreateWithoutOrganizationInput[]
-    connectOrCreate?: CustomFieldCreateOrConnectWithoutOrganizationInput | CustomFieldCreateOrConnectWithoutOrganizationInput[]
-    createMany?: CustomFieldCreateManyOrganizationInputEnvelope
-    connect?: CustomFieldWhereUniqueInput | CustomFieldWhereUniqueInput[]
-  }
-
   export type DocumentCreateNestedManyWithoutOrganizationInput = {
     create?: XOR<DocumentCreateWithoutOrganizationInput, DocumentUncheckedCreateWithoutOrganizationInput> | DocumentCreateWithoutOrganizationInput[] | DocumentUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutOrganizationInput | DocumentCreateOrConnectWithoutOrganizationInput[]
@@ -29258,13 +27874,6 @@ export namespace Prisma {
     connectOrCreate?: ApplicationCreateOrConnectWithoutOrganizationInput | ApplicationCreateOrConnectWithoutOrganizationInput[]
     createMany?: ApplicationCreateManyOrganizationInputEnvelope
     connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
-  }
-
-  export type CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput = {
-    create?: XOR<CustomFieldCreateWithoutOrganizationInput, CustomFieldUncheckedCreateWithoutOrganizationInput> | CustomFieldCreateWithoutOrganizationInput[] | CustomFieldUncheckedCreateWithoutOrganizationInput[]
-    connectOrCreate?: CustomFieldCreateOrConnectWithoutOrganizationInput | CustomFieldCreateOrConnectWithoutOrganizationInput[]
-    createMany?: CustomFieldCreateManyOrganizationInputEnvelope
-    connect?: CustomFieldWhereUniqueInput | CustomFieldWhereUniqueInput[]
   }
 
   export type DocumentUncheckedCreateNestedManyWithoutOrganizationInput = {
@@ -29363,20 +27972,6 @@ export namespace Prisma {
     update?: ApplicationUpdateWithWhereUniqueWithoutOrganizationInput | ApplicationUpdateWithWhereUniqueWithoutOrganizationInput[]
     updateMany?: ApplicationUpdateManyWithWhereWithoutOrganizationInput | ApplicationUpdateManyWithWhereWithoutOrganizationInput[]
     deleteMany?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
-  }
-
-  export type CustomFieldUpdateManyWithoutOrganizationNestedInput = {
-    create?: XOR<CustomFieldCreateWithoutOrganizationInput, CustomFieldUncheckedCreateWithoutOrganizationInput> | CustomFieldCreateWithoutOrganizationInput[] | CustomFieldUncheckedCreateWithoutOrganizationInput[]
-    connectOrCreate?: CustomFieldCreateOrConnectWithoutOrganizationInput | CustomFieldCreateOrConnectWithoutOrganizationInput[]
-    upsert?: CustomFieldUpsertWithWhereUniqueWithoutOrganizationInput | CustomFieldUpsertWithWhereUniqueWithoutOrganizationInput[]
-    createMany?: CustomFieldCreateManyOrganizationInputEnvelope
-    set?: CustomFieldWhereUniqueInput | CustomFieldWhereUniqueInput[]
-    disconnect?: CustomFieldWhereUniqueInput | CustomFieldWhereUniqueInput[]
-    delete?: CustomFieldWhereUniqueInput | CustomFieldWhereUniqueInput[]
-    connect?: CustomFieldWhereUniqueInput | CustomFieldWhereUniqueInput[]
-    update?: CustomFieldUpdateWithWhereUniqueWithoutOrganizationInput | CustomFieldUpdateWithWhereUniqueWithoutOrganizationInput[]
-    updateMany?: CustomFieldUpdateManyWithWhereWithoutOrganizationInput | CustomFieldUpdateManyWithWhereWithoutOrganizationInput[]
-    deleteMany?: CustomFieldScalarWhereInput | CustomFieldScalarWhereInput[]
   }
 
   export type DocumentUpdateManyWithoutOrganizationNestedInput = {
@@ -29505,20 +28100,6 @@ export namespace Prisma {
     deleteMany?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
   }
 
-  export type CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput = {
-    create?: XOR<CustomFieldCreateWithoutOrganizationInput, CustomFieldUncheckedCreateWithoutOrganizationInput> | CustomFieldCreateWithoutOrganizationInput[] | CustomFieldUncheckedCreateWithoutOrganizationInput[]
-    connectOrCreate?: CustomFieldCreateOrConnectWithoutOrganizationInput | CustomFieldCreateOrConnectWithoutOrganizationInput[]
-    upsert?: CustomFieldUpsertWithWhereUniqueWithoutOrganizationInput | CustomFieldUpsertWithWhereUniqueWithoutOrganizationInput[]
-    createMany?: CustomFieldCreateManyOrganizationInputEnvelope
-    set?: CustomFieldWhereUniqueInput | CustomFieldWhereUniqueInput[]
-    disconnect?: CustomFieldWhereUniqueInput | CustomFieldWhereUniqueInput[]
-    delete?: CustomFieldWhereUniqueInput | CustomFieldWhereUniqueInput[]
-    connect?: CustomFieldWhereUniqueInput | CustomFieldWhereUniqueInput[]
-    update?: CustomFieldUpdateWithWhereUniqueWithoutOrganizationInput | CustomFieldUpdateWithWhereUniqueWithoutOrganizationInput[]
-    updateMany?: CustomFieldUpdateManyWithWhereWithoutOrganizationInput | CustomFieldUpdateManyWithWhereWithoutOrganizationInput[]
-    deleteMany?: CustomFieldScalarWhereInput | CustomFieldScalarWhereInput[]
-  }
-
   export type DocumentUncheckedUpdateManyWithoutOrganizationNestedInput = {
     create?: XOR<DocumentCreateWithoutOrganizationInput, DocumentUncheckedCreateWithoutOrganizationInput> | DocumentCreateWithoutOrganizationInput[] | DocumentUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutOrganizationInput | DocumentCreateOrConnectWithoutOrganizationInput[]
@@ -29615,20 +28196,6 @@ export namespace Prisma {
     update?: UserUpdateWithWhereUniqueWithoutOrganizationInput | UserUpdateWithWhereUniqueWithoutOrganizationInput[]
     updateMany?: UserUpdateManyWithWhereWithoutOrganizationInput | UserUpdateManyWithWhereWithoutOrganizationInput[]
     deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
-  }
-
-  export type OrganizationCreateNestedOneWithoutCustomFieldsInput = {
-    create?: XOR<OrganizationCreateWithoutCustomFieldsInput, OrganizationUncheckedCreateWithoutCustomFieldsInput>
-    connectOrCreate?: OrganizationCreateOrConnectWithoutCustomFieldsInput
-    connect?: OrganizationWhereUniqueInput
-  }
-
-  export type OrganizationUpdateOneRequiredWithoutCustomFieldsNestedInput = {
-    create?: XOR<OrganizationCreateWithoutCustomFieldsInput, OrganizationUncheckedCreateWithoutCustomFieldsInput>
-    connectOrCreate?: OrganizationCreateOrConnectWithoutCustomFieldsInput
-    upsert?: OrganizationUpsertWithoutCustomFieldsInput
-    connect?: OrganizationWhereUniqueInput
-    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutCustomFieldsInput, OrganizationUpdateWithoutCustomFieldsInput>, OrganizationUncheckedUpdateWithoutCustomFieldsInput>
   }
 
   export type OrganizationCreateNestedOneWithoutKnowledgeBaseInput = {
@@ -30855,7 +29422,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -30897,7 +29463,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -31014,7 +29579,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -31056,7 +29620,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -31154,32 +29717,6 @@ export namespace Prisma {
 
   export type ApplicationCreateManyOrganizationInputEnvelope = {
     data: ApplicationCreateManyOrganizationInput | ApplicationCreateManyOrganizationInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type CustomFieldCreateWithoutOrganizationInput = {
-    id?: string
-    fieldName: string
-    fieldValue?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type CustomFieldUncheckedCreateWithoutOrganizationInput = {
-    id?: string
-    fieldName: string
-    fieldValue?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type CustomFieldCreateOrConnectWithoutOrganizationInput = {
-    where: CustomFieldWhereUniqueInput
-    create: XOR<CustomFieldCreateWithoutOrganizationInput, CustomFieldUncheckedCreateWithoutOrganizationInput>
-  }
-
-  export type CustomFieldCreateManyOrganizationInputEnvelope = {
-    data: CustomFieldCreateManyOrganizationInput | CustomFieldCreateManyOrganizationInput[]
     skipDuplicates?: boolean
   }
 
@@ -31496,34 +30033,6 @@ export namespace Prisma {
     opportunityUrl?: StringNullableFilter<"Application"> | string | null
   }
 
-  export type CustomFieldUpsertWithWhereUniqueWithoutOrganizationInput = {
-    where: CustomFieldWhereUniqueInput
-    update: XOR<CustomFieldUpdateWithoutOrganizationInput, CustomFieldUncheckedUpdateWithoutOrganizationInput>
-    create: XOR<CustomFieldCreateWithoutOrganizationInput, CustomFieldUncheckedCreateWithoutOrganizationInput>
-  }
-
-  export type CustomFieldUpdateWithWhereUniqueWithoutOrganizationInput = {
-    where: CustomFieldWhereUniqueInput
-    data: XOR<CustomFieldUpdateWithoutOrganizationInput, CustomFieldUncheckedUpdateWithoutOrganizationInput>
-  }
-
-  export type CustomFieldUpdateManyWithWhereWithoutOrganizationInput = {
-    where: CustomFieldScalarWhereInput
-    data: XOR<CustomFieldUpdateManyMutationInput, CustomFieldUncheckedUpdateManyWithoutOrganizationInput>
-  }
-
-  export type CustomFieldScalarWhereInput = {
-    AND?: CustomFieldScalarWhereInput | CustomFieldScalarWhereInput[]
-    OR?: CustomFieldScalarWhereInput[]
-    NOT?: CustomFieldScalarWhereInput | CustomFieldScalarWhereInput[]
-    id?: StringFilter<"CustomField"> | string
-    fieldName?: StringFilter<"CustomField"> | string
-    fieldValue?: StringNullableFilter<"CustomField"> | string | null
-    organizationId?: StringFilter<"CustomField"> | string
-    createdAt?: DateTimeFilter<"CustomField"> | Date | string
-    updatedAt?: DateTimeFilter<"CustomField"> | Date | string
-  }
-
   export type DocumentUpsertWithWhereUniqueWithoutOrganizationInput = {
     where: DocumentWhereUniqueInput
     update: XOR<DocumentUpdateWithoutOrganizationInput, DocumentUncheckedUpdateWithoutOrganizationInput>
@@ -31740,190 +30249,6 @@ export namespace Prisma {
     googleTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
   }
 
-  export type OrganizationCreateWithoutCustomFieldsInput = {
-    id?: string
-    name: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    slug: string
-    address?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    city?: string | null
-    email?: string | null
-    fiscalYearEnd?: string | null
-    missionStatement?: string | null
-    organizationLeaderName?: string | null
-    phone?: string | null
-    state?: string | null
-    website?: string | null
-    zipCode?: string | null
-    strategicPlan?: string | null
-    countyName?: string | null
-    districtDataYear?: number | null
-    enrollment?: number | null
-    highestGrade?: number | null
-    latitude?: number | null
-    leaId?: string | null
-    longitude?: number | null
-    lowestGrade?: number | null
-    numberOfSchools?: number | null
-    stateLeaId?: string | null
-    urbanCentricLocale?: number | null
-    logoUrl?: string | null
-    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
-    aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
-    applications?: ApplicationCreateNestedManyWithoutOrganizationInput
-    documents?: DocumentCreateNestedManyWithoutOrganizationInput
-    folders?: FolderCreateNestedManyWithoutOrganizationInput
-    grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
-    recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
-    users?: UserCreateNestedManyWithoutOrganizationInput
-  }
-
-  export type OrganizationUncheckedCreateWithoutCustomFieldsInput = {
-    id?: string
-    name: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    slug: string
-    address?: string | null
-    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
-    city?: string | null
-    email?: string | null
-    fiscalYearEnd?: string | null
-    missionStatement?: string | null
-    organizationLeaderName?: string | null
-    phone?: string | null
-    state?: string | null
-    website?: string | null
-    zipCode?: string | null
-    strategicPlan?: string | null
-    countyName?: string | null
-    districtDataYear?: number | null
-    enrollment?: number | null
-    highestGrade?: number | null
-    latitude?: number | null
-    leaId?: string | null
-    longitude?: number | null
-    lowestGrade?: number | null
-    numberOfSchools?: number | null
-    stateLeaId?: string | null
-    urbanCentricLocale?: number | null
-    logoUrl?: string | null
-    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
-    aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
-    applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
-    documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
-    folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
-    grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
-    recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
-    users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
-  }
-
-  export type OrganizationCreateOrConnectWithoutCustomFieldsInput = {
-    where: OrganizationWhereUniqueInput
-    create: XOR<OrganizationCreateWithoutCustomFieldsInput, OrganizationUncheckedCreateWithoutCustomFieldsInput>
-  }
-
-  export type OrganizationUpsertWithoutCustomFieldsInput = {
-    update: XOR<OrganizationUpdateWithoutCustomFieldsInput, OrganizationUncheckedUpdateWithoutCustomFieldsInput>
-    create: XOR<OrganizationCreateWithoutCustomFieldsInput, OrganizationUncheckedCreateWithoutCustomFieldsInput>
-    where?: OrganizationWhereInput
-  }
-
-  export type OrganizationUpdateToOneWithWhereWithoutCustomFieldsInput = {
-    where?: OrganizationWhereInput
-    data: XOR<OrganizationUpdateWithoutCustomFieldsInput, OrganizationUncheckedUpdateWithoutCustomFieldsInput>
-  }
-
-  export type OrganizationUpdateWithoutCustomFieldsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    slug?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
-    aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
-    applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
-    documents?: DocumentUpdateManyWithoutOrganizationNestedInput
-    folders?: FolderUpdateManyWithoutOrganizationNestedInput
-    grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
-    recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
-    users?: UserUpdateManyWithoutOrganizationNestedInput
-  }
-
-  export type OrganizationUncheckedUpdateWithoutCustomFieldsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    slug?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
-    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
-    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: NullableStringFieldUpdateOperationsInput | string | null
-    website?: NullableStringFieldUpdateOperationsInput | string | null
-    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
-    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
-    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
-    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
-    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    leaId?: NullableStringFieldUpdateOperationsInput | string | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
-    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
-    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
-    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
-    aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
-    applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
-    documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
-    folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
-    grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
-    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
-    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
-    recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
-    users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
-  }
-
   export type OrganizationCreateWithoutKnowledgeBaseInput = {
     id?: string
     name: string
@@ -31957,7 +30282,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -31999,7 +30323,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -32093,7 +30416,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -32135,7 +30457,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -32294,7 +30615,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
@@ -32336,7 +30656,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
@@ -32439,7 +30758,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
@@ -32481,7 +30799,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -32574,7 +30891,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -32616,7 +30932,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -32674,7 +30989,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -32716,7 +31030,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -32791,7 +31104,6 @@ export namespace Prisma {
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -32833,7 +31145,6 @@ export namespace Prisma {
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -32976,7 +31287,6 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -33018,7 +31328,6 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -33188,7 +31497,6 @@ export namespace Prisma {
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -33230,7 +31538,6 @@ export namespace Prisma {
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -33420,7 +31727,6 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -33462,7 +31768,6 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -33620,7 +31925,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -33662,7 +31966,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -33720,7 +32023,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -33762,7 +32064,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -33884,7 +32185,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
@@ -33926,7 +32226,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
@@ -34076,7 +32375,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
@@ -34118,7 +32416,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -34255,7 +32552,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
@@ -34297,7 +32593,6 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
-    customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
@@ -34489,7 +32784,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
@@ -34531,7 +32825,6 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
-    customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -34896,14 +33189,6 @@ export namespace Prisma {
     opportunityUrl?: string | null
   }
 
-  export type CustomFieldCreateManyOrganizationInput = {
-    id?: string
-    fieldName: string
-    fieldValue?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
   export type DocumentCreateManyOrganizationInput = {
     id?: string
     applicationId?: string | null
@@ -35094,30 +33379,6 @@ export namespace Prisma {
     opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type CustomFieldUpdateWithoutOrganizationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    fieldName?: StringFieldUpdateOperationsInput | string
-    fieldValue?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CustomFieldUncheckedUpdateWithoutOrganizationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    fieldName?: StringFieldUpdateOperationsInput | string
-    fieldValue?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CustomFieldUncheckedUpdateManyWithoutOrganizationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    fieldName?: StringFieldUpdateOperationsInput | string
-    fieldValue?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type DocumentUpdateWithoutOrganizationInput = {
