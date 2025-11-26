@@ -304,7 +304,7 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
         // Validate files before upload
         const files = Array.from(options.experimental_attachments);
         const validation = validateMultipleFiles(files, "document");
-        
+
         if (!validation.allValid) {
           setIsLoading(false);
           const errorMessage: Message = {
@@ -316,7 +316,7 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
           setMessages((prev) => [...prev, errorMessage]);
           return;
         }
-        
+
         try {
           console.log(
             "📤 [DocumentChat] Uploading files...",
