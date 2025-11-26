@@ -368,9 +368,9 @@ export default function ProfilePage() {
       return;
     }
 
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("File size must be less than 10MB");
+    // Validate file size (max 40MB)
+    if (file.size > 40 * 1024 * 1024) {
+      toast.error("File size must be less than 40MB");
       return;
     }
 
@@ -618,9 +618,9 @@ export default function ProfilePage() {
       return;
     }
 
-    // Validate file size (10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("File size exceeds 10MB limit");
+    // Validate file size (40MB)
+    if (file.size > 40 * 1024 * 1024) {
+      toast.error("File size exceeds 40MB limit");
       return;
     }
 

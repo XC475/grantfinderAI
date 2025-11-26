@@ -14,6 +14,10 @@ import { writeFile, unlink } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
 import { randomUUID } from "crypto";
+import {
+  MAX_DOCUMENT_SIZE,
+  validateDocumentUpload,
+} from "@/lib/uploadValidation";
 
 export const runtime = "nodejs";
 
@@ -106,6 +110,27 @@ export async function POST(request: NextRequest) {
 
       const arrayBuffer = await exportResponse.arrayBuffer();
       fileBuffer = Buffer.from(arrayBuffer);
+      
+      // Validate file size
+      if (fileBuffer.length > MAX_DOCUMENT_SIZE) {
+        return NextResponse.json(
+          { error: "File size exceeds 40MB limit" },
+          { status: 400 }
+        );
+      }
+      
+      // Validate page count for converted Google Docs (treated as DOCX)
+      const uploadValidation = await validateDocumentUpload(
+        { size: fileBuffer.length, type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", name: fileName },
+        fileBuffer
+      );
+      if (!uploadValidation.valid) {
+        return NextResponse.json(
+          { error: uploadValidation.error },
+          { status: 400 }
+        );
+      }
+      
       tiptapContent = await convertGoogleDocToTiptap(fileBuffer);
     } else {
       const downloadResponse = await fetch(
@@ -125,6 +150,26 @@ export async function POST(request: NextRequest) {
 
       const arrayBuffer = await downloadResponse.arrayBuffer();
       fileBuffer = Buffer.from(arrayBuffer);
+      
+      // Validate file size
+      if (fileBuffer.length > MAX_DOCUMENT_SIZE) {
+        return NextResponse.json(
+          { error: "File size exceeds 40MB limit" },
+          { status: 400 }
+        );
+      }
+      
+      // Validate page count for PDFs
+      const uploadValidation = await validateDocumentUpload(
+        { size: fileBuffer.length, type: mimeType, name: fileName },
+        fileBuffer
+      );
+      if (!uploadValidation.valid) {
+        return NextResponse.json(
+          { error: uploadValidation.error },
+          { status: 400 }
+        );
+      }
 
       const extension = fileName.split(".").pop() || "tmp";
       const tempFilePath = join(tmpdir(), `${randomUUID()}.${extension}`);

@@ -6,6 +6,10 @@ import { join } from "path";
 import { tmpdir } from "os";
 import { randomUUID } from "crypto";
 import { extractText } from "unpdf";
+import {
+  MAX_DOCUMENT_SIZE,
+  validatePageCount,
+} from "@/lib/uploadValidation";
 
 // Force Node.js runtime instead of Edge runtime
 export const runtime = "nodejs";
@@ -46,11 +50,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate file size (max 10MB)
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    if (file.size > maxSize) {
+    // Validate file size (max 40MB)
+    if (file.size > MAX_DOCUMENT_SIZE) {
       return NextResponse.json(
-        { error: "File size must be less than 10MB" },
+        { error: "File size must be less than 40MB" },
         { status: 400 }
       );
     }
@@ -72,6 +75,15 @@ export async function POST(req: NextRequest) {
       const joinedText = Array.isArray(text) ? text.join("\n\n") : text;
       extractedText = joinedText || "";
       pageCount = totalPages;
+      
+      // Validate page count
+      const pageValidation = validatePageCount(pageCount);
+      if (!pageValidation.valid) {
+        return NextResponse.json(
+          { error: pageValidation.error },
+          { status: 400 }
+        );
+      }
     } else {
       // For DOCX and other types, use the shared utility
       extractedText = await extractTextFromFile(tempFilePath, file.type);

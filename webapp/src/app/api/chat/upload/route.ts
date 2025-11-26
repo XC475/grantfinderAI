@@ -5,17 +5,15 @@ import { join } from "path";
 import { tmpdir } from "os";
 import { randomUUID } from "crypto";
 import { extractTextFromFile, cleanExtractedText } from "@/lib/fileExtraction";
+import {
+  MAX_DOCUMENT_SIZE,
+  ALLOWED_DOCUMENT_TYPES,
+  validateDocumentUpload,
+} from "@/lib/uploadValidation";
 
-// Maximum file size: 40MB
-const MAX_FILE_SIZE = 40 * 1024 * 1024;
-
-// Allowed file types
-const ALLOWED_TYPES = [
-  "application/pdf",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  "text/plain",
-  "text/csv",
-];
+// Use centralized constants
+const MAX_FILE_SIZE = MAX_DOCUMENT_SIZE;
+const ALLOWED_TYPES = ALLOWED_DOCUMENT_TYPES;
 
 // File types that are coming soon
 const COMING_SOON_TYPES = [
@@ -99,6 +97,16 @@ export async function POST(req: NextRequest) {
 
       // 4. Save file to temporary location for text extraction
       const buffer = Buffer.from(await file.arrayBuffer());
+      
+      // Validate page count for PDFs
+      const uploadValidation = await validateDocumentUpload(file, buffer);
+      if (!uploadValidation.valid) {
+        return NextResponse.json(
+          { error: uploadValidation.error },
+          { status: 400 }
+        );
+      }
+      
       // Sanitize filename by replacing invalid path characters
       const sanitizedFileName = file.name.replace(/[/\\:*?"<>|]/g, '-');
       const tempFilePath = join(tmpdir(), `${randomUUID()}-${sanitizedFileName}`);

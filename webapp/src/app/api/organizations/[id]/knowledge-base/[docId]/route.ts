@@ -6,6 +6,10 @@ import { join } from "path";
 import { tmpdir } from "os";
 import { randomUUID } from "crypto";
 import { extractTextFromFile, cleanExtractedText } from "@/lib/fileExtraction";
+import {
+  MAX_DOCUMENT_SIZE,
+  validateDocumentUpload,
+} from "@/lib/uploadValidation";
 
 export const runtime = "nodejs";
 
@@ -15,7 +19,7 @@ const ALLOWED_TYPES = [
   "text/csv",
 ];
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILE_SIZE = MAX_DOCUMENT_SIZE; // 40MB
 
 // PATCH - Update a knowledge base document
 export async function PATCH(
@@ -88,13 +92,23 @@ export async function PATCH(
       // Validate file size
       if (file.size > MAX_FILE_SIZE) {
         return NextResponse.json(
-          { error: "File size exceeds 10MB limit" },
+          { error: "File size exceeds 40MB limit" },
           { status: 400 }
         );
       }
 
       // Save file to temporary location
       const buffer = Buffer.from(await file.arrayBuffer());
+      
+      // Validate page count for PDFs
+      const uploadValidation = await validateDocumentUpload(file, buffer);
+      if (!uploadValidation.valid) {
+        return NextResponse.json(
+          { error: uploadValidation.error },
+          { status: 400 }
+        );
+      }
+      
       const sanitizedFileName = file.name.replace(/[/\\:*?"<>|]/g, "-");
       const tempFilePath = join(
         tmpdir(),

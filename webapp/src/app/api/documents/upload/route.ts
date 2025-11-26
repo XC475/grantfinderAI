@@ -7,6 +7,10 @@ import { writeFile, unlink } from "fs/promises";
 import { join } from "path";
 import { tmpdir } from "os";
 import { randomUUID } from "crypto";
+import {
+  MAX_DOCUMENT_SIZE,
+  validatePageCount,
+} from "@/lib/uploadValidation";
 
 // Force Node.js runtime for file processing
 export const runtime = "nodejs";
@@ -19,7 +23,7 @@ const ALLOWED_TYPES = {
   "text/csv": ".csv",
 };
 
-const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_SIZE = MAX_DOCUMENT_SIZE; // 40MB
 
 export async function POST(req: NextRequest) {
   try {
@@ -68,7 +72,7 @@ export async function POST(req: NextRequest) {
     // Validate file size
     if (file.size > MAX_SIZE) {
       return NextResponse.json(
-        { error: "File must be under 10MB" },
+        { error: "File must be under 40MB" },
         { status: 400 }
       );
     }
@@ -92,11 +96,21 @@ export async function POST(req: NextRequest) {
       // Clean the extracted text
       extractedText = cleanExtractedText(extractedText);
 
-      // For PDFs, also get page count
+      // For PDFs, also get page count and validate
       if (mimeType === "application/pdf") {
         const uint8Array = new Uint8Array(buffer);
         const { totalPages } = await extractText(uint8Array);
         pageCount = totalPages;
+        
+        // Validate page count
+        const pageValidation = validatePageCount(pageCount);
+        if (!pageValidation.valid) {
+          await unlink(tempFilePath).catch(console.error);
+          return NextResponse.json(
+            { error: pageValidation.error },
+            { status: 400 }
+          );
+        }
       }
     } catch (error) {
       console.error("Error extracting text:", error);
