@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
     let destination: string;
     if (returnTo && returnTo.startsWith("/")) {
       // Use the provided returnTo path
-      destination = `${returnTo}${returnTo.includes("?") ? "&" : "?"}gdrive=connected`;
+      destination = `${returnTo}${returnTo.includes("?") ? "&" : "?"}gdrive=success`;
     } else {
       // Fallback to documents page
       destination = slug

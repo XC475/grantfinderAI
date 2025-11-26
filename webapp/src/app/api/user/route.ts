@@ -31,6 +31,7 @@ export async function GET() {
         lastActiveAt: true,
         organizationId: true,
         system_admin: true,
+        googleDriveConnected: true,
       },
     });
 
@@ -100,6 +101,7 @@ export async function PATCH(request: NextRequest) {
         lastActiveAt: true,
         organizationId: true,
         system_admin: true,
+        googleDriveConnected: true,
       },
     });
 

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams, usePathname } from "next/navigation";
+import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,22 +14,44 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Save } from "lucide-react";
+import { Loader2, Save, CheckCircle2, XCircle } from "lucide-react";
 
 export default function AccountSettingsPage() {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [disconnecting, setDisconnecting] = useState(false);
 
   // Form state
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [googleDriveConnected, setGoogleDriveConnected] = useState(false);
 
   useEffect(() => {
     fetchUser();
-  }, []);
+
+    // Handle OAuth callback feedback
+    const gdriveStatus = searchParams.get("gdrive");
+    const reason = searchParams.get("reason");
+
+    if (gdriveStatus === "success") {
+      toast.success("Google Drive connected successfully!");
+      // Clear the URL params
+      window.history.replaceState({}, "", window.location.pathname);
+    } else if (gdriveStatus === "error") {
+      const errorMessage = reason
+        ? `Failed to connect Google Drive: ${reason.replace(/-/g, " ")}`
+        : "Failed to connect Google Drive";
+      toast.error(errorMessage);
+      // Clear the URL params
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, [searchParams]);
 
   const fetchUser = async () => {
     try {
@@ -40,6 +64,13 @@ export default function AccountSettingsPage() {
       if (user) {
         setFullName(user.user_metadata?.name || "");
         setEmail(user.email || "");
+
+        // Fetch additional user data from our API
+        const response = await fetch("/api/user");
+        if (response.ok) {
+          const userData = await response.json();
+          setGoogleDriveConnected(userData.googleDriveConnected || false);
+        }
       }
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -110,6 +141,37 @@ export default function AccountSettingsPage() {
       );
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleConnectGoogleDrive = () => {
+    // Redirect to Google OAuth flow with current pathname
+    const returnTo = encodeURIComponent(pathname);
+    window.location.href = `/api/google-drive/auth?returnTo=${returnTo}`;
+  };
+
+  const handleDisconnectGoogleDrive = async () => {
+    setDisconnecting(true);
+
+    try {
+      const response = await fetch("/api/google-drive/disconnect", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to disconnect Google Drive");
+      }
+
+      setGoogleDriveConnected(false);
+      toast.success("Google Drive disconnected successfully");
+    } catch (error) {
+      console.error("Error disconnecting Google Drive:", error);
+      toast.error(
+        (error instanceof Error ? error.message : String(error)) ||
+          "Failed to disconnect Google Drive"
+      );
+    } finally {
+      setDisconnecting(false);
     }
   };
 
@@ -222,6 +284,81 @@ export default function AccountSettingsPage() {
               )}
             </Button>
           </form>
+        </CardContent>
+      </Card>
+
+      {/* Integrations */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Integrations</CardTitle>
+          <CardDescription>
+            Manage your connected third-party services
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {/* Google Drive Integration */}
+            <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg">
+                  <Image
+                    src="/logos/google-drive.png"
+                    alt="Google Drive"
+                    width={40}
+                    height={40}
+                    className="object-contain"
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center gap-6">
+                    <h4 className="font-medium">Google Drive</h4>
+                    {googleDriveConnected ? (
+                      <Badge
+                        variant="outline"
+                        className="flex items-center gap-1 bg-green-50 text-green-700 border-green-200"
+                      >
+                        <CheckCircle2 className="h-3 w-3" />
+                        Connected
+                      </Badge>
+                    ) : (
+                      <Badge
+                        variant="secondary"
+                        className="flex items-center gap-1"
+                      >
+                        <XCircle className="h-3 w-3" />
+                        Not Connected
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {googleDriveConnected
+                      ? "Access your Google Drive files and documents"
+                      : "Connect to import files from Google Drive"}
+                  </p>
+                </div>
+              </div>
+              <div>
+                {googleDriveConnected ? (
+                  <Button
+                    variant="outline"
+                    onClick={handleDisconnectGoogleDrive}
+                    disabled={disconnecting}
+                  >
+                    {disconnecting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Disconnecting...
+                      </>
+                    ) : (
+                      "Disconnect"
+                    )}
+                  </Button>
+                ) : (
+                  <Button onClick={handleConnectGoogleDrive}>Connect</Button>
+                )}
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
