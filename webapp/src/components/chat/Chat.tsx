@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Chat } from "@/components/ui/chat";
 import { Message } from "@/components/ui/chat-message";
 import { type SourceDocument } from "@/components/chat/SourcesModal";
+import { validateMultipleFiles } from "@/lib/clientUploadValidation";
 
 interface FileAttachment {
   id: string;
@@ -94,13 +95,29 @@ export function ChatDemo(props: ChatDemoProps) {
         options?.experimental_attachments &&
         options.experimental_attachments.length > 0
       ) {
+        // Validate files before upload
+        const files = Array.from(options.experimental_attachments);
+        const validation = validateMultipleFiles(files, "document");
+
+        if (!validation.allValid) {
+          setIsLoading(false);
+          const errorMessage: Message = {
+            id: `error-${Date.now()}`,
+            role: "assistant",
+            content: `Unable to upload files:\n${validation.errors.join("\n")}`,
+            createdAt: new Date(),
+          };
+          setMessages((prev) => [...prev, errorMessage]);
+          return;
+        }
+
         try {
           console.log(
             "📤 [Chat] Uploading files...",
             options.experimental_attachments.length
           );
           const formData = new FormData();
-          Array.from(options.experimental_attachments).forEach((file) => {
+          files.forEach((file) => {
             formData.append("files", file);
           });
 

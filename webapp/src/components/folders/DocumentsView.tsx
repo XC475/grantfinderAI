@@ -23,6 +23,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { validateDocumentFile } from "@/lib/clientUploadValidation";
 
 interface Folder {
   id: string;
@@ -678,6 +679,13 @@ export function DocumentsView({
   // File upload handler
   const handleFileUpload = async (file: File) => {
     if (!file) return;
+
+    // Validate file before upload
+    const validation = validateDocumentFile(file);
+    if (!validation.valid) {
+      toast.error(validation.error || "Invalid file");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("file", file);
