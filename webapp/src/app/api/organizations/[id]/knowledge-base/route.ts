@@ -150,7 +150,7 @@ export async function POST(
 
     // Save file to temporary location
     const buffer = Buffer.from(await file.arrayBuffer());
-    
+
     // Validate page count for PDFs
     const uploadValidation = await validateDocumentUpload(file, buffer);
     if (!uploadValidation.valid) {
@@ -159,7 +159,7 @@ export async function POST(
         { status: 400 }
       );
     }
-    
+
     const sanitizedFileName = file.name.replace(/[/\\:*?"<>|]/g, "-");
     const tempFilePath = join(tmpdir(), `${randomUUID()}-${sanitizedFileName}`);
     await writeFile(tempFilePath, buffer);
