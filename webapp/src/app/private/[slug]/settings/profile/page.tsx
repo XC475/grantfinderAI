@@ -54,7 +54,6 @@ import Image from "next/image";
 import { toast } from "sonner";
 import { createClient } from "@/utils/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CustomFieldModal } from "@/components/profile/CustomFieldModal";
 import { Calendar } from "@/components/ui/calendar";
 import { format, parse } from "date-fns";
 import {
@@ -121,15 +120,6 @@ interface Organization {
   updatedAt: string;
 }
 
-interface CustomField {
-  id: string;
-  fieldName: string;
-  fieldValue: string | null;
-  organizationId: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 interface KnowledgeBaseDocument {
   id: string;
   fileName: string;
@@ -157,12 +147,6 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
-
-  // Custom fields state
-  const [customFields, setCustomFields] = useState<CustomField[]>([]);
-  const [loadingCustomFields, setLoadingCustomFields] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedField, setSelectedField] = useState<CustomField | null>(null);
 
   // Mission Statement state
   const [showMissionStatement, setShowMissionStatement] = useState(false);
@@ -578,34 +562,9 @@ export default function ProfilePage() {
     }
   };
 
-  // Fetch custom fields
-  const fetchCustomFields = async () => {
-    if (!organization) return;
-
-    setLoadingCustomFields(true);
-    try {
-      const response = await fetch(
-        `/api/organizations/${organization.id}/custom-fields`
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch custom fields");
-      }
-
-      const data = await response.json();
-      setCustomFields(data);
-    } catch (error) {
-      console.error("Error fetching custom fields:", error);
-      toast.error("Failed to load custom fields");
-    } finally {
-      setLoadingCustomFields(false);
-    }
-  };
-
-  // Load custom fields when organization is loaded
+  // Load knowledge base docs when organization is loaded
   useEffect(() => {
     if (organization) {
-      fetchCustomFields();
       fetchKnowledgeBaseDocs();
     }
   }, [organization?.id]);
@@ -832,103 +791,6 @@ export default function ProfilePage() {
       // Upload new document
       await handleUploadDocument(file);
     }
-  };
-
-  // Handle create/update custom field
-  const handleSaveCustomField = async (
-    fieldName: string,
-    fieldValue: string
-  ) => {
-    if (!organization) return;
-
-    try {
-      if (selectedField) {
-        // Update existing field
-        const response = await fetch(
-          `/api/organizations/${organization.id}/custom-fields/${selectedField.id}`,
-          {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ fieldName, fieldValue }),
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to update custom field");
-        }
-
-        const updatedField = await response.json();
-        setCustomFields((prev) =>
-          prev.map((field) =>
-            field.id === selectedField.id ? updatedField : field
-          )
-        );
-        toast.success("Custom field updated successfully");
-      } else {
-        // Create new field
-        const response = await fetch(
-          `/api/organizations/${organization.id}/custom-fields`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ fieldName, fieldValue }),
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to create custom field");
-        }
-
-        const newField = await response.json();
-        setCustomFields((prev) => [...prev, newField]);
-        toast.success("Custom field created successfully");
-      }
-    } catch (error) {
-      console.error("Error saving custom field:", error);
-      throw error;
-    }
-  };
-
-  // Handle delete custom field
-  const handleDeleteCustomField = async (field: CustomField) => {
-    if (!organization) return;
-
-    const confirmed = window.confirm(
-      `Are you sure you want to delete the custom field "${field.fieldName}"? This action cannot be undone.`
-    );
-
-    if (!confirmed) return;
-
-    try {
-      const response = await fetch(
-        `/api/organizations/${organization.id}/custom-fields/${field.id}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to delete custom field");
-      }
-
-      setCustomFields((prev) => prev.filter((f) => f.id !== field.id));
-      toast.success("Custom field deleted successfully");
-    } catch (error) {
-      console.error("Error deleting custom field:", error);
-      toast.error("Failed to delete custom field");
-    }
-  };
-
-  // Open modal for creating new field
-  const handleAddField = () => {
-    setSelectedField(null);
-    setModalOpen(true);
-  };
-
-  // Open modal for editing existing field
-  const handleEditField = (field: CustomField) => {
-    setSelectedField(field);
-    setModalOpen(true);
   };
 
   // Handle delete strategic plan
@@ -1959,14 +1821,6 @@ export default function ProfilePage() {
           )}
         </TabsContent>
       </Tabs>
-
-      {/* Custom Field Modal */}
-      <CustomFieldModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        field={selectedField}
-        onSave={handleSaveCustomField}
-      />
 
       {/* Strategic Plan Modal */}
       <Dialog

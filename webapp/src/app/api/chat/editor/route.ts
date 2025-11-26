@@ -70,7 +70,6 @@ export async function POST(req: NextRequest) {
             strategicPlan: true,
             annualOperatingBudget: true,
             fiscalYearEnd: true,
-            customFields: true,
           },
         },
       },

@@ -15,10 +15,6 @@ export interface OrganizationInfo {
   strategicPlan: string | null;
   annualOperatingBudget: Decimal | null;
   fiscalYearEnd: string | null;
-  customFields: Array<{
-    fieldName: string;
-    fieldValue: string | null;
-  }>;
 }
 
 export interface EditorPromptOptions {
@@ -53,8 +49,7 @@ ${organizationInfo.lowestGrade && organizationInfo.highestGrade ? `Grade Range: 
 ${organizationInfo.missionStatement ? `\nMission Statement: ${organizationInfo.missionStatement}` : ""}
 ${organizationInfo.strategicPlan ? `\nStrategic Plan: ${organizationInfo.strategicPlan}` : ""}
 ${organizationInfo.annualOperatingBudget ? `\nAnnual Operating Budget: $${Number(organizationInfo.annualOperatingBudget).toLocaleString()}` : ""}
-${organizationInfo.fiscalYearEnd ? `Fiscal Year End: ${organizationInfo.fiscalYearEnd}` : ""}
-${organizationInfo.customFields && organizationInfo.customFields.length > 0 ? `\n\nCUSTOM FIELDS:\n${organizationInfo.customFields.map((field) => `${field.fieldName}: ${field.fieldValue || "N/A"}`).join("\n")}` : ""}`;
+${organizationInfo.fiscalYearEnd ? `Fiscal Year End: ${organizationInfo.fiscalYearEnd}` : ""}`;
 
   return `You are a helpful assistant for a grant writing application called GrantWare. 
 You are helping the user with their document titled "${documentTitle}".
