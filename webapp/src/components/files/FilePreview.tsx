@@ -9,8 +9,9 @@ interface Document {
   fileUrl?: string | null;
   fileType?: string | null;
   fileSize?: number | null;
+  extractedText?: string | null; // Top-level field
   metadata?: {
-    extractedText?: string;
+    extractedText?: string; // Fallback for backwards compatibility
     originalFileName?: string;
     pageCount?: number;
   } | null;
@@ -46,8 +47,9 @@ export function FilePreview({ document }: FilePreviewProps) {
 
   // Text and CSV files - show extracted text
   if (document.fileType === "text/plain" || document.fileType === "text/csv") {
+    // Use top-level extractedText field, fallback to metadata for backwards compatibility
     const extractedText =
-      document.metadata?.extractedText || "No text content available";
+      document.extractedText || document.metadata?.extractedText || "No text content available";
 
     return (
       <div className="border rounded-md bg-muted p-6">

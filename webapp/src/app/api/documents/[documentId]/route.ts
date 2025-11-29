@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 import { deleteFileFromStorage } from "@/lib/documentStorageCleanup";
+import { extractTextFromTiptap } from "@/lib/textExtraction";
+import { triggerDocumentVectorization } from "@/lib/textExtraction";
+import { FileCategory } from "@/generated/prisma";
 
 // GET /api/documents/[documentId] - Get specific document
 export async function GET(
@@ -166,7 +169,24 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { title, content, contentType = "json", folderId } = body;
+    const {
+      title,
+      content,
+      contentType = "json",
+      folderId,
+      // NEW KB fields:
+      isKnowledgeBase,
+      fileCategory,
+      metadata,
+    } = body;
+
+    // If content is being updated, re-extract text
+    let newExtractedText = existingDocument.extractedText;
+    let needsRevectorization = false;
+    if (content !== undefined && existingDocument.contentType === "json") {
+      newExtractedText = extractTextFromTiptap(content);
+      needsRevectorization = true;
+    }
 
     // If folderId is being updated, verify it belongs to the organization
     if (folderId !== undefined && folderId !== null) {
@@ -210,6 +230,19 @@ export async function PUT(
         ...(newApplicationId !== existingDocument.applicationId && {
           applicationId: newApplicationId,
         }),
+        // NEW KB fields:
+        ...(isKnowledgeBase !== undefined && { isKnowledgeBase }),
+        ...(fileCategory && { fileCategory: fileCategory as FileCategory }),
+        ...(metadata && {
+          metadata: {
+            ...((existingDocument.metadata as object) || {}),
+            ...metadata,
+          },
+        }),
+        ...(newExtractedText !== existingDocument.extractedText && {
+          extractedText: newExtractedText,
+          vectorizationStatus: newExtractedText ? "PENDING" : "COMPLETED",
+        }),
         version: existingDocument.version + 1,
         updatedAt: new Date(),
       },
@@ -229,6 +262,15 @@ export async function PUT(
         },
       },
     });
+
+    // Trigger vectorization if needed
+    if (
+      (needsRevectorization || document.isKnowledgeBase) &&
+      document.vectorizationStatus !== "COMPLETED" &&
+      document.extractedText
+    ) {
+      await triggerDocumentVectorization(documentId, dbUser.organizationId);
+    }
 
     return NextResponse.json({ document });
   } catch (error) {

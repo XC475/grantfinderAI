@@ -182,6 +182,15 @@ exports.Prisma.UserScalarFieldEnum = {
   googleTokenExpiry: 'googleTokenExpiry'
 };
 
+exports.Prisma.UserAIContextSettingsScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  enabledCategoriesChat: 'enabledCategoriesChat',
+  enabledCategoriesEditor: 'enabledCategoriesEditor',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.OrganizationScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -213,37 +222,6 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   urbanCentricLocale: 'urbanCentricLocale',
   logoUrl: 'logoUrl',
   services: 'services'
-};
-
-exports.Prisma.KnowledgeBaseDocumentScalarFieldEnum = {
-  id: 'id',
-  fileName: 'fileName',
-  fileType: 'fileType',
-  fileSize: 'fileSize',
-  fileUrl: 'fileUrl',
-  extractedText: 'extractedText',
-  isActive: 'isActive',
-  organizationId: 'organizationId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  chunkCount: 'chunkCount',
-  vectorizationError: 'vectorizationError',
-  vectorizationStatus: 'vectorizationStatus',
-  vectorizedAt: 'vectorizedAt'
-};
-
-exports.Prisma.KnowledgeBaseVectorScalarFieldEnum = {
-  id: 'id',
-  kbDocumentId: 'kbDocumentId',
-  organizationId: 'organizationId',
-  chunkIndex: 'chunkIndex',
-  totalChunks: 'totalChunks',
-  content: 'content',
-  fileName: 'fileName',
-  fileType: 'fileType',
-  contentHash: 'contentHash',
-  vectorizedAt: 'vectorizedAt',
-  model: 'model'
 };
 
 exports.Prisma.GrantBookmarkScalarFieldEnum = {
@@ -341,7 +319,28 @@ exports.Prisma.DocumentScalarFieldEnum = {
   folderId: 'folderId',
   fileSize: 'fileSize',
   fileType: 'fileType',
-  fileUrl: 'fileUrl'
+  fileUrl: 'fileUrl',
+  fileCategory: 'fileCategory',
+  isKnowledgeBase: 'isKnowledgeBase',
+  extractedText: 'extractedText',
+  vectorizationStatus: 'vectorizationStatus',
+  vectorizedAt: 'vectorizedAt',
+  chunkCount: 'chunkCount',
+  vectorizationError: 'vectorizationError'
+};
+
+exports.Prisma.DocumentVectorScalarFieldEnum = {
+  id: 'id',
+  documentId: 'documentId',
+  organizationId: 'organizationId',
+  chunkIndex: 'chunkIndex',
+  totalChunks: 'totalChunks',
+  content: 'content',
+  fileName: 'fileName',
+  fileType: 'fileType',
+  contentHash: 'contentHash',
+  vectorizedAt: 'vectorizedAt',
+  model: 'model'
 };
 
 exports.Prisma.FolderScalarFieldEnum = {
@@ -450,11 +449,18 @@ exports.OrganizationRole = exports.$Enums.OrganizationRole = {
   MEMBER: 'MEMBER'
 };
 
-exports.VectorizationStatus = exports.$Enums.VectorizationStatus = {
-  PENDING: 'PENDING',
-  PROCESSING: 'PROCESSING',
-  COMPLETED: 'COMPLETED',
-  FAILED: 'FAILED'
+exports.FileCategory = exports.$Enums.FileCategory = {
+  GENERAL: 'GENERAL',
+  WINNING_APPLICATION: 'WINNING_APPLICATION',
+  TEMPLATE: 'TEMPLATE',
+  OPPORTUNITY: 'OPPORTUNITY',
+  AWARD_CONTRACT: 'AWARD_CONTRACT',
+  BUDGET_FINANCIAL: 'BUDGET_FINANCIAL',
+  PROGRESS_REPORT: 'PROGRESS_REPORT',
+  FINAL_REPORT: 'FINAL_REPORT',
+  SUPPORTING_DOCUMENT: 'SUPPORTING_DOCUMENT',
+  CORRESPONDENCE: 'CORRESPONDENCE',
+  COMPLIANCE_RECORDS: 'COMPLIANCE_RECORDS'
 };
 
 exports.GoNoGoDecision = exports.$Enums.GoNoGoDecision = {
@@ -486,6 +492,13 @@ exports.MessageRole = exports.$Enums.MessageRole = {
   USER: 'USER',
   ASSISTANT: 'ASSISTANT',
   SYSTEM: 'SYSTEM'
+};
+
+exports.VectorizationStatus = exports.$Enums.VectorizationStatus = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
 };
 
 exports.k12_education_opportunity_category_enum = exports.$Enums.k12_education_opportunity_category_enum = {
@@ -526,9 +539,8 @@ exports.Prisma.ModelName = {
   alembic_version: 'alembic_version',
   opportunities: 'opportunities',
   User: 'User',
+  UserAIContextSettings: 'UserAIContextSettings',
   Organization: 'Organization',
-  KnowledgeBaseDocument: 'KnowledgeBaseDocument',
-  KnowledgeBaseVector: 'KnowledgeBaseVector',
   GrantBookmark: 'GrantBookmark',
   GrantEligibilityAnalysis: 'GrantEligibilityAnalysis',
   Application: 'Application',
@@ -537,6 +549,7 @@ exports.Prisma.ModelName = {
   Recommendation: 'Recommendation',
   VectorDocument: 'VectorDocument',
   Document: 'Document',
+  DocumentVector: 'DocumentVector',
   Folder: 'Folder',
   k12_education_opportunities: 'k12_education_opportunities'
 };

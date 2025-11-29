@@ -277,6 +277,13 @@ export async function POST(
         ],
       });
 
+    // Extract text from Tiptap JSON content if present
+    let extractedText = null;
+    if (gettingStartedContent && contentType === "json") {
+      const { extractTextFromTiptap } = await import("@/lib/textExtraction");
+      extractedText = extractTextFromTiptap(gettingStartedContent);
+    }
+
     const document = await prisma.document.create({
       data: {
         applicationId: applicationId,
@@ -285,9 +292,23 @@ export async function POST(
         title,
         content: gettingStartedContent,
         contentType,
+        fileCategory: "GENERAL", // Default for all new docs
+        extractedText,
+        vectorizationStatus: extractedText ? "PENDING" : "COMPLETED",
         version: 1,
       },
     });
+
+    // Trigger vectorization if text exists
+    if (extractedText) {
+      const { triggerDocumentVectorization } = await import(
+        "@/lib/textExtraction"
+      );
+      await triggerDocumentVectorization(
+        document.id,
+        application.organizationId
+      );
+    }
 
     return NextResponse.json({ document });
   } catch (error) {

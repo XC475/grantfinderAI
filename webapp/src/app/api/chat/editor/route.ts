@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 import { getSourceDocumentContext } from "@/lib/documentContext";
 import { searchKnowledgeBase } from "@/lib/ai/knowledgeBaseRAG";
+import { getActiveKnowledgeBase } from "@/lib/getOrgKnowledgeBase";
 import { buildEditorSystemPrompt } from "@/lib/ai/prompts/chat-editor";
 
 interface FileAttachment {
@@ -183,18 +184,36 @@ ${opportunity.raw_text}`;
       sourceContext = await getSourceDocumentContext(sourceDocumentIds);
     }
 
-    // Get knowledge base context for organization using RAG
-    const knowledgeBaseContext = await searchKnowledgeBase(
+    // Get knowledge base context for organization using RAG (semantic search)
+    const ragContext = await searchKnowledgeBase(
       lastUserMessage.content,
       organization.id,
-      { topK: 5 }
+      { topK: 5, userId: user.id, context: "editor" }
     );
+
+    // Get general knowledge base context (user-filtered by AI settings)
+    const generalKBContext = await getActiveKnowledgeBase(
+      organization.id,
+      user.id,
+      { context: "editor" }
+    );
+
+    // Combine all contexts
+    let knowledgeBaseContext = "";
+    if (ragContext) {
+      knowledgeBaseContext += `## Relevant Knowledge Base (Semantic Search)\n\n${ragContext}`;
+    }
+    if (generalKBContext) {
+      knowledgeBaseContext += ragContext
+        ? `\n\n## General Knowledge Base Context\n\n${generalKBContext}`
+        : `## Knowledge Base Context\n\n${generalKBContext}`;
+    }
 
     // Combine source document context and knowledge base context
     if (knowledgeBaseContext) {
       sourceContext = sourceContext
-        ? `${sourceContext}\n\n## Organization Knowledge Base\n\n${knowledgeBaseContext}`
-        : `## Organization Knowledge Base\n\n${knowledgeBaseContext}`;
+        ? `${sourceContext}\n\n${knowledgeBaseContext}`
+        : knowledgeBaseContext;
     }
 
     // Save user message with attachments

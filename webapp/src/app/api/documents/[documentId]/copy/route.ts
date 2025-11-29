@@ -80,6 +80,10 @@ export async function POST(
         content: originalDocument.content,
         contentType: originalDocument.contentType,
         metadata: originalDocument.metadata || undefined,
+        fileCategory: originalDocument.fileCategory || "GENERAL", // Preserve category
+        isKnowledgeBase: false, // Copies are not in KB by default
+        extractedText: originalDocument.extractedText, // Preserve extracted text
+        vectorizationStatus: originalDocument.extractedText ? "PENDING" : "COMPLETED", // Re-vectorize if text exists
         folderId: targetFolderId,
         organizationId: dbUser.organizationId,
         applicationId: originalDocument.applicationId,
@@ -101,6 +105,12 @@ export async function POST(
         },
       },
     });
+
+    // Trigger vectorization if text exists
+    if (originalDocument.extractedText) {
+      const { triggerDocumentVectorization } = await import("@/lib/textExtraction");
+      await triggerDocumentVectorization(newDocument.id, dbUser.organizationId);
+    }
 
     return NextResponse.json({ document: newDocument }, { status: 201 });
   } catch (error) {

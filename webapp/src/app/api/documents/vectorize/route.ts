@@ -7,24 +7,20 @@ import { chunkText } from "@/lib/textChunking";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const EMBEDDING_MODEL = "text-embedding-3-small";
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id: organizationId } = await params;
-
-  // Auth check
+export async function POST(req: NextRequest) {
+  // Auth check - internal API key only
   const apiKey = req.headers.get("x-api-key");
   if (!apiKey || apiKey !== process.env.INTERNAL_API_KEY) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Get all knowledge base docs that need vectorization
-  const docsToVectorize = await prisma.knowledgeBaseDocument.findMany({
+  // Get all documents that need vectorization
+  const docsToVectorize = await prisma.document.findMany({
     where: {
-      organizationId,
       vectorizationStatus: { in: ["PENDING", "FAILED"] },
+      extractedText: { not: null },
     },
+    take: 50, // Process in batches
   });
 
   let vectorizedCount = 0;
@@ -32,17 +28,18 @@ export async function POST(
 
   for (const doc of docsToVectorize) {
     try {
-      await prisma.knowledgeBaseDocument.update({
+      // Update status to PROCESSING
+      await prisma.document.update({
         where: { id: doc.id },
         data: { vectorizationStatus: "PROCESSING" },
       });
 
       // Chunk the text
-      const chunks = await chunkText(doc.extractedText);
+      const chunks = await chunkText(doc.extractedText!);
 
       // Delete old vectors for this document
-      await prisma.knowledgeBaseVector.deleteMany({
-        where: { kbDocumentId: doc.id },
+      await prisma.documentVector.deleteMany({
+        where: { documentId: doc.id },
       });
 
       // Vectorize each chunk
@@ -60,8 +57,8 @@ export async function POST(
 
         // Insert using raw SQL to handle vector type
         await prisma.$executeRaw`
-          INSERT INTO app.knowledge_base_vectors (
-            kb_document_id,
+          INSERT INTO app.document_vectors (
+            document_id,
             organization_id,
             chunk_index,
             total_chunks,
@@ -74,13 +71,13 @@ export async function POST(
             model
           ) VALUES (
             ${doc.id},
-            ${organizationId},
+            ${doc.organizationId},
             ${chunk.index},
             ${chunks.length},
             ${chunk.content},
             ${`[${embedding.join(",")}]`}::vector,
-            ${doc.fileName},
-            ${doc.fileType},
+            ${doc.title},
+            ${doc.fileType || "text/plain"},
             ${contentHash},
             NOW(),
             ${EMBEDDING_MODEL}
@@ -89,7 +86,7 @@ export async function POST(
       }
 
       // Update status to COMPLETED
-      await prisma.knowledgeBaseDocument.update({
+      await prisma.document.update({
         where: { id: doc.id },
         data: {
           vectorizationStatus: "COMPLETED",
@@ -101,7 +98,7 @@ export async function POST(
       vectorizedCount++;
     } catch (error) {
       console.error(`Failed to vectorize doc ${doc.id}:`, error);
-      await prisma.knowledgeBaseDocument.update({
+      await prisma.document.update({
         where: { id: doc.id },
         data: {
           vectorizationStatus: "FAILED",
@@ -119,6 +116,8 @@ export async function POST(
   return NextResponse.json({
     success: true,
     vectorized: vectorizedCount,
+    total: docsToVectorize.length,
     errors: errors.length > 0 ? errors : undefined,
   });
 }
+

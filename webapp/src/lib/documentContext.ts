@@ -60,6 +60,7 @@ export async function getSourceDocumentContext(
         title: true,
         content: true,
         fileUrl: true,
+        extractedText: true, // Include top-level extractedText field
         metadata: true,
       },
     });
@@ -74,11 +75,16 @@ export async function getSourceDocumentContext(
     for (const doc of documents) {
       let text = "";
 
-      // For uploaded files, use extracted text from metadata
-      if (doc.fileUrl && doc.metadata) {
-        const metadata = doc.metadata as { extractedText?: string };
-        if (metadata.extractedText) {
-          text = metadata.extractedText;
+      // For uploaded files, use extracted text from top-level field (preferred) or metadata (fallback)
+      if (doc.fileUrl) {
+        // Prefer top-level extractedText field
+        if ((doc as any).extractedText) {
+          text = (doc as any).extractedText;
+        } else if (doc.metadata) {
+          const metadata = doc.metadata as { extractedText?: string };
+          if (metadata.extractedText) {
+            text = metadata.extractedText;
+          }
         }
       }
       // For normal documents, parse TipTap JSON to plain text

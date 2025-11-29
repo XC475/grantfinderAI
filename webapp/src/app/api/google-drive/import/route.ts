@@ -6,10 +6,10 @@ import {
   convertGoogleDocToTiptap,
   plainTextToTiptap,
 } from "@/lib/document-converters";
-import {
-  extractTextFromFile,
-  cleanExtractedText,
-} from "@/lib/fileExtraction";
+import { extractTextFromFile, cleanExtractedText } from "@/lib/fileExtraction";
+import { extractTextFromTiptap } from "@/lib/textExtraction";
+import { triggerDocumentVectorization } from "@/lib/textExtraction";
+import { FileCategory } from "@/generated/prisma";
 import { writeFile, unlink } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
@@ -29,6 +29,8 @@ interface ImportPayload {
   mimeType: string;
   folderId?: string | null;
   applicationId?: string | null;
+  fileCategory?: string;
+  isKnowledgeBase?: boolean;
 }
 
 export async function POST(request: NextRequest) {
@@ -43,7 +45,15 @@ export async function POST(request: NextRequest) {
     }
 
     const payload = (await request.json()) as ImportPayload;
-    const { fileId, fileName, mimeType, folderId, applicationId } = payload;
+    const {
+      fileId,
+      fileName,
+      mimeType,
+      folderId,
+      applicationId,
+      fileCategory,
+      isKnowledgeBase,
+    } = payload;
 
     if (!fileId || !fileName || !mimeType) {
       return NextResponse.json(
@@ -101,7 +111,10 @@ export async function POST(request: NextRequest) {
       );
 
       if (!exportResponse.ok) {
-        console.error("Failed to export Google Doc", await exportResponse.text());
+        console.error(
+          "Failed to export Google Doc",
+          await exportResponse.text()
+        );
         return NextResponse.json(
           { error: "Failed to download Google Doc" },
           { status: 502 }
@@ -110,7 +123,7 @@ export async function POST(request: NextRequest) {
 
       const arrayBuffer = await exportResponse.arrayBuffer();
       fileBuffer = Buffer.from(arrayBuffer);
-      
+
       // Validate file size
       if (fileBuffer.length > MAX_DOCUMENT_SIZE) {
         return NextResponse.json(
@@ -118,10 +131,14 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      
+
       // Validate page count for converted Google Docs (treated as DOCX)
       const uploadValidation = await validateDocumentUpload(
-        { size: fileBuffer.length, type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", name: fileName },
+        {
+          size: fileBuffer.length,
+          type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          name: fileName,
+        },
         fileBuffer
       );
       if (!uploadValidation.valid) {
@@ -130,8 +147,27 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      
+
       tiptapContent = await convertGoogleDocToTiptap(fileBuffer);
+      // Extract text from Tiptap content for vectorization
+      if (tiptapContent) {
+        extractedText = extractTextFromTiptap(tiptapContent);
+      } else {
+        // Fallback: try to extract text from the converted docx
+        try {
+          const extension = "docx";
+          const tempFilePath = join(tmpdir(), `${randomUUID()}.${extension}`);
+          await writeFile(tempFilePath, fileBuffer);
+          const text = await extractTextFromFile(
+            tempFilePath,
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          );
+          extractedText = cleanExtractedText(text);
+          await unlink(tempFilePath).catch(() => {});
+        } catch (error) {
+          console.error("Failed to extract text from Google Doc:", error);
+        }
+      }
     } else {
       const downloadResponse = await fetch(
         `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
@@ -141,7 +177,10 @@ export async function POST(request: NextRequest) {
       );
 
       if (!downloadResponse.ok) {
-        console.error("Failed to download Drive file", await downloadResponse.text());
+        console.error(
+          "Failed to download Drive file",
+          await downloadResponse.text()
+        );
         return NextResponse.json(
           { error: "Failed to download file" },
           { status: 502 }
@@ -150,7 +189,7 @@ export async function POST(request: NextRequest) {
 
       const arrayBuffer = await downloadResponse.arrayBuffer();
       fileBuffer = Buffer.from(arrayBuffer);
-      
+
       // Validate file size
       if (fileBuffer.length > MAX_DOCUMENT_SIZE) {
         return NextResponse.json(
@@ -158,7 +197,7 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      
+
       // Validate page count for PDFs
       const uploadValidation = await validateDocumentUpload(
         { size: fileBuffer.length, type: mimeType, name: fileName },
@@ -215,6 +254,10 @@ export async function POST(request: NextRequest) {
         fileUrl: publicUrl,
         fileType: mimeType,
         fileSize: fileBuffer.length,
+        fileCategory: (fileCategory as FileCategory) || "GENERAL",
+        isKnowledgeBase: isKnowledgeBase || false,
+        extractedText: extractedText || null, // Move from metadata to top-level
+        vectorizationStatus: extractedText ? "PENDING" : "COMPLETED",
         organizationId: dbUser.organizationId,
         folderId: folderId && folderId !== "null" ? folderId : null,
         applicationId:
@@ -225,10 +268,14 @@ export async function POST(request: NextRequest) {
           originalFileId: fileId,
           originalFileName: fileName,
           importedAt: new Date().toISOString(),
-          extractedText: extractedText || null,
         },
       },
     });
+
+    // Trigger vectorization if text was extracted
+    if (extractedText) {
+      await triggerDocumentVectorization(document.id, dbUser.organizationId);
+    }
 
     return NextResponse.json({ document });
   } catch (error) {
@@ -239,4 +286,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

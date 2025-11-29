@@ -7,6 +7,7 @@ import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { DistrictInfo } from "@/lib/ai/prompts/chat-assistant";
 import { getSourceDocumentContext } from "@/lib/documentContext";
 import { searchKnowledgeBase } from "@/lib/ai/knowledgeBaseRAG";
+import { getActiveKnowledgeBase } from "@/lib/getOrgKnowledgeBase";
 
 interface FileAttachment {
   id: string;
@@ -99,18 +100,35 @@ export async function POST(req: NextRequest) {
       sourceContext = await getSourceDocumentContext(sourceDocumentIds);
     }
 
-    // Get knowledge base context for organization using RAG
-    const knowledgeBaseContext = await searchKnowledgeBase(
+    // Get knowledge base context for organization using RAG (semantic search)
+    const ragContext = await searchKnowledgeBase(
       lastUserMessage.content,
       userOrgId,
-      { topK: 5 }
+      { topK: 5, userId: user.id, context: "chat" }
     );
 
-    // Combine source document context and knowledge base context
+    // Get general knowledge base context (user-filtered by AI settings)
+    const generalKBContext = await getActiveKnowledgeBase(
+      userOrgId,
+      user.id,
+      { context: "chat" }
+    );
+
+    // Combine all contexts
+    let knowledgeBaseContext = "";
+    if (ragContext) {
+      knowledgeBaseContext += `## Relevant Knowledge Base (Semantic Search)\n\n${ragContext}`;
+    }
+    if (generalKBContext) {
+      knowledgeBaseContext += ragContext
+        ? `\n\n## General Knowledge Base Context\n\n${generalKBContext}`
+        : `## Knowledge Base Context\n\n${generalKBContext}`;
+    }
+
     if (knowledgeBaseContext) {
       sourceContext = sourceContext
-        ? `${sourceContext}\n\n## Organization Knowledge Base\n\n${knowledgeBaseContext}`
-        : `## Organization Knowledge Base\n\n${knowledgeBaseContext}`;
+        ? `${sourceContext}\n\n${knowledgeBaseContext}`
+        : knowledgeBaseContext;
     }
 
     // 6. Save user message with attachments

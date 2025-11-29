@@ -94,6 +94,15 @@ export async function PUT(
     const body = await request.json();
     const { title, content, contentType = "json" } = body;
 
+    // If content is being updated, re-extract text
+    let newExtractedText = existingDocument.extractedText;
+    let needsRevectorization = false;
+    if (content !== undefined && existingDocument.contentType === "json") {
+      const { extractTextFromTiptap } = await import("@/lib/textExtraction");
+      newExtractedText = extractTextFromTiptap(content);
+      needsRevectorization = true;
+    }
+
     // Update document
     const document = await prisma.document.update({
       where: { id: documentId },
@@ -101,10 +110,25 @@ export async function PUT(
         ...(title && { title }),
         ...(content !== undefined && { content }),
         contentType,
+        ...(newExtractedText !== existingDocument.extractedText && {
+          extractedText: newExtractedText,
+          vectorizationStatus: newExtractedText ? "PENDING" : "COMPLETED",
+        }),
         version: existingDocument.version + 1,
         updatedAt: new Date(),
       },
     });
+
+    // Trigger vectorization if needed
+    if (needsRevectorization && newExtractedText && document.isKnowledgeBase) {
+      const { triggerDocumentVectorization } = await import(
+        "@/lib/textExtraction"
+      );
+      await triggerDocumentVectorization(
+        document.id,
+        existingDocument.organizationId
+      );
+    }
 
     return NextResponse.json({ document });
   } catch (error) {

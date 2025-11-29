@@ -81,9 +81,24 @@ model User {
   aiChats              AiChat[]
   grantBookmarks       GrantBookmark[]
   organization         Organization     @relation("UserOrganization", fields: [organizationId], references: [id], onDelete: Cascade)
+  aiContextSettings    UserAIContextSettings?
 
   @@index([organizationId, role])
   @@map("users")
+  @@schema("app")
+}
+
+model UserAIContextSettings {
+  id                         String         @id @default(cuid())
+  userId                     String         @unique @db.Uuid
+  enabledCategoriesChat      FileCategory[] @default([GENERAL, WINNING_APPLICATION, TEMPLATE, OPPORTUNITY, AWARD_CONTRACT, BUDGET_FINANCIAL, PROGRESS_REPORT, FINAL_REPORT, SUPPORTING_DOCUMENT, CORRESPONDENCE, COMPLIANCE_RECORDS])
+  enabledCategoriesEditor    FileCategory[] @default([GENERAL, WINNING_APPLICATION, TEMPLATE, OPPORTUNITY, AWARD_CONTRACT, BUDGET_FINANCIAL, PROGRESS_REPORT, FINAL_REPORT, SUPPORTING_DOCUMENT, CORRESPONDENCE, COMPLIANCE_RECORDS])
+  createdAt                  DateTime       @default(now())
+  updatedAt                  DateTime       @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_ai_context_settings")
   @@schema("app")
 }
 
@@ -124,61 +139,12 @@ model Organization {
   folders                Folder[]                    @relation("OrganizationFolders")
   grantBookmarks         GrantBookmark[]
   eligibilityAnalyses    GrantEligibilityAnalysis[]
-  knowledgeBase          KnowledgeBaseDocument[]     @relation("OrganizationKnowledgeBase")
   recommendations        Recommendation[]
   users                  User[]                      @relation("UserOrganization")
 
   @@index([leaId])
   @@index([state])
   @@map("organizations")
-  @@schema("app")
-}
-
-model KnowledgeBaseDocument {
-  id                  String                @id @default(cuid())
-  fileName            String
-  fileType            String
-  fileSize            Int
-  fileUrl             String?
-  extractedText       String
-  isActive            Boolean               @default(true)
-  organizationId      String
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @default(now()) @updatedAt
-  chunkCount          Int?
-  vectorizationError  String?
-  vectorizationStatus VectorizationStatus   @default(PENDING)
-  vectorizedAt        DateTime?
-  organization        Organization          @relation("OrganizationKnowledgeBase", fields: [organizationId], references: [id], onDelete: Cascade)
-  vectors             KnowledgeBaseVector[] @relation("KBDocumentVectors")
-
-  @@index([organizationId])
-  @@index([organizationId, isActive])
-  @@index([vectorizationStatus])
-  @@map("knowledge_base_documents")
-  @@schema("app")
-}
-
-model KnowledgeBaseVector {
-  id             BigInt                 @id @default(autoincrement())
-  kbDocumentId   String                 @map("kb_document_id")
-  organizationId String                 @map("organization_id")
-  chunkIndex     Int                    @map("chunk_index")
-  totalChunks    Int                    @map("total_chunks")
-  content        String
-  embedding      Unsupported("vector")?
-  fileName       String                 @map("file_name")
-  fileType       String                 @map("file_type")
-  contentHash    String                 @map("content_hash")
-  vectorizedAt   DateTime               @default(now()) @map("vectorized_at")
-  model          String                 @default("text-embedding-3-small")
-  kbDocument     KnowledgeBaseDocument  @relation("KBDocumentVectors", fields: [kbDocumentId], references: [id], onDelete: Cascade)
-
-  @@index([organizationId])
-  @@index([kbDocumentId])
-  @@index([organizationId, kbDocumentId])
-  @@index([embedding], map: "idx_kb_vectors_embedding")
-  @@map("knowledge_base_vectors")
   @@schema("app")
 }
 
@@ -320,15 +286,56 @@ model Document {
   fileSize       Int?
   fileType       String?
   fileUrl        String?
+
+  // NEW FIELDS - File Category & Knowledge Base
+  fileCategory        FileCategory      @default(GENERAL)
+  isKnowledgeBase     Boolean           @default(false)
+  extractedText       String?
+
+  // NEW FIELDS - Vectorization
+  vectorizationStatus VectorizationStatus @default(PENDING)
+  vectorizedAt        DateTime?
+  chunkCount          Int?
+  vectorizationError  String?
+
   application    Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
   folder         Folder?      @relation(fields: [folderId], references: [id], onDelete: Cascade)
   organization   Organization @relation("OrganizationDocuments", fields: [organizationId], references: [id], onDelete: Cascade)
+  vectors        DocumentVector[] @relation("DocumentVectors")
 
   @@index([applicationId])
   @@index([updatedAt])
   @@index([applicationId, createdAt])
   @@index([folderId])
+  @@index([organizationId, fileCategory])
+  @@index([organizationId, isKnowledgeBase])
+  @@index([organizationId, fileCategory, isKnowledgeBase])
+  @@index([vectorizationStatus])
   @@map("documents")
+  @@schema("app")
+}
+
+model DocumentVector {
+  id             BigInt                 @id @default(autoincrement())
+  documentId     String                 @map("document_id")
+  organizationId String                 @map("organization_id")
+  chunkIndex     Int                    @map("chunk_index")
+  totalChunks    Int                    @map("total_chunks")
+  content        String
+  embedding      Unsupported("vector")?
+  fileName       String                 @map("file_name")
+  fileType       String                 @map("file_type")
+  contentHash    String                 @map("content_hash")
+  vectorizedAt   DateTime               @default(now()) @map("vectorized_at")
+  model          String                 @default("text-embedding-3-small")
+
+  document       Document               @relation("DocumentVectors", fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([documentId])
+  @@index([organizationId, documentId])
+  @@index([embedding], map: "idx_document_vectors_embedding")
+  @@map("document_vectors")
   @@schema("app")
 }
 
@@ -427,6 +434,22 @@ enum VectorizationStatus {
   PROCESSING
   COMPLETED
   FAILED
+
+  @@schema("app")
+}
+
+enum FileCategory {
+  GENERAL
+  WINNING_APPLICATION
+  TEMPLATE
+  OPPORTUNITY
+  AWARD_CONTRACT
+  BUDGET_FINANCIAL
+  PROGRESS_REPORT
+  FINAL_REPORT
+  SUPPORTING_DOCUMENT
+  CORRESPONDENCE
+  COMPLIANCE_RECORDS
 
   @@schema("app")
 }

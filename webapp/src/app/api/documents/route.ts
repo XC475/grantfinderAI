@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
+import { extractTextFromTiptap } from "@/lib/textExtraction";
+import { triggerDocumentVectorization } from "@/lib/textExtraction";
+import { FileCategory } from "@/generated/prisma";
+import { VectorizationStatus } from "@/generated/prisma";
 
 /**
  * Documents API Endpoint
@@ -59,6 +63,9 @@ export async function GET(req: NextRequest) {
     // Extract pagination parameters
     const { searchParams } = new URL(req.url);
     const withFolders = searchParams.get("withFolders") === "true";
+    const isKnowledgeBase = searchParams.get("isKnowledgeBase");
+    const fileCategory = searchParams.get("fileCategory");
+    const vectorizationStatus = searchParams.get("vectorizationStatus");
     let limit = parseInt(searchParams.get("limit") || "10");
     let offset = parseInt(searchParams.get("offset") || "0");
 
@@ -75,6 +82,9 @@ export async function GET(req: NextRequest) {
       const documents = await prisma.document.findMany({
         where: {
           organizationId: dbUser.organizationId,
+          ...(isKnowledgeBase !== null && {
+            isKnowledgeBase: isKnowledgeBase === "true",
+          }),
         },
         select: {
           id: true,
@@ -100,24 +110,36 @@ export async function GET(req: NextRequest) {
       });
     }
 
+    // Build where clause with KB filters
+    const whereClause: any = {
+      organizationId: dbUser.organizationId,
+      ...(isKnowledgeBase !== null && {
+        isKnowledgeBase: isKnowledgeBase === "true",
+      }),
+      ...(fileCategory && {
+        fileCategory: fileCategory as FileCategory,
+      }),
+      ...(vectorizationStatus && {
+        vectorizationStatus: vectorizationStatus as VectorizationStatus,
+      }),
+    };
+
     // Get total count of documents for this organization
     const totalCount = await prisma.document.count({
-      where: {
-        organizationId: dbUser.organizationId,
-      },
+      where: whereClause,
     });
 
     // Fetch documents with pagination, including application details
     const documents = await prisma.document.findMany({
-      where: {
-        organizationId: dbUser.organizationId,
-      },
+      where: whereClause,
       include: {
         application: {
           select: {
             id: true,
             title: true,
             opportunityId: true,
+            opportunityAgency: true,
+            opportunityAwardMax: true,
           },
         },
       },
@@ -353,11 +375,21 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Extract text from Tiptap JSON content if present
+    let extractedText = null;
+    const finalContent = content || DEFAULT_DOCUMENT_CONTENT;
+    if (finalContent && contentType === "json") {
+      extractedText = extractTextFromTiptap(finalContent);
+    }
+
     const document = await prisma.document.create({
       data: {
         title,
-        content: content || DEFAULT_DOCUMENT_CONTENT,
+        content: finalContent,
         contentType,
+        fileCategory: "GENERAL", // Default for all new docs
+        extractedText,
+        vectorizationStatus: extractedText ? "PENDING" : "COMPLETED",
         organizationId: dbUser.organizationId,
         folderId: folderId || null,
         version: 1,
@@ -378,6 +410,11 @@ export async function POST(req: NextRequest) {
         },
       },
     });
+
+    // Trigger vectorization if text exists
+    if (extractedText) {
+      await triggerDocumentVectorization(document.id, dbUser.organizationId);
+    }
 
     return NextResponse.json({ document }, { status: 201 });
   } catch (error) {

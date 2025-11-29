@@ -11,6 +11,8 @@ import {
   MAX_DOCUMENT_SIZE,
   validatePageCount,
 } from "@/lib/uploadValidation";
+import { FileCategory } from "@/generated/prisma";
+import { triggerDocumentVectorization } from "@/lib/textExtraction";
 
 // Force Node.js runtime for file processing
 export const runtime = "nodejs";
@@ -55,6 +57,8 @@ export async function POST(req: NextRequest) {
     const file = formData.get("file") as File;
     const folderId = formData.get("folderId") as string | null;
     const applicationId = formData.get("applicationId") as string | null;
+    const fileCategory = (formData.get("fileCategory") as string) || "GENERAL";
+    const isKnowledgeBase = formData.get("isKnowledgeBase") === "true";
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -177,9 +181,12 @@ export async function POST(req: NextRequest) {
         fileUrl: publicUrl,
         fileType: mimeType,
         fileSize: file.size,
+        fileCategory: fileCategory as FileCategory,
+        isKnowledgeBase,
+        extractedText: extractedText || null, // Move from metadata to top-level
+        vectorizationStatus: extractedText ? "PENDING" : "COMPLETED",
         metadata: {
           originalFileName: file.name,
-          extractedText,
           ...(pageCount && { pageCount }),
           uploadedAt: new Date().toISOString(),
         },
@@ -204,6 +211,11 @@ export async function POST(req: NextRequest) {
         },
       },
     });
+
+    // Trigger vectorization if text was extracted
+    if (extractedText) {
+      await triggerDocumentVectorization(document.id, dbUser.organizationId);
+    }
 
     return NextResponse.json({ document }, { status: 201 });
   } catch (error) {

@@ -20,10 +20,11 @@ interface Document {
   fileUrl?: string | null;
   fileType?: string | null;
   fileSize?: number | null;
+  extractedText?: string | null; // Top-level field
   createdAt: string;
   updatedAt: string;
   metadata?: {
-    extractedText?: string;
+    extractedText?: string; // Fallback for backwards compatibility
     originalFileName?: string;
     pageCount?: number;
     uploadedAt?: string;
@@ -94,8 +95,8 @@ export default function FileViewerPage({ params }: FileViewerPageProps) {
   useEffect(() => {
     if (document && documentContext) {
       documentContext.setDocumentTitle(document.title);
-      // Pass extracted text as content for AI context
-      const extractedText = document.metadata?.extractedText || "";
+      // Pass extracted text as content for AI context (use top-level field, fallback to metadata for backwards compatibility)
+      const extractedText = (document as any).extractedText || document.metadata?.extractedText || "";
       documentContext.setDocumentContent(extractedText);
     }
   }, [document, documentContext]);
@@ -142,7 +143,8 @@ export default function FileViewerPage({ params }: FileViewerPageProps) {
     );
   }
 
-  const extractedText = document.metadata?.extractedText;
+  // Use top-level extractedText field, fallback to metadata for backwards compatibility
+  const extractedText = (document as any).extractedText || document.metadata?.extractedText;
   const pageCount = document.metadata?.pageCount;
 
   // Remove outer container - ConditionalLayout handles everything
