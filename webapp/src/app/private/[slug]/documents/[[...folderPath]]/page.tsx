@@ -95,7 +95,7 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
     formData.append("file", file);
     formData.append("folderId", currentFolderId || "null");
     formData.append("fileCategory", fileCategory);
-    formData.append("isKnowledgeBase", "false");
+    // isKnowledgeBase defaults to true in the API unless explicitly set to "false"
 
     const uploadPromise = fetch("/api/documents/upload", {
       method: "POST",

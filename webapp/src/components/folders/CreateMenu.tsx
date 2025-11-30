@@ -189,7 +189,9 @@ export function CreateMenu({
           folderId: currentFolderId,
           applicationId: applicationId,
           fileCategory: googleDriveFileCategory,
-          isKnowledgeBase: isKnowledgeBase,
+          // isKnowledgeBase defaults to true in the API
+          // Only pass it if explicitly set to true (for knowledge base page)
+          ...(isKnowledgeBase === true && { isKnowledgeBase: true }),
         }),
       });
 
