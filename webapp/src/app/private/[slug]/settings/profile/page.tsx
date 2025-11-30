@@ -66,6 +66,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
+import { KnowledgeBase } from "@/components/knowledge-base/KnowledgeBase";
+import { AddDocumentsModal } from "@/components/knowledge-base/AddDocumentsModal";
 
 // Grade level options with numeric values
 const GRADE_OPTIONS = [
@@ -153,6 +155,7 @@ export default function ProfilePage() {
     string | null
   >(null);
   const [showStrategicPlanModal, setShowStrategicPlanModal] = useState(false);
+  const [showAddDocumentsModal, setShowAddDocumentsModal] = useState(false);
 
   // Track active tab to conditionally show Save Changes button
   const [activeTab, setActiveTab] = useState("basic-info");
@@ -601,7 +604,7 @@ export default function ProfilePage() {
             Manage your organization&apos;s information and settings
           </p>
         </div>
-        {activeTab !== "knowledge-base" && (
+        {activeTab !== "knowledge-base" ? (
           <Button onClick={handleSave} disabled={saving} size="lg">
             {saving ? (
               <>
@@ -614,6 +617,11 @@ export default function ProfilePage() {
                 Save Changes
               </>
             )}
+          </Button>
+        ) : (
+          <Button onClick={() => setShowAddDocumentsModal(true)} size="lg">
+            <Plus className="mr-2 h-4 w-4" />
+            Add
           </Button>
         )}
       </div>
@@ -1366,26 +1374,56 @@ export default function ProfilePage() {
         </TabsContent>
 
         <TabsContent value="knowledge-base" className="space-y-8">
-          {/* Knowledge Base Redirect Message */}
-          <div className="text-center py-12 border-2 border-dashed rounded-lg">
-            <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">
-              Knowledge Base Management
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              Knowledge base management has been moved to a dedicated page with
-              enhanced features.
-            </p>
-            <p className="text-sm text-muted-foreground mb-6">
-              You can now manage documents by category, toggle entire categories
-              for AI context, and more.
-            </p>
-            <Link href={`/private/${slug}/knowledge-base`}>
-              <Button>Go to Knowledge Base</Button>
-            </Link>
-          </div>
+          <KnowledgeBase
+            organizationSlug={slug}
+            organizationId={organization?.id || ""}
+            onAddClick={() => setShowAddDocumentsModal(true)}
+          />
         </TabsContent>
       </Tabs>
+
+      {/* Add Documents Modal */}
+      {organization && (
+        <AddDocumentsModal
+          open={showAddDocumentsModal}
+          onOpenChange={setShowAddDocumentsModal}
+          onAdd={async (documentIds: string[]) => {
+            try {
+              const updatePromises = documentIds.map((docId) =>
+                fetch(`/api/documents/${docId}`, {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ isKnowledgeBase: true }),
+                })
+              );
+
+              const results = await Promise.all(updatePromises);
+              const failed = results.filter((res) => !res.ok);
+
+              if (failed.length > 0) {
+                throw new Error(
+                  `Failed to add ${failed.length} document(s) to knowledge base`
+                );
+              }
+
+              toast.success(
+                `Added ${documentIds.length} document(s) to knowledge base`
+              );
+
+              // Trigger refresh via custom event
+              window.dispatchEvent(new Event("knowledge-base-refresh"));
+            } catch (error) {
+              console.error("Error adding documents to KB:", error);
+              toast.error(
+                error instanceof Error
+                  ? error.message
+                  : "Failed to add documents to knowledge base"
+              );
+              throw error;
+            }
+          }}
+        />
+      )}
 
       {/* Strategic Plan Modal */}
       <Dialog

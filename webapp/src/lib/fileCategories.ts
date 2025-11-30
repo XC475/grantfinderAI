@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 export const FILE_CATEGORY_LABELS: Record<FileCategory, string> = {
-  GENERAL: "General Documents",
+  GENERAL: "General",
   WINNING_APPLICATION: "Winning Applications",
   TEMPLATE: "Templates",
   OPPORTUNITY: "Grant Opportunities",
@@ -76,4 +76,3 @@ export function getKnowledgeBaseFileCategories(): FileCategory[] {
   // Returns all file categories for KB selection
   return getAllFileCategories();
 }
-

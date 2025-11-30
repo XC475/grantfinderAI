@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FolderIcon } from "./FolderIcon";
-import { Home } from "lucide-react";
+import { Home, ChevronRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Folder {
@@ -48,6 +48,9 @@ export function MoveModal({
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
+    new Set()
+  );
 
   // Fetch all folders when modal opens
   useEffect(() => {
@@ -56,8 +59,21 @@ export function MoveModal({
       fetch("/api/folders?all=true")
         .then((res) => res.json())
         .then((data) => {
-          setFolders(data.folders || []);
+          const fetchedFolders = data.folders || [];
+          setFolders(fetchedFolders);
           setIsFetching(false);
+          
+          // Auto-expand folders to show current folder
+          if (currentFolderId) {
+            const expanded = new Set<string>();
+            let currentId: string | null = currentFolderId;
+            while (currentId) {
+              expanded.add(currentId);
+              const folder = fetchedFolders.find((f: Folder) => f.id === currentId);
+              currentId = folder?.parentFolderId || null;
+            }
+            setExpandedFolders(expanded);
+          }
         })
         .catch((err) => {
           console.error("Failed to fetch folders:", err);
@@ -65,9 +81,22 @@ export function MoveModal({
           setIsFetching(false);
         });
     }
-  }, [open]);
+  }, [open, currentFolderId]);
 
-  // Build folder hierarchy for display
+  // Build folder hierarchy
+  const folderChildren = useMemo(() => {
+    const childMap = new Map<string | null, Folder[]>();
+    folders.forEach((folder) => {
+      const parentId = folder.parentFolderId;
+      if (!childMap.has(parentId)) {
+        childMap.set(parentId, []);
+      }
+      childMap.get(parentId)!.push(folder);
+    });
+    return childMap;
+  }, [folders]);
+
+  // Build folder paths for search display
   const folderPaths = useMemo(() => {
     const pathMap = new Map<string, string>();
 
@@ -94,19 +123,137 @@ export function MoveModal({
     return pathMap;
   }, [folders]);
 
-  // Filter folders based on search query
-  const filteredFolders = useMemo(() => {
-    if (!searchQuery.trim()) return folders;
+  // Get folders that match search query and their ancestors
+  const matchingFolders = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return new Set<string>();
+    }
 
     const query = searchQuery.toLowerCase();
-    return folders.filter((folder) => {
+    const matchingIds = new Set<string>();
+    const ancestorIds = new Set<string>();
+
+    // Find all matching folders
+    folders.forEach((folder) => {
       const path = folderPaths.get(folder.id) || "";
-      return (
+      if (
         folder.name.toLowerCase().includes(query) ||
         path.toLowerCase().includes(query)
-      );
+      ) {
+        matchingIds.add(folder.id);
+        // Add all ancestors
+        let currentId: string | null = folder.parentFolderId;
+        while (currentId) {
+          ancestorIds.add(currentId);
+          const parent = folders.find((f) => f.id === currentId);
+          currentId = parent?.parentFolderId || null;
+        }
+      }
     });
+
+    // Combine matching folders and their ancestors
+    const result = new Set<string>();
+    matchingIds.forEach((id) => result.add(id));
+    ancestorIds.forEach((id) => result.add(id));
+    return result;
   }, [folders, searchQuery, folderPaths]);
+
+  // Auto-expand matching folders when searching
+  useEffect(() => {
+    if (searchQuery.trim() && matchingFolders.size > 0) {
+      setExpandedFolders((prev) => {
+        const next = new Set(prev);
+        matchingFolders.forEach((id) => next.add(id));
+        return next;
+      });
+    }
+  }, [searchQuery, matchingFolders]);
+
+  const toggleFolder = (folderId: string) => {
+    setExpandedFolders((prev) => {
+      const next = new Set(prev);
+      if (next.has(folderId)) {
+        next.delete(folderId);
+      } else {
+        next.add(folderId);
+      }
+      return next;
+    });
+  };
+
+  // Recursive folder rendering
+  const renderFolder = (folder: Folder, depth: number = 0): JSX.Element | null => {
+    const isExpanded = expandedFolders.has(folder.id);
+    const children = folderChildren.get(folder.id) || [];
+    const isSelected = selectedFolderId === folder.id;
+    const isCurrent = currentFolderId === folder.id;
+
+    // If searching, only show matching folders and their ancestors/descendants
+    if (searchQuery.trim()) {
+      const isMatching = matchingFolders.has(folder.id);
+      const hasMatchingDescendant = children.some((child) =>
+        matchingFolders.has(child.id)
+      );
+
+      if (!isMatching && !hasMatchingDescendant) {
+        return null;
+      }
+    }
+
+    return (
+      <div key={folder.id}>
+        <button
+          type="button"
+          className={cn(
+            "w-full flex items-center gap-2 px-4 py-2 text-left hover:bg-accent transition-colors",
+            isSelected && "bg-accent"
+          )}
+          style={{ paddingLeft: `${1 + depth * 1.5}rem` }}
+          onClick={() => setSelectedFolderId(folder.id)}
+          disabled={isLoading}
+        >
+          {children.length > 0 ? (
+            <button
+              type="button"
+              className="flex-shrink-0"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFolder(folder.id);
+              }}
+            >
+              {isExpanded ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
+            </button>
+          ) : (
+            <div className="h-4 w-4 flex-shrink-0" />
+          )}
+          <FolderIcon isApplicationFolder={!!folder.applicationId} />
+          <div className="flex-1 min-w-0">
+            <div className="font-medium truncate">{folder.name}</div>
+            {searchQuery && (
+              <div className="text-xs text-muted-foreground truncate">
+                {folderPaths.get(folder.id)}
+              </div>
+            )}
+          </div>
+          {isCurrent && (
+            <span className="ml-2 text-xs text-muted-foreground flex-shrink-0">
+              (current)
+            </span>
+          )}
+        </button>
+
+        {isExpanded && children.length > 0 && (
+          <>
+            {children.map((child) => renderFolder(child, depth + 1))}
+          </>
+        )}
+      </div>
+    );
+  };
 
   const handleMove = async () => {
     if (selectedFolderId === currentFolderId) {
@@ -134,6 +281,7 @@ export function MoveModal({
         setSearchQuery("");
         setSelectedFolderId(currentFolderId);
         setError(null);
+        setExpandedFolders(new Set());
       }
       onOpenChange(newOpen);
     }
@@ -187,50 +335,22 @@ export function MoveModal({
                 </button>
 
                 {/* Folder list */}
-                {filteredFolders.length === 0 ? (
+                {(() => {
+                  const rootFolders = folderChildren.get(null) || [];
+                  const renderedFolders = rootFolders
+                    .map((folder) => renderFolder(folder, 0))
+                    .filter((item) => item !== null);
+
+                  if (renderedFolders.length === 0) {
+                    return (
                   <div className="p-4 text-center text-sm text-muted-foreground">
                     {searchQuery ? "No folders found" : "No folders available"}
                   </div>
-                ) : (
-                  filteredFolders.map((folder) => {
-                    const depth = (folderPaths.get(folder.id) || "").split(" / ").length - 1;
-                    const isSelected = selectedFolderId === folder.id;
-                    const isCurrent = currentFolderId === folder.id;
-
-                    return (
-                      <button
-                        key={folder.id}
-                        type="button"
-                        className={cn(
-                          "w-full flex items-center gap-2 px-4 py-2 text-left hover:bg-accent transition-colors",
-                          isSelected && "bg-accent"
-                        )}
-                        style={{ paddingLeft: `${1 + depth * 1.5}rem` }}
-                        onClick={() => setSelectedFolderId(folder.id)}
-                        disabled={isLoading}
-                      >
-                        <FolderIcon
-                          isApplicationFolder={!!folder.applicationId}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium truncate">
-                            {folder.name}
-                          </div>
-                          {searchQuery && (
-                            <div className="text-xs text-muted-foreground truncate">
-                              {folderPaths.get(folder.id)}
-                            </div>
-                          )}
-                        </div>
-                        {isCurrent && (
-                          <span className="ml-2 text-xs text-muted-foreground flex-shrink-0">
-                            (current)
-                          </span>
-                        )}
-                      </button>
                     );
-                  })
-                )}
+                  }
+
+                  return renderedFolders;
+                })()}
               </>
             )}
           </div>

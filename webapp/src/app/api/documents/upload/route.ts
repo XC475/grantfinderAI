@@ -7,10 +7,7 @@ import { writeFile, unlink } from "fs/promises";
 import { join } from "path";
 import { tmpdir } from "os";
 import { randomUUID } from "crypto";
-import {
-  MAX_DOCUMENT_SIZE,
-  validatePageCount,
-} from "@/lib/uploadValidation";
+import { MAX_DOCUMENT_SIZE, validatePageCount } from "@/lib/uploadValidation";
 import { FileCategory } from "@/generated/prisma";
 import { triggerDocumentVectorization } from "@/lib/textExtraction";
 
@@ -58,7 +55,7 @@ export async function POST(req: NextRequest) {
     const folderId = formData.get("folderId") as string | null;
     const applicationId = formData.get("applicationId") as string | null;
     const fileCategory = (formData.get("fileCategory") as string) || "GENERAL";
-    const isKnowledgeBase = formData.get("isKnowledgeBase") === "true";
+    const isKnowledgeBase = formData.get("isKnowledgeBase") !== "false"; // Default to true unless explicitly false
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -105,7 +102,7 @@ export async function POST(req: NextRequest) {
         const uint8Array = new Uint8Array(buffer);
         const { totalPages } = await extractText(uint8Array);
         pageCount = totalPages;
-        
+
         // Validate page count
         const pageValidation = validatePageCount(pageCount);
         if (!pageValidation.valid) {

@@ -255,7 +255,7 @@ export async function POST(request: NextRequest) {
         fileType: mimeType,
         fileSize: fileBuffer.length,
         fileCategory: (fileCategory as FileCategory) || "GENERAL",
-        isKnowledgeBase: isKnowledgeBase || false,
+        isKnowledgeBase: isKnowledgeBase !== undefined ? isKnowledgeBase : true, // Default to true
         extractedText: extractedText || null, // Move from metadata to top-level
         vectorizationStatus: extractedText ? "PENDING" : "COMPLETED",
         organizationId: dbUser.organizationId,

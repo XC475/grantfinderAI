@@ -6,6 +6,7 @@ import { DocumentsView } from "@/components/folders/DocumentsView";
 import { useHeaderActions } from "@/contexts/HeaderActionsContext";
 import { CreateMenu } from "@/components/folders/CreateMenu";
 import { toast } from "sonner";
+import { FileCategory } from "@/generated/prisma";
 
 interface DocumentsPageProps {
   params: Promise<{ slug: string; folderPath?: string[] }>;
@@ -17,6 +18,19 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
   const { setHeaderActions } = useHeaderActions();
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [organizationId, setOrganizationId] = useState<string | undefined>();
+
+  // Fetch organization ID on mount
+  useEffect(() => {
+    fetch("/api/user")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.organizationId) {
+          setOrganizationId(data.organizationId);
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   // Calculate current folder ID from path
   useEffect(() => {
@@ -51,13 +65,14 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
 
   const handleCreateDocument = async (
     title: string,
-    folderId: string | null
+    folderId: string | null,
+    fileCategory: FileCategory
   ) => {
     try {
       const response = await fetch("/api/documents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, folderId, content: "" }),
+        body: JSON.stringify({ title, folderId, content: "", fileCategory }),
       });
 
       if (!response.ok) throw new Error("Failed to create document");
@@ -73,12 +88,14 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
     }
   };
 
-  const handleFileUpload = async (file: File) => {
+  const handleFileUpload = async (file: File, fileCategory: FileCategory) => {
     if (!file) return;
 
     const formData = new FormData();
     formData.append("file", file);
     formData.append("folderId", currentFolderId || "null");
+    formData.append("fileCategory", fileCategory);
+    formData.append("isKnowledgeBase", "false");
 
     const uploadPromise = fetch("/api/documents/upload", {
       method: "POST",
@@ -102,21 +119,28 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
     });
   };
 
+  const handleGoogleDriveImported = async (fileCategory: FileCategory) => {
+    setRefreshTrigger((prev) => prev + 1);
+  };
+
   // Set header actions on mount
   useEffect(() => {
     setHeaderActions(
       <CreateMenu
         currentFolderId={currentFolderId}
+        organizationSlug={slug}
+        organizationId={organizationId}
         onCreateFolder={handleCreateFolder}
         onCreateDocument={handleCreateDocument}
         onFileUpload={handleFileUpload}
-        onGoogleDriveImported={() => setRefreshTrigger((prev) => prev + 1)}
+        onGoogleDriveImported={handleGoogleDriveImported}
+        isKnowledgeBase={false}
       />
     );
 
     // Cleanup on unmount
     return () => setHeaderActions(null);
-  }, [setHeaderActions, currentFolderId]);
+  }, [setHeaderActions, currentFolderId, slug, organizationId]);
 
   // Build path to a folder by fetching its full path
   const buildFolderPath = async (

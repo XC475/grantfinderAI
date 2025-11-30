@@ -50,7 +50,7 @@ async function copyFolderRecursive(
           ? (document.metadata as Prisma.InputJsonValue)
           : Prisma.JsonNull,
         fileCategory: document.fileCategory || "GENERAL", // Preserve category
-        isKnowledgeBase: false, // Copies are not in KB by default
+        isKnowledgeBase: true, // Copies are in KB by default
         extractedText: document.extractedText, // Preserve extracted text
         vectorizationStatus: document.extractedText ? "PENDING" : "COMPLETED", // Re-vectorize if text exists
         folderId: newFolder.id,

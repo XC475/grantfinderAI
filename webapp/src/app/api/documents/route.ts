@@ -352,7 +352,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { title, content, contentType = "json", folderId } = body;
+    const { title, content, contentType = "json", folderId, fileCategory = "GENERAL" } = body;
 
     if (!title || typeof title !== "string") {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
@@ -387,7 +387,7 @@ export async function POST(req: NextRequest) {
         title,
         content: finalContent,
         contentType,
-        fileCategory: "GENERAL", // Default for all new docs
+        fileCategory: fileCategory as FileCategory,
         extractedText,
         vectorizationStatus: extractedText ? "PENDING" : "COMPLETED",
         organizationId: dbUser.organizationId,

@@ -188,6 +188,26 @@ export async function PUT(
       needsRevectorization = true;
     }
 
+    // If title or folder is being updated, also need re-vectorization
+    // (because title/folder are included in chunk content prefix)
+    if (title !== undefined && title !== existingDocument.title) {
+      console.log(
+        `🔄 [Document Update] Title changed for document ${documentId}: "${existingDocument.title}" → "${title}"`
+      );
+      needsRevectorization = true;
+    }
+
+    if (folderId !== undefined && folderId !== existingDocument.folderId) {
+      const oldFolderName = existingDocument.folderId
+        ? `folder ${existingDocument.folderId}`
+        : "root";
+      const newFolderName = folderId ? `folder ${folderId}` : "root";
+      console.log(
+        `🔄 [Document Update] Folder changed for document ${documentId}: ${oldFolderName} → ${newFolderName}`
+      );
+      needsRevectorization = true;
+    }
+
     // If folderId is being updated, verify it belongs to the organization
     if (folderId !== undefined && folderId !== null) {
       const folder = await prisma.folder.findFirst({
@@ -243,6 +263,12 @@ export async function PUT(
           extractedText: newExtractedText,
           vectorizationStatus: newExtractedText ? "PENDING" : "COMPLETED",
         }),
+        // If title or folder changed (but not extractedText), set status to PENDING for re-vectorization
+        ...(needsRevectorization &&
+          newExtractedText === existingDocument.extractedText &&
+          existingDocument.extractedText && {
+            vectorizationStatus: "PENDING",
+          }),
         version: existingDocument.version + 1,
         updatedAt: new Date(),
       },
@@ -269,7 +295,20 @@ export async function PUT(
       document.vectorizationStatus !== "COMPLETED" &&
       document.extractedText
     ) {
+      const reason = needsRevectorization
+        ? "title/folder/content change"
+        : "isKnowledgeBase flag";
+      console.log(
+        `🚀 [Document Update] Triggering re-vectorization for document ${documentId} (${document.title}) - Reason: ${reason}, Status: ${document.vectorizationStatus}`
+      );
       await triggerDocumentVectorization(documentId, dbUser.organizationId);
+      console.log(
+        `✅ [Document Update] Re-vectorization triggered for document ${documentId}`
+      );
+    } else if (needsRevectorization) {
+      console.log(
+        `⚠️ [Document Update] Re-vectorization needed but not triggered for document ${documentId} - Status: ${document.vectorizationStatus}, Has extractedText: ${!!document.extractedText}`
+      );
     }
 
     return NextResponse.json({ document });

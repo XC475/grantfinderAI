@@ -20,6 +20,13 @@ export async function POST(req: NextRequest) {
       vectorizationStatus: { in: ["PENDING", "FAILED"] },
       extractedText: { not: null },
     },
+    include: {
+      folder: {
+        select: {
+          name: true,
+        },
+      },
+    },
     take: 50, // Process in batches
   });
 
@@ -28,6 +35,10 @@ export async function POST(req: NextRequest) {
 
   for (const doc of docsToVectorize) {
     try {
+      console.log(
+        `📝 [Vectorize] Starting vectorization for document ${doc.id}: "${doc.title}" (${doc.folder?.name || "root folder"})`
+      );
+
       // Update status to PROCESSING
       await prisma.document.update({
         where: { id: doc.id },
@@ -36,6 +47,9 @@ export async function POST(req: NextRequest) {
 
       // Chunk the text
       const chunks = await chunkText(doc.extractedText!);
+      console.log(
+        `📝 [Vectorize] Document "${doc.title}" split into ${chunks.length} chunks`
+      );
 
       // Delete old vectors for this document
       await prisma.documentVector.deleteMany({
@@ -44,15 +58,22 @@ export async function POST(req: NextRequest) {
 
       // Vectorize each chunk
       for (const chunk of chunks) {
+        // Create title-prefixed content with optional folder
+        let chunkContentWithTitle = `Document: ${doc.title}`;
+        if (doc.folder) {
+          chunkContentWithTitle += `\nFolder: ${doc.folder.name}`;
+        }
+        chunkContentWithTitle += `\n\n${chunk.content}`;
+
         const embeddingResponse = await openai.embeddings.create({
           model: EMBEDDING_MODEL,
-          input: chunk.content,
+          input: chunkContentWithTitle,
         });
 
         const embedding = embeddingResponse.data[0].embedding;
         const contentHash = crypto
           .createHash("sha256")
-          .update(chunk.content)
+          .update(chunkContentWithTitle)
           .digest("hex");
 
         // Insert using raw SQL to handle vector type
@@ -74,7 +95,7 @@ export async function POST(req: NextRequest) {
             ${doc.organizationId},
             ${chunk.index},
             ${chunks.length},
-            ${chunk.content},
+            ${chunkContentWithTitle},
             ${`[${embedding.join(",")}]`}::vector,
             ${doc.title},
             ${doc.fileType || "text/plain"},
@@ -95,6 +116,9 @@ export async function POST(req: NextRequest) {
         },
       });
 
+      console.log(
+        `✅ [Vectorize] Successfully vectorized document ${doc.id}: "${doc.title}" - ${chunks.length} chunks created`
+      );
       vectorizedCount++;
     } catch (error) {
       console.error(`Failed to vectorize doc ${doc.id}:`, error);
@@ -120,4 +144,3 @@ export async function POST(req: NextRequest) {
     errors: errors.length > 0 ? errors : undefined,
   });
 }
-

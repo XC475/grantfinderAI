@@ -12,7 +12,10 @@ import {
   File,
   Table,
   Download,
+  Tag,
+  BookOpen,
 } from "lucide-react";
+import Image from "next/image";
 import { FolderIcon } from "./FolderIcon";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,8 +27,18 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import {
+  getAllFileCategories,
+  getFileCategoryLabel,
+} from "@/lib/fileCategories";
+import { FileCategory } from "@/generated/prisma";
+import {
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 
 interface Folder {
   id: string;
@@ -43,6 +56,8 @@ interface Document {
   applicationId?: string | null;
   fileUrl?: string | null;
   fileType?: string | null;
+  fileCategory?: FileCategory;
+  isKnowledgeBase?: boolean;
 }
 
 // Helper function to get the appropriate icon for a document
@@ -90,6 +105,8 @@ interface FolderListProps {
     documentId: string,
     format: "google-drive" | "pdf" | "docx"
   ) => void;
+  onChangeDocumentCategory?: (documentId: string, category: FileCategory) => void;
+  onToggleDocumentKnowledgeBase?: (documentId: string, enabled: boolean) => void;
   organizationSlug: string;
 }
 
@@ -227,6 +244,8 @@ function DraggableDocument({
   onCopy,
   onMove,
   onExport,
+  onChangeCategory,
+  onToggleKnowledgeBase,
 }: {
   document: Document;
   onClick: () => void;
@@ -235,6 +254,8 @@ function DraggableDocument({
   onCopy?: () => void;
   onMove?: () => void;
   onExport?: (format: "google-drive" | "pdf" | "docx") => void;
+  onChangeCategory?: (category: FileCategory) => void;
+  onToggleKnowledgeBase?: (enabled: boolean) => void;
   organizationSlug: string;
 }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
@@ -326,6 +347,55 @@ function DraggableDocument({
                   Move
                 </DropdownMenuItem>
               )}
+              {onChangeCategory && (
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <Tag className="h-4 w-4 mr-2" />
+                    Category
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    {getAllFileCategories().map((category) => (
+                      <DropdownMenuItem
+                        key={category}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onChangeCategory(category);
+                        }}
+                        className={
+                          document.fileCategory === category
+                            ? "bg-accent"
+                            : ""
+                        }
+                      >
+                        {getFileCategoryLabel(category)}
+                        {document.fileCategory === category && (
+                          <span className="ml-auto text-xs">✓</span>
+                        )}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+              )}
+              {onToggleKnowledgeBase && (
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                  }}
+                  className="flex items-center justify-between cursor-default"
+                >
+                  <div className="flex items-center">
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Knowledge Base
+                  </div>
+                  <Switch
+                    checked={document.isKnowledgeBase ?? true}
+                    onCheckedChange={(checked) => {
+                      onToggleKnowledgeBase(checked);
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </DropdownMenuItem>
+              )}
               {onExport && (
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger>
@@ -339,6 +409,13 @@ function DraggableDocument({
                         onExport("google-drive");
                       }}
                     >
+                      <Image
+                        src="/logos/google-drive.svg"
+                        alt="Google Drive"
+                        width={16}
+                        height={16}
+                        className="mr-2"
+                      />
                       Google Drive
                     </DropdownMenuItem>
                     <DropdownMenuItem
@@ -360,6 +437,8 @@ function DraggableDocument({
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
               )}
+              {(onChangeCategory || onToggleKnowledgeBase || onExport) &&
+                onDelete && <DropdownMenuSeparator />}
               {onDelete && (
                 <DropdownMenuItem
                   onClick={(e) => {
@@ -394,6 +473,8 @@ export function FolderList({
   onMoveFolder,
   onMoveDocument,
   onExportDocument,
+  onChangeDocumentCategory,
+  onToggleDocumentKnowledgeBase,
   organizationSlug,
 }: FolderListProps) {
   // Root level droppable zone
@@ -476,6 +557,16 @@ export function FolderList({
               onExport={
                 onExportDocument
                   ? (format) => onExportDocument(document.id, format)
+                  : undefined
+              }
+              onChangeCategory={
+                onChangeDocumentCategory
+                  ? (category) => onChangeDocumentCategory(document.id, category)
+                  : undefined
+              }
+              onToggleKnowledgeBase={
+                onToggleDocumentKnowledgeBase
+                  ? (enabled) => onToggleDocumentKnowledgeBase(document.id, enabled)
                   : undefined
               }
               organizationSlug={organizationSlug}

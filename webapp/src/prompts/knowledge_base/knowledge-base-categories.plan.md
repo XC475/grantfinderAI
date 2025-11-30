@@ -1350,7 +1350,7 @@ export function KnowledgeBaseHeader({ organizationSlug }: KnowledgeBaseHeaderPro
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setShowGoogleDrive(true)}>
               <img
-                src="/logos/google-drive.png"
+                src="/logos/google-drive.svg"
                 alt="Google Drive"
                 className="mr-2 h-4 w-4"
               />

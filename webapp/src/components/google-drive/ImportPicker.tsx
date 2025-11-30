@@ -57,6 +57,7 @@ declare global {
 
 interface GoogleDriveImportPickerPropsBase {
   onImported?: (documentId?: string) => void;
+  onFileSelected?: (fileId: string, fileName: string, mimeType: string) => void;
   children?: (props: {
     onClick: () => void;
     loading: boolean;
@@ -69,6 +70,8 @@ interface GoogleDriveImportPickerFolderMode
   mode?: "import";
   folderId?: string | null;
   applicationId?: string | null;
+  fileCategory?: string;
+  isKnowledgeBase?: boolean;
 }
 
 interface GoogleDriveImportPickerChatMode
@@ -123,7 +126,9 @@ export function GoogleDriveImportPicker(props: GoogleDriveImportPickerProps) {
         // Not connected - redirect to auth flow
         toast.info("Connecting to Google Drive...");
         // Pass current path so we can return here after authentication
-        const returnTo = encodeURIComponent(window.location.pathname + window.location.search);
+        const returnTo = encodeURIComponent(
+          window.location.pathname + window.location.search
+        );
         window.location.href = `/api/google-drive/auth?returnTo=${returnTo}`;
         return;
       }
@@ -227,9 +232,32 @@ export function GoogleDriveImportPicker(props: GoogleDriveImportPickerProps) {
               } else {
                 // Folder import mode - import single file
                 if (!data.docs || data.docs.length === 0) {
+                  setLoading(false);
                   return;
                 }
                 const file = data.docs[0];
+
+                // If onFileSelected callback is provided, just call it and return
+                // This allows the parent to handle the import manually (like file upload)
+                // Use setTimeout to ensure the callback happens after the picker fully closes
+                if (props.onFileSelected) {
+                  const onFileSelected = props.onFileSelected;
+                  // Delay the callback to ensure the picker modal is fully closed
+                  // and our modal stays open
+                  setTimeout(() => {
+                    try {
+                      onFileSelected(file.id, file.name, file.mimeType);
+                    } catch (error) {
+                      console.error("Error in onFileSelected callback:", error);
+                      toast.error("Failed to process selected file");
+                    } finally {
+                      setLoading(false);
+                    }
+                  }, 100);
+                  return;
+                }
+
+                // Otherwise, import immediately (existing behavior for backward compatibility)
                 try {
                   const importResponse = await fetch(
                     "/api/google-drive/import",
@@ -248,6 +276,16 @@ export function GoogleDriveImportPicker(props: GoogleDriveImportPickerProps) {
                           props.mode !== "attach"
                             ? (props.applicationId ?? null)
                             : null,
+                        fileCategory:
+                          props.mode !== "attach"
+                            ? (props as GoogleDriveImportPickerFolderMode)
+                                .fileCategory
+                            : undefined,
+                        isKnowledgeBase:
+                          props.mode !== "attach"
+                            ? (props as GoogleDriveImportPickerFolderMode)
+                                .isKnowledgeBase
+                            : undefined,
                       }),
                     }
                   );
@@ -268,6 +306,8 @@ export function GoogleDriveImportPicker(props: GoogleDriveImportPickerProps) {
                       ? error.message
                       : "Failed to import file"
                   );
+                } finally {
+                  setLoading(false);
                 }
               }
             }

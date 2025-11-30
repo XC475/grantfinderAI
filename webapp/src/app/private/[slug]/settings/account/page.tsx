@@ -302,7 +302,7 @@ export default function AccountSettingsPage() {
               <div className="flex items-center gap-3">
                 <div className="flex items-center justify-center w-10 h-10 rounded-lg">
                   <Image
-                    src="/logos/google-drive.png"
+                    src="/logos/google-drive.svg"
                     alt="Google Drive"
                     width={40}
                     height={40}

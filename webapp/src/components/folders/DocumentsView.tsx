@@ -24,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { validateDocumentFile } from "@/lib/clientUploadValidation";
+import { FileCategory } from "@/generated/prisma";
 
 interface Folder {
   id: string;
@@ -43,6 +44,8 @@ interface Document {
   fileUrl?: string | null;
   fileType?: string | null;
   content?: string | null;
+  fileCategory?: FileCategory;
+  isKnowledgeBase?: boolean;
 }
 
 interface FolderPathItem {
@@ -585,6 +588,66 @@ export function DocumentsView({
     }
   };
 
+  // Change document category handler
+  const handleChangeDocumentCategory = async (
+    documentId: string,
+    category: FileCategory
+  ) => {
+    try {
+      const response = await fetch(`/api/documents/${documentId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileCategory: category }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to update category");
+      }
+
+      toast.success("Document category updated");
+      fetchFolderContents(currentFolderId);
+    } catch (error) {
+      console.error("Error changing category:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update category"
+      );
+    }
+  };
+
+  // Toggle knowledge base handler
+  const handleToggleDocumentKnowledgeBase = async (
+    documentId: string,
+    enabled: boolean
+  ) => {
+    try {
+      const response = await fetch(`/api/documents/${documentId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isKnowledgeBase: enabled }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to update knowledge base status");
+      }
+
+      toast.success(
+        enabled
+          ? "Document added to knowledge base"
+          : "Document removed from knowledge base"
+      );
+      fetchFolderContents(currentFolderId);
+    } catch (error) {
+      console.error("Error toggling knowledge base:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to update knowledge base status"
+      );
+    }
+  };
+
   // Export handler
   const handleExportDocument = async (
     documentId: string,
@@ -925,6 +988,8 @@ export function DocumentsView({
           onMoveFolder={handleMoveFolder}
           onMoveDocument={handleMoveDocument}
           onExportDocument={handleExportDocument}
+          onChangeDocumentCategory={handleChangeDocumentCategory}
+          onToggleDocumentKnowledgeBase={handleToggleDocumentKnowledgeBase}
           organizationSlug={organizationSlug}
         />
       </DragDropProvider>
