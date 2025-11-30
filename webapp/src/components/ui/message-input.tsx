@@ -7,12 +7,12 @@ import {
   Paperclip,
   Square,
   Plus,
-  FolderOpen,
   FileText,
   X,
   File,
   Table,
 } from "lucide-react";
+import Image from "next/image";
 import { omit } from "remeda";
 
 import { cn } from "@/lib/utils";
@@ -488,7 +488,13 @@ export function MessageInput({
                         onClick={onClick}
                         className="cursor-pointer"
                       >
-                        <FolderOpen className="mr-2 h-4 w-4" />
+                        <Image
+                          src="/logos/google-drive.svg"
+                          alt="Google Drive"
+                          width={16}
+                          height={16}
+                          className="mr-2"
+                        />
                         <span>Google Drive</span>
                       </DropdownMenuItem>
                     )}

@@ -7,11 +7,11 @@ import {
   X,
   Plus,
   Upload,
-  FolderOpen,
   FileText,
   File,
   Table,
 } from "lucide-react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -276,7 +276,13 @@ export function HeroChatInput({
                     onClick={onClick}
                     className="cursor-pointer"
                   >
-                    <FolderOpen className="mr-2 h-4 w-4" />
+                    <Image
+                      src="/logos/google-drive.svg"
+                      alt="Google Drive"
+                      width={16}
+                      height={16}
+                      className="mr-2"
+                    />
                     <span>Google Drive</span>
                   </DropdownMenuItem>
                 )}
