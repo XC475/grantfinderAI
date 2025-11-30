@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
+import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,10 +35,8 @@ import {
   Image as ImageIcon,
   Info,
   Save,
-  Sparkles,
   GraduationCap,
   Plus,
-  Pencil,
   Trash2,
   ChevronDown,
   Globe,
@@ -48,8 +45,6 @@ import {
   FileText,
   CheckCircle2,
   CalendarIcon,
-  XCircle,
-  Table,
 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -65,7 +60,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
 import { KnowledgeBase } from "@/components/knowledge-base/KnowledgeBase";
 import { AddDocumentsModal } from "@/components/knowledge-base/AddDocumentsModal";
 
@@ -131,7 +125,6 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadingPdf, setUploadingPdf] = useState(false);
-  const [summarizing, setSummarizing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
@@ -169,7 +162,7 @@ export default function ProfilePage() {
     if (organization) {
       setShowMissionStatement(!!organization.missionStatement);
     }
-  }, [organization?.missionStatement]);
+  }, [organization]);
 
   // Initialize budget display value
   useEffect(() => {
@@ -229,7 +222,7 @@ export default function ProfilePage() {
         if (!isNaN(parsed.getTime())) {
           return parsed;
         }
-      } catch (e) {
+      } catch {
         // Try next format
       }
     }
@@ -445,69 +438,6 @@ export default function ProfilePage() {
       if (pdfInputRef.current) {
         pdfInputRef.current.value = "";
       }
-    }
-  };
-
-  const handleSummarizeWithAI = async () => {
-    if (!organization || !organization.strategicPlan) {
-      toast.error("Please add a strategic plan first");
-      return;
-    }
-
-    if (organization.strategicPlan.length < 100) {
-      toast.error("Strategic plan is too short to summarize");
-      return;
-    }
-
-    setSummarizing(true);
-    try {
-      const response = await fetch("/api/strategic-plan-summarize", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          strategicPlanText: organization.strategicPlan,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to summarize strategic plan");
-      }
-
-      const data = await response.json();
-
-      // Update the database with AI summary
-      const updateResponse = await fetch(
-        `/api/organizations/${organization.id}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ strategicPlan: data.summary }),
-        }
-      );
-
-      if (!updateResponse.ok) {
-        throw new Error("Failed to save summary to database");
-      }
-
-      // Update the strategic plan field with the AI summary
-      setOrganization({
-        ...organization,
-        strategicPlan: data.summary,
-      });
-
-      toast.success("Strategic plan summarized successfully with AI and saved");
-    } catch (error) {
-      console.error("Error summarizing strategic plan:", error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Failed to summarize strategic plan"
-      );
-    } finally {
-      setSummarizing(false);
     }
   };
 

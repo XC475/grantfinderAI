@@ -289,7 +289,7 @@ model Document {
 
   // NEW FIELDS - File Category & Knowledge Base
   fileCategory    FileCategory @default(GENERAL)
-  isKnowledgeBase Boolean      @default(false)
+  isKnowledgeBase Boolean      @default(true)
   extractedText   String?
 
   // NEW FIELDS - Vectorization

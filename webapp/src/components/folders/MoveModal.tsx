@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, ReactElement } from "react";
 import {
   Dialog,
   DialogContent,
@@ -62,14 +62,16 @@ export function MoveModal({
           const fetchedFolders = data.folders || [];
           setFolders(fetchedFolders);
           setIsFetching(false);
-          
+
           // Auto-expand folders to show current folder
           if (currentFolderId) {
             const expanded = new Set<string>();
             let currentId: string | null = currentFolderId;
             while (currentId) {
               expanded.add(currentId);
-              const folder = fetchedFolders.find((f: Folder) => f.id === currentId);
+              const folder = fetchedFolders.find(
+                (f: Folder) => f.id === currentId
+              );
               currentId = folder?.parentFolderId || null;
             }
             setExpandedFolders(expanded);
@@ -114,7 +116,9 @@ export function MoveModal({
       }
 
       const parentPath = buildPath(folder.parentFolderId);
-      const fullPath = parentPath ? `${parentPath} / ${folder.name}` : folder.name;
+      const fullPath = parentPath
+        ? `${parentPath} / ${folder.name}`
+        : folder.name;
       pathMap.set(folderId, fullPath);
       return fullPath;
     };
@@ -182,7 +186,10 @@ export function MoveModal({
   };
 
   // Recursive folder rendering
-  const renderFolder = (folder: Folder, depth: number = 0): JSX.Element | null => {
+  const renderFolder = (
+    folder: Folder,
+    depth: number = 0
+  ): ReactElement | null => {
     const isExpanded = expandedFolders.has(folder.id);
     const children = folderChildren.get(folder.id) || [];
     const isSelected = selectedFolderId === folder.id;
@@ -247,9 +254,7 @@ export function MoveModal({
         </button>
 
         {isExpanded && children.length > 0 && (
-          <>
-            {children.map((child) => renderFolder(child, depth + 1))}
-          </>
+          <>{children.map((child) => renderFolder(child, depth + 1))}</>
         )}
       </div>
     );
@@ -343,9 +348,11 @@ export function MoveModal({
 
                   if (renderedFolders.length === 0) {
                     return (
-                  <div className="p-4 text-center text-sm text-muted-foreground">
-                    {searchQuery ? "No folders found" : "No folders available"}
-                  </div>
+                      <div className="p-4 text-center text-sm text-muted-foreground">
+                        {searchQuery
+                          ? "No folders found"
+                          : "No folders available"}
+                      </div>
                     );
                   }
 
@@ -373,4 +380,3 @@ export function MoveModal({
     </Dialog>
   );
 }
-

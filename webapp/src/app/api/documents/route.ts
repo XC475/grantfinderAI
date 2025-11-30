@@ -111,7 +111,12 @@ export async function GET(req: NextRequest) {
     }
 
     // Build where clause with KB filters
-    const whereClause: any = {
+    const whereClause: {
+      organizationId: string;
+      isKnowledgeBase?: boolean;
+      fileCategory?: FileCategory;
+      vectorizationStatus?: VectorizationStatus;
+    } = {
       organizationId: dbUser.organizationId,
       ...(isKnowledgeBase !== null && {
         isKnowledgeBase: isKnowledgeBase === "true",
@@ -211,7 +216,10 @@ const DEFAULT_DOCUMENT_CONTENT = JSON.stringify({
             {
               type: "paragraph",
               content: [
-                { type: "text", text: "Use the toolbar above to format your text" },
+                {
+                  type: "text",
+                  text: "Use the toolbar above to format your text",
+                },
               ],
             },
           ],
@@ -352,7 +360,13 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { title, content, contentType = "json", folderId, fileCategory = "GENERAL" } = body;
+    const {
+      title,
+      content,
+      contentType = "json",
+      folderId,
+      fileCategory = "GENERAL",
+    } = body;
 
     if (!title || typeof title !== "string") {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
@@ -388,6 +402,7 @@ export async function POST(req: NextRequest) {
         content: finalContent,
         contentType,
         fileCategory: fileCategory as FileCategory,
+        isKnowledgeBase: true, // Explicitly set - Prisma doesn't always use DB defaults when field is omitted
         extractedText,
         vectorizationStatus: extractedText ? "PENDING" : "COMPLETED",
         organizationId: dbUser.organizationId,

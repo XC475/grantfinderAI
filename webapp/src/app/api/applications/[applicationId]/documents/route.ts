@@ -293,6 +293,7 @@ export async function POST(
         content: gettingStartedContent,
         contentType,
         fileCategory: "GENERAL", // Default for all new docs
+        isKnowledgeBase: true, // Explicitly set - Prisma doesn't always use DB defaults when field is omitted
         extractedText,
         vectorizationStatus: extractedText ? "PENDING" : "COMPLETED",
         version: 1,

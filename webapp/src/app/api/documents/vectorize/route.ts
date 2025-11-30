@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
   for (const doc of docsToVectorize) {
     try {
       console.log(
-        `📝 [Vectorize] Starting vectorization for document ${doc.id}: "${doc.title}" (Category: ${getFileCategoryLabel(doc.fileCategory)}, ${doc.folder?.name || "root folder"})`
+        `📝 [Vectorize] Starting vectorization for document ${doc.id}: "${doc.title}" (Category: ${getFileCategoryLabel(doc.fileCategory)}, Folder: ${doc.folder?.name || "Root"})`
       );
 
       // Update status to PROCESSING
@@ -59,12 +59,10 @@ export async function POST(req: NextRequest) {
 
       // Vectorize each chunk
       for (const chunk of chunks) {
-        // Create title-prefixed content with category and optional folder
+        // Create title-prefixed content with category and folder (always include folder)
         let chunkContentWithTitle = `Document: ${doc.title}`;
         chunkContentWithTitle += `\nCategory: ${getFileCategoryLabel(doc.fileCategory)}`;
-        if (doc.folder) {
-          chunkContentWithTitle += `\nFolder: ${doc.folder.name}`;
-        }
+        chunkContentWithTitle += `\nFolder: ${doc.folder?.name || "Root"}`;
         chunkContentWithTitle += `\n\n${chunk.content}`;
 
         const embeddingResponse = await openai.embeddings.create({

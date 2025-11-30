@@ -38,7 +38,6 @@ import { FileCategory } from "@/generated/prisma";
 import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { toast } from "sonner";
 
 interface Folder {
   id: string;

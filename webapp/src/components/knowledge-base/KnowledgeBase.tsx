@@ -8,6 +8,27 @@ import { Button } from "@/components/ui/button";
 import { AddDocumentsModal } from "./AddDocumentsModal";
 import { toast } from "sonner";
 
+interface KBDocument {
+  id: string;
+  title: string;
+  isKnowledgeBase?: boolean;
+  contentType?: string;
+  fileUrl?: string | null;
+  application?: {
+    title: string;
+    opportunityAgency?: string | null;
+  } | null;
+}
+
+interface DocumentsByTypeData {
+  type: string;
+  documents: KBDocument[];
+  hasKBDocs: boolean;
+  allInKB: boolean;
+  totalCount: number;
+  kbCount: number;
+}
+
 interface KnowledgeBaseProps {
   organizationSlug: string;
   organizationId: string;
@@ -19,7 +40,9 @@ export function KnowledgeBase({
   organizationId,
   onAddClick,
 }: KnowledgeBaseProps) {
-  const [documentsByType, setDocumentsByType] = useState<any[]>([]);
+  const [documentsByType, setDocumentsByType] = useState<DocumentsByTypeData[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -65,16 +88,16 @@ export function KnowledgeBase({
 
           // Filter to only show documents in knowledge base
           const kbDocuments = allDocuments.filter(
-            (doc: any) => doc.isKnowledgeBase
+            (doc: KBDocument) => doc.isKnowledgeBase
           );
 
           // Determine toggle state: true if ANY document is in KB
           const hasKBDocs = allDocuments.some(
-            (doc: any) => doc.isKnowledgeBase
+            (doc: KBDocument) => doc.isKnowledgeBase
           );
           const allInKB =
             allDocuments.length > 0 &&
-            allDocuments.every((doc: any) => doc.isKnowledgeBase);
+            allDocuments.every((doc: KBDocument) => doc.isKnowledgeBase);
 
           return {
             type,
@@ -183,7 +206,8 @@ export function KnowledgeBase({
       ) : (
         <div className="text-center py-12 border-2 border-dashed rounded-lg">
           <p className="text-muted-foreground mb-4">
-            No documents in knowledge base. Click "Add" to add documents.
+            No documents in knowledge base. Click &quot;Add&quot; to add
+            documents.
           </p>
           <Button onClick={handleAddClick} variant="outline" className="gap-2">
             <FileText className="h-4 w-4" />

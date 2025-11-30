@@ -96,7 +96,7 @@ export default function FileViewerPage({ params }: FileViewerPageProps) {
     if (document && documentContext) {
       documentContext.setDocumentTitle(document.title);
       // Pass extracted text as content for AI context (use top-level field, fallback to metadata for backwards compatibility)
-      const extractedText = (document as any).extractedText || document.metadata?.extractedText || "";
+      const extractedText = document.extractedText || (document.metadata as { extractedText?: string })?.extractedText || "";
       documentContext.setDocumentContent(extractedText);
     }
   }, [document, documentContext]);
@@ -144,7 +144,7 @@ export default function FileViewerPage({ params }: FileViewerPageProps) {
   }
 
   // Use top-level extractedText field, fallback to metadata for backwards compatibility
-  const extractedText = (document as any).extractedText || document.metadata?.extractedText;
+  const extractedText = document.extractedText || (document.metadata as { extractedText?: string })?.extractedText;
   const pageCount = document.metadata?.pageCount;
 
   // Remove outer container - ConditionalLayout handles everything

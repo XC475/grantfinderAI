@@ -29,11 +29,11 @@ export function buildKnowledgeBaseRAGPrompt(organizationName?: string): string {
   **Document Chunk Structure:**
   When chunks are retrieved, they appear in this format:
   \`\`\`
-  [Knowledge Base - {file_name} (Chunk {index})]
-  Document: {title}
+  [Knowledge Base - Document: {document_title}]
   Category: {category_label}
-  Folder: {folder_name} (if applicable)
+  Folder: {folder_name} (always present, "Root" if document has no folder)
   
+  [Relevant sections from this document:]
   {actual document content}
   \`\`\`
 
@@ -52,14 +52,18 @@ export function buildKnowledgeBaseRAGPrompt(organizationName?: string): string {
 
   **Usage Instructions:**
   - **CRITICAL: NEVER mention "chunks", "chunk numbers", or technical implementation details to users.** Chunks are internal technical details - users should only see natural references to documents.
-  - **CRITICAL: Deduplicate documents when listing.** Multiple chunks from the same document (same Document Title and Category) represent ONE document. When listing or referencing documents, group all chunks by their Document Title and Category, and present each unique document only ONCE.
+  - **CRITICAL: ALWAYS use the EXACT document title as provided.** Use the title exactly as it appears in the "[Knowledge Base - Document: {title}]" header. Do NOT infer, expand, or modify the title based on content. If the title is "Proposal Template", use "Proposal Template" - do NOT say "Grant Proposal Template for [Organization]" or any expanded version.
+  - **CRITICAL: ALWAYS use the EXACT folder name as provided.** Use the folder name exactly as it appears in the "Folder: {folder_name}" field. Do NOT infer, expand, or modify the folder name.
+  - **CRITICAL: ALWAYS When listing documents deduplicate documents.** Multiple chunks from the same document (same Document Title and Category) represent ONE document. When listing or referencing documents, group all chunks into a single document presenting each document only ONCE.
   - When multiple chunks from the same document are retrieved, synthesize all the information from those chunks into a single, unified reference to that document. Do not list the same document multiple times.
-  - When listing available documents, identify unique documents by their Document Title + Category combination. Each unique combination should appear only once in your response.
-  - When referencing retrieved documents, refer to them naturally by their **Document Title** and **Category** (e.g., "the Annual Budget document" or "your Template documents"), never by chunk numbers.
+  - **CRITICAL: Always use the category specified in the "Category:" field, not any category-like words that may appear in the document title.**
+  - **CRITICAL: If you cannot find a document the user is asking about, do not assume it exists or make up information.** Instead, politely inform the user that you could not find the requested document in their knowledge base. Ask them to verify if the document has been added to their knowledge base, and if it was recently added, suggest they wait 2-5 minutes for it to be processed before searching again.
   - Help users understand what categories are available when they ask about document types
   - Use document context to provide personalized assistance aligned with ${orgContext} actual content
   - The semantic search automatically retrieves relevant chunks based on the user's query, so you can reference this information naturally
   - When summarizing or listing documents from the knowledge base, present them as complete, unique documents (e.g., "The Annual Report covers...") rather than exposing chunk-based structure or listing the same document multiple times
   - Focus on the content and meaning, not the technical retrieval mechanism
-  - **Example:** If you receive Chunk 2, Chunk 3, and Chunk 5 from "AKFCS-Annual-Report-8.1.2025.pdf" (Category: General), present this as ONE document: "**Document:** AKFCS-Annual-Report-8.1.2025.pdf (Category: General)" with a synthesized summary of all three chunks' content`;
+  - **CRITICAL: When users ask to "list documents" or similar requests to see everything, you MUST inform them at the END of your response that the search uses semantic similarity matching, not an exhaustive list.** Explain that you're showing the most relevant documents based on their query, and that not all documents may be included. For example: "I'm showing you the most relevant documents based on your query. Since I search by similarity rather than listing everything, some documents may not appear. If you're looking for something specific, try asking about it directly."
+  - **Example:** If you receive multiple chunks from a document titled "Proposal Template" (Category: Winning Applications), present this as: "**Document:** Proposal Template (Category: Winning Applications)" - use the EXACT title "Proposal Template", not an expanded version like "Grant Proposal Template for [Organization]"
+  - **Another Example:** If you receive Chunk 2, Chunk 3, and Chunk 5 from "AKFCS-Annual-Report-8.1.2025.pdf" (Category: General), present this as ONE document: "**Document:** AKFCS-Annual-Report-8.1.2025.pdf (Category: General)" with a synthesized summary of all its chunks' content - use the EXACT title as provided`;
 }

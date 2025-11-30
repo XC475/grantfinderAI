@@ -6,7 +6,6 @@ import {
   Folder as FolderIcon,
   FileText,
   Upload,
-  FolderOpen,
   Loader2,
   X,
 } from "lucide-react";
@@ -67,7 +66,6 @@ export function CreateMenu({
   currentFolderId,
   applicationId,
   organizationSlug,
-  organizationId,
   onCreateFolder,
   onCreateDocument,
   onFileUpload,
@@ -200,7 +198,7 @@ export function CreateMenu({
         throw new Error(error.error || "Failed to import file");
       }
 
-      const data = await response.json();
+      await response.json();
       toast.success("File imported successfully");
       setSelectedGoogleDriveFile(null);
       setGoogleDriveFileCategory("GENERAL");

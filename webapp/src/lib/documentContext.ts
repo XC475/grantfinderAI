@@ -78,8 +78,8 @@ export async function getSourceDocumentContext(
       // For uploaded files, use extracted text from top-level field (preferred) or metadata (fallback)
       if (doc.fileUrl) {
         // Prefer top-level extractedText field
-        if ((doc as any).extractedText) {
-          text = (doc as any).extractedText;
+        if (doc.extractedText) {
+          text = doc.extractedText;
         } else if (doc.metadata) {
           const metadata = doc.metadata as { extractedText?: string };
           if (metadata.extractedText) {

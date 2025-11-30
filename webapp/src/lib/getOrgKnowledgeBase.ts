@@ -79,22 +79,54 @@ export async function getActiveKnowledgeBase(
       return "";
     }
 
-    // 5. Format for AI with type labels and metadata from FKs
-    return formatDocsForAI(docs);
+    // 5. Filter out any documents with null extractedText (defensive check)
+    // Type assertion is safe here because:
+    // - We filter for extractedText: { not: null } in the query
+    // - We filter again here as a defensive check
+    // - The structure matches DocumentForAI (metadata is JsonValue but handled safely in formatDocsForAI)
+    const validDocs = docs.filter(
+      (doc) => doc.extractedText !== null
+    ) as DocumentForAI[];
+
+    if (validDocs.length === 0) {
+      return "";
+    }
+
+    // 6. Format for AI with type labels and metadata from FKs
+    return formatDocsForAI(validDocs);
   } catch (error) {
     console.error("Error fetching active knowledge base:", error);
     return "";
   }
 }
 
-function formatDocsForAI(docs: any[]): string {
+interface DocumentForAI {
+  title: string;
+  extractedText: string; // Non-null after filtering
+  fileCategory: FileCategory;
+  metadata: {
+    successNotes?: string;
+    tags?: string[];
+  } | null;
+  applicationId: string | null;
+  application: {
+    id: string;
+    title: string | null; // Prisma returns string | null
+    opportunityAgency: string | null;
+    opportunityAwardMax: bigint | null;
+    opportunityAwardMin: bigint | null;
+  } | null;
+}
+
+function formatDocsForAI(docs: DocumentForAI[]): string {
   return docs
     .map((doc) => {
       let header = `[${getFileCategoryLabel(doc.fileCategory)}: ${doc.title}]`;
 
       // Add context from existing application relation
       if (doc.application) {
-        header += `\n(Source: Application "${doc.application.title}")`;
+        const appTitle = doc.application.title || "Untitled Application";
+        header += `\n(Source: Application "${appTitle}")`;
         if (doc.application.opportunityAgency) {
           header += `\nFunder: ${doc.application.opportunityAgency}`;
         }
