@@ -1673,7 +1673,7 @@ export function KnowledgeBaseCategoryList({
               <div className="flex items-center justify-between gap-4">
                 {/* Left side - Category info */}
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <Icon className="h-6 w-6 text-primary flex-shrink-0" />
+                  <Icon className="h-6 w-6 text-primary shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-base">

@@ -188,8 +188,8 @@ export async function PUT(
       needsRevectorization = true;
     }
 
-    // If title or folder is being updated, also need re-vectorization
-    // (because title/folder are included in chunk content prefix)
+    // If title, folder, or category is being updated, also need re-vectorization
+    // (because title/folder/category are included in chunk content prefix)
     if (title !== undefined && title !== existingDocument.title) {
       console.log(
         `🔄 [Document Update] Title changed for document ${documentId}: "${existingDocument.title}" → "${title}"`
@@ -204,6 +204,18 @@ export async function PUT(
       const newFolderName = folderId ? `folder ${folderId}` : "root";
       console.log(
         `🔄 [Document Update] Folder changed for document ${documentId}: ${oldFolderName} → ${newFolderName}`
+      );
+      needsRevectorization = true;
+    }
+
+    // If fileCategory is being updated, also need re-vectorization
+    // (because category is included in chunk content prefix)
+    if (
+      fileCategory !== undefined &&
+      fileCategory !== existingDocument.fileCategory
+    ) {
+      console.log(
+        `🔄 [Document Update] Category changed for document ${documentId}: "${existingDocument.fileCategory}" → "${fileCategory}"`
       );
       needsRevectorization = true;
     }
@@ -263,7 +275,7 @@ export async function PUT(
           extractedText: newExtractedText,
           vectorizationStatus: newExtractedText ? "PENDING" : "COMPLETED",
         }),
-        // If title or folder changed (but not extractedText), set status to PENDING for re-vectorization
+        // If title, folder, or category changed (but not extractedText), set status to PENDING for re-vectorization
         ...(needsRevectorization &&
           newExtractedText === existingDocument.extractedText &&
           existingDocument.extractedText && {
@@ -296,7 +308,7 @@ export async function PUT(
       document.extractedText
     ) {
       const reason = needsRevectorization
-        ? "title/folder/content change"
+        ? "title/folder/category/content change"
         : "isKnowledgeBase flag";
       console.log(
         `🚀 [Document Update] Triggering re-vectorization for document ${documentId} (${document.title}) - Reason: ${reason}, Status: ${document.vectorizationStatus}`

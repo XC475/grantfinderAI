@@ -1052,7 +1052,7 @@ export default function ProfilePage() {
             {strategicPlanState === "success" && (
               <div className="border rounded-lg p-6">
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     <div className="relative">
                       <FileText className="h-12 w-12 text-primary" />
                       <CheckCircle2 className="h-6 w-6 text-green-500 absolute -bottom-1 -right-1 bg-background rounded-full" />

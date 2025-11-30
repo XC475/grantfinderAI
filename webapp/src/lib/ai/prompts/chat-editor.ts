@@ -1,4 +1,5 @@
 import { Decimal } from "@prisma/client/runtime/library";
+import { buildKnowledgeBaseRAGPrompt } from "./tools/knowledgeBaseRAG";
 
 export interface OrganizationInfo {
   id: string;
@@ -60,6 +61,10 @@ You are helping the user with their document titled "${documentTitle}".
 - Access to the organization's knowledge base of uploaded institutional documents
 - Provide suggestions based on organizational context, past proposals, budgets, and strategic plans
 - Reference relevant organizational materials to ensure consistency and alignment
+
+## Knowledge Base Access
+
+${buildKnowledgeBaseRAGPrompt(organizationInfo.name)}
 
 ${organizationContext}
 ${applicationContext}

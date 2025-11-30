@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import OpenAI from "openai";
 import crypto from "crypto";
 import { chunkText } from "@/lib/textChunking";
+import { getFileCategoryLabel } from "@/lib/fileCategories";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const EMBEDDING_MODEL = "text-embedding-3-small";
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
   for (const doc of docsToVectorize) {
     try {
       console.log(
-        `📝 [Vectorize] Starting vectorization for document ${doc.id}: "${doc.title}" (${doc.folder?.name || "root folder"})`
+        `📝 [Vectorize] Starting vectorization for document ${doc.id}: "${doc.title}" (Category: ${getFileCategoryLabel(doc.fileCategory)}, ${doc.folder?.name || "root folder"})`
       );
 
       // Update status to PROCESSING
@@ -58,8 +59,9 @@ export async function POST(req: NextRequest) {
 
       // Vectorize each chunk
       for (const chunk of chunks) {
-        // Create title-prefixed content with optional folder
+        // Create title-prefixed content with category and optional folder
         let chunkContentWithTitle = `Document: ${doc.title}`;
+        chunkContentWithTitle += `\nCategory: ${getFileCategoryLabel(doc.fileCategory)}`;
         if (doc.folder) {
           chunkContentWithTitle += `\nFolder: ${doc.folder.name}`;
         }

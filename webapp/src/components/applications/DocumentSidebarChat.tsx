@@ -187,7 +187,7 @@ export function DocumentSidebarChat({
         ) : null}
       </div>
 
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         <BaseChatForm
           isPending={isGenerating || isTyping}
           handleSubmit={handleSubmit}
@@ -312,24 +312,24 @@ function SidebarMessageList({
 // Helper function to get document icon based on file type
 function getDocumentIcon(doc: SourceDocument) {
   if (!doc.fileType) {
-    return <FileText className="h-4 w-4 text-blue-500 flex-shrink-0" />;
+    return <FileText className="h-4 w-4 text-blue-500 shrink-0" />;
   }
   if (doc.fileType === "application/pdf") {
-    return <FileText className="h-4 w-4 text-red-500 flex-shrink-0" />;
+    return <FileText className="h-4 w-4 text-red-500 shrink-0" />;
   }
   if (
     doc.fileType ===
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
   ) {
-    return <FileText className="h-4 w-4 text-blue-600 flex-shrink-0" />;
+    return <FileText className="h-4 w-4 text-blue-600 shrink-0" />;
   }
   if (doc.fileType === "text/csv") {
-    return <Table className="h-4 w-4 text-green-600 flex-shrink-0" />;
+    return <Table className="h-4 w-4 text-green-600 shrink-0" />;
   }
   if (doc.fileType === "text/plain") {
-    return <File className="h-4 w-4 text-gray-600 flex-shrink-0" />;
+    return <File className="h-4 w-4 text-gray-600 shrink-0" />;
   }
-  return <File className="h-4 w-4 text-muted-foreground flex-shrink-0" />;
+  return <File className="h-4 w-4 text-muted-foreground shrink-0" />;
 }
 
 interface SidebarMessageInputProps
