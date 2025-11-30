@@ -60,8 +60,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { KnowledgeBase } from "@/components/knowledge-base/KnowledgeBase";
-import { AddDocumentsModal } from "@/components/knowledge-base/AddDocumentsModal";
 
 // Grade level options with numeric values
 const GRADE_OPTIONS = [
@@ -148,7 +146,6 @@ export default function ProfilePage() {
     string | null
   >(null);
   const [showStrategicPlanModal, setShowStrategicPlanModal] = useState(false);
-  const [showAddDocumentsModal, setShowAddDocumentsModal] = useState(false);
 
   // Track active tab to conditionally show Save Changes button
   const [activeTab, setActiveTab] = useState("basic-info");
@@ -534,33 +531,26 @@ export default function ProfilePage() {
             Manage your organization&apos;s information and settings
           </p>
         </div>
-        {activeTab !== "knowledge-base" ? (
-          <Button onClick={handleSave} disabled={saving} size="lg">
-            {saving ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save className="mr-2 h-4 w-4" />
-                Save Changes
-              </>
-            )}
-          </Button>
-        ) : (
-          <Button onClick={() => setShowAddDocumentsModal(true)} size="lg">
-            <Plus className="mr-2 h-4 w-4" />
-            Add
-          </Button>
-        )}
+        <Button onClick={handleSave} disabled={saving} size="lg">
+          {saving ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Save className="mr-2 h-4 w-4" />
+              Save Changes
+            </>
+          )}
+        </Button>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 mb-8">
           <TabsTrigger value="basic-info">Basic Info</TabsTrigger>
           <TabsTrigger value="details">Details</TabsTrigger>
-          <TabsTrigger value="knowledge-base">Knowledge Base</TabsTrigger>
+          <TabsTrigger value="custom-fields">Custom Fields</TabsTrigger>
         </TabsList>
 
         <TabsContent value="basic-info" className="space-y-8">
@@ -1303,57 +1293,18 @@ export default function ProfilePage() {
           </div>
         </TabsContent>
 
-        <TabsContent value="knowledge-base" className="space-y-8">
-          <KnowledgeBase
-            organizationSlug={slug}
-            organizationId={organization?.id || ""}
-            onAddClick={() => setShowAddDocumentsModal(true)}
-          />
+        <TabsContent value="custom-fields" className="space-y-8">
+          <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg">
+            <div className="text-center space-y-4">
+              <h3 className="text-xl font-semibold">Custom Fields</h3>
+              <p className="text-muted-foreground max-w-md">
+                Custom fields functionality is coming soon. You&apos;ll be able
+                to add custom metadata fields to your organization profile.
+              </p>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
-
-      {/* Add Documents Modal */}
-      {organization && (
-        <AddDocumentsModal
-          open={showAddDocumentsModal}
-          onOpenChange={setShowAddDocumentsModal}
-          onAdd={async (documentIds: string[]) => {
-            try {
-              const updatePromises = documentIds.map((docId) =>
-                fetch(`/api/documents/${docId}`, {
-                  method: "PUT",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ isKnowledgeBase: true }),
-                })
-              );
-
-              const results = await Promise.all(updatePromises);
-              const failed = results.filter((res) => !res.ok);
-
-              if (failed.length > 0) {
-                throw new Error(
-                  `Failed to add ${failed.length} document(s) to knowledge base`
-                );
-              }
-
-              toast.success(
-                `Added ${documentIds.length} document(s) to knowledge base`
-              );
-
-              // Trigger refresh via custom event
-              window.dispatchEvent(new Event("knowledge-base-refresh"));
-            } catch (error) {
-              console.error("Error adding documents to KB:", error);
-              toast.error(
-                error instanceof Error
-                  ? error.message
-                  : "Failed to add documents to knowledge base"
-              );
-              throw error;
-            }
-          }}
-        />
-      )}
 
       {/* Strategic Plan Modal */}
       <Dialog

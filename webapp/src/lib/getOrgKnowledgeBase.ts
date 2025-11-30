@@ -1,11 +1,10 @@
 import prisma from "@/lib/prisma";
-import { FileCategory } from "@/generated/prisma";
-import { getFileCategoryLabel } from "@/lib/fileCategories";
+import { getFileTagLabel } from "@/lib/fileTags";
 
 interface KBRetrievalOptions {
   context: "chat" | "editor";
-  includeFileCategories?: FileCategory[];
-  excludeFileCategories?: FileCategory[];
+  includeFileTags?: string[];
+  excludeFileTags?: string[];
 }
 
 /**
@@ -27,39 +26,79 @@ export async function getActiveKnowledgeBase(
       where: { userId },
     });
 
-    // 2. Determine enabled document types based on context
-    const enabledTypes =
+    // 2. Determine enabled tag names based on context
+    const enabledTagNames =
       options.context === "chat"
-        ? settings?.enabledCategoriesChat
-        : settings?.enabledCategoriesEditor;
+        ? settings?.enabledTagsChat
+        : settings?.enabledTagsEditor;
 
-    // 3. Apply filters
-    let typesToInclude = enabledTypes || getAllFileCategories();
-
-    if (options.includeFileCategories) {
-      typesToInclude = typesToInclude.filter((t) =>
-        options.includeFileCategories!.includes(t)
-      );
+    // 3. Get tag IDs for enabled tags
+    let tagIdsToInclude: string[] | undefined;
+    if (enabledTagNames && enabledTagNames.length > 0) {
+      const tags = await prisma.documentTag.findMany({
+        where: {
+          organizationId,
+          name: { in: enabledTagNames },
+        },
+        select: { id: true },
+      });
+      tagIdsToInclude = tags.map((t) => t.id);
     }
 
-    if (options.excludeFileCategories) {
-      typesToInclude = typesToInclude.filter(
-        (t) => !options.excludeFileCategories!.includes(t)
-      );
+    // 4. Apply filters
+    if (options.includeFileTags) {
+      const includeTagIds = await prisma.documentTag.findMany({
+        where: {
+          organizationId,
+          name: { in: options.includeFileTags },
+        },
+        select: { id: true },
+      });
+      const includeIds = includeTagIds.map((t) => t.id);
+      if (tagIdsToInclude) {
+        tagIdsToInclude = tagIdsToInclude.filter((id) =>
+          includeIds.includes(id)
+        );
+      } else {
+        tagIdsToInclude = includeIds;
+      }
     }
 
-    // 4. Query documents marked as knowledge base (still org-level)
+    if (options.excludeFileTags) {
+      const excludeTagIds = await prisma.documentTag.findMany({
+        where: {
+          organizationId,
+          name: { in: options.excludeFileTags },
+        },
+        select: { id: true },
+      });
+      const excludeIds = excludeTagIds.map((t) => t.id);
+      if (tagIdsToInclude) {
+        tagIdsToInclude = tagIdsToInclude.filter(
+          (id) => !excludeIds.includes(id)
+        );
+      }
+    }
+
+    // 5. Query documents marked as knowledge base (still org-level)
     const docs = await prisma.document.findMany({
       where: {
         organizationId,
         isKnowledgeBase: true,
-        fileCategory: { in: typesToInclude },
+        ...(tagIdsToInclude && tagIdsToInclude.length > 0
+          ? { fileTagId: { in: tagIdsToInclude } }
+          : {}),
         extractedText: { not: null },
       },
       select: {
         title: true,
         extractedText: true,
-        fileCategory: true,
+        fileTag: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         metadata: true,
         applicationId: true,
         application: {
@@ -103,7 +142,10 @@ export async function getActiveKnowledgeBase(
 interface DocumentForAI {
   title: string;
   extractedText: string; // Non-null after filtering
-  fileCategory: FileCategory;
+  fileTag: {
+    id: string;
+    name: string;
+  } | null;
   metadata: {
     successNotes?: string;
     tags?: string[];
@@ -121,7 +163,10 @@ interface DocumentForAI {
 function formatDocsForAI(docs: DocumentForAI[]): string {
   return docs
     .map((doc) => {
-      let header = `[${getFileCategoryLabel(doc.fileCategory)}: ${doc.title}]`;
+      const tagName = doc.fileTag
+        ? getFileTagLabel(doc.fileTag.name)
+        : "Untagged";
+      let header = `[${tagName}: ${doc.title}]`;
 
       // Add context from existing application relation
       if (doc.application) {
@@ -146,8 +191,4 @@ function formatDocsForAI(docs: DocumentForAI[]): string {
       return `${header}\n${doc.extractedText}`;
     })
     .join("\n\n---\n\n");
-}
-
-function getAllFileCategories(): FileCategory[] {
-  return Object.values(FileCategory);
 }

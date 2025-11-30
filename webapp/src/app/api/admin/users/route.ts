@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 import { sendWelcomeEmail } from "@/lib/email";
+import { createDefaultTags } from "@/lib/documentTags";
 import crypto from "crypto";
 
 // POST /api/admin/users - Admin creates a new user
@@ -132,6 +133,9 @@ export async function POST(request: NextRequest) {
           },
         });
 
+        // Create default tags for new organization
+        await createDefaultTags(newOrg.id);
+
         targetOrganizationId = newOrg.id;
         newOrganizationCreated = true;
       } else if (organizationType === "custom" && customOrgData?.name) {
@@ -165,6 +169,9 @@ export async function POST(request: NextRequest) {
             zipCode: customOrgData.zipCode || null,
           },
         });
+
+        // Create default tags for new organization
+        await createDefaultTags(newOrg.id);
 
         targetOrganizationId = newOrg.id;
         newOrganizationCreated = true;

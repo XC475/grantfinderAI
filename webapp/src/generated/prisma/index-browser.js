@@ -185,10 +185,10 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.UserAIContextSettingsScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  enabledCategoriesChat: 'enabledCategoriesChat',
-  enabledCategoriesEditor: 'enabledCategoriesEditor',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  enabledTagsChat: 'enabledTagsChat',
+  enabledTagsEditor: 'enabledTagsEditor'
 };
 
 exports.Prisma.OrganizationScalarFieldEnum = {
@@ -320,13 +320,13 @@ exports.Prisma.DocumentScalarFieldEnum = {
   fileSize: 'fileSize',
   fileType: 'fileType',
   fileUrl: 'fileUrl',
-  fileCategory: 'fileCategory',
-  isKnowledgeBase: 'isKnowledgeBase',
+  chunkCount: 'chunkCount',
   extractedText: 'extractedText',
+  isKnowledgeBase: 'isKnowledgeBase',
+  vectorizationError: 'vectorizationError',
   vectorizationStatus: 'vectorizationStatus',
   vectorizedAt: 'vectorizedAt',
-  chunkCount: 'chunkCount',
-  vectorizationError: 'vectorizationError'
+  fileTagId: 'fileTagId'
 };
 
 exports.Prisma.DocumentVectorScalarFieldEnum = {
@@ -341,6 +341,14 @@ exports.Prisma.DocumentVectorScalarFieldEnum = {
   contentHash: 'contentHash',
   vectorizedAt: 'vectorizedAt',
   model: 'model'
+};
+
+exports.Prisma.DocumentTagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  organizationId: 'organizationId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.FolderScalarFieldEnum = {
@@ -449,20 +457,6 @@ exports.OrganizationRole = exports.$Enums.OrganizationRole = {
   MEMBER: 'MEMBER'
 };
 
-exports.FileCategory = exports.$Enums.FileCategory = {
-  GENERAL: 'GENERAL',
-  WINNING_APPLICATION: 'WINNING_APPLICATION',
-  TEMPLATE: 'TEMPLATE',
-  OPPORTUNITY: 'OPPORTUNITY',
-  AWARD_CONTRACT: 'AWARD_CONTRACT',
-  BUDGET_FINANCIAL: 'BUDGET_FINANCIAL',
-  PROGRESS_REPORT: 'PROGRESS_REPORT',
-  FINAL_REPORT: 'FINAL_REPORT',
-  SUPPORTING_DOCUMENT: 'SUPPORTING_DOCUMENT',
-  CORRESPONDENCE: 'CORRESPONDENCE',
-  COMPLIANCE_RECORDS: 'COMPLIANCE_RECORDS'
-};
-
 exports.GoNoGoDecision = exports.$Enums.GoNoGoDecision = {
   GO: 'GO',
   NO_GO: 'NO_GO',
@@ -550,6 +544,7 @@ exports.Prisma.ModelName = {
   VectorDocument: 'VectorDocument',
   Document: 'Document',
   DocumentVector: 'DocumentVector',
+  DocumentTag: 'DocumentTag',
   Folder: 'Folder',
   k12_education_opportunities: 'k12_education_opportunities'
 };

@@ -80,7 +80,7 @@ export async function POST(
         content: originalDocument.content,
         contentType: originalDocument.contentType,
         metadata: originalDocument.metadata || undefined,
-        fileCategory: originalDocument.fileCategory || "GENERAL", // Preserve category
+        fileTagId: originalDocument.fileTagId || null, // Preserve tag
         isKnowledgeBase: true, // Copies are in KB by default
         extractedText: originalDocument.extractedText, // Preserve extracted text
         vectorizationStatus: originalDocument.extractedText ? "PENDING" : "COMPLETED", // Re-vectorize if text exists

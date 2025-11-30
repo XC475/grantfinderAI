@@ -3,7 +3,6 @@ import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 import { extractTextFromTiptap } from "@/lib/textExtraction";
 import { triggerDocumentVectorization } from "@/lib/textExtraction";
-import { FileCategory } from "@/generated/prisma";
 import { VectorizationStatus } from "@/generated/prisma";
 
 /**
@@ -64,7 +63,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const withFolders = searchParams.get("withFolders") === "true";
     const isKnowledgeBase = searchParams.get("isKnowledgeBase");
-    const fileCategory = searchParams.get("fileCategory");
+    const fileTag = searchParams.get("fileTag"); // Can be tag name or tag ID
     const vectorizationStatus = searchParams.get("vectorizationStatus");
     let limit = parseInt(searchParams.get("limit") || "10");
     let offset = parseInt(searchParams.get("offset") || "0");
@@ -94,6 +93,12 @@ export async function GET(req: NextRequest) {
           fileType: true,
           contentType: true,
           updatedAt: true,
+          fileTag: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
         orderBy: {
           updatedAt: "desc",
@@ -111,18 +116,32 @@ export async function GET(req: NextRequest) {
     }
 
     // Build where clause with KB filters
+    let fileTagId: string | undefined;
+    if (fileTag) {
+      // Try to find tag by name or ID
+      const tag = await prisma.documentTag.findFirst({
+        where: {
+          organizationId: dbUser.organizationId,
+          OR: [{ id: fileTag }, { name: fileTag }],
+        },
+      });
+      if (tag) {
+        fileTagId = tag.id;
+      }
+    }
+
     const whereClause: {
       organizationId: string;
       isKnowledgeBase?: boolean;
-      fileCategory?: FileCategory;
+      fileTagId?: string;
       vectorizationStatus?: VectorizationStatus;
     } = {
       organizationId: dbUser.organizationId,
       ...(isKnowledgeBase !== null && {
         isKnowledgeBase: isKnowledgeBase === "true",
       }),
-      ...(fileCategory && {
-        fileCategory: fileCategory as FileCategory,
+      ...(fileTagId && {
+        fileTagId,
       }),
       ...(vectorizationStatus && {
         vectorizationStatus: vectorizationStatus as VectorizationStatus,
@@ -134,7 +153,7 @@ export async function GET(req: NextRequest) {
       where: whereClause,
     });
 
-    // Fetch documents with pagination, including application details
+    // Fetch documents with pagination, including application details and fileTag
     const documents = await prisma.document.findMany({
       where: whereClause,
       include: {
@@ -145,6 +164,12 @@ export async function GET(req: NextRequest) {
             opportunityId: true,
             opportunityAgency: true,
             opportunityAwardMax: true,
+          },
+        },
+        fileTag: {
+          select: {
+            id: true,
+            name: true,
           },
         },
       },
@@ -365,7 +390,8 @@ export async function POST(req: NextRequest) {
       content,
       contentType = "json",
       folderId,
-      fileCategory = "GENERAL",
+      fileTagId,
+      fileTag, // Can be tag name or tag ID
     } = body;
 
     if (!title || typeof title !== "string") {
@@ -396,12 +422,39 @@ export async function POST(req: NextRequest) {
       extractedText = extractTextFromTiptap(finalContent);
     }
 
+    // Resolve fileTagId from fileTag name or use provided fileTagId
+    let resolvedFileTagId: string | null = fileTagId || null;
+    if (fileTag && !resolvedFileTagId) {
+      const tag = await prisma.documentTag.findFirst({
+        where: {
+          organizationId: dbUser.organizationId,
+          OR: [{ id: fileTag }, { name: fileTag }],
+        },
+      });
+      if (tag) {
+        resolvedFileTagId = tag.id;
+      }
+    }
+    
+    // If no tag specified, use "General" as default
+    if (!resolvedFileTagId) {
+      const generalTag = await prisma.documentTag.findFirst({
+        where: {
+          organizationId: dbUser.organizationId,
+          name: "General",
+        },
+      });
+      if (generalTag) {
+        resolvedFileTagId = generalTag.id;
+      }
+    }
+
     const document = await prisma.document.create({
       data: {
         title,
         content: finalContent,
         contentType,
-        fileCategory: fileCategory as FileCategory,
+        fileTagId: resolvedFileTagId,
         isKnowledgeBase: true, // Explicitly set - Prisma doesn't always use DB defaults when field is omitted
         extractedText,
         vectorizationStatus: extractedText ? "PENDING" : "COMPLETED",

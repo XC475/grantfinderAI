@@ -23,7 +23,10 @@ interface Document {
   contentType: string;
   fileUrl: string | null;
   isKnowledgeBase: boolean;
-  fileCategory: string;
+  fileTag?: {
+    id: string;
+    name: string;
+  } | null;
   application?: {
     title: string;
     opportunityAgency: string | null;
@@ -104,9 +107,7 @@ export function AddDocumentsModal({
     if (!searchQuery.trim()) return documents;
 
     const query = searchQuery.toLowerCase();
-    return documents.filter((doc) =>
-      doc.title.toLowerCase().includes(query)
-    );
+    return documents.filter((doc) => doc.title.toLowerCase().includes(query));
   }, [documents, searchQuery]);
 
   const toggleDocument = (documentId: string) => {
@@ -246,4 +247,3 @@ export function AddDocumentsModal({
     </Dialog>
   );
 }
-

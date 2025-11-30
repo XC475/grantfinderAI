@@ -284,6 +284,14 @@ export async function POST(
       extractedText = extractTextFromTiptap(gettingStartedContent);
     }
 
+    // Get default "General" tag for the organization
+    const defaultTag = await prisma.documentTag.findFirst({
+      where: {
+        organizationId: application.organizationId,
+        name: "General",
+      },
+    });
+
     const document = await prisma.document.create({
       data: {
         applicationId: applicationId,
@@ -292,7 +300,7 @@ export async function POST(
         title,
         content: gettingStartedContent,
         contentType,
-        fileCategory: "GENERAL", // Default for all new docs
+        fileTagId: defaultTag?.id || null,
         isKnowledgeBase: true, // Explicitly set - Prisma doesn't always use DB defaults when field is omitted
         extractedText,
         vectorizationStatus: extractedText ? "PENDING" : "COMPLETED",

@@ -9,7 +9,6 @@ import {
 import { extractTextFromFile, cleanExtractedText } from "@/lib/fileExtraction";
 import { extractTextFromTiptap } from "@/lib/textExtraction";
 import { triggerDocumentVectorization } from "@/lib/textExtraction";
-import { FileCategory } from "@/generated/prisma";
 import { writeFile, unlink } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
@@ -29,7 +28,7 @@ interface ImportPayload {
   mimeType: string;
   folderId?: string | null;
   applicationId?: string | null;
-  fileCategory?: string;
+  fileTagId?: string | null;
   isKnowledgeBase?: boolean;
 }
 
@@ -51,7 +50,7 @@ export async function POST(request: NextRequest) {
       mimeType,
       folderId,
       applicationId,
-      fileCategory,
+      fileTagId,
       isKnowledgeBase,
     } = payload;
 
@@ -254,7 +253,7 @@ export async function POST(request: NextRequest) {
         fileUrl: publicUrl,
         fileType: mimeType,
         fileSize: fileBuffer.length,
-        fileCategory: (fileCategory as FileCategory) || "GENERAL",
+        fileTagId: fileTagId || null,
         isKnowledgeBase: isKnowledgeBase !== undefined ? isKnowledgeBase : true, // Default to true
         extractedText: extractedText || null, // Move from metadata to top-level
         vectorizationStatus: extractedText ? "PENDING" : "COMPLETED",

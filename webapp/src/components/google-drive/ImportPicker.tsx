@@ -70,7 +70,7 @@ interface GoogleDriveImportPickerFolderMode
   mode?: "import";
   folderId?: string | null;
   applicationId?: string | null;
-  fileCategory?: string;
+  fileTagId?: string | null;
   isKnowledgeBase?: boolean;
 }
 
@@ -276,10 +276,10 @@ export function GoogleDriveImportPicker(props: GoogleDriveImportPickerProps) {
                           props.mode !== "attach"
                             ? (props.applicationId ?? null)
                             : null,
-                        fileCategory:
+                        fileTagId:
                           props.mode !== "attach"
                             ? (props as GoogleDriveImportPickerFolderMode)
-                                .fileCategory
+                                .fileTagId
                             : undefined,
                         isKnowledgeBase:
                           props.mode !== "attach"

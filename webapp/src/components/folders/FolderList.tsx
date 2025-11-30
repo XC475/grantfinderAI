@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import {
   FileText,
@@ -30,11 +31,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import {
-  getAllFileCategories,
-  getFileCategoryLabel,
-} from "@/lib/fileCategories";
-import { FileCategory } from "@/generated/prisma";
+import { getFileTagLabel } from "@/lib/fileTags";
 import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
@@ -55,7 +52,10 @@ interface Document {
   applicationId?: string | null;
   fileUrl?: string | null;
   fileType?: string | null;
-  fileCategory?: FileCategory;
+  fileTag?: {
+    id: string;
+    name: string;
+  } | null;
   isKnowledgeBase?: boolean;
 }
 
@@ -104,7 +104,7 @@ interface FolderListProps {
     documentId: string,
     format: "google-drive" | "pdf" | "docx"
   ) => void;
-  onChangeDocumentCategory?: (documentId: string, category: FileCategory) => void;
+  onChangeDocumentTag?: (documentId: string, tagId: string | null) => void;
   onToggleDocumentKnowledgeBase?: (documentId: string, enabled: boolean) => void;
   organizationSlug: string;
 }
@@ -243,7 +243,7 @@ function DraggableDocument({
   onCopy,
   onMove,
   onExport,
-  onChangeCategory,
+  onChangeTag,
   onToggleKnowledgeBase,
 }: {
   document: Document;
@@ -253,10 +253,29 @@ function DraggableDocument({
   onCopy?: () => void;
   onMove?: () => void;
   onExport?: (format: "google-drive" | "pdf" | "docx") => void;
-  onChangeCategory?: (category: FileCategory) => void;
+  onChangeTag?: (tagId: string | null) => void;
   onToggleKnowledgeBase?: (enabled: boolean) => void;
   organizationSlug: string;
 }) {
+  const [tags, setTags] = useState<Array<{ id: string; name: string }>>([]);
+  const [loadingTags, setLoadingTags] = useState(true);
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await fetch("/api/document-tags");
+        if (!response.ok) throw new Error("Failed to fetch tags");
+        const data = await response.json();
+        setTags(data.tags || []);
+      } catch (error) {
+        console.error("Error fetching tags:", error);
+      } finally {
+        setLoadingTags(false);
+      }
+    };
+    fetchTags();
+  }, []);
+
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: document.id,
     data: { type: "document", document },
@@ -346,32 +365,52 @@ function DraggableDocument({
                   Move
                 </DropdownMenuItem>
               )}
-              {onChangeCategory && (
+              {onChangeTag && (
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger>
                     <Tag className="h-4 w-4 mr-2" />
-                    Category
+                    Tag
                   </DropdownMenuSubTrigger>
                   <DropdownMenuSubContent>
-                    {getAllFileCategories().map((category) => (
-                      <DropdownMenuItem
-                        key={category}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onChangeCategory(category);
-                        }}
-                        className={
-                          document.fileCategory === category
-                            ? "bg-accent"
-                            : ""
-                        }
-                      >
-                        {getFileCategoryLabel(category)}
-                        {document.fileCategory === category && (
-                          <span className="ml-auto text-xs">✓</span>
-                        )}
-                      </DropdownMenuItem>
-                    ))}
+                    {loadingTags ? (
+                      <DropdownMenuItem disabled>Loading tags...</DropdownMenuItem>
+                    ) : (
+                      <>
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onChangeTag(null);
+                          }}
+                          className={
+                            !document.fileTag ? "bg-accent" : ""
+                          }
+                        >
+                          Untagged
+                          {!document.fileTag && (
+                            <span className="ml-auto text-xs">✓</span>
+                          )}
+                        </DropdownMenuItem>
+                        {tags.map((tag) => (
+                          <DropdownMenuItem
+                            key={tag.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onChangeTag(tag.id);
+                            }}
+                            className={
+                              document.fileTag?.id === tag.id
+                                ? "bg-accent"
+                                : ""
+                            }
+                          >
+                            {getFileTagLabel(tag.name)}
+                            {document.fileTag?.id === tag.id && (
+                              <span className="ml-auto text-xs">✓</span>
+                            )}
+                          </DropdownMenuItem>
+                        ))}
+                      </>
+                    )}
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
               )}
@@ -436,7 +475,7 @@ function DraggableDocument({
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
               )}
-              {(onChangeCategory || onToggleKnowledgeBase || onExport) &&
+              {(onChangeTag || onToggleKnowledgeBase || onExport) &&
                 onDelete && <DropdownMenuSeparator />}
               {onDelete && (
                 <DropdownMenuItem
@@ -472,7 +511,7 @@ export function FolderList({
   onMoveFolder,
   onMoveDocument,
   onExportDocument,
-  onChangeDocumentCategory,
+  onChangeDocumentTag,
   onToggleDocumentKnowledgeBase,
   organizationSlug,
 }: FolderListProps) {
@@ -558,9 +597,9 @@ export function FolderList({
                   ? (format) => onExportDocument(document.id, format)
                   : undefined
               }
-              onChangeCategory={
-                onChangeDocumentCategory
-                  ? (category) => onChangeDocumentCategory(document.id, category)
+              onChangeTag={
+                onChangeDocumentTag
+                  ? (tagId) => onChangeDocumentTag(document.id, tagId)
                   : undefined
               }
               onToggleKnowledgeBase={

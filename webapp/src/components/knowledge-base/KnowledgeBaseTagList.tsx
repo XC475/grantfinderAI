@@ -11,14 +11,9 @@ import {
   File,
   Table,
   X,
+  Tag as TagIcon,
 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  getFileCategoryLabel,
-  getFileCategoryIcon,
-  getFileCategoryDescription,
-} from "@/lib/fileCategories";
-import { FileCategory } from "@/generated/prisma";
 
 interface Document {
   id: string;
@@ -32,8 +27,9 @@ interface Document {
   } | null;
 }
 
-interface DocumentsByTypeData {
-  type: string;
+interface DocumentsByTagData {
+  tagId: string;
+  tagName: string;
   documents: Document[];
   hasKBDocs: boolean;
   allInKB: boolean;
@@ -41,8 +37,8 @@ interface DocumentsByTypeData {
   kbCount: number;
 }
 
-interface KnowledgeBaseCategoryListProps {
-  documentsByType: DocumentsByTypeData[];
+interface KnowledgeBaseTagListProps {
+  documentsByTag: DocumentsByTagData[];
   organizationSlug: string;
   organizationId: string;
 }
@@ -75,20 +71,20 @@ function getDocumentIcon(document: Document) {
   return <File className="h-4 w-4 text-muted-foreground shrink-0" />;
 }
 
-export function KnowledgeBaseCategoryList({
-  documentsByType,
+export function KnowledgeBaseTagList({
+  documentsByTag,
   organizationSlug,
-}: KnowledgeBaseCategoryListProps) {
-  const [expandedTypes, setExpandedTypes] = useState<Set<string>>(new Set());
+}: KnowledgeBaseTagListProps) {
+  const [expandedTags, setExpandedTags] = useState<Set<string>>(new Set());
   const [removingDocIds, setRemovingDocIds] = useState<Set<string>>(new Set());
 
-  const toggleExpand = (type: string) => {
-    setExpandedTypes((prev) => {
+  const toggleExpand = (tagId: string) => {
+    setExpandedTags((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(type)) {
-        newSet.delete(type);
+      if (newSet.has(tagId)) {
+        newSet.delete(tagId);
       } else {
-        newSet.add(type);
+        newSet.add(tagId);
       }
       return newSet;
     });
@@ -130,29 +126,23 @@ export function KnowledgeBaseCategoryList({
 
   return (
     <div className="space-y-3">
-      {documentsByType.map(({ type, documents, kbCount }) => {
-        const Icon = getFileCategoryIcon(type as FileCategory);
-        const isExpanded = expandedTypes.has(type);
+      {documentsByTag.map(({ tagId, tagName, documents, kbCount }) => {
+        const isExpanded = expandedTags.has(tagId);
 
         return (
-          <Card key={type} className="overflow-hidden">
+          <Card key={tagId} className="overflow-hidden">
             <div className="px-4">
               <div className="flex items-center justify-between gap-4">
-                {/* Left side - Category info */}
+                {/* Left side - Tag info */}
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <Icon className="h-6 w-6 text-primary shrink-0" />
+                  <TagIcon className="h-6 w-6 text-primary shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-base">
-                        {getFileCategoryLabel(type as FileCategory)}
-                      </h3>
+                      <h3 className="font-semibold text-base">{tagName}</h3>
                       <Badge variant="outline" className="text-xs">
                         {kbCount}
                       </Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {getFileCategoryDescription(type as FileCategory)}
-                    </p>
                   </div>
                 </div>
 
@@ -162,7 +152,7 @@ export function KnowledgeBaseCategoryList({
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => toggleExpand(type)}
+                      onClick={() => toggleExpand(tagId)}
                       className="h-8 w-8"
                     >
                       {isExpanded ? (

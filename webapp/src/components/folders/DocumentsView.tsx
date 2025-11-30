@@ -22,7 +22,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { validateDocumentFile } from "@/lib/clientUploadValidation";
-import { FileCategory } from "@/generated/prisma";
 
 interface Folder {
   id: string;
@@ -42,7 +41,10 @@ interface Document {
   fileUrl?: string | null;
   fileType?: string | null;
   content?: string | null;
-  fileCategory?: FileCategory;
+  fileTag?: {
+    id: string;
+    name: string;
+  } | null;
   isKnowledgeBase?: boolean;
 }
 
@@ -586,29 +588,29 @@ export function DocumentsView({
     }
   };
 
-  // Change document category handler
-  const handleChangeDocumentCategory = async (
+  // Change document tag handler
+  const handleChangeDocumentTag = async (
     documentId: string,
-    category: FileCategory
+    tagId: string | null
   ) => {
     try {
       const response = await fetch(`/api/documents/${documentId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileCategory: category }),
+        body: JSON.stringify({ fileTagId: tagId }),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || "Failed to update category");
+        throw new Error(error.error || "Failed to update tag");
       }
 
-      toast.success("Document category updated");
+      toast.success("Document tag updated");
       fetchFolderContents(currentFolderId);
     } catch (error) {
-      console.error("Error changing category:", error);
+      console.error("Error changing tag:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to update category"
+        error instanceof Error ? error.message : "Failed to update tag"
       );
     }
   };
@@ -986,7 +988,7 @@ export function DocumentsView({
           onMoveFolder={handleMoveFolder}
           onMoveDocument={handleMoveDocument}
           onExportDocument={handleExportDocument}
-          onChangeDocumentCategory={handleChangeDocumentCategory}
+          onChangeDocumentTag={handleChangeDocumentTag}
           onToggleDocumentKnowledgeBase={handleToggleDocumentKnowledgeBase}
           organizationSlug={organizationSlug}
         />

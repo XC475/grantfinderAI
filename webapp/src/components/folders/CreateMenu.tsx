@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Plus,
   Folder as FolderIcon,
@@ -35,12 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  getAllFileCategories,
-  getFileCategoryLabel,
-} from "@/lib/fileCategories";
 import { toast } from "sonner";
-import { FileCategory } from "@/generated/prisma";
 
 interface CreateMenuProps {
   currentFolderId: string | null;
@@ -54,10 +49,10 @@ interface CreateMenuProps {
   onCreateDocument: (
     title: string,
     folderId: string | null,
-    fileCategory: FileCategory
+    fileTagId: string | null
   ) => Promise<void>;
-  onFileUpload?: (file: File, fileCategory: FileCategory) => void;
-  onGoogleDriveImported?: (fileCategory: FileCategory) => void;
+  onFileUpload?: (file: File, fileTagId: string | null) => void;
+  onGoogleDriveImported?: (fileTagId: string | null) => void;
   isKnowledgeBase?: boolean;
   onShowDocumentSelector?: () => void;
 }
@@ -79,13 +74,12 @@ export function CreateMenu({
   const [googleDriveDialogOpen, setGoogleDriveDialogOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [documentTitle, setDocumentTitle] = useState("Untitled Document");
-  const [documentFileCategory, setDocumentFileCategory] =
-    useState<FileCategory>("GENERAL");
-  const [uploadFileCategory, setUploadFileCategory] =
-    useState<FileCategory>("GENERAL");
-  const [googleDriveFileCategory, setGoogleDriveFileCategory] =
-    useState<FileCategory>("GENERAL");
+  const [tags, setTags] = useState<Array<{ id: string; name: string }>>([]);
+  const [documentFileTagId, setDocumentFileTagId] = useState<string | null>(null);
+  const [uploadFileTagId, setUploadFileTagId] = useState<string | null>(null);
+  const [googleDriveFileTagId, setGoogleDriveFileTagId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [loadingTags, setLoadingTags] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedGoogleDriveFile, setSelectedGoogleDriveFile] = useState<{
@@ -95,6 +89,31 @@ export function CreateMenu({
   } | null>(null);
   const [importing, setImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Fetch tags on mount
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        setLoadingTags(true);
+        const response = await fetch("/api/document-tags");
+        if (!response.ok) throw new Error("Failed to fetch tags");
+        const data = await response.json();
+        setTags(data.tags || []);
+        // Set default to first tag if available
+        if (data.tags && data.tags.length > 0) {
+          setDocumentFileTagId(data.tags[0].id);
+          setUploadFileTagId(data.tags[0].id);
+          setGoogleDriveFileTagId(data.tags[0].id);
+        }
+      } catch (error) {
+        console.error("Error fetching tags:", error);
+        toast.error("Failed to load document tags");
+      } finally {
+        setLoadingTags(false);
+      }
+    };
+    fetchTags();
+  }, []);
 
   const handleCreateFolder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,10 +140,12 @@ export function CreateMenu({
       await onCreateDocument(
         documentTitle,
         currentFolderId,
-        documentFileCategory
+        documentFileTagId
       );
       setDocumentTitle("Untitled Document");
-      setDocumentFileCategory("GENERAL");
+      if (tags.length > 0) {
+        setDocumentFileTagId(tags[0].id);
+      }
       setDocumentDialogOpen(false);
     } catch (error) {
       console.error("Error creating document:", error);
@@ -150,9 +171,11 @@ export function CreateMenu({
 
     setUploading(true);
     try {
-      await onFileUpload(selectedFile, uploadFileCategory);
+      await onFileUpload(selectedFile, uploadFileTagId);
       setSelectedFile(null);
-      setUploadFileCategory("GENERAL");
+      if (tags.length > 0) {
+        setUploadFileTagId(tags[0].id);
+      }
       setUploadDialogOpen(false);
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -186,7 +209,7 @@ export function CreateMenu({
           mimeType: selectedGoogleDriveFile.mimeType,
           folderId: currentFolderId,
           applicationId: applicationId,
-          fileCategory: googleDriveFileCategory,
+          fileTagId: googleDriveFileTagId,
           // isKnowledgeBase defaults to true in the API
           // Only pass it if explicitly set to true (for knowledge base page)
           ...(isKnowledgeBase === true && { isKnowledgeBase: true }),
@@ -201,9 +224,11 @@ export function CreateMenu({
       await response.json();
       toast.success("File imported successfully");
       setSelectedGoogleDriveFile(null);
-      setGoogleDriveFileCategory("GENERAL");
+      if (tags.length > 0) {
+        setGoogleDriveFileTagId(tags[0].id);
+      }
       setGoogleDriveDialogOpen(false);
-      onGoogleDriveImported?.(googleDriveFileCategory);
+      onGoogleDriveImported?.(googleDriveFileTagId);
     } catch (error) {
       console.error("Error importing from Google Drive:", error);
       toast.error(
@@ -317,7 +342,7 @@ export function CreateMenu({
             <DialogHeader>
               <DialogTitle>Create New Document</DialogTitle>
               <DialogDescription>
-                Enter a title and select a category for your new document.
+                Enter a title and select a tag for your new document.
               </DialogDescription>
             </DialogHeader>
             <div className="py-4 space-y-4">
@@ -333,21 +358,21 @@ export function CreateMenu({
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="document-category">Document Type</Label>
+                <Label htmlFor="document-tag">Document Tag</Label>
                 <Select
-                  value={documentFileCategory}
+                  value={documentFileTagId || ""}
                   onValueChange={(value) =>
-                    setDocumentFileCategory(value as FileCategory)
+                    setDocumentFileTagId(value || null)
                   }
-                  disabled={isCreating}
+                  disabled={isCreating || loadingTags}
                 >
-                  <SelectTrigger id="document-category">
-                    <SelectValue />
+                  <SelectTrigger id="document-tag">
+                    <SelectValue placeholder="Select a tag" />
                   </SelectTrigger>
                   <SelectContent>
-                    {getAllFileCategories().map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {getFileCategoryLabel(type)}
+                    {tags.map((tag) => (
+                      <SelectItem key={tag.id} value={tag.id}>
+                        {tag.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -398,21 +423,21 @@ export function CreateMenu({
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label>Document Type</Label>
+                <Label>Document Tag</Label>
                 <Select
-                  value={uploadFileCategory}
+                  value={uploadFileTagId || ""}
                   onValueChange={(value) =>
-                    setUploadFileCategory(value as FileCategory)
+                    setUploadFileTagId(value || null)
                   }
-                  disabled={uploading}
+                  disabled={uploading || loadingTags}
                 >
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Select a tag" />
                   </SelectTrigger>
                   <SelectContent>
-                    {getAllFileCategories().map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {getFileCategoryLabel(type)}
+                    {tags.map((tag) => (
+                      <SelectItem key={tag.id} value={tag.id}>
+                        {tag.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -515,21 +540,21 @@ export function CreateMenu({
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label>Document Type</Label>
+                <Label>Document Tag</Label>
                 <Select
-                  value={googleDriveFileCategory}
+                  value={googleDriveFileTagId || ""}
                   onValueChange={(value) =>
-                    setGoogleDriveFileCategory(value as FileCategory)
+                    setGoogleDriveFileTagId(value || null)
                   }
-                  disabled={importing}
+                  disabled={importing || loadingTags}
                 >
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Select a tag" />
                   </SelectTrigger>
                   <SelectContent>
-                    {getAllFileCategories().map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {getFileCategoryLabel(type)}
+                    {tags.map((tag) => (
+                      <SelectItem key={tag.id} value={tag.id}>
+                        {tag.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -542,7 +567,7 @@ export function CreateMenu({
                     mode="import"
                     folderId={currentFolderId}
                     applicationId={applicationId}
-                    fileCategory={googleDriveFileCategory}
+                    fileTagId={googleDriveFileTagId}
                     isKnowledgeBase={isKnowledgeBase}
                     onFileSelected={handleGoogleDriveFileSelected}
                     asButton

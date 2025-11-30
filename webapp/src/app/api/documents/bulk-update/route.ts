@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
-import { FileCategory } from "@/generated/prisma";
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,7 +27,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { documentIds, updates } = await req.json();
-    // updates can contain: { isKnowledgeBase, fileCategory, metadata }
+    // updates can contain: { isKnowledgeBase, fileTagId, fileTag, metadata }
 
     if (
       !documentIds ||
@@ -48,6 +47,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Resolve fileTagId from fileTag name or use provided fileTagId
+    let resolvedFileTagId: string | null | undefined = updates.fileTagId;
+    if (updates.fileTag && !resolvedFileTagId) {
+      const tag = await prisma.documentTag.findFirst({
+        where: {
+          organizationId: dbUser.organizationId,
+          OR: [{ id: updates.fileTag }, { name: updates.fileTag }],
+        },
+      });
+      if (tag) {
+        resolvedFileTagId = tag.id;
+      }
+    }
+
     // Update all documents (note: metadata requires individual updates)
     if (updates.metadata) {
       // Individual updates for metadata merge
@@ -63,8 +76,8 @@ export async function POST(req: NextRequest) {
                 ...(updates.isKnowledgeBase !== undefined && {
                   isKnowledgeBase: updates.isKnowledgeBase,
                 }),
-                ...(updates.fileCategory && {
-                  fileCategory: updates.fileCategory,
+                ...(resolvedFileTagId !== undefined && {
+                  fileTagId: resolvedFileTagId,
                 }),
                 metadata: {
                   ...((doc.metadata as object) || {}),
@@ -86,8 +99,8 @@ export async function POST(req: NextRequest) {
           ...(updates.isKnowledgeBase !== undefined && {
             isKnowledgeBase: updates.isKnowledgeBase,
           }),
-          ...(updates.fileCategory && {
-            fileCategory: updates.fileCategory as FileCategory,
+          ...(resolvedFileTagId !== undefined && {
+            fileTagId: resolvedFileTagId,
           }),
         },
       });

@@ -84,6 +84,11 @@ export type Document = $Result.DefaultSelection<Prisma.$DocumentPayload>
  */
 export type DocumentVector = $Result.DefaultSelection<Prisma.$DocumentVectorPayload>
 /**
+ * Model DocumentTag
+ * 
+ */
+export type DocumentTag = $Result.DefaultSelection<Prisma.$DocumentTagPayload>
+/**
  * Model Folder
  * 
  */
@@ -168,23 +173,6 @@ export const VectorizationStatus: {
 };
 
 export type VectorizationStatus = (typeof VectorizationStatus)[keyof typeof VectorizationStatus]
-
-
-export const FileCategory: {
-  GENERAL: 'GENERAL',
-  WINNING_APPLICATION: 'WINNING_APPLICATION',
-  TEMPLATE: 'TEMPLATE',
-  OPPORTUNITY: 'OPPORTUNITY',
-  AWARD_CONTRACT: 'AWARD_CONTRACT',
-  BUDGET_FINANCIAL: 'BUDGET_FINANCIAL',
-  PROGRESS_REPORT: 'PROGRESS_REPORT',
-  FINAL_REPORT: 'FINAL_REPORT',
-  SUPPORTING_DOCUMENT: 'SUPPORTING_DOCUMENT',
-  CORRESPONDENCE: 'CORRESPONDENCE',
-  COMPLIANCE_RECORDS: 'COMPLIANCE_RECORDS'
-};
-
-export type FileCategory = (typeof FileCategory)[keyof typeof FileCategory]
 
 
 export const funding_type_enum: {
@@ -310,10 +298,6 @@ export const OrganizationRole: typeof $Enums.OrganizationRole
 export type VectorizationStatus = $Enums.VectorizationStatus
 
 export const VectorizationStatus: typeof $Enums.VectorizationStatus
-
-export type FileCategory = $Enums.FileCategory
-
-export const FileCategory: typeof $Enums.FileCategory
 
 export type funding_type_enum = $Enums.funding_type_enum
 
@@ -588,6 +572,16 @@ export class PrismaClient<
     * ```
     */
   get documentVector(): Prisma.DocumentVectorDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.documentTag`: Exposes CRUD operations for the **DocumentTag** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DocumentTags
+    * const documentTags = await prisma.documentTag.findMany()
+    * ```
+    */
+  get documentTag(): Prisma.DocumentTagDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.folder`: Exposes CRUD operations for the **Folder** model.
@@ -1063,6 +1057,7 @@ export namespace Prisma {
     VectorDocument: 'VectorDocument',
     Document: 'Document',
     DocumentVector: 'DocumentVector',
+    DocumentTag: 'DocumentTag',
     Folder: 'Folder',
     k12_education_opportunities: 'k12_education_opportunities'
   };
@@ -1083,7 +1078,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "alembic_version" | "opportunities" | "user" | "userAIContextSettings" | "organization" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "vectorDocument" | "document" | "documentVector" | "folder" | "k12_education_opportunities"
+      modelProps: "alembic_version" | "opportunities" | "user" | "userAIContextSettings" | "organization" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "vectorDocument" | "document" | "documentVector" | "documentTag" | "folder" | "k12_education_opportunities"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2123,6 +2118,80 @@ export namespace Prisma {
           }
         }
       }
+      DocumentTag: {
+        payload: Prisma.$DocumentTagPayload<ExtArgs>
+        fields: Prisma.DocumentTagFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DocumentTagFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DocumentTagPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DocumentTagFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DocumentTagPayload>
+          }
+          findFirst: {
+            args: Prisma.DocumentTagFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DocumentTagPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DocumentTagFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DocumentTagPayload>
+          }
+          findMany: {
+            args: Prisma.DocumentTagFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DocumentTagPayload>[]
+          }
+          create: {
+            args: Prisma.DocumentTagCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DocumentTagPayload>
+          }
+          createMany: {
+            args: Prisma.DocumentTagCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DocumentTagCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DocumentTagPayload>[]
+          }
+          delete: {
+            args: Prisma.DocumentTagDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DocumentTagPayload>
+          }
+          update: {
+            args: Prisma.DocumentTagUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DocumentTagPayload>
+          }
+          deleteMany: {
+            args: Prisma.DocumentTagDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DocumentTagUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DocumentTagUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DocumentTagPayload>[]
+          }
+          upsert: {
+            args: Prisma.DocumentTagUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DocumentTagPayload>
+          }
+          aggregate: {
+            args: Prisma.DocumentTagAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDocumentTag>
+          }
+          groupBy: {
+            args: Prisma.DocumentTagGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DocumentTagGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DocumentTagCountArgs<ExtArgs>
+            result: $Utils.Optional<DocumentTagCountAggregateOutputType> | number
+          }
+        }
+      }
       Folder: {
         payload: Prisma.$FolderPayload<ExtArgs>
         fields: Prisma.FolderFieldRefs
@@ -2381,6 +2450,7 @@ export namespace Prisma {
     vectorDocument?: VectorDocumentOmit
     document?: DocumentOmit
     documentVector?: DocumentVectorOmit
+    documentTag?: DocumentTagOmit
     folder?: FolderOmit
     k12_education_opportunities?: k12_education_opportunitiesOmit
   }
@@ -2722,6 +2792,37 @@ export namespace Prisma {
    */
   export type DocumentCountOutputTypeCountVectorsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: DocumentVectorWhereInput
+  }
+
+
+  /**
+   * Count Type DocumentTagCountOutputType
+   */
+
+  export type DocumentTagCountOutputType = {
+    documents: number
+  }
+
+  export type DocumentTagCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    documents?: boolean | DocumentTagCountOutputTypeCountDocumentsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * DocumentTagCountOutputType without action
+   */
+  export type DocumentTagCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DocumentTagCountOutputType
+     */
+    select?: DocumentTagCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * DocumentTagCountOutputType without action
+   */
+  export type DocumentTagCountOutputTypeCountDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DocumentWhereInput
   }
 
 
@@ -5468,8 +5569,8 @@ export namespace Prisma {
     googleTokenExpiry?: boolean
     aiChats?: boolean | User$aiChatsArgs<ExtArgs>
     grantBookmarks?: boolean | User$grantBookmarksArgs<ExtArgs>
-    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     aiContextSettings?: boolean | User$aiContextSettingsArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -5536,8 +5637,8 @@ export namespace Prisma {
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | User$aiChatsArgs<ExtArgs>
     grantBookmarks?: boolean | User$grantBookmarksArgs<ExtArgs>
-    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     aiContextSettings?: boolean | User$aiContextSettingsArgs<ExtArgs>
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5552,8 +5653,8 @@ export namespace Prisma {
     objects: {
       aiChats: Prisma.$AiChatPayload<ExtArgs>[]
       grantBookmarks: Prisma.$GrantBookmarkPayload<ExtArgs>[]
-      organization: Prisma.$OrganizationPayload<ExtArgs>
       aiContextSettings: Prisma.$UserAIContextSettingsPayload<ExtArgs> | null
+      organization: Prisma.$OrganizationPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5968,8 +6069,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     aiChats<T extends User$aiChatsArgs<ExtArgs> = {}>(args?: Subset<T, User$aiChatsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     grantBookmarks<T extends User$grantBookmarksArgs<ExtArgs> = {}>(args?: Subset<T, User$grantBookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GrantBookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     aiContextSettings<T extends User$aiContextSettingsArgs<ExtArgs> = {}>(args?: Subset<T, User$aiContextSettingsArgs<ExtArgs>>): Prisma__UserAIContextSettingsClient<$Result.GetResult<Prisma.$UserAIContextSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6523,10 +6624,10 @@ export namespace Prisma {
   export type UserAIContextSettingsCountAggregateOutputType = {
     id: number
     userId: number
-    enabledCategoriesChat: number
-    enabledCategoriesEditor: number
     createdAt: number
     updatedAt: number
+    enabledTagsChat: number
+    enabledTagsEditor: number
     _all: number
   }
 
@@ -6548,10 +6649,10 @@ export namespace Prisma {
   export type UserAIContextSettingsCountAggregateInputType = {
     id?: true
     userId?: true
-    enabledCategoriesChat?: true
-    enabledCategoriesEditor?: true
     createdAt?: true
     updatedAt?: true
+    enabledTagsChat?: true
+    enabledTagsEditor?: true
     _all?: true
   }
 
@@ -6630,10 +6731,10 @@ export namespace Prisma {
   export type UserAIContextSettingsGroupByOutputType = {
     id: string
     userId: string
-    enabledCategoriesChat: $Enums.FileCategory[]
-    enabledCategoriesEditor: $Enums.FileCategory[]
     createdAt: Date
     updatedAt: Date
+    enabledTagsChat: string[]
+    enabledTagsEditor: string[]
     _count: UserAIContextSettingsCountAggregateOutputType | null
     _min: UserAIContextSettingsMinAggregateOutputType | null
     _max: UserAIContextSettingsMaxAggregateOutputType | null
@@ -6656,43 +6757,43 @@ export namespace Prisma {
   export type UserAIContextSettingsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    enabledCategoriesChat?: boolean
-    enabledCategoriesEditor?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    enabledTagsChat?: boolean
+    enabledTagsEditor?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userAIContextSettings"]>
 
   export type UserAIContextSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    enabledCategoriesChat?: boolean
-    enabledCategoriesEditor?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    enabledTagsChat?: boolean
+    enabledTagsEditor?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userAIContextSettings"]>
 
   export type UserAIContextSettingsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    enabledCategoriesChat?: boolean
-    enabledCategoriesEditor?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    enabledTagsChat?: boolean
+    enabledTagsEditor?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userAIContextSettings"]>
 
   export type UserAIContextSettingsSelectScalar = {
     id?: boolean
     userId?: boolean
-    enabledCategoriesChat?: boolean
-    enabledCategoriesEditor?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    enabledTagsChat?: boolean
+    enabledTagsEditor?: boolean
   }
 
-  export type UserAIContextSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "enabledCategoriesChat" | "enabledCategoriesEditor" | "createdAt" | "updatedAt", ExtArgs["result"]["userAIContextSettings"]>
+  export type UserAIContextSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "createdAt" | "updatedAt" | "enabledTagsChat" | "enabledTagsEditor", ExtArgs["result"]["userAIContextSettings"]>
   export type UserAIContextSettingsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -6711,10 +6812,10 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
-      enabledCategoriesChat: $Enums.FileCategory[]
-      enabledCategoriesEditor: $Enums.FileCategory[]
       createdAt: Date
       updatedAt: Date
+      enabledTagsChat: string[]
+      enabledTagsEditor: string[]
     }, ExtArgs["result"]["userAIContextSettings"]>
     composites: {}
   }
@@ -7141,10 +7242,10 @@ export namespace Prisma {
   interface UserAIContextSettingsFieldRefs {
     readonly id: FieldRef<"UserAIContextSettings", 'String'>
     readonly userId: FieldRef<"UserAIContextSettings", 'String'>
-    readonly enabledCategoriesChat: FieldRef<"UserAIContextSettings", 'FileCategory[]'>
-    readonly enabledCategoriesEditor: FieldRef<"UserAIContextSettings", 'FileCategory[]'>
     readonly createdAt: FieldRef<"UserAIContextSettings", 'DateTime'>
     readonly updatedAt: FieldRef<"UserAIContextSettings", 'DateTime'>
+    readonly enabledTagsChat: FieldRef<"UserAIContextSettings", 'String[]'>
+    readonly enabledTagsEditor: FieldRef<"UserAIContextSettings", 'String[]'>
   }
     
 
@@ -17246,13 +17347,13 @@ export namespace Prisma {
     fileSize: number | null
     fileType: string | null
     fileUrl: string | null
-    fileCategory: $Enums.FileCategory | null
-    isKnowledgeBase: boolean | null
+    chunkCount: number | null
     extractedText: string | null
+    isKnowledgeBase: boolean | null
+    vectorizationError: string | null
     vectorizationStatus: $Enums.VectorizationStatus | null
     vectorizedAt: Date | null
-    chunkCount: number | null
-    vectorizationError: string | null
+    fileTagId: string | null
   }
 
   export type DocumentMaxAggregateOutputType = {
@@ -17269,13 +17370,13 @@ export namespace Prisma {
     fileSize: number | null
     fileType: string | null
     fileUrl: string | null
-    fileCategory: $Enums.FileCategory | null
-    isKnowledgeBase: boolean | null
+    chunkCount: number | null
     extractedText: string | null
+    isKnowledgeBase: boolean | null
+    vectorizationError: string | null
     vectorizationStatus: $Enums.VectorizationStatus | null
     vectorizedAt: Date | null
-    chunkCount: number | null
-    vectorizationError: string | null
+    fileTagId: string | null
   }
 
   export type DocumentCountAggregateOutputType = {
@@ -17293,13 +17394,13 @@ export namespace Prisma {
     fileSize: number
     fileType: number
     fileUrl: number
-    fileCategory: number
-    isKnowledgeBase: number
+    chunkCount: number
     extractedText: number
+    isKnowledgeBase: number
+    vectorizationError: number
     vectorizationStatus: number
     vectorizedAt: number
-    chunkCount: number
-    vectorizationError: number
+    fileTagId: number
     _all: number
   }
 
@@ -17330,13 +17431,13 @@ export namespace Prisma {
     fileSize?: true
     fileType?: true
     fileUrl?: true
-    fileCategory?: true
-    isKnowledgeBase?: true
+    chunkCount?: true
     extractedText?: true
+    isKnowledgeBase?: true
+    vectorizationError?: true
     vectorizationStatus?: true
     vectorizedAt?: true
-    chunkCount?: true
-    vectorizationError?: true
+    fileTagId?: true
   }
 
   export type DocumentMaxAggregateInputType = {
@@ -17353,13 +17454,13 @@ export namespace Prisma {
     fileSize?: true
     fileType?: true
     fileUrl?: true
-    fileCategory?: true
-    isKnowledgeBase?: true
+    chunkCount?: true
     extractedText?: true
+    isKnowledgeBase?: true
+    vectorizationError?: true
     vectorizationStatus?: true
     vectorizedAt?: true
-    chunkCount?: true
-    vectorizationError?: true
+    fileTagId?: true
   }
 
   export type DocumentCountAggregateInputType = {
@@ -17377,13 +17478,13 @@ export namespace Prisma {
     fileSize?: true
     fileType?: true
     fileUrl?: true
-    fileCategory?: true
-    isKnowledgeBase?: true
+    chunkCount?: true
     extractedText?: true
+    isKnowledgeBase?: true
+    vectorizationError?: true
     vectorizationStatus?: true
     vectorizedAt?: true
-    chunkCount?: true
-    vectorizationError?: true
+    fileTagId?: true
     _all?: true
   }
 
@@ -17488,13 +17589,13 @@ export namespace Prisma {
     fileSize: number | null
     fileType: string | null
     fileUrl: string | null
-    fileCategory: $Enums.FileCategory
-    isKnowledgeBase: boolean
+    chunkCount: number | null
     extractedText: string | null
+    isKnowledgeBase: boolean
+    vectorizationError: string | null
     vectorizationStatus: $Enums.VectorizationStatus
     vectorizedAt: Date | null
-    chunkCount: number | null
-    vectorizationError: string | null
+    fileTagId: string | null
     _count: DocumentCountAggregateOutputType | null
     _avg: DocumentAvgAggregateOutputType | null
     _sum: DocumentSumAggregateOutputType | null
@@ -17531,17 +17632,18 @@ export namespace Prisma {
     fileSize?: boolean
     fileType?: boolean
     fileUrl?: boolean
-    fileCategory?: boolean
-    isKnowledgeBase?: boolean
+    chunkCount?: boolean
     extractedText?: boolean
+    isKnowledgeBase?: boolean
+    vectorizationError?: boolean
     vectorizationStatus?: boolean
     vectorizedAt?: boolean
-    chunkCount?: boolean
-    vectorizationError?: boolean
+    fileTagId?: boolean
+    vectors?: boolean | Document$vectorsArgs<ExtArgs>
     application?: boolean | Document$applicationArgs<ExtArgs>
+    fileTag?: boolean | Document$fileTagArgs<ExtArgs>
     folder?: boolean | Document$folderArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
-    vectors?: boolean | Document$vectorsArgs<ExtArgs>
     _count?: boolean | DocumentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["document"]>
 
@@ -17560,14 +17662,15 @@ export namespace Prisma {
     fileSize?: boolean
     fileType?: boolean
     fileUrl?: boolean
-    fileCategory?: boolean
-    isKnowledgeBase?: boolean
+    chunkCount?: boolean
     extractedText?: boolean
+    isKnowledgeBase?: boolean
+    vectorizationError?: boolean
     vectorizationStatus?: boolean
     vectorizedAt?: boolean
-    chunkCount?: boolean
-    vectorizationError?: boolean
+    fileTagId?: boolean
     application?: boolean | Document$applicationArgs<ExtArgs>
+    fileTag?: boolean | Document$fileTagArgs<ExtArgs>
     folder?: boolean | Document$folderArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["document"]>
@@ -17587,14 +17690,15 @@ export namespace Prisma {
     fileSize?: boolean
     fileType?: boolean
     fileUrl?: boolean
-    fileCategory?: boolean
-    isKnowledgeBase?: boolean
+    chunkCount?: boolean
     extractedText?: boolean
+    isKnowledgeBase?: boolean
+    vectorizationError?: boolean
     vectorizationStatus?: boolean
     vectorizedAt?: boolean
-    chunkCount?: boolean
-    vectorizationError?: boolean
+    fileTagId?: boolean
     application?: boolean | Document$applicationArgs<ExtArgs>
+    fileTag?: boolean | Document$fileTagArgs<ExtArgs>
     folder?: boolean | Document$folderArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["document"]>
@@ -17614,30 +17718,33 @@ export namespace Prisma {
     fileSize?: boolean
     fileType?: boolean
     fileUrl?: boolean
-    fileCategory?: boolean
-    isKnowledgeBase?: boolean
+    chunkCount?: boolean
     extractedText?: boolean
+    isKnowledgeBase?: boolean
+    vectorizationError?: boolean
     vectorizationStatus?: boolean
     vectorizedAt?: boolean
-    chunkCount?: boolean
-    vectorizationError?: boolean
+    fileTagId?: boolean
   }
 
-  export type DocumentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicationId" | "title" | "content" | "contentType" | "metadata" | "version" | "createdAt" | "updatedAt" | "organizationId" | "folderId" | "fileSize" | "fileType" | "fileUrl" | "fileCategory" | "isKnowledgeBase" | "extractedText" | "vectorizationStatus" | "vectorizedAt" | "chunkCount" | "vectorizationError", ExtArgs["result"]["document"]>
+  export type DocumentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicationId" | "title" | "content" | "contentType" | "metadata" | "version" | "createdAt" | "updatedAt" | "organizationId" | "folderId" | "fileSize" | "fileType" | "fileUrl" | "chunkCount" | "extractedText" | "isKnowledgeBase" | "vectorizationError" | "vectorizationStatus" | "vectorizedAt" | "fileTagId", ExtArgs["result"]["document"]>
   export type DocumentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    vectors?: boolean | Document$vectorsArgs<ExtArgs>
     application?: boolean | Document$applicationArgs<ExtArgs>
+    fileTag?: boolean | Document$fileTagArgs<ExtArgs>
     folder?: boolean | Document$folderArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
-    vectors?: boolean | Document$vectorsArgs<ExtArgs>
     _count?: boolean | DocumentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type DocumentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     application?: boolean | Document$applicationArgs<ExtArgs>
+    fileTag?: boolean | Document$fileTagArgs<ExtArgs>
     folder?: boolean | Document$folderArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }
   export type DocumentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     application?: boolean | Document$applicationArgs<ExtArgs>
+    fileTag?: boolean | Document$fileTagArgs<ExtArgs>
     folder?: boolean | Document$folderArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }
@@ -17645,10 +17752,11 @@ export namespace Prisma {
   export type $DocumentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Document"
     objects: {
+      vectors: Prisma.$DocumentVectorPayload<ExtArgs>[]
       application: Prisma.$ApplicationPayload<ExtArgs> | null
+      fileTag: Prisma.$DocumentTagPayload<ExtArgs> | null
       folder: Prisma.$FolderPayload<ExtArgs> | null
       organization: Prisma.$OrganizationPayload<ExtArgs>
-      vectors: Prisma.$DocumentVectorPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -17665,13 +17773,13 @@ export namespace Prisma {
       fileSize: number | null
       fileType: string | null
       fileUrl: string | null
-      fileCategory: $Enums.FileCategory
-      isKnowledgeBase: boolean
+      chunkCount: number | null
       extractedText: string | null
+      isKnowledgeBase: boolean
+      vectorizationError: string | null
       vectorizationStatus: $Enums.VectorizationStatus
       vectorizedAt: Date | null
-      chunkCount: number | null
-      vectorizationError: string | null
+      fileTagId: string | null
     }, ExtArgs["result"]["document"]>
     composites: {}
   }
@@ -18066,10 +18174,11 @@ export namespace Prisma {
    */
   export interface Prisma__DocumentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    vectors<T extends Document$vectorsArgs<ExtArgs> = {}>(args?: Subset<T, Document$vectorsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentVectorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     application<T extends Document$applicationArgs<ExtArgs> = {}>(args?: Subset<T, Document$applicationArgs<ExtArgs>>): Prisma__ApplicationClient<$Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    fileTag<T extends Document$fileTagArgs<ExtArgs> = {}>(args?: Subset<T, Document$fileTagArgs<ExtArgs>>): Prisma__DocumentTagClient<$Result.GetResult<Prisma.$DocumentTagPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     folder<T extends Document$folderArgs<ExtArgs> = {}>(args?: Subset<T, Document$folderArgs<ExtArgs>>): Prisma__FolderClient<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    vectors<T extends Document$vectorsArgs<ExtArgs> = {}>(args?: Subset<T, Document$vectorsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentVectorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -18113,13 +18222,13 @@ export namespace Prisma {
     readonly fileSize: FieldRef<"Document", 'Int'>
     readonly fileType: FieldRef<"Document", 'String'>
     readonly fileUrl: FieldRef<"Document", 'String'>
-    readonly fileCategory: FieldRef<"Document", 'FileCategory'>
-    readonly isKnowledgeBase: FieldRef<"Document", 'Boolean'>
+    readonly chunkCount: FieldRef<"Document", 'Int'>
     readonly extractedText: FieldRef<"Document", 'String'>
+    readonly isKnowledgeBase: FieldRef<"Document", 'Boolean'>
+    readonly vectorizationError: FieldRef<"Document", 'String'>
     readonly vectorizationStatus: FieldRef<"Document", 'VectorizationStatus'>
     readonly vectorizedAt: FieldRef<"Document", 'DateTime'>
-    readonly chunkCount: FieldRef<"Document", 'Int'>
-    readonly vectorizationError: FieldRef<"Document", 'String'>
+    readonly fileTagId: FieldRef<"Document", 'String'>
   }
     
 
@@ -18516,44 +18625,6 @@ export namespace Prisma {
   }
 
   /**
-   * Document.application
-   */
-  export type Document$applicationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Application
-     */
-    select?: ApplicationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Application
-     */
-    omit?: ApplicationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ApplicationInclude<ExtArgs> | null
-    where?: ApplicationWhereInput
-  }
-
-  /**
-   * Document.folder
-   */
-  export type Document$folderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Folder
-     */
-    select?: FolderSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Folder
-     */
-    omit?: FolderOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FolderInclude<ExtArgs> | null
-    where?: FolderWhereInput
-  }
-
-  /**
    * Document.vectors
    */
   export type Document$vectorsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -18575,6 +18646,63 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DocumentVectorScalarFieldEnum | DocumentVectorScalarFieldEnum[]
+  }
+
+  /**
+   * Document.application
+   */
+  export type Document$applicationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Application
+     */
+    select?: ApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Application
+     */
+    omit?: ApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationInclude<ExtArgs> | null
+    where?: ApplicationWhereInput
+  }
+
+  /**
+   * Document.fileTag
+   */
+  export type Document$fileTagArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DocumentTag
+     */
+    select?: DocumentTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DocumentTag
+     */
+    omit?: DocumentTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentTagInclude<ExtArgs> | null
+    where?: DocumentTagWhereInput
+  }
+
+  /**
+   * Document.folder
+   */
+  export type Document$folderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Folder
+     */
+    select?: FolderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Folder
+     */
+    omit?: FolderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FolderInclude<ExtArgs> | null
+    where?: FolderWhereInput
   }
 
   /**
@@ -19771,6 +19899,1076 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: DocumentVectorInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model DocumentTag
+   */
+
+  export type AggregateDocumentTag = {
+    _count: DocumentTagCountAggregateOutputType | null
+    _min: DocumentTagMinAggregateOutputType | null
+    _max: DocumentTagMaxAggregateOutputType | null
+  }
+
+  export type DocumentTagMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    organizationId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DocumentTagMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    organizationId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DocumentTagCountAggregateOutputType = {
+    id: number
+    name: number
+    organizationId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type DocumentTagMinAggregateInputType = {
+    id?: true
+    name?: true
+    organizationId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DocumentTagMaxAggregateInputType = {
+    id?: true
+    name?: true
+    organizationId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DocumentTagCountAggregateInputType = {
+    id?: true
+    name?: true
+    organizationId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type DocumentTagAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DocumentTag to aggregate.
+     */
+    where?: DocumentTagWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DocumentTags to fetch.
+     */
+    orderBy?: DocumentTagOrderByWithRelationInput | DocumentTagOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DocumentTagWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DocumentTags from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DocumentTags.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DocumentTags
+    **/
+    _count?: true | DocumentTagCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DocumentTagMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DocumentTagMaxAggregateInputType
+  }
+
+  export type GetDocumentTagAggregateType<T extends DocumentTagAggregateArgs> = {
+        [P in keyof T & keyof AggregateDocumentTag]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDocumentTag[P]>
+      : GetScalarType<T[P], AggregateDocumentTag[P]>
+  }
+
+
+
+
+  export type DocumentTagGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DocumentTagWhereInput
+    orderBy?: DocumentTagOrderByWithAggregationInput | DocumentTagOrderByWithAggregationInput[]
+    by: DocumentTagScalarFieldEnum[] | DocumentTagScalarFieldEnum
+    having?: DocumentTagScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DocumentTagCountAggregateInputType | true
+    _min?: DocumentTagMinAggregateInputType
+    _max?: DocumentTagMaxAggregateInputType
+  }
+
+  export type DocumentTagGroupByOutputType = {
+    id: string
+    name: string
+    organizationId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: DocumentTagCountAggregateOutputType | null
+    _min: DocumentTagMinAggregateOutputType | null
+    _max: DocumentTagMaxAggregateOutputType | null
+  }
+
+  type GetDocumentTagGroupByPayload<T extends DocumentTagGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DocumentTagGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DocumentTagGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DocumentTagGroupByOutputType[P]>
+            : GetScalarType<T[P], DocumentTagGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DocumentTagSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    organizationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    documents?: boolean | DocumentTag$documentsArgs<ExtArgs>
+    _count?: boolean | DocumentTagCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["documentTag"]>
+
+  export type DocumentTagSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    organizationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["documentTag"]>
+
+  export type DocumentTagSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    organizationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["documentTag"]>
+
+  export type DocumentTagSelectScalar = {
+    id?: boolean
+    name?: boolean
+    organizationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type DocumentTagOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "organizationId" | "createdAt" | "updatedAt", ExtArgs["result"]["documentTag"]>
+  export type DocumentTagInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    documents?: boolean | DocumentTag$documentsArgs<ExtArgs>
+    _count?: boolean | DocumentTagCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type DocumentTagIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type DocumentTagIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $DocumentTagPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DocumentTag"
+    objects: {
+      documents: Prisma.$DocumentPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      organizationId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["documentTag"]>
+    composites: {}
+  }
+
+  type DocumentTagGetPayload<S extends boolean | null | undefined | DocumentTagDefaultArgs> = $Result.GetResult<Prisma.$DocumentTagPayload, S>
+
+  type DocumentTagCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DocumentTagFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DocumentTagCountAggregateInputType | true
+    }
+
+  export interface DocumentTagDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DocumentTag'], meta: { name: 'DocumentTag' } }
+    /**
+     * Find zero or one DocumentTag that matches the filter.
+     * @param {DocumentTagFindUniqueArgs} args - Arguments to find a DocumentTag
+     * @example
+     * // Get one DocumentTag
+     * const documentTag = await prisma.documentTag.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DocumentTagFindUniqueArgs>(args: SelectSubset<T, DocumentTagFindUniqueArgs<ExtArgs>>): Prisma__DocumentTagClient<$Result.GetResult<Prisma.$DocumentTagPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one DocumentTag that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DocumentTagFindUniqueOrThrowArgs} args - Arguments to find a DocumentTag
+     * @example
+     * // Get one DocumentTag
+     * const documentTag = await prisma.documentTag.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DocumentTagFindUniqueOrThrowArgs>(args: SelectSubset<T, DocumentTagFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DocumentTagClient<$Result.GetResult<Prisma.$DocumentTagPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DocumentTag that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DocumentTagFindFirstArgs} args - Arguments to find a DocumentTag
+     * @example
+     * // Get one DocumentTag
+     * const documentTag = await prisma.documentTag.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DocumentTagFindFirstArgs>(args?: SelectSubset<T, DocumentTagFindFirstArgs<ExtArgs>>): Prisma__DocumentTagClient<$Result.GetResult<Prisma.$DocumentTagPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DocumentTag that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DocumentTagFindFirstOrThrowArgs} args - Arguments to find a DocumentTag
+     * @example
+     * // Get one DocumentTag
+     * const documentTag = await prisma.documentTag.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DocumentTagFindFirstOrThrowArgs>(args?: SelectSubset<T, DocumentTagFindFirstOrThrowArgs<ExtArgs>>): Prisma__DocumentTagClient<$Result.GetResult<Prisma.$DocumentTagPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more DocumentTags that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DocumentTagFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DocumentTags
+     * const documentTags = await prisma.documentTag.findMany()
+     * 
+     * // Get first 10 DocumentTags
+     * const documentTags = await prisma.documentTag.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const documentTagWithIdOnly = await prisma.documentTag.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DocumentTagFindManyArgs>(args?: SelectSubset<T, DocumentTagFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentTagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a DocumentTag.
+     * @param {DocumentTagCreateArgs} args - Arguments to create a DocumentTag.
+     * @example
+     * // Create one DocumentTag
+     * const DocumentTag = await prisma.documentTag.create({
+     *   data: {
+     *     // ... data to create a DocumentTag
+     *   }
+     * })
+     * 
+     */
+    create<T extends DocumentTagCreateArgs>(args: SelectSubset<T, DocumentTagCreateArgs<ExtArgs>>): Prisma__DocumentTagClient<$Result.GetResult<Prisma.$DocumentTagPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many DocumentTags.
+     * @param {DocumentTagCreateManyArgs} args - Arguments to create many DocumentTags.
+     * @example
+     * // Create many DocumentTags
+     * const documentTag = await prisma.documentTag.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DocumentTagCreateManyArgs>(args?: SelectSubset<T, DocumentTagCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DocumentTags and returns the data saved in the database.
+     * @param {DocumentTagCreateManyAndReturnArgs} args - Arguments to create many DocumentTags.
+     * @example
+     * // Create many DocumentTags
+     * const documentTag = await prisma.documentTag.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many DocumentTags and only return the `id`
+     * const documentTagWithIdOnly = await prisma.documentTag.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DocumentTagCreateManyAndReturnArgs>(args?: SelectSubset<T, DocumentTagCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentTagPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a DocumentTag.
+     * @param {DocumentTagDeleteArgs} args - Arguments to delete one DocumentTag.
+     * @example
+     * // Delete one DocumentTag
+     * const DocumentTag = await prisma.documentTag.delete({
+     *   where: {
+     *     // ... filter to delete one DocumentTag
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DocumentTagDeleteArgs>(args: SelectSubset<T, DocumentTagDeleteArgs<ExtArgs>>): Prisma__DocumentTagClient<$Result.GetResult<Prisma.$DocumentTagPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one DocumentTag.
+     * @param {DocumentTagUpdateArgs} args - Arguments to update one DocumentTag.
+     * @example
+     * // Update one DocumentTag
+     * const documentTag = await prisma.documentTag.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DocumentTagUpdateArgs>(args: SelectSubset<T, DocumentTagUpdateArgs<ExtArgs>>): Prisma__DocumentTagClient<$Result.GetResult<Prisma.$DocumentTagPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more DocumentTags.
+     * @param {DocumentTagDeleteManyArgs} args - Arguments to filter DocumentTags to delete.
+     * @example
+     * // Delete a few DocumentTags
+     * const { count } = await prisma.documentTag.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DocumentTagDeleteManyArgs>(args?: SelectSubset<T, DocumentTagDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DocumentTags.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DocumentTagUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DocumentTags
+     * const documentTag = await prisma.documentTag.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DocumentTagUpdateManyArgs>(args: SelectSubset<T, DocumentTagUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DocumentTags and returns the data updated in the database.
+     * @param {DocumentTagUpdateManyAndReturnArgs} args - Arguments to update many DocumentTags.
+     * @example
+     * // Update many DocumentTags
+     * const documentTag = await prisma.documentTag.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more DocumentTags and only return the `id`
+     * const documentTagWithIdOnly = await prisma.documentTag.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DocumentTagUpdateManyAndReturnArgs>(args: SelectSubset<T, DocumentTagUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentTagPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one DocumentTag.
+     * @param {DocumentTagUpsertArgs} args - Arguments to update or create a DocumentTag.
+     * @example
+     * // Update or create a DocumentTag
+     * const documentTag = await prisma.documentTag.upsert({
+     *   create: {
+     *     // ... data to create a DocumentTag
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DocumentTag we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DocumentTagUpsertArgs>(args: SelectSubset<T, DocumentTagUpsertArgs<ExtArgs>>): Prisma__DocumentTagClient<$Result.GetResult<Prisma.$DocumentTagPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of DocumentTags.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DocumentTagCountArgs} args - Arguments to filter DocumentTags to count.
+     * @example
+     * // Count the number of DocumentTags
+     * const count = await prisma.documentTag.count({
+     *   where: {
+     *     // ... the filter for the DocumentTags we want to count
+     *   }
+     * })
+    **/
+    count<T extends DocumentTagCountArgs>(
+      args?: Subset<T, DocumentTagCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DocumentTagCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DocumentTag.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DocumentTagAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DocumentTagAggregateArgs>(args: Subset<T, DocumentTagAggregateArgs>): Prisma.PrismaPromise<GetDocumentTagAggregateType<T>>
+
+    /**
+     * Group by DocumentTag.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DocumentTagGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DocumentTagGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DocumentTagGroupByArgs['orderBy'] }
+        : { orderBy?: DocumentTagGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DocumentTagGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDocumentTagGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DocumentTag model
+   */
+  readonly fields: DocumentTagFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DocumentTag.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DocumentTagClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    documents<T extends DocumentTag$documentsArgs<ExtArgs> = {}>(args?: Subset<T, DocumentTag$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DocumentTag model
+   */
+  interface DocumentTagFieldRefs {
+    readonly id: FieldRef<"DocumentTag", 'String'>
+    readonly name: FieldRef<"DocumentTag", 'String'>
+    readonly organizationId: FieldRef<"DocumentTag", 'String'>
+    readonly createdAt: FieldRef<"DocumentTag", 'DateTime'>
+    readonly updatedAt: FieldRef<"DocumentTag", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * DocumentTag findUnique
+   */
+  export type DocumentTagFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DocumentTag
+     */
+    select?: DocumentTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DocumentTag
+     */
+    omit?: DocumentTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentTagInclude<ExtArgs> | null
+    /**
+     * Filter, which DocumentTag to fetch.
+     */
+    where: DocumentTagWhereUniqueInput
+  }
+
+  /**
+   * DocumentTag findUniqueOrThrow
+   */
+  export type DocumentTagFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DocumentTag
+     */
+    select?: DocumentTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DocumentTag
+     */
+    omit?: DocumentTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentTagInclude<ExtArgs> | null
+    /**
+     * Filter, which DocumentTag to fetch.
+     */
+    where: DocumentTagWhereUniqueInput
+  }
+
+  /**
+   * DocumentTag findFirst
+   */
+  export type DocumentTagFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DocumentTag
+     */
+    select?: DocumentTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DocumentTag
+     */
+    omit?: DocumentTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentTagInclude<ExtArgs> | null
+    /**
+     * Filter, which DocumentTag to fetch.
+     */
+    where?: DocumentTagWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DocumentTags to fetch.
+     */
+    orderBy?: DocumentTagOrderByWithRelationInput | DocumentTagOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DocumentTags.
+     */
+    cursor?: DocumentTagWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DocumentTags from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DocumentTags.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DocumentTags.
+     */
+    distinct?: DocumentTagScalarFieldEnum | DocumentTagScalarFieldEnum[]
+  }
+
+  /**
+   * DocumentTag findFirstOrThrow
+   */
+  export type DocumentTagFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DocumentTag
+     */
+    select?: DocumentTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DocumentTag
+     */
+    omit?: DocumentTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentTagInclude<ExtArgs> | null
+    /**
+     * Filter, which DocumentTag to fetch.
+     */
+    where?: DocumentTagWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DocumentTags to fetch.
+     */
+    orderBy?: DocumentTagOrderByWithRelationInput | DocumentTagOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DocumentTags.
+     */
+    cursor?: DocumentTagWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DocumentTags from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DocumentTags.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DocumentTags.
+     */
+    distinct?: DocumentTagScalarFieldEnum | DocumentTagScalarFieldEnum[]
+  }
+
+  /**
+   * DocumentTag findMany
+   */
+  export type DocumentTagFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DocumentTag
+     */
+    select?: DocumentTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DocumentTag
+     */
+    omit?: DocumentTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentTagInclude<ExtArgs> | null
+    /**
+     * Filter, which DocumentTags to fetch.
+     */
+    where?: DocumentTagWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DocumentTags to fetch.
+     */
+    orderBy?: DocumentTagOrderByWithRelationInput | DocumentTagOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DocumentTags.
+     */
+    cursor?: DocumentTagWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DocumentTags from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DocumentTags.
+     */
+    skip?: number
+    distinct?: DocumentTagScalarFieldEnum | DocumentTagScalarFieldEnum[]
+  }
+
+  /**
+   * DocumentTag create
+   */
+  export type DocumentTagCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DocumentTag
+     */
+    select?: DocumentTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DocumentTag
+     */
+    omit?: DocumentTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentTagInclude<ExtArgs> | null
+    /**
+     * The data needed to create a DocumentTag.
+     */
+    data: XOR<DocumentTagCreateInput, DocumentTagUncheckedCreateInput>
+  }
+
+  /**
+   * DocumentTag createMany
+   */
+  export type DocumentTagCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DocumentTags.
+     */
+    data: DocumentTagCreateManyInput | DocumentTagCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DocumentTag createManyAndReturn
+   */
+  export type DocumentTagCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DocumentTag
+     */
+    select?: DocumentTagSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DocumentTag
+     */
+    omit?: DocumentTagOmit<ExtArgs> | null
+    /**
+     * The data used to create many DocumentTags.
+     */
+    data: DocumentTagCreateManyInput | DocumentTagCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DocumentTag update
+   */
+  export type DocumentTagUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DocumentTag
+     */
+    select?: DocumentTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DocumentTag
+     */
+    omit?: DocumentTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentTagInclude<ExtArgs> | null
+    /**
+     * The data needed to update a DocumentTag.
+     */
+    data: XOR<DocumentTagUpdateInput, DocumentTagUncheckedUpdateInput>
+    /**
+     * Choose, which DocumentTag to update.
+     */
+    where: DocumentTagWhereUniqueInput
+  }
+
+  /**
+   * DocumentTag updateMany
+   */
+  export type DocumentTagUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DocumentTags.
+     */
+    data: XOR<DocumentTagUpdateManyMutationInput, DocumentTagUncheckedUpdateManyInput>
+    /**
+     * Filter which DocumentTags to update
+     */
+    where?: DocumentTagWhereInput
+    /**
+     * Limit how many DocumentTags to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DocumentTag updateManyAndReturn
+   */
+  export type DocumentTagUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DocumentTag
+     */
+    select?: DocumentTagSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DocumentTag
+     */
+    omit?: DocumentTagOmit<ExtArgs> | null
+    /**
+     * The data used to update DocumentTags.
+     */
+    data: XOR<DocumentTagUpdateManyMutationInput, DocumentTagUncheckedUpdateManyInput>
+    /**
+     * Filter which DocumentTags to update
+     */
+    where?: DocumentTagWhereInput
+    /**
+     * Limit how many DocumentTags to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DocumentTag upsert
+   */
+  export type DocumentTagUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DocumentTag
+     */
+    select?: DocumentTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DocumentTag
+     */
+    omit?: DocumentTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentTagInclude<ExtArgs> | null
+    /**
+     * The filter to search for the DocumentTag to update in case it exists.
+     */
+    where: DocumentTagWhereUniqueInput
+    /**
+     * In case the DocumentTag found by the `where` argument doesn't exist, create a new DocumentTag with this data.
+     */
+    create: XOR<DocumentTagCreateInput, DocumentTagUncheckedCreateInput>
+    /**
+     * In case the DocumentTag was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DocumentTagUpdateInput, DocumentTagUncheckedUpdateInput>
+  }
+
+  /**
+   * DocumentTag delete
+   */
+  export type DocumentTagDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DocumentTag
+     */
+    select?: DocumentTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DocumentTag
+     */
+    omit?: DocumentTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentTagInclude<ExtArgs> | null
+    /**
+     * Filter which DocumentTag to delete.
+     */
+    where: DocumentTagWhereUniqueInput
+  }
+
+  /**
+   * DocumentTag deleteMany
+   */
+  export type DocumentTagDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DocumentTags to delete
+     */
+    where?: DocumentTagWhereInput
+    /**
+     * Limit how many DocumentTags to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * DocumentTag.documents
+   */
+  export type DocumentTag$documentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Document
+     */
+    select?: DocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Document
+     */
+    omit?: DocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentInclude<ExtArgs> | null
+    where?: DocumentWhereInput
+    orderBy?: DocumentOrderByWithRelationInput | DocumentOrderByWithRelationInput[]
+    cursor?: DocumentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DocumentScalarFieldEnum | DocumentScalarFieldEnum[]
+  }
+
+  /**
+   * DocumentTag without action
+   */
+  export type DocumentTagDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DocumentTag
+     */
+    select?: DocumentTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DocumentTag
+     */
+    omit?: DocumentTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentTagInclude<ExtArgs> | null
   }
 
 
@@ -22166,10 +23364,10 @@ export namespace Prisma {
   export const UserAIContextSettingsScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
-    enabledCategoriesChat: 'enabledCategoriesChat',
-    enabledCategoriesEditor: 'enabledCategoriesEditor',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    enabledTagsChat: 'enabledTagsChat',
+    enabledTagsEditor: 'enabledTagsEditor'
   };
 
   export type UserAIContextSettingsScalarFieldEnum = (typeof UserAIContextSettingsScalarFieldEnum)[keyof typeof UserAIContextSettingsScalarFieldEnum]
@@ -22328,13 +23526,13 @@ export namespace Prisma {
     fileSize: 'fileSize',
     fileType: 'fileType',
     fileUrl: 'fileUrl',
-    fileCategory: 'fileCategory',
-    isKnowledgeBase: 'isKnowledgeBase',
+    chunkCount: 'chunkCount',
     extractedText: 'extractedText',
+    isKnowledgeBase: 'isKnowledgeBase',
+    vectorizationError: 'vectorizationError',
     vectorizationStatus: 'vectorizationStatus',
     vectorizedAt: 'vectorizedAt',
-    chunkCount: 'chunkCount',
-    vectorizationError: 'vectorizationError'
+    fileTagId: 'fileTagId'
   };
 
   export type DocumentScalarFieldEnum = (typeof DocumentScalarFieldEnum)[keyof typeof DocumentScalarFieldEnum]
@@ -22355,6 +23553,17 @@ export namespace Prisma {
   };
 
   export type DocumentVectorScalarFieldEnum = (typeof DocumentVectorScalarFieldEnum)[keyof typeof DocumentVectorScalarFieldEnum]
+
+
+  export const DocumentTagScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    organizationId: 'organizationId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type DocumentTagScalarFieldEnum = (typeof DocumentTagScalarFieldEnum)[keyof typeof DocumentTagScalarFieldEnum]
 
 
   export const FolderScalarFieldEnum: {
@@ -22572,20 +23781,6 @@ export namespace Prisma {
    * Reference to a field of type 'OrganizationRole[]'
    */
   export type ListEnumOrganizationRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrganizationRole[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'FileCategory[]'
-   */
-  export type ListEnumFileCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FileCategory[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'FileCategory'
-   */
-  export type EnumFileCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FileCategory'>
     
 
 
@@ -22965,8 +24160,8 @@ export namespace Prisma {
     googleTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
     aiChats?: AiChatListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
-    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     aiContextSettings?: XOR<UserAIContextSettingsNullableScalarRelationFilter, UserAIContextSettingsWhereInput> | null
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
   }
 
   export type UserOrderByWithRelationInput = {
@@ -22988,8 +24183,8 @@ export namespace Prisma {
     googleTokenExpiry?: SortOrderInput | SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     grantBookmarks?: GrantBookmarkOrderByRelationAggregateInput
-    organization?: OrganizationOrderByWithRelationInput
     aiContextSettings?: UserAIContextSettingsOrderByWithRelationInput
+    organization?: OrganizationOrderByWithRelationInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -23014,8 +24209,8 @@ export namespace Prisma {
     googleTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
     aiChats?: AiChatListRelationFilter
     grantBookmarks?: GrantBookmarkListRelationFilter
-    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     aiContextSettings?: XOR<UserAIContextSettingsNullableScalarRelationFilter, UserAIContextSettingsWhereInput> | null
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -23068,20 +24263,20 @@ export namespace Prisma {
     NOT?: UserAIContextSettingsWhereInput | UserAIContextSettingsWhereInput[]
     id?: StringFilter<"UserAIContextSettings"> | string
     userId?: UuidFilter<"UserAIContextSettings"> | string
-    enabledCategoriesChat?: EnumFileCategoryNullableListFilter<"UserAIContextSettings">
-    enabledCategoriesEditor?: EnumFileCategoryNullableListFilter<"UserAIContextSettings">
     createdAt?: DateTimeFilter<"UserAIContextSettings"> | Date | string
     updatedAt?: DateTimeFilter<"UserAIContextSettings"> | Date | string
+    enabledTagsChat?: StringNullableListFilter<"UserAIContextSettings">
+    enabledTagsEditor?: StringNullableListFilter<"UserAIContextSettings">
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type UserAIContextSettingsOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
-    enabledCategoriesChat?: SortOrder
-    enabledCategoriesEditor?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    enabledTagsChat?: SortOrder
+    enabledTagsEditor?: SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -23091,20 +24286,20 @@ export namespace Prisma {
     AND?: UserAIContextSettingsWhereInput | UserAIContextSettingsWhereInput[]
     OR?: UserAIContextSettingsWhereInput[]
     NOT?: UserAIContextSettingsWhereInput | UserAIContextSettingsWhereInput[]
-    enabledCategoriesChat?: EnumFileCategoryNullableListFilter<"UserAIContextSettings">
-    enabledCategoriesEditor?: EnumFileCategoryNullableListFilter<"UserAIContextSettings">
     createdAt?: DateTimeFilter<"UserAIContextSettings"> | Date | string
     updatedAt?: DateTimeFilter<"UserAIContextSettings"> | Date | string
+    enabledTagsChat?: StringNullableListFilter<"UserAIContextSettings">
+    enabledTagsEditor?: StringNullableListFilter<"UserAIContextSettings">
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "userId">
 
   export type UserAIContextSettingsOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
-    enabledCategoriesChat?: SortOrder
-    enabledCategoriesEditor?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    enabledTagsChat?: SortOrder
+    enabledTagsEditor?: SortOrder
     _count?: UserAIContextSettingsCountOrderByAggregateInput
     _max?: UserAIContextSettingsMaxOrderByAggregateInput
     _min?: UserAIContextSettingsMinOrderByAggregateInput
@@ -23116,10 +24311,10 @@ export namespace Prisma {
     NOT?: UserAIContextSettingsScalarWhereWithAggregatesInput | UserAIContextSettingsScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"UserAIContextSettings"> | string
     userId?: UuidWithAggregatesFilter<"UserAIContextSettings"> | string
-    enabledCategoriesChat?: EnumFileCategoryNullableListFilter<"UserAIContextSettings">
-    enabledCategoriesEditor?: EnumFileCategoryNullableListFilter<"UserAIContextSettings">
     createdAt?: DateTimeWithAggregatesFilter<"UserAIContextSettings"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"UserAIContextSettings"> | Date | string
+    enabledTagsChat?: StringNullableListFilter<"UserAIContextSettings">
+    enabledTagsEditor?: StringNullableListFilter<"UserAIContextSettings">
   }
 
   export type OrganizationWhereInput = {
@@ -23883,17 +25078,18 @@ export namespace Prisma {
     fileSize?: IntNullableFilter<"Document"> | number | null
     fileType?: StringNullableFilter<"Document"> | string | null
     fileUrl?: StringNullableFilter<"Document"> | string | null
-    fileCategory?: EnumFileCategoryFilter<"Document"> | $Enums.FileCategory
-    isKnowledgeBase?: BoolFilter<"Document"> | boolean
+    chunkCount?: IntNullableFilter<"Document"> | number | null
     extractedText?: StringNullableFilter<"Document"> | string | null
+    isKnowledgeBase?: BoolFilter<"Document"> | boolean
+    vectorizationError?: StringNullableFilter<"Document"> | string | null
     vectorizationStatus?: EnumVectorizationStatusFilter<"Document"> | $Enums.VectorizationStatus
     vectorizedAt?: DateTimeNullableFilter<"Document"> | Date | string | null
-    chunkCount?: IntNullableFilter<"Document"> | number | null
-    vectorizationError?: StringNullableFilter<"Document"> | string | null
+    fileTagId?: StringNullableFilter<"Document"> | string | null
+    vectors?: DocumentVectorListRelationFilter
     application?: XOR<ApplicationNullableScalarRelationFilter, ApplicationWhereInput> | null
+    fileTag?: XOR<DocumentTagNullableScalarRelationFilter, DocumentTagWhereInput> | null
     folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
-    vectors?: DocumentVectorListRelationFilter
   }
 
   export type DocumentOrderByWithRelationInput = {
@@ -23911,17 +25107,18 @@ export namespace Prisma {
     fileSize?: SortOrderInput | SortOrder
     fileType?: SortOrderInput | SortOrder
     fileUrl?: SortOrderInput | SortOrder
-    fileCategory?: SortOrder
-    isKnowledgeBase?: SortOrder
+    chunkCount?: SortOrderInput | SortOrder
     extractedText?: SortOrderInput | SortOrder
+    isKnowledgeBase?: SortOrder
+    vectorizationError?: SortOrderInput | SortOrder
     vectorizationStatus?: SortOrder
     vectorizedAt?: SortOrderInput | SortOrder
-    chunkCount?: SortOrderInput | SortOrder
-    vectorizationError?: SortOrderInput | SortOrder
+    fileTagId?: SortOrderInput | SortOrder
+    vectors?: DocumentVectorOrderByRelationAggregateInput
     application?: ApplicationOrderByWithRelationInput
+    fileTag?: DocumentTagOrderByWithRelationInput
     folder?: FolderOrderByWithRelationInput
     organization?: OrganizationOrderByWithRelationInput
-    vectors?: DocumentVectorOrderByRelationAggregateInput
   }
 
   export type DocumentWhereUniqueInput = Prisma.AtLeast<{
@@ -23942,17 +25139,18 @@ export namespace Prisma {
     fileSize?: IntNullableFilter<"Document"> | number | null
     fileType?: StringNullableFilter<"Document"> | string | null
     fileUrl?: StringNullableFilter<"Document"> | string | null
-    fileCategory?: EnumFileCategoryFilter<"Document"> | $Enums.FileCategory
-    isKnowledgeBase?: BoolFilter<"Document"> | boolean
+    chunkCount?: IntNullableFilter<"Document"> | number | null
     extractedText?: StringNullableFilter<"Document"> | string | null
+    isKnowledgeBase?: BoolFilter<"Document"> | boolean
+    vectorizationError?: StringNullableFilter<"Document"> | string | null
     vectorizationStatus?: EnumVectorizationStatusFilter<"Document"> | $Enums.VectorizationStatus
     vectorizedAt?: DateTimeNullableFilter<"Document"> | Date | string | null
-    chunkCount?: IntNullableFilter<"Document"> | number | null
-    vectorizationError?: StringNullableFilter<"Document"> | string | null
+    fileTagId?: StringNullableFilter<"Document"> | string | null
+    vectors?: DocumentVectorListRelationFilter
     application?: XOR<ApplicationNullableScalarRelationFilter, ApplicationWhereInput> | null
+    fileTag?: XOR<DocumentTagNullableScalarRelationFilter, DocumentTagWhereInput> | null
     folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
-    vectors?: DocumentVectorListRelationFilter
   }, "id">
 
   export type DocumentOrderByWithAggregationInput = {
@@ -23970,13 +25168,13 @@ export namespace Prisma {
     fileSize?: SortOrderInput | SortOrder
     fileType?: SortOrderInput | SortOrder
     fileUrl?: SortOrderInput | SortOrder
-    fileCategory?: SortOrder
-    isKnowledgeBase?: SortOrder
+    chunkCount?: SortOrderInput | SortOrder
     extractedText?: SortOrderInput | SortOrder
+    isKnowledgeBase?: SortOrder
+    vectorizationError?: SortOrderInput | SortOrder
     vectorizationStatus?: SortOrder
     vectorizedAt?: SortOrderInput | SortOrder
-    chunkCount?: SortOrderInput | SortOrder
-    vectorizationError?: SortOrderInput | SortOrder
+    fileTagId?: SortOrderInput | SortOrder
     _count?: DocumentCountOrderByAggregateInput
     _avg?: DocumentAvgOrderByAggregateInput
     _max?: DocumentMaxOrderByAggregateInput
@@ -24002,13 +25200,13 @@ export namespace Prisma {
     fileSize?: IntNullableWithAggregatesFilter<"Document"> | number | null
     fileType?: StringNullableWithAggregatesFilter<"Document"> | string | null
     fileUrl?: StringNullableWithAggregatesFilter<"Document"> | string | null
-    fileCategory?: EnumFileCategoryWithAggregatesFilter<"Document"> | $Enums.FileCategory
-    isKnowledgeBase?: BoolWithAggregatesFilter<"Document"> | boolean
+    chunkCount?: IntNullableWithAggregatesFilter<"Document"> | number | null
     extractedText?: StringNullableWithAggregatesFilter<"Document"> | string | null
+    isKnowledgeBase?: BoolWithAggregatesFilter<"Document"> | boolean
+    vectorizationError?: StringNullableWithAggregatesFilter<"Document"> | string | null
     vectorizationStatus?: EnumVectorizationStatusWithAggregatesFilter<"Document"> | $Enums.VectorizationStatus
     vectorizedAt?: DateTimeNullableWithAggregatesFilter<"Document"> | Date | string | null
-    chunkCount?: IntNullableWithAggregatesFilter<"Document"> | number | null
-    vectorizationError?: StringNullableWithAggregatesFilter<"Document"> | string | null
+    fileTagId?: StringNullableWithAggregatesFilter<"Document"> | string | null
   }
 
   export type DocumentVectorWhereInput = {
@@ -24096,6 +25294,62 @@ export namespace Prisma {
     contentHash?: StringWithAggregatesFilter<"DocumentVector"> | string
     vectorizedAt?: DateTimeWithAggregatesFilter<"DocumentVector"> | Date | string
     model?: StringWithAggregatesFilter<"DocumentVector"> | string
+  }
+
+  export type DocumentTagWhereInput = {
+    AND?: DocumentTagWhereInput | DocumentTagWhereInput[]
+    OR?: DocumentTagWhereInput[]
+    NOT?: DocumentTagWhereInput | DocumentTagWhereInput[]
+    id?: StringFilter<"DocumentTag"> | string
+    name?: StringFilter<"DocumentTag"> | string
+    organizationId?: StringFilter<"DocumentTag"> | string
+    createdAt?: DateTimeFilter<"DocumentTag"> | Date | string
+    updatedAt?: DateTimeFilter<"DocumentTag"> | Date | string
+    documents?: DocumentListRelationFilter
+  }
+
+  export type DocumentTagOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    organizationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    documents?: DocumentOrderByRelationAggregateInput
+  }
+
+  export type DocumentTagWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    organizationId_name?: DocumentTagOrganizationIdNameCompoundUniqueInput
+    AND?: DocumentTagWhereInput | DocumentTagWhereInput[]
+    OR?: DocumentTagWhereInput[]
+    NOT?: DocumentTagWhereInput | DocumentTagWhereInput[]
+    name?: StringFilter<"DocumentTag"> | string
+    organizationId?: StringFilter<"DocumentTag"> | string
+    createdAt?: DateTimeFilter<"DocumentTag"> | Date | string
+    updatedAt?: DateTimeFilter<"DocumentTag"> | Date | string
+    documents?: DocumentListRelationFilter
+  }, "id" | "organizationId_name">
+
+  export type DocumentTagOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    organizationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: DocumentTagCountOrderByAggregateInput
+    _max?: DocumentTagMaxOrderByAggregateInput
+    _min?: DocumentTagMinOrderByAggregateInput
+  }
+
+  export type DocumentTagScalarWhereWithAggregatesInput = {
+    AND?: DocumentTagScalarWhereWithAggregatesInput | DocumentTagScalarWhereWithAggregatesInput[]
+    OR?: DocumentTagScalarWhereWithAggregatesInput[]
+    NOT?: DocumentTagScalarWhereWithAggregatesInput | DocumentTagScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"DocumentTag"> | string
+    name?: StringWithAggregatesFilter<"DocumentTag"> | string
+    organizationId?: StringWithAggregatesFilter<"DocumentTag"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"DocumentTag"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"DocumentTag"> | Date | string
   }
 
   export type FolderWhereInput = {
@@ -24550,8 +25804,8 @@ export namespace Prisma {
     googleTokenExpiry?: Date | string | null
     aiChats?: AiChatCreateNestedManyWithoutUserInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutUserInput
-    organization: OrganizationCreateNestedOneWithoutUsersInput
     aiContextSettings?: UserAIContextSettingsCreateNestedOneWithoutUserInput
+    organization: OrganizationCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -24594,8 +25848,8 @@ export namespace Prisma {
     googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     aiChats?: AiChatUpdateManyWithoutUserNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutUserNestedInput
-    organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
     aiContextSettings?: UserAIContextSettingsUpdateOneWithoutUserNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -24678,64 +25932,64 @@ export namespace Prisma {
 
   export type UserAIContextSettingsCreateInput = {
     id?: string
-    enabledCategoriesChat?: UserAIContextSettingsCreateenabledCategoriesChatInput | $Enums.FileCategory[]
-    enabledCategoriesEditor?: UserAIContextSettingsCreateenabledCategoriesEditorInput | $Enums.FileCategory[]
     createdAt?: Date | string
     updatedAt?: Date | string
+    enabledTagsChat?: UserAIContextSettingsCreateenabledTagsChatInput | string[]
+    enabledTagsEditor?: UserAIContextSettingsCreateenabledTagsEditorInput | string[]
     user: UserCreateNestedOneWithoutAiContextSettingsInput
   }
 
   export type UserAIContextSettingsUncheckedCreateInput = {
     id?: string
     userId: string
-    enabledCategoriesChat?: UserAIContextSettingsCreateenabledCategoriesChatInput | $Enums.FileCategory[]
-    enabledCategoriesEditor?: UserAIContextSettingsCreateenabledCategoriesEditorInput | $Enums.FileCategory[]
     createdAt?: Date | string
     updatedAt?: Date | string
+    enabledTagsChat?: UserAIContextSettingsCreateenabledTagsChatInput | string[]
+    enabledTagsEditor?: UserAIContextSettingsCreateenabledTagsEditorInput | string[]
   }
 
   export type UserAIContextSettingsUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    enabledCategoriesChat?: UserAIContextSettingsUpdateenabledCategoriesChatInput | $Enums.FileCategory[]
-    enabledCategoriesEditor?: UserAIContextSettingsUpdateenabledCategoriesEditorInput | $Enums.FileCategory[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabledTagsChat?: UserAIContextSettingsUpdateenabledTagsChatInput | string[]
+    enabledTagsEditor?: UserAIContextSettingsUpdateenabledTagsEditorInput | string[]
     user?: UserUpdateOneRequiredWithoutAiContextSettingsNestedInput
   }
 
   export type UserAIContextSettingsUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    enabledCategoriesChat?: UserAIContextSettingsUpdateenabledCategoriesChatInput | $Enums.FileCategory[]
-    enabledCategoriesEditor?: UserAIContextSettingsUpdateenabledCategoriesEditorInput | $Enums.FileCategory[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabledTagsChat?: UserAIContextSettingsUpdateenabledTagsChatInput | string[]
+    enabledTagsEditor?: UserAIContextSettingsUpdateenabledTagsEditorInput | string[]
   }
 
   export type UserAIContextSettingsCreateManyInput = {
     id?: string
     userId: string
-    enabledCategoriesChat?: UserAIContextSettingsCreateenabledCategoriesChatInput | $Enums.FileCategory[]
-    enabledCategoriesEditor?: UserAIContextSettingsCreateenabledCategoriesEditorInput | $Enums.FileCategory[]
     createdAt?: Date | string
     updatedAt?: Date | string
+    enabledTagsChat?: UserAIContextSettingsCreateenabledTagsChatInput | string[]
+    enabledTagsEditor?: UserAIContextSettingsCreateenabledTagsEditorInput | string[]
   }
 
   export type UserAIContextSettingsUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    enabledCategoriesChat?: UserAIContextSettingsUpdateenabledCategoriesChatInput | $Enums.FileCategory[]
-    enabledCategoriesEditor?: UserAIContextSettingsUpdateenabledCategoriesEditorInput | $Enums.FileCategory[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabledTagsChat?: UserAIContextSettingsUpdateenabledTagsChatInput | string[]
+    enabledTagsEditor?: UserAIContextSettingsUpdateenabledTagsEditorInput | string[]
   }
 
   export type UserAIContextSettingsUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    enabledCategoriesChat?: UserAIContextSettingsUpdateenabledCategoriesChatInput | $Enums.FileCategory[]
-    enabledCategoriesEditor?: UserAIContextSettingsUpdateenabledCategoriesEditorInput | $Enums.FileCategory[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabledTagsChat?: UserAIContextSettingsUpdateenabledTagsChatInput | string[]
+    enabledTagsEditor?: UserAIContextSettingsUpdateenabledTagsEditorInput | string[]
   }
 
   export type OrganizationCreateInput = {
@@ -25587,17 +26841,17 @@ export namespace Prisma {
     fileSize?: number | null
     fileType?: string | null
     fileUrl?: string | null
-    fileCategory?: $Enums.FileCategory
-    isKnowledgeBase?: boolean
+    chunkCount?: number | null
     extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
     vectorizationStatus?: $Enums.VectorizationStatus
     vectorizedAt?: Date | string | null
-    chunkCount?: number | null
-    vectorizationError?: string | null
+    vectors?: DocumentVectorCreateNestedManyWithoutDocumentInput
     application?: ApplicationCreateNestedOneWithoutDocumentsInput
+    fileTag?: DocumentTagCreateNestedOneWithoutDocumentsInput
     folder?: FolderCreateNestedOneWithoutDocumentsInput
     organization: OrganizationCreateNestedOneWithoutDocumentsInput
-    vectors?: DocumentVectorCreateNestedManyWithoutDocumentInput
   }
 
   export type DocumentUncheckedCreateInput = {
@@ -25615,13 +26869,13 @@ export namespace Prisma {
     fileSize?: number | null
     fileType?: string | null
     fileUrl?: string | null
-    fileCategory?: $Enums.FileCategory
-    isKnowledgeBase?: boolean
+    chunkCount?: number | null
     extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
     vectorizationStatus?: $Enums.VectorizationStatus
     vectorizedAt?: Date | string | null
-    chunkCount?: number | null
-    vectorizationError?: string | null
+    fileTagId?: string | null
     vectors?: DocumentVectorUncheckedCreateNestedManyWithoutDocumentInput
   }
 
@@ -25637,17 +26891,17 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    fileCategory?: EnumFileCategoryFieldUpdateOperationsInput | $Enums.FileCategory
-    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
     vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
-    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    vectors?: DocumentVectorUpdateManyWithoutDocumentNestedInput
     application?: ApplicationUpdateOneWithoutDocumentsNestedInput
+    fileTag?: DocumentTagUpdateOneWithoutDocumentsNestedInput
     folder?: FolderUpdateOneWithoutDocumentsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutDocumentsNestedInput
-    vectors?: DocumentVectorUpdateManyWithoutDocumentNestedInput
   }
 
   export type DocumentUncheckedUpdateInput = {
@@ -25665,13 +26919,13 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    fileCategory?: EnumFileCategoryFieldUpdateOperationsInput | $Enums.FileCategory
-    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
     vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
-    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    fileTagId?: NullableStringFieldUpdateOperationsInput | string | null
     vectors?: DocumentVectorUncheckedUpdateManyWithoutDocumentNestedInput
   }
 
@@ -25690,13 +26944,13 @@ export namespace Prisma {
     fileSize?: number | null
     fileType?: string | null
     fileUrl?: string | null
-    fileCategory?: $Enums.FileCategory
-    isKnowledgeBase?: boolean
+    chunkCount?: number | null
     extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
     vectorizationStatus?: $Enums.VectorizationStatus
     vectorizedAt?: Date | string | null
-    chunkCount?: number | null
-    vectorizationError?: string | null
+    fileTagId?: string | null
   }
 
   export type DocumentUpdateManyMutationInput = {
@@ -25711,13 +26965,12 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    fileCategory?: EnumFileCategoryFieldUpdateOperationsInput | $Enums.FileCategory
-    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
     vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
-    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DocumentUncheckedUpdateManyInput = {
@@ -25735,13 +26988,13 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    fileCategory?: EnumFileCategoryFieldUpdateOperationsInput | $Enums.FileCategory
-    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
     vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
-    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    fileTagId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DocumentVectorCreateInput = {
@@ -25839,6 +27092,66 @@ export namespace Prisma {
     contentHash?: StringFieldUpdateOperationsInput | string
     vectorizedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     model?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DocumentTagCreateInput = {
+    id?: string
+    name: string
+    organizationId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    documents?: DocumentCreateNestedManyWithoutFileTagInput
+  }
+
+  export type DocumentTagUncheckedCreateInput = {
+    id?: string
+    name: string
+    organizationId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    documents?: DocumentUncheckedCreateNestedManyWithoutFileTagInput
+  }
+
+  export type DocumentTagUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUpdateManyWithoutFileTagNestedInput
+  }
+
+  export type DocumentTagUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUncheckedUpdateManyWithoutFileTagNestedInput
+  }
+
+  export type DocumentTagCreateManyInput = {
+    id?: string
+    name: string
+    organizationId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DocumentTagUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DocumentTagUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FolderCreateInput = {
@@ -26459,14 +27772,14 @@ export namespace Prisma {
     none?: GrantBookmarkWhereInput
   }
 
-  export type OrganizationScalarRelationFilter = {
-    is?: OrganizationWhereInput
-    isNot?: OrganizationWhereInput
-  }
-
   export type UserAIContextSettingsNullableScalarRelationFilter = {
     is?: UserAIContextSettingsWhereInput | null
     isNot?: UserAIContextSettingsWhereInput | null
+  }
+
+  export type OrganizationScalarRelationFilter = {
+    is?: OrganizationWhereInput
+    isNot?: OrganizationWhereInput
   }
 
   export type AiChatOrderByRelationAggregateInput = {
@@ -26581,11 +27894,11 @@ export namespace Prisma {
     _max?: NestedEnumOrganizationRoleFilter<$PrismaModel>
   }
 
-  export type EnumFileCategoryNullableListFilter<$PrismaModel = never> = {
-    equals?: $Enums.FileCategory[] | ListEnumFileCategoryFieldRefInput<$PrismaModel> | null
-    has?: $Enums.FileCategory | EnumFileCategoryFieldRefInput<$PrismaModel> | null
-    hasEvery?: $Enums.FileCategory[] | ListEnumFileCategoryFieldRefInput<$PrismaModel>
-    hasSome?: $Enums.FileCategory[] | ListEnumFileCategoryFieldRefInput<$PrismaModel>
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
     isEmpty?: boolean
   }
 
@@ -26597,10 +27910,10 @@ export namespace Prisma {
   export type UserAIContextSettingsCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    enabledCategoriesChat?: SortOrder
-    enabledCategoriesEditor?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    enabledTagsChat?: SortOrder
+    enabledTagsEditor?: SortOrder
   }
 
   export type UserAIContextSettingsMaxOrderByAggregateInput = {
@@ -27268,13 +28581,6 @@ export namespace Prisma {
     _max?: NestedBigIntFilter<$PrismaModel>
   }
 
-  export type EnumFileCategoryFilter<$PrismaModel = never> = {
-    equals?: $Enums.FileCategory | EnumFileCategoryFieldRefInput<$PrismaModel>
-    in?: $Enums.FileCategory[] | ListEnumFileCategoryFieldRefInput<$PrismaModel>
-    notIn?: $Enums.FileCategory[] | ListEnumFileCategoryFieldRefInput<$PrismaModel>
-    not?: NestedEnumFileCategoryFilter<$PrismaModel> | $Enums.FileCategory
-  }
-
   export type EnumVectorizationStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.VectorizationStatus | EnumVectorizationStatusFieldRefInput<$PrismaModel>
     in?: $Enums.VectorizationStatus[] | ListEnumVectorizationStatusFieldRefInput<$PrismaModel>
@@ -27286,6 +28592,11 @@ export namespace Prisma {
     every?: DocumentVectorWhereInput
     some?: DocumentVectorWhereInput
     none?: DocumentVectorWhereInput
+  }
+
+  export type DocumentTagNullableScalarRelationFilter = {
+    is?: DocumentTagWhereInput | null
+    isNot?: DocumentTagWhereInput | null
   }
 
   export type DocumentVectorOrderByRelationAggregateInput = {
@@ -27307,13 +28618,13 @@ export namespace Prisma {
     fileSize?: SortOrder
     fileType?: SortOrder
     fileUrl?: SortOrder
-    fileCategory?: SortOrder
-    isKnowledgeBase?: SortOrder
+    chunkCount?: SortOrder
     extractedText?: SortOrder
+    isKnowledgeBase?: SortOrder
+    vectorizationError?: SortOrder
     vectorizationStatus?: SortOrder
     vectorizedAt?: SortOrder
-    chunkCount?: SortOrder
-    vectorizationError?: SortOrder
+    fileTagId?: SortOrder
   }
 
   export type DocumentAvgOrderByAggregateInput = {
@@ -27336,13 +28647,13 @@ export namespace Prisma {
     fileSize?: SortOrder
     fileType?: SortOrder
     fileUrl?: SortOrder
-    fileCategory?: SortOrder
-    isKnowledgeBase?: SortOrder
+    chunkCount?: SortOrder
     extractedText?: SortOrder
+    isKnowledgeBase?: SortOrder
+    vectorizationError?: SortOrder
     vectorizationStatus?: SortOrder
     vectorizedAt?: SortOrder
-    chunkCount?: SortOrder
-    vectorizationError?: SortOrder
+    fileTagId?: SortOrder
   }
 
   export type DocumentMinOrderByAggregateInput = {
@@ -27359,29 +28670,19 @@ export namespace Prisma {
     fileSize?: SortOrder
     fileType?: SortOrder
     fileUrl?: SortOrder
-    fileCategory?: SortOrder
-    isKnowledgeBase?: SortOrder
+    chunkCount?: SortOrder
     extractedText?: SortOrder
+    isKnowledgeBase?: SortOrder
+    vectorizationError?: SortOrder
     vectorizationStatus?: SortOrder
     vectorizedAt?: SortOrder
-    chunkCount?: SortOrder
-    vectorizationError?: SortOrder
+    fileTagId?: SortOrder
   }
 
   export type DocumentSumOrderByAggregateInput = {
     version?: SortOrder
     fileSize?: SortOrder
     chunkCount?: SortOrder
-  }
-
-  export type EnumFileCategoryWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.FileCategory | EnumFileCategoryFieldRefInput<$PrismaModel>
-    in?: $Enums.FileCategory[] | ListEnumFileCategoryFieldRefInput<$PrismaModel>
-    notIn?: $Enums.FileCategory[] | ListEnumFileCategoryFieldRefInput<$PrismaModel>
-    not?: NestedEnumFileCategoryWithAggregatesFilter<$PrismaModel> | $Enums.FileCategory
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumFileCategoryFilter<$PrismaModel>
-    _max?: NestedEnumFileCategoryFilter<$PrismaModel>
   }
 
   export type EnumVectorizationStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -27451,6 +28752,35 @@ export namespace Prisma {
     id?: SortOrder
     chunkIndex?: SortOrder
     totalChunks?: SortOrder
+  }
+
+  export type DocumentTagOrganizationIdNameCompoundUniqueInput = {
+    organizationId: string
+    name: string
+  }
+
+  export type DocumentTagCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    organizationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DocumentTagMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    organizationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DocumentTagMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    organizationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type FolderCountOrderByAggregateInput = {
@@ -27655,16 +28985,16 @@ export namespace Prisma {
     connect?: GrantBookmarkWhereUniqueInput | GrantBookmarkWhereUniqueInput[]
   }
 
-  export type OrganizationCreateNestedOneWithoutUsersInput = {
-    create?: XOR<OrganizationCreateWithoutUsersInput, OrganizationUncheckedCreateWithoutUsersInput>
-    connectOrCreate?: OrganizationCreateOrConnectWithoutUsersInput
-    connect?: OrganizationWhereUniqueInput
-  }
-
   export type UserAIContextSettingsCreateNestedOneWithoutUserInput = {
     create?: XOR<UserAIContextSettingsCreateWithoutUserInput, UserAIContextSettingsUncheckedCreateWithoutUserInput>
     connectOrCreate?: UserAIContextSettingsCreateOrConnectWithoutUserInput
     connect?: UserAIContextSettingsWhereUniqueInput
+  }
+
+  export type OrganizationCreateNestedOneWithoutUsersInput = {
+    create?: XOR<OrganizationCreateWithoutUsersInput, OrganizationUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutUsersInput
+    connect?: OrganizationWhereUniqueInput
   }
 
   export type AiChatUncheckedCreateNestedManyWithoutUserInput = {
@@ -27727,14 +29057,6 @@ export namespace Prisma {
     deleteMany?: GrantBookmarkScalarWhereInput | GrantBookmarkScalarWhereInput[]
   }
 
-  export type OrganizationUpdateOneRequiredWithoutUsersNestedInput = {
-    create?: XOR<OrganizationCreateWithoutUsersInput, OrganizationUncheckedCreateWithoutUsersInput>
-    connectOrCreate?: OrganizationCreateOrConnectWithoutUsersInput
-    upsert?: OrganizationUpsertWithoutUsersInput
-    connect?: OrganizationWhereUniqueInput
-    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutUsersInput, OrganizationUpdateWithoutUsersInput>, OrganizationUncheckedUpdateWithoutUsersInput>
-  }
-
   export type UserAIContextSettingsUpdateOneWithoutUserNestedInput = {
     create?: XOR<UserAIContextSettingsCreateWithoutUserInput, UserAIContextSettingsUncheckedCreateWithoutUserInput>
     connectOrCreate?: UserAIContextSettingsCreateOrConnectWithoutUserInput
@@ -27743,6 +29065,14 @@ export namespace Prisma {
     delete?: UserAIContextSettingsWhereInput | boolean
     connect?: UserAIContextSettingsWhereUniqueInput
     update?: XOR<XOR<UserAIContextSettingsUpdateToOneWithWhereWithoutUserInput, UserAIContextSettingsUpdateWithoutUserInput>, UserAIContextSettingsUncheckedUpdateWithoutUserInput>
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutUsersNestedInput = {
+    create?: XOR<OrganizationCreateWithoutUsersInput, OrganizationUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutUsersInput
+    upsert?: OrganizationUpsertWithoutUsersInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutUsersInput, OrganizationUpdateWithoutUsersInput>, OrganizationUncheckedUpdateWithoutUsersInput>
   }
 
   export type AiChatUncheckedUpdateManyWithoutUserNestedInput = {
@@ -27783,12 +29113,12 @@ export namespace Prisma {
     update?: XOR<XOR<UserAIContextSettingsUpdateToOneWithWhereWithoutUserInput, UserAIContextSettingsUpdateWithoutUserInput>, UserAIContextSettingsUncheckedUpdateWithoutUserInput>
   }
 
-  export type UserAIContextSettingsCreateenabledCategoriesChatInput = {
-    set: $Enums.FileCategory[]
+  export type UserAIContextSettingsCreateenabledTagsChatInput = {
+    set: string[]
   }
 
-  export type UserAIContextSettingsCreateenabledCategoriesEditorInput = {
-    set: $Enums.FileCategory[]
+  export type UserAIContextSettingsCreateenabledTagsEditorInput = {
+    set: string[]
   }
 
   export type UserCreateNestedOneWithoutAiContextSettingsInput = {
@@ -27797,14 +29127,14 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type UserAIContextSettingsUpdateenabledCategoriesChatInput = {
-    set?: $Enums.FileCategory[]
-    push?: $Enums.FileCategory | $Enums.FileCategory[]
+  export type UserAIContextSettingsUpdateenabledTagsChatInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
-  export type UserAIContextSettingsUpdateenabledCategoriesEditorInput = {
-    set?: $Enums.FileCategory[]
-    push?: $Enums.FileCategory | $Enums.FileCategory[]
+  export type UserAIContextSettingsUpdateenabledTagsEditorInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type UserUpdateOneRequiredWithoutAiContextSettingsNestedInput = {
@@ -28486,10 +29816,23 @@ export namespace Prisma {
     divide?: bigint | number
   }
 
+  export type DocumentVectorCreateNestedManyWithoutDocumentInput = {
+    create?: XOR<DocumentVectorCreateWithoutDocumentInput, DocumentVectorUncheckedCreateWithoutDocumentInput> | DocumentVectorCreateWithoutDocumentInput[] | DocumentVectorUncheckedCreateWithoutDocumentInput[]
+    connectOrCreate?: DocumentVectorCreateOrConnectWithoutDocumentInput | DocumentVectorCreateOrConnectWithoutDocumentInput[]
+    createMany?: DocumentVectorCreateManyDocumentInputEnvelope
+    connect?: DocumentVectorWhereUniqueInput | DocumentVectorWhereUniqueInput[]
+  }
+
   export type ApplicationCreateNestedOneWithoutDocumentsInput = {
     create?: XOR<ApplicationCreateWithoutDocumentsInput, ApplicationUncheckedCreateWithoutDocumentsInput>
     connectOrCreate?: ApplicationCreateOrConnectWithoutDocumentsInput
     connect?: ApplicationWhereUniqueInput
+  }
+
+  export type DocumentTagCreateNestedOneWithoutDocumentsInput = {
+    create?: XOR<DocumentTagCreateWithoutDocumentsInput, DocumentTagUncheckedCreateWithoutDocumentsInput>
+    connectOrCreate?: DocumentTagCreateOrConnectWithoutDocumentsInput
+    connect?: DocumentTagWhereUniqueInput
   }
 
   export type FolderCreateNestedOneWithoutDocumentsInput = {
@@ -28504,13 +29847,6 @@ export namespace Prisma {
     connect?: OrganizationWhereUniqueInput
   }
 
-  export type DocumentVectorCreateNestedManyWithoutDocumentInput = {
-    create?: XOR<DocumentVectorCreateWithoutDocumentInput, DocumentVectorUncheckedCreateWithoutDocumentInput> | DocumentVectorCreateWithoutDocumentInput[] | DocumentVectorUncheckedCreateWithoutDocumentInput[]
-    connectOrCreate?: DocumentVectorCreateOrConnectWithoutDocumentInput | DocumentVectorCreateOrConnectWithoutDocumentInput[]
-    createMany?: DocumentVectorCreateManyDocumentInputEnvelope
-    connect?: DocumentVectorWhereUniqueInput | DocumentVectorWhereUniqueInput[]
-  }
-
   export type DocumentVectorUncheckedCreateNestedManyWithoutDocumentInput = {
     create?: XOR<DocumentVectorCreateWithoutDocumentInput, DocumentVectorUncheckedCreateWithoutDocumentInput> | DocumentVectorCreateWithoutDocumentInput[] | DocumentVectorUncheckedCreateWithoutDocumentInput[]
     connectOrCreate?: DocumentVectorCreateOrConnectWithoutDocumentInput | DocumentVectorCreateOrConnectWithoutDocumentInput[]
@@ -28518,12 +29854,22 @@ export namespace Prisma {
     connect?: DocumentVectorWhereUniqueInput | DocumentVectorWhereUniqueInput[]
   }
 
-  export type EnumFileCategoryFieldUpdateOperationsInput = {
-    set?: $Enums.FileCategory
-  }
-
   export type EnumVectorizationStatusFieldUpdateOperationsInput = {
     set?: $Enums.VectorizationStatus
+  }
+
+  export type DocumentVectorUpdateManyWithoutDocumentNestedInput = {
+    create?: XOR<DocumentVectorCreateWithoutDocumentInput, DocumentVectorUncheckedCreateWithoutDocumentInput> | DocumentVectorCreateWithoutDocumentInput[] | DocumentVectorUncheckedCreateWithoutDocumentInput[]
+    connectOrCreate?: DocumentVectorCreateOrConnectWithoutDocumentInput | DocumentVectorCreateOrConnectWithoutDocumentInput[]
+    upsert?: DocumentVectorUpsertWithWhereUniqueWithoutDocumentInput | DocumentVectorUpsertWithWhereUniqueWithoutDocumentInput[]
+    createMany?: DocumentVectorCreateManyDocumentInputEnvelope
+    set?: DocumentVectorWhereUniqueInput | DocumentVectorWhereUniqueInput[]
+    disconnect?: DocumentVectorWhereUniqueInput | DocumentVectorWhereUniqueInput[]
+    delete?: DocumentVectorWhereUniqueInput | DocumentVectorWhereUniqueInput[]
+    connect?: DocumentVectorWhereUniqueInput | DocumentVectorWhereUniqueInput[]
+    update?: DocumentVectorUpdateWithWhereUniqueWithoutDocumentInput | DocumentVectorUpdateWithWhereUniqueWithoutDocumentInput[]
+    updateMany?: DocumentVectorUpdateManyWithWhereWithoutDocumentInput | DocumentVectorUpdateManyWithWhereWithoutDocumentInput[]
+    deleteMany?: DocumentVectorScalarWhereInput | DocumentVectorScalarWhereInput[]
   }
 
   export type ApplicationUpdateOneWithoutDocumentsNestedInput = {
@@ -28534,6 +29880,16 @@ export namespace Prisma {
     delete?: ApplicationWhereInput | boolean
     connect?: ApplicationWhereUniqueInput
     update?: XOR<XOR<ApplicationUpdateToOneWithWhereWithoutDocumentsInput, ApplicationUpdateWithoutDocumentsInput>, ApplicationUncheckedUpdateWithoutDocumentsInput>
+  }
+
+  export type DocumentTagUpdateOneWithoutDocumentsNestedInput = {
+    create?: XOR<DocumentTagCreateWithoutDocumentsInput, DocumentTagUncheckedCreateWithoutDocumentsInput>
+    connectOrCreate?: DocumentTagCreateOrConnectWithoutDocumentsInput
+    upsert?: DocumentTagUpsertWithoutDocumentsInput
+    disconnect?: DocumentTagWhereInput | boolean
+    delete?: DocumentTagWhereInput | boolean
+    connect?: DocumentTagWhereUniqueInput
+    update?: XOR<XOR<DocumentTagUpdateToOneWithWhereWithoutDocumentsInput, DocumentTagUpdateWithoutDocumentsInput>, DocumentTagUncheckedUpdateWithoutDocumentsInput>
   }
 
   export type FolderUpdateOneWithoutDocumentsNestedInput = {
@@ -28552,20 +29908,6 @@ export namespace Prisma {
     upsert?: OrganizationUpsertWithoutDocumentsInput
     connect?: OrganizationWhereUniqueInput
     update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutDocumentsInput, OrganizationUpdateWithoutDocumentsInput>, OrganizationUncheckedUpdateWithoutDocumentsInput>
-  }
-
-  export type DocumentVectorUpdateManyWithoutDocumentNestedInput = {
-    create?: XOR<DocumentVectorCreateWithoutDocumentInput, DocumentVectorUncheckedCreateWithoutDocumentInput> | DocumentVectorCreateWithoutDocumentInput[] | DocumentVectorUncheckedCreateWithoutDocumentInput[]
-    connectOrCreate?: DocumentVectorCreateOrConnectWithoutDocumentInput | DocumentVectorCreateOrConnectWithoutDocumentInput[]
-    upsert?: DocumentVectorUpsertWithWhereUniqueWithoutDocumentInput | DocumentVectorUpsertWithWhereUniqueWithoutDocumentInput[]
-    createMany?: DocumentVectorCreateManyDocumentInputEnvelope
-    set?: DocumentVectorWhereUniqueInput | DocumentVectorWhereUniqueInput[]
-    disconnect?: DocumentVectorWhereUniqueInput | DocumentVectorWhereUniqueInput[]
-    delete?: DocumentVectorWhereUniqueInput | DocumentVectorWhereUniqueInput[]
-    connect?: DocumentVectorWhereUniqueInput | DocumentVectorWhereUniqueInput[]
-    update?: DocumentVectorUpdateWithWhereUniqueWithoutDocumentInput | DocumentVectorUpdateWithWhereUniqueWithoutDocumentInput[]
-    updateMany?: DocumentVectorUpdateManyWithWhereWithoutDocumentInput | DocumentVectorUpdateManyWithWhereWithoutDocumentInput[]
-    deleteMany?: DocumentVectorScalarWhereInput | DocumentVectorScalarWhereInput[]
   }
 
   export type DocumentVectorUncheckedUpdateManyWithoutDocumentNestedInput = {
@@ -28594,6 +29936,48 @@ export namespace Prisma {
     upsert?: DocumentUpsertWithoutVectorsInput
     connect?: DocumentWhereUniqueInput
     update?: XOR<XOR<DocumentUpdateToOneWithWhereWithoutVectorsInput, DocumentUpdateWithoutVectorsInput>, DocumentUncheckedUpdateWithoutVectorsInput>
+  }
+
+  export type DocumentCreateNestedManyWithoutFileTagInput = {
+    create?: XOR<DocumentCreateWithoutFileTagInput, DocumentUncheckedCreateWithoutFileTagInput> | DocumentCreateWithoutFileTagInput[] | DocumentUncheckedCreateWithoutFileTagInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutFileTagInput | DocumentCreateOrConnectWithoutFileTagInput[]
+    createMany?: DocumentCreateManyFileTagInputEnvelope
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+  }
+
+  export type DocumentUncheckedCreateNestedManyWithoutFileTagInput = {
+    create?: XOR<DocumentCreateWithoutFileTagInput, DocumentUncheckedCreateWithoutFileTagInput> | DocumentCreateWithoutFileTagInput[] | DocumentUncheckedCreateWithoutFileTagInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutFileTagInput | DocumentCreateOrConnectWithoutFileTagInput[]
+    createMany?: DocumentCreateManyFileTagInputEnvelope
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+  }
+
+  export type DocumentUpdateManyWithoutFileTagNestedInput = {
+    create?: XOR<DocumentCreateWithoutFileTagInput, DocumentUncheckedCreateWithoutFileTagInput> | DocumentCreateWithoutFileTagInput[] | DocumentUncheckedCreateWithoutFileTagInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutFileTagInput | DocumentCreateOrConnectWithoutFileTagInput[]
+    upsert?: DocumentUpsertWithWhereUniqueWithoutFileTagInput | DocumentUpsertWithWhereUniqueWithoutFileTagInput[]
+    createMany?: DocumentCreateManyFileTagInputEnvelope
+    set?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    disconnect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    delete?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    update?: DocumentUpdateWithWhereUniqueWithoutFileTagInput | DocumentUpdateWithWhereUniqueWithoutFileTagInput[]
+    updateMany?: DocumentUpdateManyWithWhereWithoutFileTagInput | DocumentUpdateManyWithWhereWithoutFileTagInput[]
+    deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
+  }
+
+  export type DocumentUncheckedUpdateManyWithoutFileTagNestedInput = {
+    create?: XOR<DocumentCreateWithoutFileTagInput, DocumentUncheckedCreateWithoutFileTagInput> | DocumentCreateWithoutFileTagInput[] | DocumentUncheckedCreateWithoutFileTagInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutFileTagInput | DocumentCreateOrConnectWithoutFileTagInput[]
+    upsert?: DocumentUpsertWithWhereUniqueWithoutFileTagInput | DocumentUpsertWithWhereUniqueWithoutFileTagInput[]
+    createMany?: DocumentCreateManyFileTagInputEnvelope
+    set?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    disconnect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    delete?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    update?: DocumentUpdateWithWhereUniqueWithoutFileTagInput | DocumentUpdateWithWhereUniqueWithoutFileTagInput[]
+    updateMany?: DocumentUpdateManyWithWhereWithoutFileTagInput | DocumentUpdateManyWithWhereWithoutFileTagInput[]
+    deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
   }
 
   export type DocumentCreateNestedManyWithoutFolderInput = {
@@ -29227,28 +30611,11 @@ export namespace Prisma {
     _max?: NestedBigIntFilter<$PrismaModel>
   }
 
-  export type NestedEnumFileCategoryFilter<$PrismaModel = never> = {
-    equals?: $Enums.FileCategory | EnumFileCategoryFieldRefInput<$PrismaModel>
-    in?: $Enums.FileCategory[] | ListEnumFileCategoryFieldRefInput<$PrismaModel>
-    notIn?: $Enums.FileCategory[] | ListEnumFileCategoryFieldRefInput<$PrismaModel>
-    not?: NestedEnumFileCategoryFilter<$PrismaModel> | $Enums.FileCategory
-  }
-
   export type NestedEnumVectorizationStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.VectorizationStatus | EnumVectorizationStatusFieldRefInput<$PrismaModel>
     in?: $Enums.VectorizationStatus[] | ListEnumVectorizationStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.VectorizationStatus[] | ListEnumVectorizationStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumVectorizationStatusFilter<$PrismaModel> | $Enums.VectorizationStatus
-  }
-
-  export type NestedEnumFileCategoryWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.FileCategory | EnumFileCategoryFieldRefInput<$PrismaModel>
-    in?: $Enums.FileCategory[] | ListEnumFileCategoryFieldRefInput<$PrismaModel>
-    notIn?: $Enums.FileCategory[] | ListEnumFileCategoryFieldRefInput<$PrismaModel>
-    not?: NestedEnumFileCategoryWithAggregatesFilter<$PrismaModel> | $Enums.FileCategory
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumFileCategoryFilter<$PrismaModel>
-    _max?: NestedEnumFileCategoryFilter<$PrismaModel>
   }
 
   export type NestedEnumVectorizationStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -29374,6 +30741,27 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UserAIContextSettingsCreateWithoutUserInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabledTagsChat?: UserAIContextSettingsCreateenabledTagsChatInput | string[]
+    enabledTagsEditor?: UserAIContextSettingsCreateenabledTagsEditorInput | string[]
+  }
+
+  export type UserAIContextSettingsUncheckedCreateWithoutUserInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabledTagsChat?: UserAIContextSettingsCreateenabledTagsChatInput | string[]
+    enabledTagsEditor?: UserAIContextSettingsCreateenabledTagsEditorInput | string[]
+  }
+
+  export type UserAIContextSettingsCreateOrConnectWithoutUserInput = {
+    where: UserAIContextSettingsWhereUniqueInput
+    create: XOR<UserAIContextSettingsCreateWithoutUserInput, UserAIContextSettingsUncheckedCreateWithoutUserInput>
+  }
+
   export type OrganizationCreateWithoutUsersInput = {
     id?: string
     name: string
@@ -29459,27 +30847,6 @@ export namespace Prisma {
     create: XOR<OrganizationCreateWithoutUsersInput, OrganizationUncheckedCreateWithoutUsersInput>
   }
 
-  export type UserAIContextSettingsCreateWithoutUserInput = {
-    id?: string
-    enabledCategoriesChat?: UserAIContextSettingsCreateenabledCategoriesChatInput | $Enums.FileCategory[]
-    enabledCategoriesEditor?: UserAIContextSettingsCreateenabledCategoriesEditorInput | $Enums.FileCategory[]
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type UserAIContextSettingsUncheckedCreateWithoutUserInput = {
-    id?: string
-    enabledCategoriesChat?: UserAIContextSettingsCreateenabledCategoriesChatInput | $Enums.FileCategory[]
-    enabledCategoriesEditor?: UserAIContextSettingsCreateenabledCategoriesEditorInput | $Enums.FileCategory[]
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type UserAIContextSettingsCreateOrConnectWithoutUserInput = {
-    where: UserAIContextSettingsWhereUniqueInput
-    create: XOR<UserAIContextSettingsCreateWithoutUserInput, UserAIContextSettingsUncheckedCreateWithoutUserInput>
-  }
-
   export type AiChatUpsertWithWhereUniqueWithoutUserInput = {
     where: AiChatWhereUniqueInput
     update: XOR<AiChatUpdateWithoutUserInput, AiChatUncheckedUpdateWithoutUserInput>
@@ -29537,6 +30904,33 @@ export namespace Prisma {
     userId?: UuidFilter<"GrantBookmark"> | string
     opportunityId?: IntFilter<"GrantBookmark"> | number
     organizationId?: StringFilter<"GrantBookmark"> | string
+  }
+
+  export type UserAIContextSettingsUpsertWithoutUserInput = {
+    update: XOR<UserAIContextSettingsUpdateWithoutUserInput, UserAIContextSettingsUncheckedUpdateWithoutUserInput>
+    create: XOR<UserAIContextSettingsCreateWithoutUserInput, UserAIContextSettingsUncheckedCreateWithoutUserInput>
+    where?: UserAIContextSettingsWhereInput
+  }
+
+  export type UserAIContextSettingsUpdateToOneWithWhereWithoutUserInput = {
+    where?: UserAIContextSettingsWhereInput
+    data: XOR<UserAIContextSettingsUpdateWithoutUserInput, UserAIContextSettingsUncheckedUpdateWithoutUserInput>
+  }
+
+  export type UserAIContextSettingsUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabledTagsChat?: UserAIContextSettingsUpdateenabledTagsChatInput | string[]
+    enabledTagsEditor?: UserAIContextSettingsUpdateenabledTagsEditorInput | string[]
+  }
+
+  export type UserAIContextSettingsUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabledTagsChat?: UserAIContextSettingsUpdateenabledTagsChatInput | string[]
+    enabledTagsEditor?: UserAIContextSettingsUpdateenabledTagsEditorInput | string[]
   }
 
   export type OrganizationUpsertWithoutUsersInput = {
@@ -29628,33 +31022,6 @@ export namespace Prisma {
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
     eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
-  }
-
-  export type UserAIContextSettingsUpsertWithoutUserInput = {
-    update: XOR<UserAIContextSettingsUpdateWithoutUserInput, UserAIContextSettingsUncheckedUpdateWithoutUserInput>
-    create: XOR<UserAIContextSettingsCreateWithoutUserInput, UserAIContextSettingsUncheckedCreateWithoutUserInput>
-    where?: UserAIContextSettingsWhereInput
-  }
-
-  export type UserAIContextSettingsUpdateToOneWithWhereWithoutUserInput = {
-    where?: UserAIContextSettingsWhereInput
-    data: XOR<UserAIContextSettingsUpdateWithoutUserInput, UserAIContextSettingsUncheckedUpdateWithoutUserInput>
-  }
-
-  export type UserAIContextSettingsUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    enabledCategoriesChat?: UserAIContextSettingsUpdateenabledCategoriesChatInput | $Enums.FileCategory[]
-    enabledCategoriesEditor?: UserAIContextSettingsUpdateenabledCategoriesEditorInput | $Enums.FileCategory[]
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type UserAIContextSettingsUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    enabledCategoriesChat?: UserAIContextSettingsUpdateenabledCategoriesChatInput | $Enums.FileCategory[]
-    enabledCategoriesEditor?: UserAIContextSettingsUpdateenabledCategoriesEditorInput | $Enums.FileCategory[]
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserCreateWithoutAiContextSettingsInput = {
@@ -29861,16 +31228,16 @@ export namespace Prisma {
     fileSize?: number | null
     fileType?: string | null
     fileUrl?: string | null
-    fileCategory?: $Enums.FileCategory
-    isKnowledgeBase?: boolean
+    chunkCount?: number | null
     extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
     vectorizationStatus?: $Enums.VectorizationStatus
     vectorizedAt?: Date | string | null
-    chunkCount?: number | null
-    vectorizationError?: string | null
-    application?: ApplicationCreateNestedOneWithoutDocumentsInput
-    folder?: FolderCreateNestedOneWithoutDocumentsInput
     vectors?: DocumentVectorCreateNestedManyWithoutDocumentInput
+    application?: ApplicationCreateNestedOneWithoutDocumentsInput
+    fileTag?: DocumentTagCreateNestedOneWithoutDocumentsInput
+    folder?: FolderCreateNestedOneWithoutDocumentsInput
   }
 
   export type DocumentUncheckedCreateWithoutOrganizationInput = {
@@ -29887,13 +31254,13 @@ export namespace Prisma {
     fileSize?: number | null
     fileType?: string | null
     fileUrl?: string | null
-    fileCategory?: $Enums.FileCategory
-    isKnowledgeBase?: boolean
+    chunkCount?: number | null
     extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
     vectorizationStatus?: $Enums.VectorizationStatus
     vectorizedAt?: Date | string | null
-    chunkCount?: number | null
-    vectorizationError?: string | null
+    fileTagId?: string | null
     vectors?: DocumentVectorUncheckedCreateNestedManyWithoutDocumentInput
   }
 
@@ -30170,13 +31537,13 @@ export namespace Prisma {
     fileSize?: IntNullableFilter<"Document"> | number | null
     fileType?: StringNullableFilter<"Document"> | string | null
     fileUrl?: StringNullableFilter<"Document"> | string | null
-    fileCategory?: EnumFileCategoryFilter<"Document"> | $Enums.FileCategory
-    isKnowledgeBase?: BoolFilter<"Document"> | boolean
+    chunkCount?: IntNullableFilter<"Document"> | number | null
     extractedText?: StringNullableFilter<"Document"> | string | null
+    isKnowledgeBase?: BoolFilter<"Document"> | boolean
+    vectorizationError?: StringNullableFilter<"Document"> | string | null
     vectorizationStatus?: EnumVectorizationStatusFilter<"Document"> | $Enums.VectorizationStatus
     vectorizedAt?: DateTimeNullableFilter<"Document"> | Date | string | null
-    chunkCount?: IntNullableFilter<"Document"> | number | null
-    vectorizationError?: StringNullableFilter<"Document"> | string | null
+    fileTagId?: StringNullableFilter<"Document"> | string | null
   }
 
   export type FolderUpsertWithWhereUniqueWithoutOrganizationInput = {
@@ -30425,8 +31792,8 @@ export namespace Prisma {
     googleRefreshToken?: string | null
     googleTokenExpiry?: Date | string | null
     aiChats?: AiChatCreateNestedManyWithoutUserInput
-    organization: OrganizationCreateNestedOneWithoutUsersInput
     aiContextSettings?: UserAIContextSettingsCreateNestedOneWithoutUserInput
+    organization: OrganizationCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutGrantBookmarksInput = {
@@ -30574,8 +31941,8 @@ export namespace Prisma {
     googleRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     aiChats?: AiChatUpdateManyWithoutUserNestedInput
-    organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
     aiContextSettings?: UserAIContextSettingsUpdateOneWithoutUserNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGrantBookmarksInput = {
@@ -30906,16 +32273,16 @@ export namespace Prisma {
     fileSize?: number | null
     fileType?: string | null
     fileUrl?: string | null
-    fileCategory?: $Enums.FileCategory
-    isKnowledgeBase?: boolean
+    chunkCount?: number | null
     extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
     vectorizationStatus?: $Enums.VectorizationStatus
     vectorizedAt?: Date | string | null
-    chunkCount?: number | null
-    vectorizationError?: string | null
+    vectors?: DocumentVectorCreateNestedManyWithoutDocumentInput
+    fileTag?: DocumentTagCreateNestedOneWithoutDocumentsInput
     folder?: FolderCreateNestedOneWithoutDocumentsInput
     organization: OrganizationCreateNestedOneWithoutDocumentsInput
-    vectors?: DocumentVectorCreateNestedManyWithoutDocumentInput
   }
 
   export type DocumentUncheckedCreateWithoutApplicationInput = {
@@ -30932,13 +32299,13 @@ export namespace Prisma {
     fileSize?: number | null
     fileType?: string | null
     fileUrl?: string | null
-    fileCategory?: $Enums.FileCategory
-    isKnowledgeBase?: boolean
+    chunkCount?: number | null
     extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
     vectorizationStatus?: $Enums.VectorizationStatus
     vectorizedAt?: Date | string | null
-    chunkCount?: number | null
-    vectorizationError?: string | null
+    fileTagId?: string | null
     vectors?: DocumentVectorUncheckedCreateNestedManyWithoutDocumentInput
   }
 
@@ -31316,8 +32683,8 @@ export namespace Prisma {
     googleRefreshToken?: string | null
     googleTokenExpiry?: Date | string | null
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutUserInput
-    organization: OrganizationCreateNestedOneWithoutUsersInput
     aiContextSettings?: UserAIContextSettingsCreateNestedOneWithoutUserInput
+    organization: OrganizationCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutAiChatsInput = {
@@ -31552,8 +32919,8 @@ export namespace Prisma {
     googleRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     googleTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     grantBookmarks?: GrantBookmarkUpdateManyWithoutUserNestedInput
-    organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
     aiContextSettings?: UserAIContextSettingsUpdateOneWithoutUserNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAiChatsInput = {
@@ -31817,6 +33184,42 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
+  export type DocumentVectorCreateWithoutDocumentInput = {
+    id?: bigint | number
+    organizationId: string
+    chunkIndex: number
+    totalChunks: number
+    content: string
+    fileName: string
+    fileType: string
+    contentHash: string
+    vectorizedAt?: Date | string
+    model?: string
+  }
+
+  export type DocumentVectorUncheckedCreateWithoutDocumentInput = {
+    id?: bigint | number
+    organizationId: string
+    chunkIndex: number
+    totalChunks: number
+    content: string
+    fileName: string
+    fileType: string
+    contentHash: string
+    vectorizedAt?: Date | string
+    model?: string
+  }
+
+  export type DocumentVectorCreateOrConnectWithoutDocumentInput = {
+    where: DocumentVectorWhereUniqueInput
+    create: XOR<DocumentVectorCreateWithoutDocumentInput, DocumentVectorUncheckedCreateWithoutDocumentInput>
+  }
+
+  export type DocumentVectorCreateManyDocumentInputEnvelope = {
+    data: DocumentVectorCreateManyDocumentInput | DocumentVectorCreateManyDocumentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ApplicationCreateWithoutDocumentsInput = {
     id?: string
     opportunityId?: number | null
@@ -31868,6 +33271,27 @@ export namespace Prisma {
   export type ApplicationCreateOrConnectWithoutDocumentsInput = {
     where: ApplicationWhereUniqueInput
     create: XOR<ApplicationCreateWithoutDocumentsInput, ApplicationUncheckedCreateWithoutDocumentsInput>
+  }
+
+  export type DocumentTagCreateWithoutDocumentsInput = {
+    id?: string
+    name: string
+    organizationId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DocumentTagUncheckedCreateWithoutDocumentsInput = {
+    id?: string
+    name: string
+    organizationId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DocumentTagCreateOrConnectWithoutDocumentsInput = {
+    where: DocumentTagWhereUniqueInput
+    create: XOR<DocumentTagCreateWithoutDocumentsInput, DocumentTagUncheckedCreateWithoutDocumentsInput>
   }
 
   export type FolderCreateWithoutDocumentsInput = {
@@ -31982,40 +33406,37 @@ export namespace Prisma {
     create: XOR<OrganizationCreateWithoutDocumentsInput, OrganizationUncheckedCreateWithoutDocumentsInput>
   }
 
-  export type DocumentVectorCreateWithoutDocumentInput = {
-    id?: bigint | number
-    organizationId: string
-    chunkIndex: number
-    totalChunks: number
-    content: string
-    fileName: string
-    fileType: string
-    contentHash: string
-    vectorizedAt?: Date | string
-    model?: string
-  }
-
-  export type DocumentVectorUncheckedCreateWithoutDocumentInput = {
-    id?: bigint | number
-    organizationId: string
-    chunkIndex: number
-    totalChunks: number
-    content: string
-    fileName: string
-    fileType: string
-    contentHash: string
-    vectorizedAt?: Date | string
-    model?: string
-  }
-
-  export type DocumentVectorCreateOrConnectWithoutDocumentInput = {
+  export type DocumentVectorUpsertWithWhereUniqueWithoutDocumentInput = {
     where: DocumentVectorWhereUniqueInput
+    update: XOR<DocumentVectorUpdateWithoutDocumentInput, DocumentVectorUncheckedUpdateWithoutDocumentInput>
     create: XOR<DocumentVectorCreateWithoutDocumentInput, DocumentVectorUncheckedCreateWithoutDocumentInput>
   }
 
-  export type DocumentVectorCreateManyDocumentInputEnvelope = {
-    data: DocumentVectorCreateManyDocumentInput | DocumentVectorCreateManyDocumentInput[]
-    skipDuplicates?: boolean
+  export type DocumentVectorUpdateWithWhereUniqueWithoutDocumentInput = {
+    where: DocumentVectorWhereUniqueInput
+    data: XOR<DocumentVectorUpdateWithoutDocumentInput, DocumentVectorUncheckedUpdateWithoutDocumentInput>
+  }
+
+  export type DocumentVectorUpdateManyWithWhereWithoutDocumentInput = {
+    where: DocumentVectorScalarWhereInput
+    data: XOR<DocumentVectorUpdateManyMutationInput, DocumentVectorUncheckedUpdateManyWithoutDocumentInput>
+  }
+
+  export type DocumentVectorScalarWhereInput = {
+    AND?: DocumentVectorScalarWhereInput | DocumentVectorScalarWhereInput[]
+    OR?: DocumentVectorScalarWhereInput[]
+    NOT?: DocumentVectorScalarWhereInput | DocumentVectorScalarWhereInput[]
+    id?: BigIntFilter<"DocumentVector"> | bigint | number
+    documentId?: StringFilter<"DocumentVector"> | string
+    organizationId?: StringFilter<"DocumentVector"> | string
+    chunkIndex?: IntFilter<"DocumentVector"> | number
+    totalChunks?: IntFilter<"DocumentVector"> | number
+    content?: StringFilter<"DocumentVector"> | string
+    fileName?: StringFilter<"DocumentVector"> | string
+    fileType?: StringFilter<"DocumentVector"> | string
+    contentHash?: StringFilter<"DocumentVector"> | string
+    vectorizedAt?: DateTimeFilter<"DocumentVector"> | Date | string
+    model?: StringFilter<"DocumentVector"> | string
   }
 
   export type ApplicationUpsertWithoutDocumentsInput = {
@@ -32075,6 +33496,33 @@ export namespace Prisma {
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
     aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
     folder?: FolderUncheckedUpdateOneWithoutApplicationNestedInput
+  }
+
+  export type DocumentTagUpsertWithoutDocumentsInput = {
+    update: XOR<DocumentTagUpdateWithoutDocumentsInput, DocumentTagUncheckedUpdateWithoutDocumentsInput>
+    create: XOR<DocumentTagCreateWithoutDocumentsInput, DocumentTagUncheckedCreateWithoutDocumentsInput>
+    where?: DocumentTagWhereInput
+  }
+
+  export type DocumentTagUpdateToOneWithWhereWithoutDocumentsInput = {
+    where?: DocumentTagWhereInput
+    data: XOR<DocumentTagUpdateWithoutDocumentsInput, DocumentTagUncheckedUpdateWithoutDocumentsInput>
+  }
+
+  export type DocumentTagUpdateWithoutDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DocumentTagUncheckedUpdateWithoutDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FolderUpsertWithoutDocumentsInput = {
@@ -32201,39 +33649,6 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
-  export type DocumentVectorUpsertWithWhereUniqueWithoutDocumentInput = {
-    where: DocumentVectorWhereUniqueInput
-    update: XOR<DocumentVectorUpdateWithoutDocumentInput, DocumentVectorUncheckedUpdateWithoutDocumentInput>
-    create: XOR<DocumentVectorCreateWithoutDocumentInput, DocumentVectorUncheckedCreateWithoutDocumentInput>
-  }
-
-  export type DocumentVectorUpdateWithWhereUniqueWithoutDocumentInput = {
-    where: DocumentVectorWhereUniqueInput
-    data: XOR<DocumentVectorUpdateWithoutDocumentInput, DocumentVectorUncheckedUpdateWithoutDocumentInput>
-  }
-
-  export type DocumentVectorUpdateManyWithWhereWithoutDocumentInput = {
-    where: DocumentVectorScalarWhereInput
-    data: XOR<DocumentVectorUpdateManyMutationInput, DocumentVectorUncheckedUpdateManyWithoutDocumentInput>
-  }
-
-  export type DocumentVectorScalarWhereInput = {
-    AND?: DocumentVectorScalarWhereInput | DocumentVectorScalarWhereInput[]
-    OR?: DocumentVectorScalarWhereInput[]
-    NOT?: DocumentVectorScalarWhereInput | DocumentVectorScalarWhereInput[]
-    id?: BigIntFilter<"DocumentVector"> | bigint | number
-    documentId?: StringFilter<"DocumentVector"> | string
-    organizationId?: StringFilter<"DocumentVector"> | string
-    chunkIndex?: IntFilter<"DocumentVector"> | number
-    totalChunks?: IntFilter<"DocumentVector"> | number
-    content?: StringFilter<"DocumentVector"> | string
-    fileName?: StringFilter<"DocumentVector"> | string
-    fileType?: StringFilter<"DocumentVector"> | string
-    contentHash?: StringFilter<"DocumentVector"> | string
-    vectorizedAt?: DateTimeFilter<"DocumentVector"> | Date | string
-    model?: StringFilter<"DocumentVector"> | string
-  }
-
   export type DocumentCreateWithoutVectorsInput = {
     id?: string
     title: string
@@ -32246,14 +33661,14 @@ export namespace Prisma {
     fileSize?: number | null
     fileType?: string | null
     fileUrl?: string | null
-    fileCategory?: $Enums.FileCategory
-    isKnowledgeBase?: boolean
+    chunkCount?: number | null
     extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
     vectorizationStatus?: $Enums.VectorizationStatus
     vectorizedAt?: Date | string | null
-    chunkCount?: number | null
-    vectorizationError?: string | null
     application?: ApplicationCreateNestedOneWithoutDocumentsInput
+    fileTag?: DocumentTagCreateNestedOneWithoutDocumentsInput
     folder?: FolderCreateNestedOneWithoutDocumentsInput
     organization: OrganizationCreateNestedOneWithoutDocumentsInput
   }
@@ -32273,13 +33688,13 @@ export namespace Prisma {
     fileSize?: number | null
     fileType?: string | null
     fileUrl?: string | null
-    fileCategory?: $Enums.FileCategory
-    isKnowledgeBase?: boolean
+    chunkCount?: number | null
     extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
     vectorizationStatus?: $Enums.VectorizationStatus
     vectorizedAt?: Date | string | null
-    chunkCount?: number | null
-    vectorizationError?: string | null
+    fileTagId?: string | null
   }
 
   export type DocumentCreateOrConnectWithoutVectorsInput = {
@@ -32310,14 +33725,14 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    fileCategory?: EnumFileCategoryFieldUpdateOperationsInput | $Enums.FileCategory
-    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
     vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
-    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     application?: ApplicationUpdateOneWithoutDocumentsNestedInput
+    fileTag?: DocumentTagUpdateOneWithoutDocumentsNestedInput
     folder?: FolderUpdateOneWithoutDocumentsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutDocumentsNestedInput
   }
@@ -32337,13 +33752,87 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    fileCategory?: EnumFileCategoryFieldUpdateOperationsInput | $Enums.FileCategory
-    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
     vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
-    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    fileTagId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type DocumentCreateWithoutFileTagInput = {
+    id?: string
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    fileSize?: number | null
+    fileType?: string | null
+    fileUrl?: string | null
+    chunkCount?: number | null
+    extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
+    vectorizationStatus?: $Enums.VectorizationStatus
+    vectorizedAt?: Date | string | null
+    vectors?: DocumentVectorCreateNestedManyWithoutDocumentInput
+    application?: ApplicationCreateNestedOneWithoutDocumentsInput
+    folder?: FolderCreateNestedOneWithoutDocumentsInput
+    organization: OrganizationCreateNestedOneWithoutDocumentsInput
+  }
+
+  export type DocumentUncheckedCreateWithoutFileTagInput = {
+    id?: string
+    applicationId?: string | null
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organizationId: string
+    folderId?: string | null
+    fileSize?: number | null
+    fileType?: string | null
+    fileUrl?: string | null
+    chunkCount?: number | null
+    extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
+    vectorizationStatus?: $Enums.VectorizationStatus
+    vectorizedAt?: Date | string | null
+    vectors?: DocumentVectorUncheckedCreateNestedManyWithoutDocumentInput
+  }
+
+  export type DocumentCreateOrConnectWithoutFileTagInput = {
+    where: DocumentWhereUniqueInput
+    create: XOR<DocumentCreateWithoutFileTagInput, DocumentUncheckedCreateWithoutFileTagInput>
+  }
+
+  export type DocumentCreateManyFileTagInputEnvelope = {
+    data: DocumentCreateManyFileTagInput | DocumentCreateManyFileTagInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DocumentUpsertWithWhereUniqueWithoutFileTagInput = {
+    where: DocumentWhereUniqueInput
+    update: XOR<DocumentUpdateWithoutFileTagInput, DocumentUncheckedUpdateWithoutFileTagInput>
+    create: XOR<DocumentCreateWithoutFileTagInput, DocumentUncheckedCreateWithoutFileTagInput>
+  }
+
+  export type DocumentUpdateWithWhereUniqueWithoutFileTagInput = {
+    where: DocumentWhereUniqueInput
+    data: XOR<DocumentUpdateWithoutFileTagInput, DocumentUncheckedUpdateWithoutFileTagInput>
+  }
+
+  export type DocumentUpdateManyWithWhereWithoutFileTagInput = {
+    where: DocumentScalarWhereInput
+    data: XOR<DocumentUpdateManyMutationInput, DocumentUncheckedUpdateManyWithoutFileTagInput>
   }
 
   export type DocumentCreateWithoutFolderInput = {
@@ -32358,16 +33847,16 @@ export namespace Prisma {
     fileSize?: number | null
     fileType?: string | null
     fileUrl?: string | null
-    fileCategory?: $Enums.FileCategory
-    isKnowledgeBase?: boolean
+    chunkCount?: number | null
     extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
     vectorizationStatus?: $Enums.VectorizationStatus
     vectorizedAt?: Date | string | null
-    chunkCount?: number | null
-    vectorizationError?: string | null
-    application?: ApplicationCreateNestedOneWithoutDocumentsInput
-    organization: OrganizationCreateNestedOneWithoutDocumentsInput
     vectors?: DocumentVectorCreateNestedManyWithoutDocumentInput
+    application?: ApplicationCreateNestedOneWithoutDocumentsInput
+    fileTag?: DocumentTagCreateNestedOneWithoutDocumentsInput
+    organization: OrganizationCreateNestedOneWithoutDocumentsInput
   }
 
   export type DocumentUncheckedCreateWithoutFolderInput = {
@@ -32384,13 +33873,13 @@ export namespace Prisma {
     fileSize?: number | null
     fileType?: string | null
     fileUrl?: string | null
-    fileCategory?: $Enums.FileCategory
-    isKnowledgeBase?: boolean
+    chunkCount?: number | null
     extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
     vectorizationStatus?: $Enums.VectorizationStatus
     vectorizedAt?: Date | string | null
-    chunkCount?: number | null
-    vectorizationError?: string | null
+    fileTagId?: string | null
     vectors?: DocumentVectorUncheckedCreateNestedManyWithoutDocumentInput
   }
 
@@ -33137,13 +34626,13 @@ export namespace Prisma {
     fileSize?: number | null
     fileType?: string | null
     fileUrl?: string | null
-    fileCategory?: $Enums.FileCategory
-    isKnowledgeBase?: boolean
+    chunkCount?: number | null
     extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
     vectorizationStatus?: $Enums.VectorizationStatus
     vectorizedAt?: Date | string | null
-    chunkCount?: number | null
-    vectorizationError?: string | null
+    fileTagId?: string | null
   }
 
   export type FolderCreateManyOrganizationInput = {
@@ -33318,16 +34807,16 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    fileCategory?: EnumFileCategoryFieldUpdateOperationsInput | $Enums.FileCategory
-    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
     vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
-    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
-    application?: ApplicationUpdateOneWithoutDocumentsNestedInput
-    folder?: FolderUpdateOneWithoutDocumentsNestedInput
     vectors?: DocumentVectorUpdateManyWithoutDocumentNestedInput
+    application?: ApplicationUpdateOneWithoutDocumentsNestedInput
+    fileTag?: DocumentTagUpdateOneWithoutDocumentsNestedInput
+    folder?: FolderUpdateOneWithoutDocumentsNestedInput
   }
 
   export type DocumentUncheckedUpdateWithoutOrganizationInput = {
@@ -33344,13 +34833,13 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    fileCategory?: EnumFileCategoryFieldUpdateOperationsInput | $Enums.FileCategory
-    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
     vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
-    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    fileTagId?: NullableStringFieldUpdateOperationsInput | string | null
     vectors?: DocumentVectorUncheckedUpdateManyWithoutDocumentNestedInput
   }
 
@@ -33368,13 +34857,13 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    fileCategory?: EnumFileCategoryFieldUpdateOperationsInput | $Enums.FileCategory
-    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
     vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
-    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    fileTagId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FolderUpdateWithoutOrganizationInput = {
@@ -33580,13 +35069,13 @@ export namespace Prisma {
     fileSize?: number | null
     fileType?: string | null
     fileUrl?: string | null
-    fileCategory?: $Enums.FileCategory
-    isKnowledgeBase?: boolean
+    chunkCount?: number | null
     extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
     vectorizationStatus?: $Enums.VectorizationStatus
     vectorizedAt?: Date | string | null
-    chunkCount?: number | null
-    vectorizationError?: string | null
+    fileTagId?: string | null
   }
 
   export type AiChatUpdateWithoutApplicationInput = {
@@ -33636,16 +35125,16 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    fileCategory?: EnumFileCategoryFieldUpdateOperationsInput | $Enums.FileCategory
-    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
     vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
-    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    vectors?: DocumentVectorUpdateManyWithoutDocumentNestedInput
+    fileTag?: DocumentTagUpdateOneWithoutDocumentsNestedInput
     folder?: FolderUpdateOneWithoutDocumentsNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutDocumentsNestedInput
-    vectors?: DocumentVectorUpdateManyWithoutDocumentNestedInput
   }
 
   export type DocumentUncheckedUpdateWithoutApplicationInput = {
@@ -33662,13 +35151,13 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    fileCategory?: EnumFileCategoryFieldUpdateOperationsInput | $Enums.FileCategory
-    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
     vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
-    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    fileTagId?: NullableStringFieldUpdateOperationsInput | string | null
     vectors?: DocumentVectorUncheckedUpdateManyWithoutDocumentNestedInput
   }
 
@@ -33686,13 +35175,13 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    fileCategory?: EnumFileCategoryFieldUpdateOperationsInput | $Enums.FileCategory
-    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
     vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
-    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    fileTagId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AiChatMessageCreateManyChatInput = {
@@ -33779,6 +35268,100 @@ export namespace Prisma {
     model?: StringFieldUpdateOperationsInput | string
   }
 
+  export type DocumentCreateManyFileTagInput = {
+    id?: string
+    applicationId?: string | null
+    title: string
+    content?: string | null
+    contentType?: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organizationId: string
+    folderId?: string | null
+    fileSize?: number | null
+    fileType?: string | null
+    fileUrl?: string | null
+    chunkCount?: number | null
+    extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
+    vectorizationStatus?: $Enums.VectorizationStatus
+    vectorizedAt?: Date | string | null
+  }
+
+  export type DocumentUpdateWithoutFileTagInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
+    extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
+    vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    vectors?: DocumentVectorUpdateManyWithoutDocumentNestedInput
+    application?: ApplicationUpdateOneWithoutDocumentsNestedInput
+    folder?: FolderUpdateOneWithoutDocumentsNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutDocumentsNestedInput
+  }
+
+  export type DocumentUncheckedUpdateWithoutFileTagInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
+    extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
+    vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    vectors?: DocumentVectorUncheckedUpdateManyWithoutDocumentNestedInput
+  }
+
+  export type DocumentUncheckedUpdateManyWithoutFileTagInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    applicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    contentType?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
+    extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
+    vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type DocumentCreateManyFolderInput = {
     id?: string
     applicationId?: string | null
@@ -33793,13 +35376,13 @@ export namespace Prisma {
     fileSize?: number | null
     fileType?: string | null
     fileUrl?: string | null
-    fileCategory?: $Enums.FileCategory
-    isKnowledgeBase?: boolean
+    chunkCount?: number | null
     extractedText?: string | null
+    isKnowledgeBase?: boolean
+    vectorizationError?: string | null
     vectorizationStatus?: $Enums.VectorizationStatus
     vectorizedAt?: Date | string | null
-    chunkCount?: number | null
-    vectorizationError?: string | null
+    fileTagId?: string | null
   }
 
   export type FolderCreateManyParentInput = {
@@ -33823,16 +35406,16 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    fileCategory?: EnumFileCategoryFieldUpdateOperationsInput | $Enums.FileCategory
-    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
     vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
-    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
-    application?: ApplicationUpdateOneWithoutDocumentsNestedInput
-    organization?: OrganizationUpdateOneRequiredWithoutDocumentsNestedInput
     vectors?: DocumentVectorUpdateManyWithoutDocumentNestedInput
+    application?: ApplicationUpdateOneWithoutDocumentsNestedInput
+    fileTag?: DocumentTagUpdateOneWithoutDocumentsNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutDocumentsNestedInput
   }
 
   export type DocumentUncheckedUpdateWithoutFolderInput = {
@@ -33849,13 +35432,13 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    fileCategory?: EnumFileCategoryFieldUpdateOperationsInput | $Enums.FileCategory
-    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
     vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
-    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    fileTagId?: NullableStringFieldUpdateOperationsInput | string | null
     vectors?: DocumentVectorUncheckedUpdateManyWithoutDocumentNestedInput
   }
 
@@ -33873,13 +35456,13 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    fileCategory?: EnumFileCategoryFieldUpdateOperationsInput | $Enums.FileCategory
-    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    isKnowledgeBase?: BoolFieldUpdateOperationsInput | boolean
+    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
     vectorizationStatus?: EnumVectorizationStatusFieldUpdateOperationsInput | $Enums.VectorizationStatus
     vectorizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    chunkCount?: NullableIntFieldUpdateOperationsInput | number | null
-    vectorizationError?: NullableStringFieldUpdateOperationsInput | string | null
+    fileTagId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FolderUpdateWithoutParentInput = {

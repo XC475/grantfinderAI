@@ -8,7 +8,6 @@ import { join } from "path";
 import { tmpdir } from "os";
 import { randomUUID } from "crypto";
 import { MAX_DOCUMENT_SIZE, validatePageCount } from "@/lib/uploadValidation";
-import { FileCategory } from "@/generated/prisma";
 import { triggerDocumentVectorization } from "@/lib/textExtraction";
 
 // Force Node.js runtime for file processing
@@ -54,7 +53,7 @@ export async function POST(req: NextRequest) {
     const file = formData.get("file") as File;
     const folderId = formData.get("folderId") as string | null;
     const applicationId = formData.get("applicationId") as string | null;
-    const fileCategory = (formData.get("fileCategory") as string) || "GENERAL";
+    const fileTagId = (formData.get("fileTagId") as string) || null;
     const isKnowledgeBase = formData.get("isKnowledgeBase") !== "false"; // Default to true unless explicitly false
 
     if (!file) {
@@ -178,7 +177,7 @@ export async function POST(req: NextRequest) {
         fileUrl: publicUrl,
         fileType: mimeType,
         fileSize: file.size,
-        fileCategory: fileCategory as FileCategory,
+        fileTagId: fileTagId || null,
         isKnowledgeBase,
         extractedText: extractedText || null, // Move from metadata to top-level
         vectorizationStatus: extractedText ? "PENDING" : "COMPLETED",

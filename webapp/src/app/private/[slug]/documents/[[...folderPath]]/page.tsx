@@ -6,7 +6,6 @@ import { DocumentsView } from "@/components/folders/DocumentsView";
 import { useHeaderActions } from "@/contexts/HeaderActionsContext";
 import { CreateMenu } from "@/components/folders/CreateMenu";
 import { toast } from "sonner";
-import { FileCategory } from "@/generated/prisma";
 
 interface DocumentsPageProps {
   params: Promise<{ slug: string; folderPath?: string[] }>;
@@ -66,13 +65,13 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
   const handleCreateDocument = async (
     title: string,
     folderId: string | null,
-    fileCategory: FileCategory
+    fileTagId: string | null
   ) => {
     try {
       const response = await fetch("/api/documents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, folderId, content: "", fileCategory }),
+        body: JSON.stringify({ title, folderId, content: "", fileTagId }),
       });
 
       if (!response.ok) throw new Error("Failed to create document");
@@ -88,13 +87,15 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
     }
   };
 
-  const handleFileUpload = async (file: File, fileCategory: FileCategory) => {
+  const handleFileUpload = async (file: File, fileTagId: string | null) => {
     if (!file) return;
 
     const formData = new FormData();
     formData.append("file", file);
     formData.append("folderId", currentFolderId || "null");
-    formData.append("fileCategory", fileCategory);
+    if (fileTagId) {
+      formData.append("fileTagId", fileTagId);
+    }
     // isKnowledgeBase defaults to true in the API unless explicitly set to "false"
 
     const uploadPromise = fetch("/api/documents/upload", {
@@ -119,7 +120,7 @@ export default function DocumentsPage({ params }: DocumentsPageProps) {
     });
   };
 
-  const handleGoogleDriveImported = async (fileCategory: FileCategory) => {
+  const handleGoogleDriveImported = async (fileTagId: string | null) => {
     setRefreshTrigger((prev) => prev + 1);
   };
 

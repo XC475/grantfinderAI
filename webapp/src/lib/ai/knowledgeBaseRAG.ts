@@ -1,8 +1,7 @@
 import OpenAI from "openai";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma";
-import { FileCategory } from "@/generated/prisma";
-import { getFileCategoryLabel } from "@/lib/fileCategories";
+import { getFileTagLabel } from "@/lib/fileTags";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -10,7 +9,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
  * Extracts the actual content text from a chunk, removing the metadata prefix.
  * Chunk content format:
  *   Document: {title}
- *   Category: {label}
+ *   Tag: {tag_name}
  *   Folder: {name} (always present, "Root" if no folder)
  *
  *   {actual content}
@@ -26,7 +25,7 @@ function extractChunkContent(chunkContent: string): string {
     // Check if this is a metadata line
     if (
       line.startsWith("Document:") ||
-      line.startsWith("Category:") ||
+      line.startsWith("Tag:") ||
       line.startsWith("Folder:")
     ) {
       continue;
@@ -51,7 +50,7 @@ function extractChunkContent(chunkContent: string): string {
   const filteredLines = lines.filter(
     (line) =>
       !line.trim().startsWith("Document:") &&
-      !line.trim().startsWith("Category:") &&
+      !line.trim().startsWith("Tag:") &&
       !line.trim().startsWith("Folder:") &&
       line.trim() !== ""
   );
@@ -71,15 +70,28 @@ export async function searchKnowledgeBase(
 
   try {
     // Get user AI context settings if userId provided
-    let enabledCategories: FileCategory[] | null = null;
+    let enabledTagNames: string[] | null = null;
     if (options?.userId && options?.context) {
       const settings = await prisma.userAIContextSettings.findUnique({
         where: { userId: options.userId },
       });
-      enabledCategories =
+      enabledTagNames =
         options.context === "chat"
-          ? settings?.enabledCategoriesChat || null
-          : settings?.enabledCategoriesEditor || null;
+          ? settings?.enabledTagsChat || null
+          : settings?.enabledTagsEditor || null;
+    }
+
+    // Get tag IDs for enabled tags
+    let tagIds: string[] | null = null;
+    if (enabledTagNames && enabledTagNames.length > 0) {
+      const tags = await prisma.documentTag.findMany({
+        where: {
+          organizationId,
+          name: { in: enabledTagNames },
+        },
+        select: { id: true },
+      });
+      tagIds = tags.map((t) => t.id);
     }
 
     // Generate embedding for query
@@ -90,11 +102,13 @@ export async function searchKnowledgeBase(
     const queryEmbedding = embeddingResponse.data[0].embedding;
     const embeddingArrayString = `[${queryEmbedding.join(",")}]`;
 
-    // Build category filter SQL if user settings exist
-    let categoryFilterSQL = "";
-    if (enabledCategories && enabledCategories.length > 0) {
-      const categoriesList = enabledCategories.map((c) => `'${c}'`).join(",");
-      categoryFilterSQL = `AND d."fileCategory" = ANY(ARRAY[${categoriesList}]::"FileCategory"[])`;
+    // Build tag filter SQL if user settings exist
+    let tagFilterSQL = "";
+    if (tagIds && tagIds.length > 0) {
+      const tagIdsList = tagIds
+        .map((id) => `'${id.replace(/'/g, "''")}'`)
+        .join(",");
+      tagFilterSQL = `AND d."fileTagId" = ANY(ARRAY[${tagIdsList}]::TEXT[])`;
     }
 
     // Search using cosine similarity in app.document_vectors
@@ -109,16 +123,17 @@ export async function searchKnowledgeBase(
         dv.chunk_index,
         dv.document_id,
         d.title as document_title,
-        d."fileCategory" as document_category,
+        dt.name as document_tag_name,
         f.name as folder_name,
         1 - (dv.embedding <=> '${escapedEmbedding}'::vector) as similarity
       FROM app.document_vectors dv
       INNER JOIN app.documents d ON d.id = dv.document_id
+      LEFT JOIN app.document_tags dt ON dt.id = d."fileTagId"
       LEFT JOIN app.folders f ON f.id = d."folderId"
       WHERE dv.organization_id = $1
         AND d."isKnowledgeBase" = true
         AND d."vectorizationStatus" = 'COMPLETED'
-        ${categoryFilterSQL}
+        ${tagFilterSQL}
       ORDER BY dv.embedding <=> '${escapedEmbedding}'::vector
       LIMIT $2
     `;
@@ -129,7 +144,7 @@ export async function searchKnowledgeBase(
         chunk_index: number;
         document_id: string;
         document_title: string;
-        document_category: FileCategory;
+        document_tag_name: string | null;
         folder_name: string | null;
         similarity: number;
       }>
@@ -153,7 +168,7 @@ export async function searchKnowledgeBase(
       string,
       {
         document_title: string;
-        document_category: FileCategory;
+        document_tag_name: string | null;
         folder_name: string | null;
         chunks: Array<{
           content: string;
@@ -169,7 +184,7 @@ export async function searchKnowledgeBase(
       if (!chunksByDocument.has(documentId)) {
         chunksByDocument.set(documentId, {
           document_title: result.document_title,
-          document_category: result.document_category,
+          document_tag_name: result.document_tag_name,
           folder_name: result.folder_name,
           chunks: [],
         });
@@ -202,7 +217,7 @@ export async function searchKnowledgeBase(
 
     for (const [documentId, docData] of chunksByDocument.entries()) {
       let formatted = `[Knowledge Base - Document: ${docData.document_title}]\n`;
-      formatted += `Category: ${getFileCategoryLabel(docData.document_category)}\n`;
+      formatted += `Tag: ${docData.document_tag_name ? getFileTagLabel(docData.document_tag_name) : "Untagged"}\n`;
       formatted += `Folder: ${docData.folder_name || "Root"}\n`;
 
       formatted += "\n[Relevant sections from this document:]\n";

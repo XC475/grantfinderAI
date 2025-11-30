@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
-import { FileCategory } from "@/generated/prisma";
 
 export async function POST(req: NextRequest) {
   try {
@@ -27,27 +26,46 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { fileCategory, isKnowledgeBase } = await req.json();
+    const { fileTag, fileTagId, isKnowledgeBase } = await req.json();
 
-    if (!fileCategory || typeof isKnowledgeBase !== "boolean") {
+    if (typeof isKnowledgeBase !== "boolean") {
       return NextResponse.json(
-        { error: "fileCategory and isKnowledgeBase are required" },
+        { error: "isKnowledgeBase is required" },
         { status: 400 }
       );
     }
 
-    if (!Object.values(FileCategory).includes(fileCategory as FileCategory)) {
+    // Resolve fileTagId from fileTag name or use provided fileTagId
+    let resolvedFileTagId: string | null = fileTagId || null;
+    if (fileTag && !resolvedFileTagId) {
+      const tag = await prisma.documentTag.findFirst({
+        where: {
+          organizationId: dbUser.organizationId,
+          OR: [{ id: fileTag }, { name: fileTag }],
+        },
+      });
+      if (tag) {
+        resolvedFileTagId = tag.id;
+      } else {
+        return NextResponse.json(
+          { error: "Tag not found" },
+          { status: 404 }
+        );
+      }
+    }
+
+    if (!resolvedFileTagId) {
       return NextResponse.json(
-        { error: "Invalid file category" },
+        { error: "fileTag or fileTagId is required" },
         { status: 400 }
       );
     }
 
-    // Update ALL documents of this type for this organization
+    // Update ALL documents with this tag for this organization
     const result = await prisma.document.updateMany({
       where: {
         organizationId: dbUser.organizationId,
-        fileCategory: fileCategory as FileCategory,
+        fileTagId: resolvedFileTagId,
       },
       data: {
         isKnowledgeBase,
@@ -59,7 +77,7 @@ export async function POST(req: NextRequest) {
       const docsNeedingVectorization = await prisma.document.findMany({
         where: {
           organizationId: dbUser.organizationId,
-          fileCategory: fileCategory as FileCategory,
+          fileTagId: resolvedFileTagId,
           extractedText: { not: null },
           vectorizationStatus: { not: "COMPLETED" },
         },
@@ -85,15 +103,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       updated: result.count,
-      fileCategory,
+      fileTagId: resolvedFileTagId,
       isKnowledgeBase,
     });
   } catch (error) {
-    console.error("Error toggling document category in KB:", error);
+    console.error("Error toggling document tag in KB:", error);
     return NextResponse.json(
-      { error: "Failed to toggle document category" },
+      { error: "Failed to toggle document tag" },
       { status: 500 }
     );
   }
 }
-

@@ -46,6 +46,22 @@ begin
     insert into app.organizations (id, name, slug, "createdAt", "updatedAt")
     values (v_organization_id, v_org_name, v_slug, now(), now())
     on conflict (id) do nothing;
+    
+    -- Create default document tags for new organization
+    insert into app.document_tags (id, name, "organizationId", "createdAt", "updatedAt")
+    select
+      gen_random_uuid()::text,
+      tag_name,
+      v_organization_id,
+      now(),
+      now()
+    from (values
+      ('General'),
+      ('Winning Application'),
+      ('Template'),
+      ('Financials and Budget')
+    ) as defaults(tag_name)
+    on conflict ("organizationId", name) do nothing;
   end if;
   
   -- Create user with role, onboarding status, and temporary password flag

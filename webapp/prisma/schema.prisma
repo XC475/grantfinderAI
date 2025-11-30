@@ -62,26 +62,26 @@ model opportunities {
 
 /// ///// APP SCHEMA ////////
 model User {
-  id                   String           @id @db.Uuid
-  email                String           @unique
+  id                   String                 @id @db.Uuid
+  email                String                 @unique
   name                 String?
-  createdAt            DateTime         @default(now())
-  updatedAt            DateTime         @updatedAt
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
   avatarUrl            String?
-  lastActiveAt         DateTime         @default(now())
+  lastActiveAt         DateTime               @default(now())
   organizationId       String
-  system_admin         Boolean          @default(false)
-  role                 OrganizationRole @default(MEMBER)
-  onboardingCompleted  Boolean          @default(false)
-  hasTemporaryPassword Boolean          @default(false)
+  system_admin         Boolean                @default(false)
+  role                 OrganizationRole       @default(MEMBER)
+  onboardingCompleted  Boolean                @default(false)
+  hasTemporaryPassword Boolean                @default(false)
   googleAccessToken    String?
-  googleDriveConnected Boolean          @default(false)
+  googleDriveConnected Boolean                @default(false)
   googleRefreshToken   String?
   googleTokenExpiry    DateTime?
   aiChats              AiChat[]
   grantBookmarks       GrantBookmark[]
-  organization         Organization     @relation("UserOrganization", fields: [organizationId], references: [id], onDelete: Cascade)
   aiContextSettings    UserAIContextSettings?
+  organization         Organization           @relation("UserOrganization", fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId, role])
   @@map("users")
@@ -89,14 +89,13 @@ model User {
 }
 
 model UserAIContextSettings {
-  id                         String         @id @default(cuid())
-  userId                     String         @unique @db.Uuid
-  enabledCategoriesChat      FileCategory[] @default([GENERAL, WINNING_APPLICATION, TEMPLATE, OPPORTUNITY, AWARD_CONTRACT, BUDGET_FINANCIAL, PROGRESS_REPORT, FINAL_REPORT, SUPPORTING_DOCUMENT, CORRESPONDENCE, COMPLIANCE_RECORDS])
-  enabledCategoriesEditor    FileCategory[] @default([GENERAL, WINNING_APPLICATION, TEMPLATE, OPPORTUNITY, AWARD_CONTRACT, BUDGET_FINANCIAL, PROGRESS_REPORT, FINAL_REPORT, SUPPORTING_DOCUMENT, CORRESPONDENCE, COMPLIANCE_RECORDS])
-  createdAt                  DateTime       @default(now())
-  updatedAt                  DateTime       @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String   @id @default(cuid())
+  userId            String   @unique @db.Uuid
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  enabledTagsChat   String[]
+  enabledTagsEditor String[]
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_ai_context_settings")
   @@schema("app")
@@ -272,44 +271,41 @@ model VectorDocument {
 }
 
 model Document {
-  id             String       @id @default(cuid())
-  applicationId  String?
-  title          String
-  content        String?
-  contentType    String       @default("json")
-  metadata       Json?
-  version        Int          @default(1)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  organizationId String
-  folderId       String?
-  fileSize       Int?
-  fileType       String?
-  fileUrl        String?
-
-  // NEW FIELDS - File Category & Knowledge Base
-  fileCategory        FileCategory      @default(GENERAL)
-  isKnowledgeBase     Boolean           @default(true)
+  id                  String              @id @default(cuid())
+  applicationId       String?
+  title               String
+  content             String?
+  contentType         String              @default("json")
+  metadata            Json?
+  version             Int                 @default(1)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  organizationId      String
+  folderId            String?
+  fileSize            Int?
+  fileType            String?
+  fileUrl             String?
+  chunkCount          Int?
   extractedText       String?
-
-  // NEW FIELDS - Vectorization
+  isKnowledgeBase     Boolean             @default(true)
+  vectorizationError  String?
   vectorizationStatus VectorizationStatus @default(PENDING)
   vectorizedAt        DateTime?
-  chunkCount          Int?
-  vectorizationError  String?
-
-  application    Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  folder         Folder?      @relation(fields: [folderId], references: [id], onDelete: Cascade)
-  organization   Organization @relation("OrganizationDocuments", fields: [organizationId], references: [id], onDelete: Cascade)
-  vectors        DocumentVector[] @relation("DocumentVectors")
+  fileTagId           String?
+  vectors             DocumentVector[]    @relation("DocumentVectors")
+  application         Application?        @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  fileTag             DocumentTag?        @relation("DocumentTags", fields: [fileTagId], references: [id])
+  folder              Folder?             @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  organization        Organization        @relation("OrganizationDocuments", fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([applicationId])
   @@index([updatedAt])
   @@index([applicationId, createdAt])
   @@index([folderId])
-  @@index([organizationId, fileCategory])
+  @@index([fileTagId])
+  @@index([organizationId, fileTagId])
   @@index([organizationId, isKnowledgeBase])
-  @@index([organizationId, fileCategory, isKnowledgeBase])
+  @@index([organizationId, fileTagId, isKnowledgeBase])
   @@index([vectorizationStatus])
   @@map("documents")
   @@schema("app")
@@ -328,7 +324,6 @@ model DocumentVector {
   contentHash    String                 @map("content_hash")
   vectorizedAt   DateTime               @default(now()) @map("vectorized_at")
   model          String                 @default("text-embedding-3-small")
-
   document       Document               @relation("DocumentVectors", fields: [documentId], references: [id], onDelete: Cascade)
 
   @@index([organizationId])
@@ -336,6 +331,20 @@ model DocumentVector {
   @@index([organizationId, documentId])
   @@index([embedding], map: "idx_document_vectors_embedding")
   @@map("document_vectors")
+  @@schema("app")
+}
+
+model DocumentTag {
+  id             String     @id @default(cuid())
+  name           String
+  organizationId String
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  documents      Document[] @relation("DocumentTags")
+
+  @@unique([organizationId, name])
+  @@index([organizationId])
+  @@map("document_tags")
   @@schema("app")
 }
 
@@ -434,22 +443,6 @@ enum VectorizationStatus {
   PROCESSING
   COMPLETED
   FAILED
-
-  @@schema("app")
-}
-
-enum FileCategory {
-  GENERAL
-  WINNING_APPLICATION
-  TEMPLATE
-  OPPORTUNITY
-  AWARD_CONTRACT
-  BUDGET_FINANCIAL
-  PROGRESS_REPORT
-  FINAL_REPORT
-  SUPPORTING_DOCUMENT
-  CORRESPONDENCE
-  COMPLIANCE_RECORDS
 
   @@schema("app")
 }

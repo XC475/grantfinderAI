@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import OpenAI from "openai";
 import crypto from "crypto";
 import { chunkText } from "@/lib/textChunking";
-import { getFileCategoryLabel } from "@/lib/fileCategories";
+import { getFileTagLabel } from "@/lib/fileTags";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const EMBEDDING_MODEL = "text-embedding-3-small";
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
   for (const doc of docsToVectorize) {
     try {
       console.log(
-        `📝 [Vectorize] Starting vectorization for document ${doc.id}: "${doc.title}" (Category: ${getFileCategoryLabel(doc.fileCategory)}, Folder: ${doc.folder?.name || "Root"})`
+        `📝 [Vectorize] Starting vectorization for document ${doc.id}: "${doc.title}" (Tag: ${doc.fileTag ? getFileTagLabel(doc.fileTag.name) : "Untagged"}, Folder: ${doc.folder?.name || "Root"})`
       );
 
       // Update status to PROCESSING
@@ -59,9 +59,9 @@ export async function POST(req: NextRequest) {
 
       // Vectorize each chunk
       for (const chunk of chunks) {
-        // Create title-prefixed content with category and folder (always include folder)
+        // Create title-prefixed content with tag and folder (always include folder)
         let chunkContentWithTitle = `Document: ${doc.title}`;
-        chunkContentWithTitle += `\nCategory: ${getFileCategoryLabel(doc.fileCategory)}`;
+        chunkContentWithTitle += `\nTag: ${doc.fileTag ? getFileTagLabel(doc.fileTag.name) : "Untagged"}`;
         chunkContentWithTitle += `\nFolder: ${doc.folder?.name || "Root"}`;
         chunkContentWithTitle += `\n\n${chunk.content}`;
 

@@ -60,6 +60,14 @@ export async function GET(
           },
         },
         documents: {
+          include: {
+            fileTag: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
           orderBy: {
             updatedAt: "desc",
           },

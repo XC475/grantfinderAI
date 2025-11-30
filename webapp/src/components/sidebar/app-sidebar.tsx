@@ -15,6 +15,7 @@ import {
   Target,
   BadgeCheck,
   Files,
+  Brain,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
@@ -151,6 +152,11 @@ const data = {
       title: "Org Profile",
       url: "/private/settings/profile",
       icon: Building2,
+    },
+    {
+      title: "Documents",
+      url: "/private/settings/documents",
+      icon: Files,
     },
   ],
 };

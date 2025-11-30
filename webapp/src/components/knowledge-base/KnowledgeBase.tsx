@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Loader2, FileText, Brain } from "lucide-react";
-import { KnowledgeBaseCategoryList } from "./KnowledgeBaseCategoryList";
-import { getAllFileCategories } from "@/lib/fileCategories";
+import { KnowledgeBaseTagList } from "./KnowledgeBaseTagList";
 import { Button } from "@/components/ui/button";
 import { AddDocumentsModal } from "./AddDocumentsModal";
 import { toast } from "sonner";
@@ -20,8 +19,9 @@ interface KBDocument {
   } | null;
 }
 
-interface DocumentsByTypeData {
-  type: string;
+interface DocumentsByTagData {
+  tagId: string;
+  tagName: string;
   documents: KBDocument[];
   hasKBDocs: boolean;
   allInKB: boolean;
@@ -40,7 +40,7 @@ export function KnowledgeBase({
   organizationId,
   onAddClick,
 }: KnowledgeBaseProps) {
-  const [documentsByType, setDocumentsByType] = useState<DocumentsByTypeData[]>(
+  const [documentsByTag, setDocumentsByTag] = useState<DocumentsByTagData[]>(
     []
   );
   const [loading, setLoading] = useState(true);
@@ -66,16 +66,24 @@ export function KnowledgeBase({
   const fetchDocuments = async () => {
     setLoading(true);
     try {
-      // Fetch documents for all categories
-      const allFileCategories = getAllFileCategories();
+      // First, fetch all tags for the organization
+      const tagsResponse = await fetch("/api/document-tags");
+      if (!tagsResponse.ok) {
+        throw new Error("Failed to fetch tags");
+      }
+      const tagsData = await tagsResponse.json();
+      const tags = tagsData.tags || [];
+
+      // Then fetch documents for each tag
       const documentsData = await Promise.all(
-        allFileCategories.map(async (type) => {
+        tags.map(async (tag: { id: string; name: string }) => {
           const response = await fetch(
-            `/api/documents?fileCategory=${type}&limit=1000`
+            `/api/documents?fileTag=${tag.id}&limit=1000`
           );
           if (!response.ok) {
             return {
-              type,
+              tagId: tag.id,
+              tagName: tag.name,
               documents: [],
               hasKBDocs: false,
               allInKB: false,
@@ -100,7 +108,8 @@ export function KnowledgeBase({
             allDocuments.every((doc: KBDocument) => doc.isKnowledgeBase);
 
           return {
-            type,
+            tagId: tag.id,
+            tagName: tag.name,
             documents: kbDocuments, // Only return KB documents
             hasKBDocs,
             allInKB,
@@ -110,10 +119,10 @@ export function KnowledgeBase({
         })
       );
 
-      // Filter out categories with 0 KB documents
+      // Filter out tags with 0 KB documents
       const filteredData = documentsData.filter((data) => data.kbCount > 0);
 
-      setDocumentsByType(filteredData);
+      setDocumentsByTag(filteredData);
     } catch (error) {
       console.error("Error fetching documents:", error);
     } finally {
@@ -197,9 +206,9 @@ export function KnowledgeBase({
         </div>
       </div>
 
-      {documentsByType.length > 0 ? (
-        <KnowledgeBaseCategoryList
-          documentsByType={documentsByType}
+      {documentsByTag.length > 0 ? (
+        <KnowledgeBaseTagList
+          documentsByTag={documentsByTag}
           organizationSlug={organizationSlug}
           organizationId={organizationId}
         />
