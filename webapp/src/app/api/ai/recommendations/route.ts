@@ -46,6 +46,11 @@ export async function POST(_req: NextRequest) {
     // 3. Fetch organization data
     const organization = await prisma.organization.findUnique({
       where: { id: dbUser.organizationId },
+      include: {
+        customFields: {
+          orderBy: { name: "asc" },
+        },
+      },
     });
 
     if (!organization) {
@@ -89,6 +94,11 @@ export async function POST(_req: NextRequest) {
             ? organization.annualOperatingBudget.toString()
             : null,
           fiscalYearEnd: organization.fiscalYearEnd,
+          customFields: organization.customFields.map((field) => ({
+            name: field.name,
+            description: field.description,
+            value: field.value,
+          })),
         }
       : null;
 
@@ -111,6 +121,11 @@ export async function POST(_req: NextRequest) {
           ? organization.annualOperatingBudget.toString()
           : null,
         fiscalYearEnd: organization.fiscalYearEnd,
+        customFields: organization.customFields.map((field) => ({
+          name: field.name,
+          description: field.description,
+          value: field.value,
+        })),
       }
     );
 

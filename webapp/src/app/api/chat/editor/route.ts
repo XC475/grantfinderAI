@@ -71,6 +71,14 @@ export async function POST(req: NextRequest) {
             strategicPlan: true,
             annualOperatingBudget: true,
             fiscalYearEnd: true,
+            customFields: {
+              select: {
+                name: true,
+                description: true,
+                value: true,
+              },
+              orderBy: { name: "asc" },
+            },
           },
         },
       },
@@ -250,7 +258,14 @@ ${opportunity.raw_text}`;
     const systemPrompt = buildEditorSystemPrompt({
       documentTitle: documentTitle || document.title || "Untitled Document",
       documentContent: documentContent || "No content yet.",
-      organizationInfo: organization,
+      organizationInfo: {
+        ...organization,
+        customFields: organization.customFields.map((field) => ({
+          name: field.name,
+          description: field.description,
+          value: field.value,
+        })),
+      },
       applicationContext,
       attachmentContext,
       sourceContext,
