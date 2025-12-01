@@ -70,11 +70,66 @@ export async function PUT(
       );
     }
 
+    // Check if tag name actually changed
+    const tagNameChanged = existingTag.name.trim() !== name.trim();
+
     // Update tag
     const tag = await prisma.documentTag.update({
       where: { id: tagId },
       data: { name: name.trim() },
     });
+
+    // If tag name changed, mark all documents with this tag for re-vectorization
+    if (tagNameChanged) {
+      // Find all documents with this tag
+      const documentsToRevectorize = await prisma.document.findMany({
+        where: {
+          fileTagId: tagId,
+          organizationId: dbUser.organizationId,
+        },
+        select: { id: true },
+      });
+
+      if (documentsToRevectorize.length > 0) {
+        // Delete existing vectors for these documents (they contain old tag name)
+        await prisma.documentVector.deleteMany({
+          where: {
+            documentId: { in: documentsToRevectorize.map((d) => d.id) },
+            organizationId: dbUser.organizationId,
+          },
+        });
+
+        // Mark documents for re-vectorization
+        await prisma.document.updateMany({
+          where: {
+            id: { in: documentsToRevectorize.map((d) => d.id) },
+            organizationId: dbUser.organizationId,
+          },
+          data: {
+            vectorizationStatus: "PENDING",
+            vectorizedAt: null,
+            chunkCount: null,
+          },
+        });
+
+        console.log(
+          `🔄 [Tag Rename] Marked ${documentsToRevectorize.length} document(s) for re-vectorization after tag rename`
+        );
+
+        // Trigger vectorization endpoint
+        const protocol = process.env.NEXT_PUBLIC_SITE_URL?.startsWith("https")
+          ? "https"
+          : "http";
+        const host =
+          process.env.NEXT_PUBLIC_SITE_URL?.replace(/^https?:\/\//, "") ||
+          "localhost:3000";
+
+        fetch(`${protocol}://${host}/api/documents/vectorize`, {
+          method: "POST",
+          headers: { "x-api-key": process.env.INTERNAL_API_KEY! },
+        }).catch((err) => console.error("Vectorization trigger failed:", err));
+      }
+    }
 
     return NextResponse.json({ tag });
   } catch (error) {
@@ -159,4 +214,3 @@ export async function DELETE(
     );
   }
 }
-

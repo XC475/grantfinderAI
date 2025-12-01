@@ -27,6 +27,11 @@ export async function POST(req: NextRequest) {
           name: true,
         },
       },
+      fileTag: {
+        select: {
+          name: true,
+        },
+      },
     },
     take: 50, // Process in batches
   });

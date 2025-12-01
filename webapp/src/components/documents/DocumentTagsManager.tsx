@@ -120,6 +120,9 @@ export function DocumentTagsManager() {
       setEditingTag(null);
       setEditTagName("");
       fetchTags();
+
+      // Trigger knowledge base refresh to update tag names
+      window.dispatchEvent(new Event("knowledge-base-refresh"));
     } catch (error) {
       console.error("Error updating tag:", error);
       toast.error(

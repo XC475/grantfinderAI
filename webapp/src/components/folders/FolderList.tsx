@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import {
   FileText,
@@ -15,6 +16,7 @@ import {
   Download,
   Tag,
   BookOpen,
+  Plus,
 } from "lucide-react";
 import Image from "next/image";
 import { FolderIcon } from "./FolderIcon";
@@ -245,6 +247,7 @@ function DraggableDocument({
   onExport,
   onChangeTag,
   onToggleKnowledgeBase,
+  organizationSlug,
 }: {
   document: Document;
   onClick: () => void;
@@ -257,6 +260,7 @@ function DraggableDocument({
   onToggleKnowledgeBase?: (enabled: boolean) => void;
   organizationSlug: string;
 }) {
+  const router = useRouter();
   const [tags, setTags] = useState<Array<{ id: string; name: string }>>([]);
   const [loadingTags, setLoadingTags] = useState(true);
 
@@ -409,6 +413,19 @@ function DraggableDocument({
                             )}
                           </DropdownMenuItem>
                         ))}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(
+                              `/private/${organizationSlug}/settings/documents`
+                            );
+                          }}
+                          className="text-primary"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Tag
+                        </DropdownMenuItem>
                       </>
                     )}
                   </DropdownMenuSubContent>

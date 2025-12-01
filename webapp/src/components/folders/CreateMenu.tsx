@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Plus,
   Folder as FolderIcon,
@@ -32,6 +33,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -68,6 +70,7 @@ export function CreateMenu({
   isKnowledgeBase = false,
   onShowDocumentSelector,
 }: CreateMenuProps) {
+  const router = useRouter();
   const [folderDialogOpen, setFolderDialogOpen] = useState(false);
   const [documentDialogOpen, setDocumentDialogOpen] = useState(false);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
@@ -75,9 +78,13 @@ export function CreateMenu({
   const [folderName, setFolderName] = useState("");
   const [documentTitle, setDocumentTitle] = useState("Untitled Document");
   const [tags, setTags] = useState<Array<{ id: string; name: string }>>([]);
-  const [documentFileTagId, setDocumentFileTagId] = useState<string | null>(null);
+  const [documentFileTagId, setDocumentFileTagId] = useState<string | null>(
+    null
+  );
   const [uploadFileTagId, setUploadFileTagId] = useState<string | null>(null);
-  const [googleDriveFileTagId, setGoogleDriveFileTagId] = useState<string | null>(null);
+  const [googleDriveFileTagId, setGoogleDriveFileTagId] = useState<
+    string | null
+  >(null);
   const [isCreating, setIsCreating] = useState(false);
   const [loadingTags, setLoadingTags] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -137,11 +144,7 @@ export function CreateMenu({
 
     setIsCreating(true);
     try {
-      await onCreateDocument(
-        documentTitle,
-        currentFolderId,
-        documentFileTagId
-      );
+      await onCreateDocument(documentTitle, currentFolderId, documentFileTagId);
       setDocumentTitle("Untitled Document");
       if (tags.length > 0) {
         setDocumentFileTagId(tags[0].id);
@@ -361,9 +364,15 @@ export function CreateMenu({
                 <Label htmlFor="document-tag">Document Tag</Label>
                 <Select
                   value={documentFileTagId || ""}
-                  onValueChange={(value) =>
-                    setDocumentFileTagId(value || null)
-                  }
+                  onValueChange={(value) => {
+                    if (value === "__add_tag__") {
+                      router.push(
+                        `/private/${organizationSlug}/settings/documents`
+                      );
+                    } else {
+                      setDocumentFileTagId(value || null);
+                    }
+                  }}
                   disabled={isCreating || loadingTags}
                 >
                   <SelectTrigger id="document-tag">
@@ -375,6 +384,18 @@ export function CreateMenu({
                         {tag.name}
                       </SelectItem>
                     ))}
+                    {organizationSlug && (
+                      <>
+                        <SelectSeparator />
+                        <SelectItem
+                          value="__add_tag__"
+                          className="text-primary"
+                        >
+                          <Plus className="h-4 w-4 mr-2 inline" />
+                          Add Tag
+                        </SelectItem>
+                      </>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -426,9 +447,15 @@ export function CreateMenu({
                 <Label>Document Tag</Label>
                 <Select
                   value={uploadFileTagId || ""}
-                  onValueChange={(value) =>
-                    setUploadFileTagId(value || null)
-                  }
+                  onValueChange={(value) => {
+                    if (value === "__add_tag__") {
+                      router.push(
+                        `/private/${organizationSlug}/settings/documents`
+                      );
+                    } else {
+                      setUploadFileTagId(value || null);
+                    }
+                  }}
                   disabled={uploading || loadingTags}
                 >
                   <SelectTrigger>
@@ -440,6 +467,18 @@ export function CreateMenu({
                         {tag.name}
                       </SelectItem>
                     ))}
+                    {organizationSlug && (
+                      <>
+                        <SelectSeparator />
+                        <SelectItem
+                          value="__add_tag__"
+                          className="text-primary"
+                        >
+                          <Plus className="h-4 w-4 mr-2 inline" />
+                          Add Tag
+                        </SelectItem>
+                      </>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -543,9 +582,15 @@ export function CreateMenu({
                 <Label>Document Tag</Label>
                 <Select
                   value={googleDriveFileTagId || ""}
-                  onValueChange={(value) =>
-                    setGoogleDriveFileTagId(value || null)
-                  }
+                  onValueChange={(value) => {
+                    if (value === "__add_tag__") {
+                      router.push(
+                        `/private/${organizationSlug}/settings/documents`
+                      );
+                    } else {
+                      setGoogleDriveFileTagId(value || null);
+                    }
+                  }}
                   disabled={importing || loadingTags}
                 >
                   <SelectTrigger>
@@ -557,6 +602,18 @@ export function CreateMenu({
                         {tag.name}
                       </SelectItem>
                     ))}
+                    {organizationSlug && (
+                      <>
+                        <SelectSeparator />
+                        <SelectItem
+                          value="__add_tag__"
+                          className="text-primary"
+                        >
+                          <Plus className="h-4 w-4 mr-2 inline" />
+                          Add Tag
+                        </SelectItem>
+                      </>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
