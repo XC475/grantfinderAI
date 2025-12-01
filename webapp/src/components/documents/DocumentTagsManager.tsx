@@ -184,11 +184,11 @@ export function DocumentTagsManager() {
             </Button>
           </div>
         ) : (
-          <div className="grid gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {tags.map((tag) => (
               <div
                 key={tag.id}
-                className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent transition-colors"
+                className="group flex items-center justify-between p-3 border rounded-lg hover:bg-accent transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <TagIcon className="h-4 w-4 text-muted-foreground" />
@@ -198,7 +198,7 @@ export function DocumentTagsManager() {
                     {tag._count.documents !== 1 ? "s" : ""}
                   </Badge>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button
                     variant="ghost"
                     size="sm"

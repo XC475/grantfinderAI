@@ -15,7 +15,7 @@ import {
   Target,
   BadgeCheck,
   Files,
-  Brain,
+  Bot,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
@@ -139,24 +139,38 @@ const data = {
   ],
   navSettings: [
     {
-      title: "Account",
-      url: "/private/settings/account",
-      icon: BadgeCheck,
+      items: [
+        {
+          title: "Account",
+          url: "/private/settings/account",
+          icon: BadgeCheck,
+        },
+        {
+          title: "AI Capabilities",
+          url: "/private/settings/ai",
+          icon: Bot,
+        },
+      ],
     },
     {
-      title: "Team",
-      url: "/private/settings/team",
-      icon: Users,
-    },
-    {
-      title: "Org Profile",
-      url: "/private/settings/profile",
-      icon: Building2,
-    },
-    {
-      title: "Documents",
-      url: "/private/settings/documents",
-      icon: Files,
+      label: "Organization",
+      items: [
+        {
+          title: "Team",
+          url: "/private/settings/team",
+          icon: Users,
+        },
+        {
+          title: "Org Profile",
+          url: "/private/settings/profile",
+          icon: Building2,
+        },
+        {
+          title: "Documents",
+          url: "/private/settings/documents",
+          icon: Files,
+        },
+      ],
     },
   ],
 };
@@ -265,9 +279,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navSettingsItems = React.useMemo(() => {
     if (!organizationSlug) return data.navSettings;
 
-    return data.navSettings.map((item) => ({
-      ...item,
-      url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
+    return data.navSettings.map((group) => ({
+      ...group,
+      items: group.items.map((item) => ({
+        ...item,
+        url: `/private/${organizationSlug}${item.url.replace("/private", "")}`,
+      })),
     }));
   }, [organizationSlug]);
 
