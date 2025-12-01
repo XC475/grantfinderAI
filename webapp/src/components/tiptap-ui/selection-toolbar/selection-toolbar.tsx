@@ -6,16 +6,23 @@ import type { Editor } from "@tiptap/core";
 import { Button } from "@/components/ui/button";
 import {
   Wand2,
-  MessageSquare,
   MessageSquarePlus,
-  Copy,
-  Bold,
-  Italic,
-  Underline,
-  Strikethrough,
-  Code,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// Import toolbar components
+import { HeadingDropdownMenu } from "@/components/tiptap-ui/heading-dropdown-menu";
+import { FontFamilyDropdownMenu } from "@/components/tiptap-ui/font-family-dropdown-menu";
+import { FontSizeDropdownMenu } from "@/components/tiptap-ui/font-size-dropdown-menu";
+import { MarkButton } from "@/components/tiptap-ui/mark-button";
+import { TextColorPopover } from "@/components/tiptap-ui/text-color-popover";
+import { ColorHighlightPopover } from "@/components/tiptap-ui/color-highlight-popover";
+import { AlignIndentDropdownMenu } from "@/components/tiptap-ui/align-indent-dropdown-menu";
+import { SelectionOverflowMenu } from "./selection-overflow-menu";
+import { ImproveWritingDropdown } from "@/components/tiptap-ui/improve-writing-dropdown";
+
+// Import toolbar primitives
+import { ToolbarGroup, ToolbarSeparator } from "@/components/tiptap-ui-primitive/toolbar";
 
 interface SelectionToolbarProps {
   editor: Editor | null;
@@ -39,8 +46,12 @@ export function SelectionToolbar({
 
   const handleAddToChat = () => {
     const selectedText = getSelectedText();
+    console.log("📤 [SelectionToolbar] handleAddToChat clicked, selectedText:", selectedText);
     if (selectedText && onAddToChat) {
+      console.log("📤 [SelectionToolbar] Calling onAddToChat with text");
       onAddToChat(selectedText);
+    } else {
+      console.log("⚠️ [SelectionToolbar] Cannot add to chat - selectedText:", selectedText, "onAddToChat:", !!onAddToChat);
     }
   };
 
@@ -58,18 +69,13 @@ export function SelectionToolbar({
     }
   };
 
-  const handleCopy = () => {
-    const selectedText = getSelectedText();
-    if (selectedText) {
-      navigator.clipboard.writeText(selectedText);
-    }
-  };
-
   // Only show when text is selected (not empty selection)
   const shouldShow = () => {
     const { from, to } = editor.state.selection;
     return from !== to && !editor.state.selection.empty;
   };
+
+  const hasAIActions = onImproveWriting || onAskAI || onAddToChat;
 
   return (
     <BubbleMenu
@@ -79,134 +85,69 @@ export function SelectionToolbar({
         offset: 8,
       }}
       shouldShow={shouldShow}
+      className="selection-toolbar-bubble-menu"
     >
-      <div className="flex items-center gap-1 rounded-lg border bg-white shadow-lg p-1">
-        {/* AI Actions */}
-        {onImproveWriting && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleImproveWriting}
-            className="h-8 px-2 text-xs"
-            title="Improve writing"
-          >
-            <Wand2 className="h-3.5 w-3.5 mr-1 text-[#5a8bf2]" />
-            Improve writing
-          </Button>
+      <div 
+        className="flex items-center gap-0.5 rounded-lg border bg-white shadow-lg p-1 animate-in fade-in-0 zoom-in-95 duration-200"
+        style={{ zIndex: 50 }}
+      >
+        {/* AI Actions Section (optional) */}
+        {hasAIActions && (
+          <>
+            <ToolbarGroup>
+              {onImproveWriting && (
+                <ImproveWritingDropdown
+                  editor={editor}
+                  onPromptSelected={(promptText) => {
+                    const selectedText = getSelectedText();
+                    if (selectedText) {
+                      onImproveWriting(`${promptText}\n\nSelected text: "${selectedText}"`);
+                    }
+                  }}
+                />
+              )}
+
+              {onAddToChat && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleAddToChat}
+                  className="h-7 px-2 text-xs hover:bg-accent"
+                  title="Add to chat"
+                >
+                  <MessageSquarePlus className="h-3.5 w-3.5 mr-1.5" />
+                  <span className="text-xs">Add to chat</span>
+                </Button>
+              )}
+            </ToolbarGroup>
+
+            <ToolbarSeparator />
+          </>
         )}
 
-        {onAskAI && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleAskAI}
-            className="h-8 px-2 text-xs"
-            title="Ask AI"
-          >
-            <MessageSquare className="h-3.5 w-3.5 mr-1" />
-            Ask AI
-          </Button>
-        )}
+        {/* Text Formatting Section */}
+        <ToolbarGroup>
+          <MarkButton editor={editor} type="bold" />
+          <MarkButton editor={editor} type="italic" />
+          <MarkButton editor={editor} type="underline" />
+          <MarkButton editor={editor} type="strike" />
+        </ToolbarGroup>
 
-        {onAddToChat && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleAddToChat}
-            className="h-8 px-2 text-xs"
-            title="Add to chat"
-          >
-            <MessageSquarePlus className="h-3.5 w-3.5 mr-1" />
-            Add to chat
-          </Button>
-        )}
+        <ToolbarSeparator />
 
-        {/* Separator */}
-        {(onImproveWriting || onAskAI || onAddToChat) && (
-          <div className="h-6 w-px bg-border mx-1" />
-        )}
+        {/* Color Section */}
+        <ToolbarGroup>
+          <TextColorPopover editor={editor} />
+          <ColorHighlightPopover editor={editor} />
+        </ToolbarGroup>
 
-        {/* Formatting Actions */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive("bold") && "bg-accent"
-          )}
-          title="Bold"
-        >
-          <Bold className="h-3.5 w-3.5" />
-        </Button>
+        <ToolbarSeparator />
 
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive("italic") && "bg-accent"
-          )}
-          title="Italic"
-        >
-          <Italic className="h-3.5 w-3.5" />
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive("underline") && "bg-accent"
-          )}
-          title="Underline"
-        >
-          <Underline className="h-3.5 w-3.5" />
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive("strike") && "bg-accent"
-          )}
-          title="Strikethrough"
-        >
-          <Strikethrough className="h-3.5 w-3.5" />
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleCode().run()}
-          className={cn(
-            "h-8 w-8 p-0",
-            editor.isActive("code") && "bg-accent"
-          )}
-          title="Code"
-        >
-          <Code className="h-3.5 w-3.5" />
-        </Button>
-
-        {/* Separator */}
-        <div className="h-6 w-px bg-border mx-1" />
-
-        {/* Copy */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleCopy}
-          className="h-8 w-8 p-0"
-          title="Copy"
-        >
-          <Copy className="h-3.5 w-3.5" />
-        </Button>
+        {/* More Options */}
+        <ToolbarGroup>
+          <SelectionOverflowMenu editor={editor} />
+        </ToolbarGroup>
       </div>
     </BubbleMenu>
   );
 }
-

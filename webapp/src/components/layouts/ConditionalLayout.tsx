@@ -24,9 +24,12 @@ import {
   useHeaderActions,
 } from "@/contexts/HeaderActionsContext";
 import { EditorInstanceProvider, useEditorInstance } from "@/contexts/EditorInstanceContext";
+import { DocumentOperationsProvider } from "@/contexts/DocumentOperationsContext";
+import { OutlineProvider } from "@/contexts/OutlineContext";
 import { EditorToolbar } from "@/components/tiptap-templates/simple/simple-editor";
 import { EditorContext } from "@tiptap/react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { DocumentMenu } from "@/components/editor";
 
 // ============================================================
 // AI ASSISTANT SIDEBAR DEFAULT WIDTH
@@ -92,7 +95,7 @@ function DocumentEditorLayoutContent({
             {/* Left section: Document name */}
             <div className="flex items-center gap-2 px-4 flex-shrink-0">
               <Separator orientation="vertical" className="mr-2 h-4" />
-              <DynamicBreadcrumb organizationSlug={organizationSlug} />
+              <DynamicBreadcrumb organizationSlug={organizationSlug} documentId={documentId} />
             </div>
 
             {/* Center section: Toolbar placeholder */}
@@ -134,10 +137,10 @@ function DocumentEditorLayoutContent({
       >
         <SidebarInset className="flex flex-col h-full bg-white">
           <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white">
-            {/* Left section: Document name */}
-            <div className="flex items-center gap-2 px-4 flex-shrink-0">
+            {/* Left section: Document name + menu */}
+            <div className="flex items-center gap-1 px-4 flex-shrink-0">
               <Separator orientation="vertical" className="mr-2 h-4" />
-              <DynamicBreadcrumb organizationSlug={organizationSlug} />
+              <DynamicBreadcrumb organizationSlug={organizationSlug} documentId={documentId} />
             </div>
 
             {/* Center section: Toolbar (responsive width) */}
@@ -301,15 +304,19 @@ export function ConditionalLayout({
     return (
       <DocumentProvider>
         <EditorInstanceProvider>
-          <SidebarProvider className="h-screen">
-            <AppSidebar />
-            <DocumentEditorLayoutContent
-              organizationSlug={organizationSlug}
-              documentId={documentId}
-            >
-              {children}
-            </DocumentEditorLayoutContent>
-          </SidebarProvider>
+          <OutlineProvider>
+            <SidebarProvider className="h-screen">
+              <AppSidebar />
+              <DocumentOperationsProvider organizationSlug={organizationSlug}>
+                <DocumentEditorLayoutContent
+                  organizationSlug={organizationSlug}
+                  documentId={documentId}
+                >
+                  {children}
+                </DocumentEditorLayoutContent>
+              </DocumentOperationsProvider>
+            </SidebarProvider>
+          </OutlineProvider>
         </EditorInstanceProvider>
       </DocumentProvider>
     );

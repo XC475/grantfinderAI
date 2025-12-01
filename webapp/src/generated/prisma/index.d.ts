@@ -54,6 +54,11 @@ export type GrantBookmark = $Result.DefaultSelection<Prisma.$GrantBookmarkPayloa
  */
 export type GrantEligibilityAnalysis = $Result.DefaultSelection<Prisma.$GrantEligibilityAnalysisPayload>
 /**
+ * Model ApplicationStatusConfig
+ * 
+ */
+export type ApplicationStatusConfig = $Result.DefaultSelection<Prisma.$ApplicationStatusConfigPayload>
+/**
  * Model Application
  * 
  */
@@ -493,6 +498,16 @@ export class PrismaClient<
     * ```
     */
   get grantEligibilityAnalysis(): Prisma.GrantEligibilityAnalysisDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.applicationStatusConfig`: Exposes CRUD operations for the **ApplicationStatusConfig** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ApplicationStatusConfigs
+    * const applicationStatusConfigs = await prisma.applicationStatusConfig.findMany()
+    * ```
+    */
+  get applicationStatusConfig(): Prisma.ApplicationStatusConfigDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.application`: Exposes CRUD operations for the **Application** model.
@@ -1022,6 +1037,7 @@ export namespace Prisma {
     KnowledgeBaseDocument: 'KnowledgeBaseDocument',
     GrantBookmark: 'GrantBookmark',
     GrantEligibilityAnalysis: 'GrantEligibilityAnalysis',
+    ApplicationStatusConfig: 'ApplicationStatusConfig',
     Application: 'Application',
     AiChat: 'AiChat',
     AiChatMessage: 'AiChatMessage',
@@ -1048,7 +1064,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "customField" | "knowledgeBaseDocument" | "grantBookmark" | "grantEligibilityAnalysis" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "vectorDocument" | "document" | "folder" | "k12_education_opportunities"
+      modelProps: "alembic_version" | "opportunities" | "user" | "organization" | "customField" | "knowledgeBaseDocument" | "grantBookmark" | "grantEligibilityAnalysis" | "applicationStatusConfig" | "application" | "aiChat" | "aiChatMessage" | "recommendation" | "vectorDocument" | "document" | "folder" | "k12_education_opportunities"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1641,6 +1657,80 @@ export namespace Prisma {
           count: {
             args: Prisma.GrantEligibilityAnalysisCountArgs<ExtArgs>
             result: $Utils.Optional<GrantEligibilityAnalysisCountAggregateOutputType> | number
+          }
+        }
+      }
+      ApplicationStatusConfig: {
+        payload: Prisma.$ApplicationStatusConfigPayload<ExtArgs>
+        fields: Prisma.ApplicationStatusConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ApplicationStatusConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApplicationStatusConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ApplicationStatusConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApplicationStatusConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.ApplicationStatusConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApplicationStatusConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ApplicationStatusConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApplicationStatusConfigPayload>
+          }
+          findMany: {
+            args: Prisma.ApplicationStatusConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApplicationStatusConfigPayload>[]
+          }
+          create: {
+            args: Prisma.ApplicationStatusConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApplicationStatusConfigPayload>
+          }
+          createMany: {
+            args: Prisma.ApplicationStatusConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ApplicationStatusConfigCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApplicationStatusConfigPayload>[]
+          }
+          delete: {
+            args: Prisma.ApplicationStatusConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApplicationStatusConfigPayload>
+          }
+          update: {
+            args: Prisma.ApplicationStatusConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApplicationStatusConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.ApplicationStatusConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ApplicationStatusConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ApplicationStatusConfigUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApplicationStatusConfigPayload>[]
+          }
+          upsert: {
+            args: Prisma.ApplicationStatusConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApplicationStatusConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.ApplicationStatusConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateApplicationStatusConfig>
+          }
+          groupBy: {
+            args: Prisma.ApplicationStatusConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ApplicationStatusConfigGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ApplicationStatusConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<ApplicationStatusConfigCountAggregateOutputType> | number
           }
         }
       }
@@ -2340,6 +2430,7 @@ export namespace Prisma {
     knowledgeBaseDocument?: KnowledgeBaseDocumentOmit
     grantBookmark?: GrantBookmarkOmit
     grantEligibilityAnalysis?: GrantEligibilityAnalysisOmit
+    applicationStatusConfig?: ApplicationStatusConfigOmit
     application?: ApplicationOmit
     aiChat?: AiChatOmit
     aiChatMessage?: AiChatMessageOmit
@@ -2501,6 +2592,7 @@ export namespace Prisma {
   export type OrganizationCountOutputType = {
     aiChats: number
     applications: number
+    applicationStatuses: number
     customFields: number
     documents: number
     folders: number
@@ -2514,6 +2606,7 @@ export namespace Prisma {
   export type OrganizationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | OrganizationCountOutputTypeCountAiChatsArgs
     applications?: boolean | OrganizationCountOutputTypeCountApplicationsArgs
+    applicationStatuses?: boolean | OrganizationCountOutputTypeCountApplicationStatusesArgs
     customFields?: boolean | OrganizationCountOutputTypeCountCustomFieldsArgs
     documents?: boolean | OrganizationCountOutputTypeCountDocumentsArgs
     folders?: boolean | OrganizationCountOutputTypeCountFoldersArgs
@@ -2547,6 +2640,13 @@ export namespace Prisma {
    */
   export type OrganizationCountOutputTypeCountApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ApplicationWhereInput
+  }
+
+  /**
+   * OrganizationCountOutputType without action
+   */
+  export type OrganizationCountOutputTypeCountApplicationStatusesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ApplicationStatusConfigWhereInput
   }
 
   /**
@@ -2603,6 +2703,37 @@ export namespace Prisma {
    */
   export type OrganizationCountOutputTypeCountKnowledgeBaseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: KnowledgeBaseDocumentWhereInput
+  }
+
+
+  /**
+   * Count Type ApplicationStatusConfigCountOutputType
+   */
+
+  export type ApplicationStatusConfigCountOutputType = {
+    applications: number
+  }
+
+  export type ApplicationStatusConfigCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    applications?: boolean | ApplicationStatusConfigCountOutputTypeCountApplicationsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ApplicationStatusConfigCountOutputType without action
+   */
+  export type ApplicationStatusConfigCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApplicationStatusConfigCountOutputType
+     */
+    select?: ApplicationStatusConfigCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ApplicationStatusConfigCountOutputType without action
+   */
+  export type ApplicationStatusConfigCountOutputTypeCountApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ApplicationWhereInput
   }
 
 
@@ -6853,6 +6984,7 @@ export namespace Prisma {
     services?: boolean
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
+    applicationStatuses?: boolean | Organization$applicationStatusesArgs<ExtArgs>
     customFields?: boolean | Organization$customFieldsArgs<ExtArgs>
     documents?: boolean | Organization$documentsArgs<ExtArgs>
     folders?: boolean | Organization$foldersArgs<ExtArgs>
@@ -6967,6 +7099,7 @@ export namespace Prisma {
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
+    applicationStatuses?: boolean | Organization$applicationStatusesArgs<ExtArgs>
     customFields?: boolean | Organization$customFieldsArgs<ExtArgs>
     documents?: boolean | Organization$documentsArgs<ExtArgs>
     folders?: boolean | Organization$foldersArgs<ExtArgs>
@@ -6985,6 +7118,7 @@ export namespace Prisma {
     objects: {
       aiChats: Prisma.$AiChatPayload<ExtArgs>[]
       applications: Prisma.$ApplicationPayload<ExtArgs>[]
+      applicationStatuses: Prisma.$ApplicationStatusConfigPayload<ExtArgs>[]
       customFields: Prisma.$CustomFieldPayload<ExtArgs>[]
       documents: Prisma.$DocumentPayload<ExtArgs>[]
       folders: Prisma.$FolderPayload<ExtArgs>[]
@@ -7421,6 +7555,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     aiChats<T extends Organization$aiChatsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$aiChatsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     applications<T extends Organization$applicationsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$applicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    applicationStatuses<T extends Organization$applicationStatusesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$applicationStatusesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApplicationStatusConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     customFields<T extends Organization$customFieldsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$customFieldsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomFieldPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     documents<T extends Organization$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     folders<T extends Organization$foldersArgs<ExtArgs> = {}>(args?: Subset<T, Organization$foldersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -7921,6 +8056,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ApplicationScalarFieldEnum | ApplicationScalarFieldEnum[]
+  }
+
+  /**
+   * Organization.applicationStatuses
+   */
+  export type Organization$applicationStatusesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApplicationStatusConfig
+     */
+    select?: ApplicationStatusConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApplicationStatusConfig
+     */
+    omit?: ApplicationStatusConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationStatusConfigInclude<ExtArgs> | null
+    where?: ApplicationStatusConfigWhereInput
+    orderBy?: ApplicationStatusConfigOrderByWithRelationInput | ApplicationStatusConfigOrderByWithRelationInput[]
+    cursor?: ApplicationStatusConfigWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ApplicationStatusConfigScalarFieldEnum | ApplicationStatusConfigScalarFieldEnum[]
   }
 
   /**
@@ -12628,6 +12787,1154 @@ export namespace Prisma {
 
 
   /**
+   * Model ApplicationStatusConfig
+   */
+
+  export type AggregateApplicationStatusConfig = {
+    _count: ApplicationStatusConfigCountAggregateOutputType | null
+    _avg: ApplicationStatusConfigAvgAggregateOutputType | null
+    _sum: ApplicationStatusConfigSumAggregateOutputType | null
+    _min: ApplicationStatusConfigMinAggregateOutputType | null
+    _max: ApplicationStatusConfigMaxAggregateOutputType | null
+  }
+
+  export type ApplicationStatusConfigAvgAggregateOutputType = {
+    displayOrder: number | null
+  }
+
+  export type ApplicationStatusConfigSumAggregateOutputType = {
+    displayOrder: number | null
+  }
+
+  export type ApplicationStatusConfigMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    color: string | null
+    displayOrder: number | null
+    organizationId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ApplicationStatusConfigMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    color: string | null
+    displayOrder: number | null
+    organizationId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ApplicationStatusConfigCountAggregateOutputType = {
+    id: number
+    name: number
+    color: number
+    displayOrder: number
+    organizationId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ApplicationStatusConfigAvgAggregateInputType = {
+    displayOrder?: true
+  }
+
+  export type ApplicationStatusConfigSumAggregateInputType = {
+    displayOrder?: true
+  }
+
+  export type ApplicationStatusConfigMinAggregateInputType = {
+    id?: true
+    name?: true
+    color?: true
+    displayOrder?: true
+    organizationId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ApplicationStatusConfigMaxAggregateInputType = {
+    id?: true
+    name?: true
+    color?: true
+    displayOrder?: true
+    organizationId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ApplicationStatusConfigCountAggregateInputType = {
+    id?: true
+    name?: true
+    color?: true
+    displayOrder?: true
+    organizationId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ApplicationStatusConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ApplicationStatusConfig to aggregate.
+     */
+    where?: ApplicationStatusConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ApplicationStatusConfigs to fetch.
+     */
+    orderBy?: ApplicationStatusConfigOrderByWithRelationInput | ApplicationStatusConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ApplicationStatusConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ApplicationStatusConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ApplicationStatusConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ApplicationStatusConfigs
+    **/
+    _count?: true | ApplicationStatusConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ApplicationStatusConfigAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ApplicationStatusConfigSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ApplicationStatusConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ApplicationStatusConfigMaxAggregateInputType
+  }
+
+  export type GetApplicationStatusConfigAggregateType<T extends ApplicationStatusConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregateApplicationStatusConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateApplicationStatusConfig[P]>
+      : GetScalarType<T[P], AggregateApplicationStatusConfig[P]>
+  }
+
+
+
+
+  export type ApplicationStatusConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ApplicationStatusConfigWhereInput
+    orderBy?: ApplicationStatusConfigOrderByWithAggregationInput | ApplicationStatusConfigOrderByWithAggregationInput[]
+    by: ApplicationStatusConfigScalarFieldEnum[] | ApplicationStatusConfigScalarFieldEnum
+    having?: ApplicationStatusConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ApplicationStatusConfigCountAggregateInputType | true
+    _avg?: ApplicationStatusConfigAvgAggregateInputType
+    _sum?: ApplicationStatusConfigSumAggregateInputType
+    _min?: ApplicationStatusConfigMinAggregateInputType
+    _max?: ApplicationStatusConfigMaxAggregateInputType
+  }
+
+  export type ApplicationStatusConfigGroupByOutputType = {
+    id: string
+    name: string
+    color: string
+    displayOrder: number
+    organizationId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: ApplicationStatusConfigCountAggregateOutputType | null
+    _avg: ApplicationStatusConfigAvgAggregateOutputType | null
+    _sum: ApplicationStatusConfigSumAggregateOutputType | null
+    _min: ApplicationStatusConfigMinAggregateOutputType | null
+    _max: ApplicationStatusConfigMaxAggregateOutputType | null
+  }
+
+  type GetApplicationStatusConfigGroupByPayload<T extends ApplicationStatusConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ApplicationStatusConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ApplicationStatusConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ApplicationStatusConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], ApplicationStatusConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ApplicationStatusConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    color?: boolean
+    displayOrder?: boolean
+    organizationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    applications?: boolean | ApplicationStatusConfig$applicationsArgs<ExtArgs>
+    _count?: boolean | ApplicationStatusConfigCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["applicationStatusConfig"]>
+
+  export type ApplicationStatusConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    color?: boolean
+    displayOrder?: boolean
+    organizationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["applicationStatusConfig"]>
+
+  export type ApplicationStatusConfigSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    color?: boolean
+    displayOrder?: boolean
+    organizationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["applicationStatusConfig"]>
+
+  export type ApplicationStatusConfigSelectScalar = {
+    id?: boolean
+    name?: boolean
+    color?: boolean
+    displayOrder?: boolean
+    organizationId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ApplicationStatusConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "color" | "displayOrder" | "organizationId" | "createdAt" | "updatedAt", ExtArgs["result"]["applicationStatusConfig"]>
+  export type ApplicationStatusConfigInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    applications?: boolean | ApplicationStatusConfig$applicationsArgs<ExtArgs>
+    _count?: boolean | ApplicationStatusConfigCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ApplicationStatusConfigIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+  export type ApplicationStatusConfigIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+
+  export type $ApplicationStatusConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ApplicationStatusConfig"
+    objects: {
+      organization: Prisma.$OrganizationPayload<ExtArgs>
+      applications: Prisma.$ApplicationPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      color: string
+      displayOrder: number
+      organizationId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["applicationStatusConfig"]>
+    composites: {}
+  }
+
+  type ApplicationStatusConfigGetPayload<S extends boolean | null | undefined | ApplicationStatusConfigDefaultArgs> = $Result.GetResult<Prisma.$ApplicationStatusConfigPayload, S>
+
+  type ApplicationStatusConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ApplicationStatusConfigFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ApplicationStatusConfigCountAggregateInputType | true
+    }
+
+  export interface ApplicationStatusConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ApplicationStatusConfig'], meta: { name: 'ApplicationStatusConfig' } }
+    /**
+     * Find zero or one ApplicationStatusConfig that matches the filter.
+     * @param {ApplicationStatusConfigFindUniqueArgs} args - Arguments to find a ApplicationStatusConfig
+     * @example
+     * // Get one ApplicationStatusConfig
+     * const applicationStatusConfig = await prisma.applicationStatusConfig.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ApplicationStatusConfigFindUniqueArgs>(args: SelectSubset<T, ApplicationStatusConfigFindUniqueArgs<ExtArgs>>): Prisma__ApplicationStatusConfigClient<$Result.GetResult<Prisma.$ApplicationStatusConfigPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ApplicationStatusConfig that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ApplicationStatusConfigFindUniqueOrThrowArgs} args - Arguments to find a ApplicationStatusConfig
+     * @example
+     * // Get one ApplicationStatusConfig
+     * const applicationStatusConfig = await prisma.applicationStatusConfig.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ApplicationStatusConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, ApplicationStatusConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ApplicationStatusConfigClient<$Result.GetResult<Prisma.$ApplicationStatusConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ApplicationStatusConfig that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApplicationStatusConfigFindFirstArgs} args - Arguments to find a ApplicationStatusConfig
+     * @example
+     * // Get one ApplicationStatusConfig
+     * const applicationStatusConfig = await prisma.applicationStatusConfig.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ApplicationStatusConfigFindFirstArgs>(args?: SelectSubset<T, ApplicationStatusConfigFindFirstArgs<ExtArgs>>): Prisma__ApplicationStatusConfigClient<$Result.GetResult<Prisma.$ApplicationStatusConfigPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ApplicationStatusConfig that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApplicationStatusConfigFindFirstOrThrowArgs} args - Arguments to find a ApplicationStatusConfig
+     * @example
+     * // Get one ApplicationStatusConfig
+     * const applicationStatusConfig = await prisma.applicationStatusConfig.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ApplicationStatusConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, ApplicationStatusConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__ApplicationStatusConfigClient<$Result.GetResult<Prisma.$ApplicationStatusConfigPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ApplicationStatusConfigs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApplicationStatusConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ApplicationStatusConfigs
+     * const applicationStatusConfigs = await prisma.applicationStatusConfig.findMany()
+     * 
+     * // Get first 10 ApplicationStatusConfigs
+     * const applicationStatusConfigs = await prisma.applicationStatusConfig.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const applicationStatusConfigWithIdOnly = await prisma.applicationStatusConfig.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ApplicationStatusConfigFindManyArgs>(args?: SelectSubset<T, ApplicationStatusConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApplicationStatusConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ApplicationStatusConfig.
+     * @param {ApplicationStatusConfigCreateArgs} args - Arguments to create a ApplicationStatusConfig.
+     * @example
+     * // Create one ApplicationStatusConfig
+     * const ApplicationStatusConfig = await prisma.applicationStatusConfig.create({
+     *   data: {
+     *     // ... data to create a ApplicationStatusConfig
+     *   }
+     * })
+     * 
+     */
+    create<T extends ApplicationStatusConfigCreateArgs>(args: SelectSubset<T, ApplicationStatusConfigCreateArgs<ExtArgs>>): Prisma__ApplicationStatusConfigClient<$Result.GetResult<Prisma.$ApplicationStatusConfigPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ApplicationStatusConfigs.
+     * @param {ApplicationStatusConfigCreateManyArgs} args - Arguments to create many ApplicationStatusConfigs.
+     * @example
+     * // Create many ApplicationStatusConfigs
+     * const applicationStatusConfig = await prisma.applicationStatusConfig.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ApplicationStatusConfigCreateManyArgs>(args?: SelectSubset<T, ApplicationStatusConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ApplicationStatusConfigs and returns the data saved in the database.
+     * @param {ApplicationStatusConfigCreateManyAndReturnArgs} args - Arguments to create many ApplicationStatusConfigs.
+     * @example
+     * // Create many ApplicationStatusConfigs
+     * const applicationStatusConfig = await prisma.applicationStatusConfig.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ApplicationStatusConfigs and only return the `id`
+     * const applicationStatusConfigWithIdOnly = await prisma.applicationStatusConfig.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ApplicationStatusConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, ApplicationStatusConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApplicationStatusConfigPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ApplicationStatusConfig.
+     * @param {ApplicationStatusConfigDeleteArgs} args - Arguments to delete one ApplicationStatusConfig.
+     * @example
+     * // Delete one ApplicationStatusConfig
+     * const ApplicationStatusConfig = await prisma.applicationStatusConfig.delete({
+     *   where: {
+     *     // ... filter to delete one ApplicationStatusConfig
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ApplicationStatusConfigDeleteArgs>(args: SelectSubset<T, ApplicationStatusConfigDeleteArgs<ExtArgs>>): Prisma__ApplicationStatusConfigClient<$Result.GetResult<Prisma.$ApplicationStatusConfigPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ApplicationStatusConfig.
+     * @param {ApplicationStatusConfigUpdateArgs} args - Arguments to update one ApplicationStatusConfig.
+     * @example
+     * // Update one ApplicationStatusConfig
+     * const applicationStatusConfig = await prisma.applicationStatusConfig.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ApplicationStatusConfigUpdateArgs>(args: SelectSubset<T, ApplicationStatusConfigUpdateArgs<ExtArgs>>): Prisma__ApplicationStatusConfigClient<$Result.GetResult<Prisma.$ApplicationStatusConfigPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ApplicationStatusConfigs.
+     * @param {ApplicationStatusConfigDeleteManyArgs} args - Arguments to filter ApplicationStatusConfigs to delete.
+     * @example
+     * // Delete a few ApplicationStatusConfigs
+     * const { count } = await prisma.applicationStatusConfig.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ApplicationStatusConfigDeleteManyArgs>(args?: SelectSubset<T, ApplicationStatusConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ApplicationStatusConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApplicationStatusConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ApplicationStatusConfigs
+     * const applicationStatusConfig = await prisma.applicationStatusConfig.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ApplicationStatusConfigUpdateManyArgs>(args: SelectSubset<T, ApplicationStatusConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ApplicationStatusConfigs and returns the data updated in the database.
+     * @param {ApplicationStatusConfigUpdateManyAndReturnArgs} args - Arguments to update many ApplicationStatusConfigs.
+     * @example
+     * // Update many ApplicationStatusConfigs
+     * const applicationStatusConfig = await prisma.applicationStatusConfig.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ApplicationStatusConfigs and only return the `id`
+     * const applicationStatusConfigWithIdOnly = await prisma.applicationStatusConfig.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ApplicationStatusConfigUpdateManyAndReturnArgs>(args: SelectSubset<T, ApplicationStatusConfigUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApplicationStatusConfigPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ApplicationStatusConfig.
+     * @param {ApplicationStatusConfigUpsertArgs} args - Arguments to update or create a ApplicationStatusConfig.
+     * @example
+     * // Update or create a ApplicationStatusConfig
+     * const applicationStatusConfig = await prisma.applicationStatusConfig.upsert({
+     *   create: {
+     *     // ... data to create a ApplicationStatusConfig
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ApplicationStatusConfig we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ApplicationStatusConfigUpsertArgs>(args: SelectSubset<T, ApplicationStatusConfigUpsertArgs<ExtArgs>>): Prisma__ApplicationStatusConfigClient<$Result.GetResult<Prisma.$ApplicationStatusConfigPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ApplicationStatusConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApplicationStatusConfigCountArgs} args - Arguments to filter ApplicationStatusConfigs to count.
+     * @example
+     * // Count the number of ApplicationStatusConfigs
+     * const count = await prisma.applicationStatusConfig.count({
+     *   where: {
+     *     // ... the filter for the ApplicationStatusConfigs we want to count
+     *   }
+     * })
+    **/
+    count<T extends ApplicationStatusConfigCountArgs>(
+      args?: Subset<T, ApplicationStatusConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ApplicationStatusConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ApplicationStatusConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApplicationStatusConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ApplicationStatusConfigAggregateArgs>(args: Subset<T, ApplicationStatusConfigAggregateArgs>): Prisma.PrismaPromise<GetApplicationStatusConfigAggregateType<T>>
+
+    /**
+     * Group by ApplicationStatusConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApplicationStatusConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ApplicationStatusConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ApplicationStatusConfigGroupByArgs['orderBy'] }
+        : { orderBy?: ApplicationStatusConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ApplicationStatusConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetApplicationStatusConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ApplicationStatusConfig model
+   */
+  readonly fields: ApplicationStatusConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ApplicationStatusConfig.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ApplicationStatusConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    applications<T extends ApplicationStatusConfig$applicationsArgs<ExtArgs> = {}>(args?: Subset<T, ApplicationStatusConfig$applicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ApplicationStatusConfig model
+   */
+  interface ApplicationStatusConfigFieldRefs {
+    readonly id: FieldRef<"ApplicationStatusConfig", 'String'>
+    readonly name: FieldRef<"ApplicationStatusConfig", 'String'>
+    readonly color: FieldRef<"ApplicationStatusConfig", 'String'>
+    readonly displayOrder: FieldRef<"ApplicationStatusConfig", 'Int'>
+    readonly organizationId: FieldRef<"ApplicationStatusConfig", 'String'>
+    readonly createdAt: FieldRef<"ApplicationStatusConfig", 'DateTime'>
+    readonly updatedAt: FieldRef<"ApplicationStatusConfig", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ApplicationStatusConfig findUnique
+   */
+  export type ApplicationStatusConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApplicationStatusConfig
+     */
+    select?: ApplicationStatusConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApplicationStatusConfig
+     */
+    omit?: ApplicationStatusConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationStatusConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which ApplicationStatusConfig to fetch.
+     */
+    where: ApplicationStatusConfigWhereUniqueInput
+  }
+
+  /**
+   * ApplicationStatusConfig findUniqueOrThrow
+   */
+  export type ApplicationStatusConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApplicationStatusConfig
+     */
+    select?: ApplicationStatusConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApplicationStatusConfig
+     */
+    omit?: ApplicationStatusConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationStatusConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which ApplicationStatusConfig to fetch.
+     */
+    where: ApplicationStatusConfigWhereUniqueInput
+  }
+
+  /**
+   * ApplicationStatusConfig findFirst
+   */
+  export type ApplicationStatusConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApplicationStatusConfig
+     */
+    select?: ApplicationStatusConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApplicationStatusConfig
+     */
+    omit?: ApplicationStatusConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationStatusConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which ApplicationStatusConfig to fetch.
+     */
+    where?: ApplicationStatusConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ApplicationStatusConfigs to fetch.
+     */
+    orderBy?: ApplicationStatusConfigOrderByWithRelationInput | ApplicationStatusConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ApplicationStatusConfigs.
+     */
+    cursor?: ApplicationStatusConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ApplicationStatusConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ApplicationStatusConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ApplicationStatusConfigs.
+     */
+    distinct?: ApplicationStatusConfigScalarFieldEnum | ApplicationStatusConfigScalarFieldEnum[]
+  }
+
+  /**
+   * ApplicationStatusConfig findFirstOrThrow
+   */
+  export type ApplicationStatusConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApplicationStatusConfig
+     */
+    select?: ApplicationStatusConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApplicationStatusConfig
+     */
+    omit?: ApplicationStatusConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationStatusConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which ApplicationStatusConfig to fetch.
+     */
+    where?: ApplicationStatusConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ApplicationStatusConfigs to fetch.
+     */
+    orderBy?: ApplicationStatusConfigOrderByWithRelationInput | ApplicationStatusConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ApplicationStatusConfigs.
+     */
+    cursor?: ApplicationStatusConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ApplicationStatusConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ApplicationStatusConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ApplicationStatusConfigs.
+     */
+    distinct?: ApplicationStatusConfigScalarFieldEnum | ApplicationStatusConfigScalarFieldEnum[]
+  }
+
+  /**
+   * ApplicationStatusConfig findMany
+   */
+  export type ApplicationStatusConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApplicationStatusConfig
+     */
+    select?: ApplicationStatusConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApplicationStatusConfig
+     */
+    omit?: ApplicationStatusConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationStatusConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which ApplicationStatusConfigs to fetch.
+     */
+    where?: ApplicationStatusConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ApplicationStatusConfigs to fetch.
+     */
+    orderBy?: ApplicationStatusConfigOrderByWithRelationInput | ApplicationStatusConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ApplicationStatusConfigs.
+     */
+    cursor?: ApplicationStatusConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ApplicationStatusConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ApplicationStatusConfigs.
+     */
+    skip?: number
+    distinct?: ApplicationStatusConfigScalarFieldEnum | ApplicationStatusConfigScalarFieldEnum[]
+  }
+
+  /**
+   * ApplicationStatusConfig create
+   */
+  export type ApplicationStatusConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApplicationStatusConfig
+     */
+    select?: ApplicationStatusConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApplicationStatusConfig
+     */
+    omit?: ApplicationStatusConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationStatusConfigInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ApplicationStatusConfig.
+     */
+    data: XOR<ApplicationStatusConfigCreateInput, ApplicationStatusConfigUncheckedCreateInput>
+  }
+
+  /**
+   * ApplicationStatusConfig createMany
+   */
+  export type ApplicationStatusConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ApplicationStatusConfigs.
+     */
+    data: ApplicationStatusConfigCreateManyInput | ApplicationStatusConfigCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ApplicationStatusConfig createManyAndReturn
+   */
+  export type ApplicationStatusConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApplicationStatusConfig
+     */
+    select?: ApplicationStatusConfigSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApplicationStatusConfig
+     */
+    omit?: ApplicationStatusConfigOmit<ExtArgs> | null
+    /**
+     * The data used to create many ApplicationStatusConfigs.
+     */
+    data: ApplicationStatusConfigCreateManyInput | ApplicationStatusConfigCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationStatusConfigIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ApplicationStatusConfig update
+   */
+  export type ApplicationStatusConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApplicationStatusConfig
+     */
+    select?: ApplicationStatusConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApplicationStatusConfig
+     */
+    omit?: ApplicationStatusConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationStatusConfigInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ApplicationStatusConfig.
+     */
+    data: XOR<ApplicationStatusConfigUpdateInput, ApplicationStatusConfigUncheckedUpdateInput>
+    /**
+     * Choose, which ApplicationStatusConfig to update.
+     */
+    where: ApplicationStatusConfigWhereUniqueInput
+  }
+
+  /**
+   * ApplicationStatusConfig updateMany
+   */
+  export type ApplicationStatusConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ApplicationStatusConfigs.
+     */
+    data: XOR<ApplicationStatusConfigUpdateManyMutationInput, ApplicationStatusConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which ApplicationStatusConfigs to update
+     */
+    where?: ApplicationStatusConfigWhereInput
+    /**
+     * Limit how many ApplicationStatusConfigs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ApplicationStatusConfig updateManyAndReturn
+   */
+  export type ApplicationStatusConfigUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApplicationStatusConfig
+     */
+    select?: ApplicationStatusConfigSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApplicationStatusConfig
+     */
+    omit?: ApplicationStatusConfigOmit<ExtArgs> | null
+    /**
+     * The data used to update ApplicationStatusConfigs.
+     */
+    data: XOR<ApplicationStatusConfigUpdateManyMutationInput, ApplicationStatusConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which ApplicationStatusConfigs to update
+     */
+    where?: ApplicationStatusConfigWhereInput
+    /**
+     * Limit how many ApplicationStatusConfigs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationStatusConfigIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ApplicationStatusConfig upsert
+   */
+  export type ApplicationStatusConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApplicationStatusConfig
+     */
+    select?: ApplicationStatusConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApplicationStatusConfig
+     */
+    omit?: ApplicationStatusConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationStatusConfigInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ApplicationStatusConfig to update in case it exists.
+     */
+    where: ApplicationStatusConfigWhereUniqueInput
+    /**
+     * In case the ApplicationStatusConfig found by the `where` argument doesn't exist, create a new ApplicationStatusConfig with this data.
+     */
+    create: XOR<ApplicationStatusConfigCreateInput, ApplicationStatusConfigUncheckedCreateInput>
+    /**
+     * In case the ApplicationStatusConfig was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ApplicationStatusConfigUpdateInput, ApplicationStatusConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * ApplicationStatusConfig delete
+   */
+  export type ApplicationStatusConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApplicationStatusConfig
+     */
+    select?: ApplicationStatusConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApplicationStatusConfig
+     */
+    omit?: ApplicationStatusConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationStatusConfigInclude<ExtArgs> | null
+    /**
+     * Filter which ApplicationStatusConfig to delete.
+     */
+    where: ApplicationStatusConfigWhereUniqueInput
+  }
+
+  /**
+   * ApplicationStatusConfig deleteMany
+   */
+  export type ApplicationStatusConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ApplicationStatusConfigs to delete
+     */
+    where?: ApplicationStatusConfigWhereInput
+    /**
+     * Limit how many ApplicationStatusConfigs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ApplicationStatusConfig.applications
+   */
+  export type ApplicationStatusConfig$applicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Application
+     */
+    select?: ApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Application
+     */
+    omit?: ApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationInclude<ExtArgs> | null
+    where?: ApplicationWhereInput
+    orderBy?: ApplicationOrderByWithRelationInput | ApplicationOrderByWithRelationInput[]
+    cursor?: ApplicationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ApplicationScalarFieldEnum | ApplicationScalarFieldEnum[]
+  }
+
+  /**
+   * ApplicationStatusConfig without action
+   */
+  export type ApplicationStatusConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApplicationStatusConfig
+     */
+    select?: ApplicationStatusConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApplicationStatusConfig
+     */
+    omit?: ApplicationStatusConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationStatusConfigInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Application
    */
 
@@ -12657,6 +13964,7 @@ export namespace Prisma {
     id: string | null
     opportunityId: number | null
     status: $Enums.ApplicationStatus | null
+    statusId: string | null
     title: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -12678,6 +13986,7 @@ export namespace Prisma {
     id: string | null
     opportunityId: number | null
     status: $Enums.ApplicationStatus | null
+    statusId: string | null
     title: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -12699,6 +14008,7 @@ export namespace Prisma {
     id: number
     opportunityId: number
     status: number
+    statusId: number
     title: number
     createdAt: number
     updatedAt: number
@@ -12737,6 +14047,7 @@ export namespace Prisma {
     id?: true
     opportunityId?: true
     status?: true
+    statusId?: true
     title?: true
     createdAt?: true
     updatedAt?: true
@@ -12758,6 +14069,7 @@ export namespace Prisma {
     id?: true
     opportunityId?: true
     status?: true
+    statusId?: true
     title?: true
     createdAt?: true
     updatedAt?: true
@@ -12779,6 +14091,7 @@ export namespace Prisma {
     id?: true
     opportunityId?: true
     status?: true
+    statusId?: true
     title?: true
     createdAt?: true
     updatedAt?: true
@@ -12887,7 +14200,8 @@ export namespace Prisma {
   export type ApplicationGroupByOutputType = {
     id: string
     opportunityId: number | null
-    status: $Enums.ApplicationStatus
+    status: $Enums.ApplicationStatus | null
+    statusId: string | null
     title: string | null
     createdAt: Date
     updatedAt: Date
@@ -12929,6 +14243,7 @@ export namespace Prisma {
     id?: boolean
     opportunityId?: boolean
     status?: boolean
+    statusId?: boolean
     title?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -12947,6 +14262,7 @@ export namespace Prisma {
     opportunityAttachments?: boolean
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    statusConfig?: boolean | Application$statusConfigArgs<ExtArgs>
     documents?: boolean | Application$documentsArgs<ExtArgs>
     folder?: boolean | Application$folderArgs<ExtArgs>
     _count?: boolean | ApplicationCountOutputTypeDefaultArgs<ExtArgs>
@@ -12956,6 +14272,7 @@ export namespace Prisma {
     id?: boolean
     opportunityId?: boolean
     status?: boolean
+    statusId?: boolean
     title?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -12973,12 +14290,14 @@ export namespace Prisma {
     opportunityUrl?: boolean
     opportunityAttachments?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    statusConfig?: boolean | Application$statusConfigArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
 
   export type ApplicationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     opportunityId?: boolean
     status?: boolean
+    statusId?: boolean
     title?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -12996,12 +14315,14 @@ export namespace Prisma {
     opportunityUrl?: boolean
     opportunityAttachments?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    statusConfig?: boolean | Application$statusConfigArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
 
   export type ApplicationSelectScalar = {
     id?: boolean
     opportunityId?: boolean
     status?: boolean
+    statusId?: boolean
     title?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -13020,19 +14341,22 @@ export namespace Prisma {
     opportunityAttachments?: boolean
   }
 
-  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "title" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId" | "opportunityTitle" | "opportunityDescription" | "opportunityEligibility" | "opportunityAgency" | "opportunityCloseDate" | "opportunityTotalFunding" | "opportunityAwardMin" | "opportunityAwardMax" | "opportunityUrl" | "opportunityAttachments", ExtArgs["result"]["application"]>
+  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "opportunityId" | "status" | "statusId" | "title" | "createdAt" | "updatedAt" | "submittedAt" | "lastEditedAt" | "organizationId" | "opportunityTitle" | "opportunityDescription" | "opportunityEligibility" | "opportunityAgency" | "opportunityCloseDate" | "opportunityTotalFunding" | "opportunityAwardMin" | "opportunityAwardMax" | "opportunityUrl" | "opportunityAttachments", ExtArgs["result"]["application"]>
   export type ApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Application$aiChatsArgs<ExtArgs>
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    statusConfig?: boolean | Application$statusConfigArgs<ExtArgs>
     documents?: boolean | Application$documentsArgs<ExtArgs>
     folder?: boolean | Application$folderArgs<ExtArgs>
     _count?: boolean | ApplicationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ApplicationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    statusConfig?: boolean | Application$statusConfigArgs<ExtArgs>
   }
   export type ApplicationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+    statusConfig?: boolean | Application$statusConfigArgs<ExtArgs>
   }
 
   export type $ApplicationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13040,13 +14364,15 @@ export namespace Prisma {
     objects: {
       aiChats: Prisma.$AiChatPayload<ExtArgs>[]
       organization: Prisma.$OrganizationPayload<ExtArgs>
+      statusConfig: Prisma.$ApplicationStatusConfigPayload<ExtArgs> | null
       documents: Prisma.$DocumentPayload<ExtArgs>[]
       folder: Prisma.$FolderPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       opportunityId: number | null
-      status: $Enums.ApplicationStatus
+      status: $Enums.ApplicationStatus | null
+      statusId: string | null
       title: string | null
       createdAt: Date
       updatedAt: Date
@@ -13459,6 +14785,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     aiChats<T extends Application$aiChatsArgs<ExtArgs> = {}>(args?: Subset<T, Application$aiChatsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    statusConfig<T extends Application$statusConfigArgs<ExtArgs> = {}>(args?: Subset<T, Application$statusConfigArgs<ExtArgs>>): Prisma__ApplicationStatusConfigClient<$Result.GetResult<Prisma.$ApplicationStatusConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     documents<T extends Application$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Application$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     folder<T extends Application$folderArgs<ExtArgs> = {}>(args?: Subset<T, Application$folderArgs<ExtArgs>>): Prisma__FolderClient<$Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
@@ -13493,6 +14820,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Application", 'String'>
     readonly opportunityId: FieldRef<"Application", 'Int'>
     readonly status: FieldRef<"Application", 'ApplicationStatus'>
+    readonly statusId: FieldRef<"Application", 'String'>
     readonly title: FieldRef<"Application", 'String'>
     readonly createdAt: FieldRef<"Application", 'DateTime'>
     readonly updatedAt: FieldRef<"Application", 'DateTime'>
@@ -13926,6 +15254,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AiChatScalarFieldEnum | AiChatScalarFieldEnum[]
+  }
+
+  /**
+   * Application.statusConfig
+   */
+  export type Application$statusConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApplicationStatusConfig
+     */
+    select?: ApplicationStatusConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApplicationStatusConfig
+     */
+    omit?: ApplicationStatusConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationStatusConfigInclude<ExtArgs> | null
+    where?: ApplicationStatusConfigWhereInput
   }
 
   /**
@@ -22101,10 +23448,24 @@ export namespace Prisma {
   export type GrantEligibilityAnalysisScalarFieldEnum = (typeof GrantEligibilityAnalysisScalarFieldEnum)[keyof typeof GrantEligibilityAnalysisScalarFieldEnum]
 
 
+  export const ApplicationStatusConfigScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    color: 'color',
+    displayOrder: 'displayOrder',
+    organizationId: 'organizationId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ApplicationStatusConfigScalarFieldEnum = (typeof ApplicationStatusConfigScalarFieldEnum)[keyof typeof ApplicationStatusConfigScalarFieldEnum]
+
+
   export const ApplicationScalarFieldEnum: {
     id: 'id',
     opportunityId: 'opportunityId',
     status: 'status',
+    statusId: 'statusId',
     title: 'title',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
@@ -22906,6 +24267,7 @@ export namespace Prisma {
     services?: Enumopportunity_services_enumNullableListFilter<"Organization">
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
+    applicationStatuses?: ApplicationStatusConfigListRelationFilter
     customFields?: CustomFieldListRelationFilter
     documents?: DocumentListRelationFilter
     folders?: FolderListRelationFilter
@@ -22949,6 +24311,7 @@ export namespace Prisma {
     services?: SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     applications?: ApplicationOrderByRelationAggregateInput
+    applicationStatuses?: ApplicationStatusConfigOrderByRelationAggregateInput
     customFields?: CustomFieldOrderByRelationAggregateInput
     documents?: DocumentOrderByRelationAggregateInput
     folders?: FolderOrderByRelationAggregateInput
@@ -22995,6 +24358,7 @@ export namespace Prisma {
     services?: Enumopportunity_services_enumNullableListFilter<"Organization">
     aiChats?: AiChatListRelationFilter
     applications?: ApplicationListRelationFilter
+    applicationStatuses?: ApplicationStatusConfigListRelationFilter
     customFields?: CustomFieldListRelationFilter
     documents?: DocumentListRelationFilter
     folders?: FolderListRelationFilter
@@ -23365,13 +24729,85 @@ export namespace Prisma {
     organizationId?: StringWithAggregatesFilter<"GrantEligibilityAnalysis"> | string
   }
 
+  export type ApplicationStatusConfigWhereInput = {
+    AND?: ApplicationStatusConfigWhereInput | ApplicationStatusConfigWhereInput[]
+    OR?: ApplicationStatusConfigWhereInput[]
+    NOT?: ApplicationStatusConfigWhereInput | ApplicationStatusConfigWhereInput[]
+    id?: StringFilter<"ApplicationStatusConfig"> | string
+    name?: StringFilter<"ApplicationStatusConfig"> | string
+    color?: StringFilter<"ApplicationStatusConfig"> | string
+    displayOrder?: IntFilter<"ApplicationStatusConfig"> | number
+    organizationId?: StringFilter<"ApplicationStatusConfig"> | string
+    createdAt?: DateTimeFilter<"ApplicationStatusConfig"> | Date | string
+    updatedAt?: DateTimeFilter<"ApplicationStatusConfig"> | Date | string
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    applications?: ApplicationListRelationFilter
+  }
+
+  export type ApplicationStatusConfigOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    color?: SortOrder
+    displayOrder?: SortOrder
+    organizationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    organization?: OrganizationOrderByWithRelationInput
+    applications?: ApplicationOrderByRelationAggregateInput
+  }
+
+  export type ApplicationStatusConfigWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    organizationId_name?: ApplicationStatusConfigOrganizationIdNameCompoundUniqueInput
+    AND?: ApplicationStatusConfigWhereInput | ApplicationStatusConfigWhereInput[]
+    OR?: ApplicationStatusConfigWhereInput[]
+    NOT?: ApplicationStatusConfigWhereInput | ApplicationStatusConfigWhereInput[]
+    name?: StringFilter<"ApplicationStatusConfig"> | string
+    color?: StringFilter<"ApplicationStatusConfig"> | string
+    displayOrder?: IntFilter<"ApplicationStatusConfig"> | number
+    organizationId?: StringFilter<"ApplicationStatusConfig"> | string
+    createdAt?: DateTimeFilter<"ApplicationStatusConfig"> | Date | string
+    updatedAt?: DateTimeFilter<"ApplicationStatusConfig"> | Date | string
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    applications?: ApplicationListRelationFilter
+  }, "id" | "organizationId_name">
+
+  export type ApplicationStatusConfigOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    color?: SortOrder
+    displayOrder?: SortOrder
+    organizationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ApplicationStatusConfigCountOrderByAggregateInput
+    _avg?: ApplicationStatusConfigAvgOrderByAggregateInput
+    _max?: ApplicationStatusConfigMaxOrderByAggregateInput
+    _min?: ApplicationStatusConfigMinOrderByAggregateInput
+    _sum?: ApplicationStatusConfigSumOrderByAggregateInput
+  }
+
+  export type ApplicationStatusConfigScalarWhereWithAggregatesInput = {
+    AND?: ApplicationStatusConfigScalarWhereWithAggregatesInput | ApplicationStatusConfigScalarWhereWithAggregatesInput[]
+    OR?: ApplicationStatusConfigScalarWhereWithAggregatesInput[]
+    NOT?: ApplicationStatusConfigScalarWhereWithAggregatesInput | ApplicationStatusConfigScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ApplicationStatusConfig"> | string
+    name?: StringWithAggregatesFilter<"ApplicationStatusConfig"> | string
+    color?: StringWithAggregatesFilter<"ApplicationStatusConfig"> | string
+    displayOrder?: IntWithAggregatesFilter<"ApplicationStatusConfig"> | number
+    organizationId?: StringWithAggregatesFilter<"ApplicationStatusConfig"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"ApplicationStatusConfig"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ApplicationStatusConfig"> | Date | string
+  }
+
   export type ApplicationWhereInput = {
     AND?: ApplicationWhereInput | ApplicationWhereInput[]
     OR?: ApplicationWhereInput[]
     NOT?: ApplicationWhereInput | ApplicationWhereInput[]
     id?: StringFilter<"Application"> | string
     opportunityId?: IntNullableFilter<"Application"> | number | null
-    status?: EnumApplicationStatusFilter<"Application"> | $Enums.ApplicationStatus
+    status?: EnumApplicationStatusNullableFilter<"Application"> | $Enums.ApplicationStatus | null
+    statusId?: StringNullableFilter<"Application"> | string | null
     title?: StringNullableFilter<"Application"> | string | null
     createdAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
@@ -23390,6 +24826,7 @@ export namespace Prisma {
     opportunityAttachments?: JsonNullableFilter<"Application">
     aiChats?: AiChatListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    statusConfig?: XOR<ApplicationStatusConfigNullableScalarRelationFilter, ApplicationStatusConfigWhereInput> | null
     documents?: DocumentListRelationFilter
     folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
   }
@@ -23397,7 +24834,8 @@ export namespace Prisma {
   export type ApplicationOrderByWithRelationInput = {
     id?: SortOrder
     opportunityId?: SortOrderInput | SortOrder
-    status?: SortOrder
+    status?: SortOrderInput | SortOrder
+    statusId?: SortOrderInput | SortOrder
     title?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -23416,6 +24854,7 @@ export namespace Prisma {
     opportunityAttachments?: SortOrderInput | SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
     organization?: OrganizationOrderByWithRelationInput
+    statusConfig?: ApplicationStatusConfigOrderByWithRelationInput
     documents?: DocumentOrderByRelationAggregateInput
     folder?: FolderOrderByWithRelationInput
   }
@@ -23426,7 +24865,8 @@ export namespace Prisma {
     OR?: ApplicationWhereInput[]
     NOT?: ApplicationWhereInput | ApplicationWhereInput[]
     opportunityId?: IntNullableFilter<"Application"> | number | null
-    status?: EnumApplicationStatusFilter<"Application"> | $Enums.ApplicationStatus
+    status?: EnumApplicationStatusNullableFilter<"Application"> | $Enums.ApplicationStatus | null
+    statusId?: StringNullableFilter<"Application"> | string | null
     title?: StringNullableFilter<"Application"> | string | null
     createdAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
@@ -23445,6 +24885,7 @@ export namespace Prisma {
     opportunityAttachments?: JsonNullableFilter<"Application">
     aiChats?: AiChatListRelationFilter
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+    statusConfig?: XOR<ApplicationStatusConfigNullableScalarRelationFilter, ApplicationStatusConfigWhereInput> | null
     documents?: DocumentListRelationFilter
     folder?: XOR<FolderNullableScalarRelationFilter, FolderWhereInput> | null
   }, "id">
@@ -23452,7 +24893,8 @@ export namespace Prisma {
   export type ApplicationOrderByWithAggregationInput = {
     id?: SortOrder
     opportunityId?: SortOrderInput | SortOrder
-    status?: SortOrder
+    status?: SortOrderInput | SortOrder
+    statusId?: SortOrderInput | SortOrder
     title?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -23482,7 +24924,8 @@ export namespace Prisma {
     NOT?: ApplicationScalarWhereWithAggregatesInput | ApplicationScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Application"> | string
     opportunityId?: IntNullableWithAggregatesFilter<"Application"> | number | null
-    status?: EnumApplicationStatusWithAggregatesFilter<"Application"> | $Enums.ApplicationStatus
+    status?: EnumApplicationStatusNullableWithAggregatesFilter<"Application"> | $Enums.ApplicationStatus | null
+    statusId?: StringNullableWithAggregatesFilter<"Application"> | string | null
     title?: StringNullableWithAggregatesFilter<"Application"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
@@ -24476,6 +25919,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
@@ -24519,6 +25963,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24562,6 +26007,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
@@ -24605,6 +26051,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25010,10 +26457,83 @@ export namespace Prisma {
     organizationId?: StringFieldUpdateOperationsInput | string
   }
 
+  export type ApplicationStatusConfigCreateInput = {
+    id?: string
+    name: string
+    color: string
+    displayOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutApplicationStatusesInput
+    applications?: ApplicationCreateNestedManyWithoutStatusConfigInput
+  }
+
+  export type ApplicationStatusConfigUncheckedCreateInput = {
+    id?: string
+    name: string
+    color: string
+    displayOrder?: number
+    organizationId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    applications?: ApplicationUncheckedCreateNestedManyWithoutStatusConfigInput
+  }
+
+  export type ApplicationStatusConfigUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutApplicationStatusesNestedInput
+    applications?: ApplicationUpdateManyWithoutStatusConfigNestedInput
+  }
+
+  export type ApplicationStatusConfigUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    organizationId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    applications?: ApplicationUncheckedUpdateManyWithoutStatusConfigNestedInput
+  }
+
+  export type ApplicationStatusConfigCreateManyInput = {
+    id?: string
+    name: string
+    color: string
+    displayOrder?: number
+    organizationId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ApplicationStatusConfigUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApplicationStatusConfigUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    organizationId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ApplicationCreateInput = {
     id?: string
     opportunityId?: number | null
-    status?: $Enums.ApplicationStatus
+    status?: $Enums.ApplicationStatus | null
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -25031,6 +26551,7 @@ export namespace Prisma {
     opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
+    statusConfig?: ApplicationStatusConfigCreateNestedOneWithoutApplicationsInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
     folder?: FolderCreateNestedOneWithoutApplicationInput
   }
@@ -25038,7 +26559,8 @@ export namespace Prisma {
   export type ApplicationUncheckedCreateInput = {
     id?: string
     opportunityId?: number | null
-    status?: $Enums.ApplicationStatus
+    status?: $Enums.ApplicationStatus | null
+    statusId?: string | null
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -25063,7 +26585,7 @@ export namespace Prisma {
   export type ApplicationUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25081,6 +26603,7 @@ export namespace Prisma {
     opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
+    statusConfig?: ApplicationStatusConfigUpdateOneWithoutApplicationsNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
     folder?: FolderUpdateOneWithoutApplicationNestedInput
   }
@@ -25088,7 +26611,8 @@ export namespace Prisma {
   export type ApplicationUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
+    statusId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25113,7 +26637,8 @@ export namespace Prisma {
   export type ApplicationCreateManyInput = {
     id?: string
     opportunityId?: number | null
-    status?: $Enums.ApplicationStatus
+    status?: $Enums.ApplicationStatus | null
+    statusId?: string | null
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -25135,7 +26660,7 @@ export namespace Prisma {
   export type ApplicationUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25156,7 +26681,8 @@ export namespace Prisma {
   export type ApplicationUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
+    statusId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26319,6 +27845,12 @@ export namespace Prisma {
     none?: ApplicationWhereInput
   }
 
+  export type ApplicationStatusConfigListRelationFilter = {
+    every?: ApplicationStatusConfigWhereInput
+    some?: ApplicationStatusConfigWhereInput
+    none?: ApplicationStatusConfigWhereInput
+  }
+
   export type CustomFieldListRelationFilter = {
     every?: CustomFieldWhereInput
     some?: CustomFieldWhereInput
@@ -26362,6 +27894,10 @@ export namespace Prisma {
   }
 
   export type ApplicationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ApplicationStatusConfigOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -26736,11 +28272,59 @@ export namespace Prisma {
     _max?: NestedEnumGoNoGoDecisionFilter<$PrismaModel>
   }
 
-  export type EnumApplicationStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.ApplicationStatus | EnumApplicationStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumApplicationStatusFilter<$PrismaModel> | $Enums.ApplicationStatus
+  export type ApplicationStatusConfigOrganizationIdNameCompoundUniqueInput = {
+    organizationId: string
+    name: string
+  }
+
+  export type ApplicationStatusConfigCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    color?: SortOrder
+    displayOrder?: SortOrder
+    organizationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ApplicationStatusConfigAvgOrderByAggregateInput = {
+    displayOrder?: SortOrder
+  }
+
+  export type ApplicationStatusConfigMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    color?: SortOrder
+    displayOrder?: SortOrder
+    organizationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ApplicationStatusConfigMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    color?: SortOrder
+    displayOrder?: SortOrder
+    organizationId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ApplicationStatusConfigSumOrderByAggregateInput = {
+    displayOrder?: SortOrder
+  }
+
+  export type EnumApplicationStatusNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApplicationStatus | EnumApplicationStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumApplicationStatusNullableFilter<$PrismaModel> | $Enums.ApplicationStatus | null
+  }
+
+  export type ApplicationStatusConfigNullableScalarRelationFilter = {
+    is?: ApplicationStatusConfigWhereInput | null
+    isNot?: ApplicationStatusConfigWhereInput | null
   }
 
   export type FolderNullableScalarRelationFilter = {
@@ -26752,6 +28336,7 @@ export namespace Prisma {
     id?: SortOrder
     opportunityId?: SortOrder
     status?: SortOrder
+    statusId?: SortOrder
     title?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -26781,6 +28366,7 @@ export namespace Prisma {
     id?: SortOrder
     opportunityId?: SortOrder
     status?: SortOrder
+    statusId?: SortOrder
     title?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -26802,6 +28388,7 @@ export namespace Prisma {
     id?: SortOrder
     opportunityId?: SortOrder
     status?: SortOrder
+    statusId?: SortOrder
     title?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -26826,14 +28413,14 @@ export namespace Prisma {
     opportunityAwardMax?: SortOrder
   }
 
-  export type EnumApplicationStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ApplicationStatus | EnumApplicationStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumApplicationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ApplicationStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumApplicationStatusFilter<$PrismaModel>
-    _max?: NestedEnumApplicationStatusFilter<$PrismaModel>
+  export type EnumApplicationStatusNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApplicationStatus | EnumApplicationStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumApplicationStatusNullableWithAggregatesFilter<$PrismaModel> | $Enums.ApplicationStatus | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumApplicationStatusNullableFilter<$PrismaModel>
+    _max?: NestedEnumApplicationStatusNullableFilter<$PrismaModel>
   }
 
   export type EnumAiChatContextFilter<$PrismaModel = never> = {
@@ -27416,6 +29003,13 @@ export namespace Prisma {
     connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
   }
 
+  export type ApplicationStatusConfigCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<ApplicationStatusConfigCreateWithoutOrganizationInput, ApplicationStatusConfigUncheckedCreateWithoutOrganizationInput> | ApplicationStatusConfigCreateWithoutOrganizationInput[] | ApplicationStatusConfigUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: ApplicationStatusConfigCreateOrConnectWithoutOrganizationInput | ApplicationStatusConfigCreateOrConnectWithoutOrganizationInput[]
+    createMany?: ApplicationStatusConfigCreateManyOrganizationInputEnvelope
+    connect?: ApplicationStatusConfigWhereUniqueInput | ApplicationStatusConfigWhereUniqueInput[]
+  }
+
   export type CustomFieldCreateNestedManyWithoutOrganizationInput = {
     create?: XOR<CustomFieldCreateWithoutOrganizationInput, CustomFieldUncheckedCreateWithoutOrganizationInput> | CustomFieldCreateWithoutOrganizationInput[] | CustomFieldUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: CustomFieldCreateOrConnectWithoutOrganizationInput | CustomFieldCreateOrConnectWithoutOrganizationInput[]
@@ -27484,6 +29078,13 @@ export namespace Prisma {
     connectOrCreate?: ApplicationCreateOrConnectWithoutOrganizationInput | ApplicationCreateOrConnectWithoutOrganizationInput[]
     createMany?: ApplicationCreateManyOrganizationInputEnvelope
     connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+  }
+
+  export type ApplicationStatusConfigUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<ApplicationStatusConfigCreateWithoutOrganizationInput, ApplicationStatusConfigUncheckedCreateWithoutOrganizationInput> | ApplicationStatusConfigCreateWithoutOrganizationInput[] | ApplicationStatusConfigUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: ApplicationStatusConfigCreateOrConnectWithoutOrganizationInput | ApplicationStatusConfigCreateOrConnectWithoutOrganizationInput[]
+    createMany?: ApplicationStatusConfigCreateManyOrganizationInputEnvelope
+    connect?: ApplicationStatusConfigWhereUniqueInput | ApplicationStatusConfigWhereUniqueInput[]
   }
 
   export type CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput = {
@@ -27589,6 +29190,20 @@ export namespace Prisma {
     update?: ApplicationUpdateWithWhereUniqueWithoutOrganizationInput | ApplicationUpdateWithWhereUniqueWithoutOrganizationInput[]
     updateMany?: ApplicationUpdateManyWithWhereWithoutOrganizationInput | ApplicationUpdateManyWithWhereWithoutOrganizationInput[]
     deleteMany?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
+  }
+
+  export type ApplicationStatusConfigUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<ApplicationStatusConfigCreateWithoutOrganizationInput, ApplicationStatusConfigUncheckedCreateWithoutOrganizationInput> | ApplicationStatusConfigCreateWithoutOrganizationInput[] | ApplicationStatusConfigUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: ApplicationStatusConfigCreateOrConnectWithoutOrganizationInput | ApplicationStatusConfigCreateOrConnectWithoutOrganizationInput[]
+    upsert?: ApplicationStatusConfigUpsertWithWhereUniqueWithoutOrganizationInput | ApplicationStatusConfigUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: ApplicationStatusConfigCreateManyOrganizationInputEnvelope
+    set?: ApplicationStatusConfigWhereUniqueInput | ApplicationStatusConfigWhereUniqueInput[]
+    disconnect?: ApplicationStatusConfigWhereUniqueInput | ApplicationStatusConfigWhereUniqueInput[]
+    delete?: ApplicationStatusConfigWhereUniqueInput | ApplicationStatusConfigWhereUniqueInput[]
+    connect?: ApplicationStatusConfigWhereUniqueInput | ApplicationStatusConfigWhereUniqueInput[]
+    update?: ApplicationStatusConfigUpdateWithWhereUniqueWithoutOrganizationInput | ApplicationStatusConfigUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: ApplicationStatusConfigUpdateManyWithWhereWithoutOrganizationInput | ApplicationStatusConfigUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: ApplicationStatusConfigScalarWhereInput | ApplicationStatusConfigScalarWhereInput[]
   }
 
   export type CustomFieldUpdateManyWithoutOrganizationNestedInput = {
@@ -27729,6 +29344,20 @@ export namespace Prisma {
     update?: ApplicationUpdateWithWhereUniqueWithoutOrganizationInput | ApplicationUpdateWithWhereUniqueWithoutOrganizationInput[]
     updateMany?: ApplicationUpdateManyWithWhereWithoutOrganizationInput | ApplicationUpdateManyWithWhereWithoutOrganizationInput[]
     deleteMany?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
+  }
+
+  export type ApplicationStatusConfigUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<ApplicationStatusConfigCreateWithoutOrganizationInput, ApplicationStatusConfigUncheckedCreateWithoutOrganizationInput> | ApplicationStatusConfigCreateWithoutOrganizationInput[] | ApplicationStatusConfigUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: ApplicationStatusConfigCreateOrConnectWithoutOrganizationInput | ApplicationStatusConfigCreateOrConnectWithoutOrganizationInput[]
+    upsert?: ApplicationStatusConfigUpsertWithWhereUniqueWithoutOrganizationInput | ApplicationStatusConfigUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: ApplicationStatusConfigCreateManyOrganizationInputEnvelope
+    set?: ApplicationStatusConfigWhereUniqueInput | ApplicationStatusConfigWhereUniqueInput[]
+    disconnect?: ApplicationStatusConfigWhereUniqueInput | ApplicationStatusConfigWhereUniqueInput[]
+    delete?: ApplicationStatusConfigWhereUniqueInput | ApplicationStatusConfigWhereUniqueInput[]
+    connect?: ApplicationStatusConfigWhereUniqueInput | ApplicationStatusConfigWhereUniqueInput[]
+    update?: ApplicationStatusConfigUpdateWithWhereUniqueWithoutOrganizationInput | ApplicationStatusConfigUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: ApplicationStatusConfigUpdateManyWithWhereWithoutOrganizationInput | ApplicationStatusConfigUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: ApplicationStatusConfigScalarWhereInput | ApplicationStatusConfigScalarWhereInput[]
   }
 
   export type CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput = {
@@ -27917,6 +29546,62 @@ export namespace Prisma {
     update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutEligibilityAnalysesInput, OrganizationUpdateWithoutEligibilityAnalysesInput>, OrganizationUncheckedUpdateWithoutEligibilityAnalysesInput>
   }
 
+  export type OrganizationCreateNestedOneWithoutApplicationStatusesInput = {
+    create?: XOR<OrganizationCreateWithoutApplicationStatusesInput, OrganizationUncheckedCreateWithoutApplicationStatusesInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutApplicationStatusesInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
+  export type ApplicationCreateNestedManyWithoutStatusConfigInput = {
+    create?: XOR<ApplicationCreateWithoutStatusConfigInput, ApplicationUncheckedCreateWithoutStatusConfigInput> | ApplicationCreateWithoutStatusConfigInput[] | ApplicationUncheckedCreateWithoutStatusConfigInput[]
+    connectOrCreate?: ApplicationCreateOrConnectWithoutStatusConfigInput | ApplicationCreateOrConnectWithoutStatusConfigInput[]
+    createMany?: ApplicationCreateManyStatusConfigInputEnvelope
+    connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+  }
+
+  export type ApplicationUncheckedCreateNestedManyWithoutStatusConfigInput = {
+    create?: XOR<ApplicationCreateWithoutStatusConfigInput, ApplicationUncheckedCreateWithoutStatusConfigInput> | ApplicationCreateWithoutStatusConfigInput[] | ApplicationUncheckedCreateWithoutStatusConfigInput[]
+    connectOrCreate?: ApplicationCreateOrConnectWithoutStatusConfigInput | ApplicationCreateOrConnectWithoutStatusConfigInput[]
+    createMany?: ApplicationCreateManyStatusConfigInputEnvelope
+    connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutApplicationStatusesNestedInput = {
+    create?: XOR<OrganizationCreateWithoutApplicationStatusesInput, OrganizationUncheckedCreateWithoutApplicationStatusesInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutApplicationStatusesInput
+    upsert?: OrganizationUpsertWithoutApplicationStatusesInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutApplicationStatusesInput, OrganizationUpdateWithoutApplicationStatusesInput>, OrganizationUncheckedUpdateWithoutApplicationStatusesInput>
+  }
+
+  export type ApplicationUpdateManyWithoutStatusConfigNestedInput = {
+    create?: XOR<ApplicationCreateWithoutStatusConfigInput, ApplicationUncheckedCreateWithoutStatusConfigInput> | ApplicationCreateWithoutStatusConfigInput[] | ApplicationUncheckedCreateWithoutStatusConfigInput[]
+    connectOrCreate?: ApplicationCreateOrConnectWithoutStatusConfigInput | ApplicationCreateOrConnectWithoutStatusConfigInput[]
+    upsert?: ApplicationUpsertWithWhereUniqueWithoutStatusConfigInput | ApplicationUpsertWithWhereUniqueWithoutStatusConfigInput[]
+    createMany?: ApplicationCreateManyStatusConfigInputEnvelope
+    set?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+    disconnect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+    delete?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+    connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+    update?: ApplicationUpdateWithWhereUniqueWithoutStatusConfigInput | ApplicationUpdateWithWhereUniqueWithoutStatusConfigInput[]
+    updateMany?: ApplicationUpdateManyWithWhereWithoutStatusConfigInput | ApplicationUpdateManyWithWhereWithoutStatusConfigInput[]
+    deleteMany?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
+  }
+
+  export type ApplicationUncheckedUpdateManyWithoutStatusConfigNestedInput = {
+    create?: XOR<ApplicationCreateWithoutStatusConfigInput, ApplicationUncheckedCreateWithoutStatusConfigInput> | ApplicationCreateWithoutStatusConfigInput[] | ApplicationUncheckedCreateWithoutStatusConfigInput[]
+    connectOrCreate?: ApplicationCreateOrConnectWithoutStatusConfigInput | ApplicationCreateOrConnectWithoutStatusConfigInput[]
+    upsert?: ApplicationUpsertWithWhereUniqueWithoutStatusConfigInput | ApplicationUpsertWithWhereUniqueWithoutStatusConfigInput[]
+    createMany?: ApplicationCreateManyStatusConfigInputEnvelope
+    set?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+    disconnect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+    delete?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+    connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+    update?: ApplicationUpdateWithWhereUniqueWithoutStatusConfigInput | ApplicationUpdateWithWhereUniqueWithoutStatusConfigInput[]
+    updateMany?: ApplicationUpdateManyWithWhereWithoutStatusConfigInput | ApplicationUpdateManyWithWhereWithoutStatusConfigInput[]
+    deleteMany?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
+  }
+
   export type AiChatCreateNestedManyWithoutApplicationInput = {
     create?: XOR<AiChatCreateWithoutApplicationInput, AiChatUncheckedCreateWithoutApplicationInput> | AiChatCreateWithoutApplicationInput[] | AiChatUncheckedCreateWithoutApplicationInput[]
     connectOrCreate?: AiChatCreateOrConnectWithoutApplicationInput | AiChatCreateOrConnectWithoutApplicationInput[]
@@ -27928,6 +29613,12 @@ export namespace Prisma {
     create?: XOR<OrganizationCreateWithoutApplicationsInput, OrganizationUncheckedCreateWithoutApplicationsInput>
     connectOrCreate?: OrganizationCreateOrConnectWithoutApplicationsInput
     connect?: OrganizationWhereUniqueInput
+  }
+
+  export type ApplicationStatusConfigCreateNestedOneWithoutApplicationsInput = {
+    create?: XOR<ApplicationStatusConfigCreateWithoutApplicationsInput, ApplicationStatusConfigUncheckedCreateWithoutApplicationsInput>
+    connectOrCreate?: ApplicationStatusConfigCreateOrConnectWithoutApplicationsInput
+    connect?: ApplicationStatusConfigWhereUniqueInput
   }
 
   export type DocumentCreateNestedManyWithoutApplicationInput = {
@@ -27963,8 +29654,8 @@ export namespace Prisma {
     connect?: FolderWhereUniqueInput
   }
 
-  export type EnumApplicationStatusFieldUpdateOperationsInput = {
-    set?: $Enums.ApplicationStatus
+  export type NullableEnumApplicationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ApplicationStatus | null
   }
 
   export type AiChatUpdateManyWithoutApplicationNestedInput = {
@@ -27987,6 +29678,16 @@ export namespace Prisma {
     upsert?: OrganizationUpsertWithoutApplicationsInput
     connect?: OrganizationWhereUniqueInput
     update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutApplicationsInput, OrganizationUpdateWithoutApplicationsInput>, OrganizationUncheckedUpdateWithoutApplicationsInput>
+  }
+
+  export type ApplicationStatusConfigUpdateOneWithoutApplicationsNestedInput = {
+    create?: XOR<ApplicationStatusConfigCreateWithoutApplicationsInput, ApplicationStatusConfigUncheckedCreateWithoutApplicationsInput>
+    connectOrCreate?: ApplicationStatusConfigCreateOrConnectWithoutApplicationsInput
+    upsert?: ApplicationStatusConfigUpsertWithoutApplicationsInput
+    disconnect?: ApplicationStatusConfigWhereInput | boolean
+    delete?: ApplicationStatusConfigWhereInput | boolean
+    connect?: ApplicationStatusConfigWhereUniqueInput
+    update?: XOR<XOR<ApplicationStatusConfigUpdateToOneWithWhereWithoutApplicationsInput, ApplicationStatusConfigUpdateWithoutApplicationsInput>, ApplicationStatusConfigUncheckedUpdateWithoutApplicationsInput>
   }
 
   export type DocumentUpdateManyWithoutApplicationNestedInput = {
@@ -28780,21 +30481,21 @@ export namespace Prisma {
     _max?: NestedEnumGoNoGoDecisionFilter<$PrismaModel>
   }
 
-  export type NestedEnumApplicationStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.ApplicationStatus | EnumApplicationStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumApplicationStatusFilter<$PrismaModel> | $Enums.ApplicationStatus
+  export type NestedEnumApplicationStatusNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApplicationStatus | EnumApplicationStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumApplicationStatusNullableFilter<$PrismaModel> | $Enums.ApplicationStatus | null
   }
 
-  export type NestedEnumApplicationStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ApplicationStatus | EnumApplicationStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumApplicationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ApplicationStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumApplicationStatusFilter<$PrismaModel>
-    _max?: NestedEnumApplicationStatusFilter<$PrismaModel>
+  export type NestedEnumApplicationStatusNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApplicationStatus | EnumApplicationStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumApplicationStatusNullableWithAggregatesFilter<$PrismaModel> | $Enums.ApplicationStatus | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumApplicationStatusNullableFilter<$PrismaModel>
+    _max?: NestedEnumApplicationStatusNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumAiChatContextFilter<$PrismaModel = never> = {
@@ -29004,6 +30705,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
@@ -29046,6 +30748,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
@@ -29163,6 +30866,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
@@ -29205,6 +30909,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -29251,7 +30956,7 @@ export namespace Prisma {
   export type ApplicationCreateWithoutOrganizationInput = {
     id?: string
     opportunityId?: number | null
-    status?: $Enums.ApplicationStatus
+    status?: $Enums.ApplicationStatus | null
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29268,6 +30973,7 @@ export namespace Prisma {
     opportunityUrl?: string | null
     opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
+    statusConfig?: ApplicationStatusConfigCreateNestedOneWithoutApplicationsInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
     folder?: FolderCreateNestedOneWithoutApplicationInput
   }
@@ -29275,7 +30981,8 @@ export namespace Prisma {
   export type ApplicationUncheckedCreateWithoutOrganizationInput = {
     id?: string
     opportunityId?: number | null
-    status?: $Enums.ApplicationStatus
+    status?: $Enums.ApplicationStatus | null
+    statusId?: string | null
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29303,6 +31010,36 @@ export namespace Prisma {
 
   export type ApplicationCreateManyOrganizationInputEnvelope = {
     data: ApplicationCreateManyOrganizationInput | ApplicationCreateManyOrganizationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ApplicationStatusConfigCreateWithoutOrganizationInput = {
+    id?: string
+    name: string
+    color: string
+    displayOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    applications?: ApplicationCreateNestedManyWithoutStatusConfigInput
+  }
+
+  export type ApplicationStatusConfigUncheckedCreateWithoutOrganizationInput = {
+    id?: string
+    name: string
+    color: string
+    displayOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    applications?: ApplicationUncheckedCreateNestedManyWithoutStatusConfigInput
+  }
+
+  export type ApplicationStatusConfigCreateOrConnectWithoutOrganizationInput = {
+    where: ApplicationStatusConfigWhereUniqueInput
+    create: XOR<ApplicationStatusConfigCreateWithoutOrganizationInput, ApplicationStatusConfigUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type ApplicationStatusConfigCreateManyOrganizationInputEnvelope = {
+    data: ApplicationStatusConfigCreateManyOrganizationInput | ApplicationStatusConfigCreateManyOrganizationInput[]
     skipDuplicates?: boolean
   }
 
@@ -29616,7 +31353,8 @@ export namespace Prisma {
     NOT?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
     id?: StringFilter<"Application"> | string
     opportunityId?: IntNullableFilter<"Application"> | number | null
-    status?: EnumApplicationStatusFilter<"Application"> | $Enums.ApplicationStatus
+    status?: EnumApplicationStatusNullableFilter<"Application"> | $Enums.ApplicationStatus | null
+    statusId?: StringNullableFilter<"Application"> | string | null
     title?: StringNullableFilter<"Application"> | string | null
     createdAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
@@ -29633,6 +31371,35 @@ export namespace Prisma {
     opportunityAwardMax?: BigIntNullableFilter<"Application"> | bigint | number | null
     opportunityUrl?: StringNullableFilter<"Application"> | string | null
     opportunityAttachments?: JsonNullableFilter<"Application">
+  }
+
+  export type ApplicationStatusConfigUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: ApplicationStatusConfigWhereUniqueInput
+    update: XOR<ApplicationStatusConfigUpdateWithoutOrganizationInput, ApplicationStatusConfigUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<ApplicationStatusConfigCreateWithoutOrganizationInput, ApplicationStatusConfigUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type ApplicationStatusConfigUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: ApplicationStatusConfigWhereUniqueInput
+    data: XOR<ApplicationStatusConfigUpdateWithoutOrganizationInput, ApplicationStatusConfigUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type ApplicationStatusConfigUpdateManyWithWhereWithoutOrganizationInput = {
+    where: ApplicationStatusConfigScalarWhereInput
+    data: XOR<ApplicationStatusConfigUpdateManyMutationInput, ApplicationStatusConfigUncheckedUpdateManyWithoutOrganizationInput>
+  }
+
+  export type ApplicationStatusConfigScalarWhereInput = {
+    AND?: ApplicationStatusConfigScalarWhereInput | ApplicationStatusConfigScalarWhereInput[]
+    OR?: ApplicationStatusConfigScalarWhereInput[]
+    NOT?: ApplicationStatusConfigScalarWhereInput | ApplicationStatusConfigScalarWhereInput[]
+    id?: StringFilter<"ApplicationStatusConfig"> | string
+    name?: StringFilter<"ApplicationStatusConfig"> | string
+    color?: StringFilter<"ApplicationStatusConfig"> | string
+    displayOrder?: IntFilter<"ApplicationStatusConfig"> | number
+    organizationId?: StringFilter<"ApplicationStatusConfig"> | string
+    createdAt?: DateTimeFilter<"ApplicationStatusConfig"> | Date | string
+    updatedAt?: DateTimeFilter<"ApplicationStatusConfig"> | Date | string
   }
 
   export type CustomFieldUpsertWithWhereUniqueWithoutOrganizationInput = {
@@ -29908,6 +31675,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -29950,6 +31718,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30008,6 +31777,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -30050,6 +31820,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -30092,6 +31863,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
@@ -30134,6 +31906,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30192,6 +31965,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
@@ -30234,6 +32008,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -30276,6 +32051,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
@@ -30318,6 +32094,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30421,6 +32198,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
@@ -30463,6 +32241,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -30556,6 +32335,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
@@ -30598,6 +32378,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30656,6 +32437,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
@@ -30698,6 +32480,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -30705,6 +32488,270 @@ export namespace Prisma {
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationCreateWithoutApplicationStatusesInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    slug: string
+    address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    phone?: string | null
+    state?: string | null
+    website?: string | null
+    zipCode?: string | null
+    strategicPlan?: string | null
+    countyName?: string | null
+    districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
+    logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
+    aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
+    applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentCreateNestedManyWithoutOrganizationInput
+    folders?: FolderCreateNestedManyWithoutOrganizationInput
+    grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisCreateNestedManyWithoutOrganizationInput
+    recommendations?: RecommendationCreateNestedManyWithoutOrganizationInput
+    users?: UserCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutApplicationStatusesInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    slug: string
+    address?: string | null
+    annualOperatingBudget?: Decimal | DecimalJsLike | number | string | null
+    city?: string | null
+    email?: string | null
+    fiscalYearEnd?: string | null
+    missionStatement?: string | null
+    organizationLeaderName?: string | null
+    phone?: string | null
+    state?: string | null
+    website?: string | null
+    zipCode?: string | null
+    strategicPlan?: string | null
+    countyName?: string | null
+    districtDataYear?: number | null
+    enrollment?: number | null
+    highestGrade?: number | null
+    latitude?: number | null
+    leaId?: string | null
+    longitude?: number | null
+    lowestGrade?: number | null
+    numberOfSchools?: number | null
+    stateLeaId?: string | null
+    urbanCentricLocale?: number | null
+    logoUrl?: string | null
+    services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
+    aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
+    applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
+    folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
+    grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedCreateNestedManyWithoutOrganizationInput
+    recommendations?: RecommendationUncheckedCreateNestedManyWithoutOrganizationInput
+    users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutApplicationStatusesInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutApplicationStatusesInput, OrganizationUncheckedCreateWithoutApplicationStatusesInput>
+  }
+
+  export type ApplicationCreateWithoutStatusConfigInput = {
+    id?: string
+    opportunityId?: number | null
+    status?: $Enums.ApplicationStatus | null
+    title?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedAt?: Date | string | null
+    lastEditedAt?: Date | string
+    opportunityTitle?: string | null
+    opportunityDescription?: string | null
+    opportunityEligibility?: string | null
+    opportunityAgency?: string | null
+    opportunityCloseDate?: Date | string | null
+    opportunityTotalFunding?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityAwardMax?: bigint | number | null
+    opportunityUrl?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    aiChats?: AiChatCreateNestedManyWithoutApplicationInput
+    organization: OrganizationCreateNestedOneWithoutApplicationsInput
+    documents?: DocumentCreateNestedManyWithoutApplicationInput
+    folder?: FolderCreateNestedOneWithoutApplicationInput
+  }
+
+  export type ApplicationUncheckedCreateWithoutStatusConfigInput = {
+    id?: string
+    opportunityId?: number | null
+    status?: $Enums.ApplicationStatus | null
+    title?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedAt?: Date | string | null
+    lastEditedAt?: Date | string
+    organizationId: string
+    opportunityTitle?: string | null
+    opportunityDescription?: string | null
+    opportunityEligibility?: string | null
+    opportunityAgency?: string | null
+    opportunityCloseDate?: Date | string | null
+    opportunityTotalFunding?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityAwardMax?: bigint | number | null
+    opportunityUrl?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    aiChats?: AiChatUncheckedCreateNestedManyWithoutApplicationInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
+    folder?: FolderUncheckedCreateNestedOneWithoutApplicationInput
+  }
+
+  export type ApplicationCreateOrConnectWithoutStatusConfigInput = {
+    where: ApplicationWhereUniqueInput
+    create: XOR<ApplicationCreateWithoutStatusConfigInput, ApplicationUncheckedCreateWithoutStatusConfigInput>
+  }
+
+  export type ApplicationCreateManyStatusConfigInputEnvelope = {
+    data: ApplicationCreateManyStatusConfigInput | ApplicationCreateManyStatusConfigInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OrganizationUpsertWithoutApplicationStatusesInput = {
+    update: XOR<OrganizationUpdateWithoutApplicationStatusesInput, OrganizationUncheckedUpdateWithoutApplicationStatusesInput>
+    create: XOR<OrganizationCreateWithoutApplicationStatusesInput, OrganizationUncheckedCreateWithoutApplicationStatusesInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutApplicationStatusesInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutApplicationStatusesInput, OrganizationUncheckedUpdateWithoutApplicationStatusesInput>
+  }
+
+  export type OrganizationUpdateWithoutApplicationStatusesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slug?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
+    aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
+    applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUpdateManyWithoutOrganizationNestedInput
+    grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUpdateManyWithoutOrganizationNestedInput
+    recommendations?: RecommendationUpdateManyWithoutOrganizationNestedInput
+    users?: UserUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutApplicationStatusesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slug?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    annualOperatingBudget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    fiscalYearEnd?: NullableStringFieldUpdateOperationsInput | string | null
+    missionStatement?: NullableStringFieldUpdateOperationsInput | string | null
+    organizationLeaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    zipCode?: NullableStringFieldUpdateOperationsInput | string | null
+    strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    countyName?: NullableStringFieldUpdateOperationsInput | string | null
+    districtDataYear?: NullableIntFieldUpdateOperationsInput | number | null
+    enrollment?: NullableIntFieldUpdateOperationsInput | number | null
+    highestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    leaId?: NullableStringFieldUpdateOperationsInput | string | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lowestGrade?: NullableIntFieldUpdateOperationsInput | number | null
+    numberOfSchools?: NullableIntFieldUpdateOperationsInput | number | null
+    stateLeaId?: NullableStringFieldUpdateOperationsInput | string | null
+    urbanCentricLocale?: NullableIntFieldUpdateOperationsInput | number | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
+    aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
+    applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+    folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
+    grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
+    eligibilityAnalyses?: GrantEligibilityAnalysisUncheckedUpdateManyWithoutOrganizationNestedInput
+    recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
+    users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
+    knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type ApplicationUpsertWithWhereUniqueWithoutStatusConfigInput = {
+    where: ApplicationWhereUniqueInput
+    update: XOR<ApplicationUpdateWithoutStatusConfigInput, ApplicationUncheckedUpdateWithoutStatusConfigInput>
+    create: XOR<ApplicationCreateWithoutStatusConfigInput, ApplicationUncheckedCreateWithoutStatusConfigInput>
+  }
+
+  export type ApplicationUpdateWithWhereUniqueWithoutStatusConfigInput = {
+    where: ApplicationWhereUniqueInput
+    data: XOR<ApplicationUpdateWithoutStatusConfigInput, ApplicationUncheckedUpdateWithoutStatusConfigInput>
+  }
+
+  export type ApplicationUpdateManyWithWhereWithoutStatusConfigInput = {
+    where: ApplicationScalarWhereInput
+    data: XOR<ApplicationUpdateManyMutationInput, ApplicationUncheckedUpdateManyWithoutStatusConfigInput>
   }
 
   export type AiChatCreateWithoutApplicationInput = {
@@ -30773,6 +32820,7 @@ export namespace Prisma {
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
@@ -30815,6 +32863,7 @@ export namespace Prisma {
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30828,6 +32877,31 @@ export namespace Prisma {
   export type OrganizationCreateOrConnectWithoutApplicationsInput = {
     where: OrganizationWhereUniqueInput
     create: XOR<OrganizationCreateWithoutApplicationsInput, OrganizationUncheckedCreateWithoutApplicationsInput>
+  }
+
+  export type ApplicationStatusConfigCreateWithoutApplicationsInput = {
+    id?: string
+    name: string
+    color: string
+    displayOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutApplicationStatusesInput
+  }
+
+  export type ApplicationStatusConfigUncheckedCreateWithoutApplicationsInput = {
+    id?: string
+    name: string
+    color: string
+    displayOrder?: number
+    organizationId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ApplicationStatusConfigCreateOrConnectWithoutApplicationsInput = {
+    where: ApplicationStatusConfigWhereUniqueInput
+    create: XOR<ApplicationStatusConfigCreateWithoutApplicationsInput, ApplicationStatusConfigUncheckedCreateWithoutApplicationsInput>
   }
 
   export type DocumentCreateWithoutApplicationInput = {
@@ -30958,6 +33032,7 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
@@ -31000,6 +33075,7 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -31008,6 +33084,37 @@ export namespace Prisma {
     recommendations?: RecommendationUncheckedUpdateManyWithoutOrganizationNestedInput
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     knowledgeBase?: KnowledgeBaseDocumentUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type ApplicationStatusConfigUpsertWithoutApplicationsInput = {
+    update: XOR<ApplicationStatusConfigUpdateWithoutApplicationsInput, ApplicationStatusConfigUncheckedUpdateWithoutApplicationsInput>
+    create: XOR<ApplicationStatusConfigCreateWithoutApplicationsInput, ApplicationStatusConfigUncheckedCreateWithoutApplicationsInput>
+    where?: ApplicationStatusConfigWhereInput
+  }
+
+  export type ApplicationStatusConfigUpdateToOneWithWhereWithoutApplicationsInput = {
+    where?: ApplicationStatusConfigWhereInput
+    data: XOR<ApplicationStatusConfigUpdateWithoutApplicationsInput, ApplicationStatusConfigUncheckedUpdateWithoutApplicationsInput>
+  }
+
+  export type ApplicationStatusConfigUpdateWithoutApplicationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutApplicationStatusesNestedInput
+  }
+
+  export type ApplicationStatusConfigUncheckedUpdateWithoutApplicationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    organizationId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type DocumentUpsertWithWhereUniqueWithoutApplicationInput = {
@@ -31088,7 +33195,7 @@ export namespace Prisma {
   export type ApplicationCreateWithoutAiChatsInput = {
     id?: string
     opportunityId?: number | null
-    status?: $Enums.ApplicationStatus
+    status?: $Enums.ApplicationStatus | null
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -31105,6 +33212,7 @@ export namespace Prisma {
     opportunityUrl?: string | null
     opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
+    statusConfig?: ApplicationStatusConfigCreateNestedOneWithoutApplicationsInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
     folder?: FolderCreateNestedOneWithoutApplicationInput
   }
@@ -31112,7 +33220,8 @@ export namespace Prisma {
   export type ApplicationUncheckedCreateWithoutAiChatsInput = {
     id?: string
     opportunityId?: number | null
-    status?: $Enums.ApplicationStatus
+    status?: $Enums.ApplicationStatus | null
+    statusId?: string | null
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -31170,6 +33279,7 @@ export namespace Prisma {
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
@@ -31212,6 +33322,7 @@ export namespace Prisma {
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
@@ -31314,7 +33425,7 @@ export namespace Prisma {
   export type ApplicationUpdateWithoutAiChatsInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31331,6 +33442,7 @@ export namespace Prisma {
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
+    statusConfig?: ApplicationStatusConfigUpdateOneWithoutApplicationsNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
     folder?: FolderUpdateOneWithoutApplicationNestedInput
   }
@@ -31338,7 +33450,8 @@ export namespace Prisma {
   export type ApplicationUncheckedUpdateWithoutAiChatsInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
+    statusId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31402,6 +33515,7 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
@@ -31444,6 +33558,7 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -31602,6 +33717,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
@@ -31644,6 +33760,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
@@ -31702,6 +33819,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
@@ -31744,6 +33862,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -31756,7 +33875,7 @@ export namespace Prisma {
   export type ApplicationCreateWithoutDocumentsInput = {
     id?: string
     opportunityId?: number | null
-    status?: $Enums.ApplicationStatus
+    status?: $Enums.ApplicationStatus | null
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -31774,13 +33893,15 @@ export namespace Prisma {
     opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
+    statusConfig?: ApplicationStatusConfigCreateNestedOneWithoutApplicationsInput
     folder?: FolderCreateNestedOneWithoutApplicationInput
   }
 
   export type ApplicationUncheckedCreateWithoutDocumentsInput = {
     id?: string
     opportunityId?: number | null
-    status?: $Enums.ApplicationStatus
+    status?: $Enums.ApplicationStatus | null
+    statusId?: string | null
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -31866,6 +33987,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     folders?: FolderCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -31908,6 +34030,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     folders?: FolderUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -31936,7 +34059,7 @@ export namespace Prisma {
   export type ApplicationUpdateWithoutDocumentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31954,13 +34077,15 @@ export namespace Prisma {
     opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
+    statusConfig?: ApplicationStatusConfigUpdateOneWithoutApplicationsNestedInput
     folder?: FolderUpdateOneWithoutApplicationNestedInput
   }
 
   export type ApplicationUncheckedUpdateWithoutDocumentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
+    statusId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32058,6 +34183,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -32100,6 +34226,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     folders?: FolderUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -32154,7 +34281,7 @@ export namespace Prisma {
   export type ApplicationCreateWithoutFolderInput = {
     id?: string
     opportunityId?: number | null
-    status?: $Enums.ApplicationStatus
+    status?: $Enums.ApplicationStatus | null
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -32172,13 +34299,15 @@ export namespace Prisma {
     opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatCreateNestedManyWithoutApplicationInput
     organization: OrganizationCreateNestedOneWithoutApplicationsInput
+    statusConfig?: ApplicationStatusConfigCreateNestedOneWithoutApplicationsInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
   }
 
   export type ApplicationUncheckedCreateWithoutFolderInput = {
     id?: string
     opportunityId?: number | null
-    status?: $Enums.ApplicationStatus
+    status?: $Enums.ApplicationStatus | null
+    statusId?: string | null
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -32237,6 +34366,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldCreateNestedManyWithoutOrganizationInput
     documents?: DocumentCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkCreateNestedManyWithoutOrganizationInput
@@ -32279,6 +34409,7 @@ export namespace Prisma {
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedCreateNestedManyWithoutOrganizationInput
     customFields?: CustomFieldUncheckedCreateNestedManyWithoutOrganizationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutOrganizationInput
     grantBookmarks?: GrantBookmarkUncheckedCreateNestedManyWithoutOrganizationInput
@@ -32382,7 +34513,7 @@ export namespace Prisma {
   export type ApplicationUpdateWithoutFolderInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32400,13 +34531,15 @@ export namespace Prisma {
     opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
     organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
+    statusConfig?: ApplicationStatusConfigUpdateOneWithoutApplicationsNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
   }
 
   export type ApplicationUncheckedUpdateWithoutFolderInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
+    statusId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32471,6 +34604,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUpdateManyWithoutOrganizationNestedInput
@@ -32513,6 +34647,7 @@ export namespace Prisma {
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
+    applicationStatuses?: ApplicationStatusConfigUncheckedUpdateManyWithoutOrganizationNestedInput
     customFields?: CustomFieldUncheckedUpdateManyWithoutOrganizationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutOrganizationNestedInput
     grantBookmarks?: GrantBookmarkUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -32860,7 +34995,8 @@ export namespace Prisma {
   export type ApplicationCreateManyOrganizationInput = {
     id?: string
     opportunityId?: number | null
-    status?: $Enums.ApplicationStatus
+    status?: $Enums.ApplicationStatus | null
+    statusId?: string | null
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -32876,6 +35012,15 @@ export namespace Prisma {
     opportunityAwardMax?: bigint | number | null
     opportunityUrl?: string | null
     opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type ApplicationStatusConfigCreateManyOrganizationInput = {
+    id?: string
+    name: string
+    color: string
+    displayOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type CustomFieldCreateManyOrganizationInput = {
@@ -33008,7 +35153,7 @@ export namespace Prisma {
   export type ApplicationUpdateWithoutOrganizationInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33025,6 +35170,7 @@ export namespace Prisma {
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
     aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
+    statusConfig?: ApplicationStatusConfigUpdateOneWithoutApplicationsNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
     folder?: FolderUpdateOneWithoutApplicationNestedInput
   }
@@ -33032,7 +35178,8 @@ export namespace Prisma {
   export type ApplicationUncheckedUpdateWithoutOrganizationInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
+    statusId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33056,7 +35203,8 @@ export namespace Prisma {
   export type ApplicationUncheckedUpdateManyWithoutOrganizationInput = {
     id?: StringFieldUpdateOperationsInput | string
     opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
+    statusId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33072,6 +35220,35 @@ export namespace Prisma {
     opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
     opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type ApplicationStatusConfigUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    applications?: ApplicationUpdateManyWithoutStatusConfigNestedInput
+  }
+
+  export type ApplicationStatusConfigUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    applications?: ApplicationUncheckedUpdateManyWithoutStatusConfigNestedInput
+  }
+
+  export type ApplicationStatusConfigUncheckedUpdateManyWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CustomFieldUpdateWithoutOrganizationInput = {
@@ -33356,6 +35533,100 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApplicationCreateManyStatusConfigInput = {
+    id?: string
+    opportunityId?: number | null
+    status?: $Enums.ApplicationStatus | null
+    title?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedAt?: Date | string | null
+    lastEditedAt?: Date | string
+    organizationId: string
+    opportunityTitle?: string | null
+    opportunityDescription?: string | null
+    opportunityEligibility?: string | null
+    opportunityAgency?: string | null
+    opportunityCloseDate?: Date | string | null
+    opportunityTotalFunding?: bigint | number | null
+    opportunityAwardMin?: bigint | number | null
+    opportunityAwardMax?: bigint | number | null
+    opportunityUrl?: string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type ApplicationUpdateWithoutStatusConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    aiChats?: AiChatUpdateManyWithoutApplicationNestedInput
+    organization?: OrganizationUpdateOneRequiredWithoutApplicationsNestedInput
+    documents?: DocumentUpdateManyWithoutApplicationNestedInput
+    folder?: FolderUpdateOneWithoutApplicationNestedInput
+  }
+
+  export type ApplicationUncheckedUpdateWithoutStatusConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
+    aiChats?: AiChatUncheckedUpdateManyWithoutApplicationNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
+    folder?: FolderUncheckedUpdateOneWithoutApplicationNestedInput
+  }
+
+  export type ApplicationUncheckedUpdateManyWithoutStatusConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    opportunityId?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: NullableEnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    opportunityTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityEligibility?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAgency?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    opportunityTotalFunding?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMin?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityAwardMax?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    opportunityUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    opportunityAttachments?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type AiChatCreateManyApplicationInput = {

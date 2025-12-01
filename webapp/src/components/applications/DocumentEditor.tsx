@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
+import { DocumentOutline } from "@/components/tiptap-ui/document-outline";
 import { useDocument } from "@/contexts/DocumentContext";
 import { useEditorInstance } from "@/contexts/EditorInstanceContext";
 import "./editor-overrides.css";
@@ -113,11 +114,13 @@ export function DocumentEditor({
   };
 
   const handleSelectionAddToChat = useCallback((text: string) => {
+    console.log("📤 [DocumentEditor] handleSelectionAddToChat called with text:", text);
     window.dispatchEvent(
       new CustomEvent("editor-selection-add-to-chat", {
         detail: { text },
       })
     );
+    console.log("📤 [DocumentEditor] Event dispatched: editor-selection-add-to-chat");
   }, []);
 
   const handleSelectionAskAI = useCallback((text: string) => {
@@ -131,16 +134,16 @@ export function DocumentEditor({
   const handleSelectionImproveWriting = useCallback((text: string) => {
     window.dispatchEvent(
       new CustomEvent("editor-selection-improve-writing", {
-        detail: { text, prompt: `Rewrite this section to be more persuasive: ${text}` },
+        detail: { text, prompt: text },
       })
     );
   }, []);
 
   return (
-    <div className="h-full bg-white">
+    <div className="h-full bg-white flex overflow-hidden">
       {/* Main editor */}
-      <div className="h-full flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 h-full flex flex-col overflow-hidden min-w-0">
+        <div className="flex-1 overflow-y-auto scroll-smooth">
           <div className="container max-w-4xl mx-auto px-8 pb-8">
             <div className="prose prose-lg max-w-none">
               <SimpleEditor
@@ -155,6 +158,9 @@ export function DocumentEditor({
           </div>
         </div>
       </div>
+
+      {/* Document Outline Sidebar */}
+      <DocumentOutline />
     </div>
   );
 }

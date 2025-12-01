@@ -120,6 +120,7 @@ model Organization {
   services               opportunity_services_enum[] @default([k12_education])
   aiChats                AiChat[]
   applications           Application[]
+  applicationStatuses    ApplicationStatusConfig[]
   customFields           CustomField[]
   documents              Document[]                  @relation("OrganizationDocuments")
   folders                Folder[]                    @relation("OrganizationFolders")
@@ -200,15 +201,33 @@ model GrantEligibilityAnalysis {
   @@schema("app")
 }
 
+model ApplicationStatusConfig {
+  id             String        @id @default(cuid())
+  name           String
+  color          String
+  displayOrder   Int           @default(0)
+  organizationId String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  applications   Application[] @relation("ApplicationStatusRelation")
+
+  @@unique([organizationId, name])
+  @@index([organizationId, displayOrder])
+  @@map("application_status_configs")
+  @@schema("app")
+}
+
 model Application {
-  id                      String            @id @default(cuid())
+  id                      String                   @id @default(cuid())
   opportunityId           Int?
-  status                  ApplicationStatus @default(DRAFT)
+  status                  ApplicationStatus?       @default(DRAFT)
+  statusId                String?
   title                   String?
-  createdAt               DateTime          @default(now())
-  updatedAt               DateTime          @updatedAt
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
   submittedAt             DateTime?
-  lastEditedAt            DateTime          @default(now())
+  lastEditedAt            DateTime                 @default(now())
   organizationId          String
   opportunityTitle        String?
   opportunityDescription  String?
@@ -221,12 +240,15 @@ model Application {
   opportunityUrl          String?
   opportunityAttachments  Json?
   aiChats                 AiChat[]
-  organization            Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization            Organization             @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  statusConfig            ApplicationStatusConfig? @relation("ApplicationStatusRelation", fields: [statusId], references: [id])
   documents               Document[]
   folder                  Folder?
 
   @@index([opportunityId, organizationId])
   @@index([organizationId, status])
+  @@index([organizationId, statusId])
+  @@index([statusId])
   @@index([updatedAt])
   @@map("applications")
   @@schema("app")

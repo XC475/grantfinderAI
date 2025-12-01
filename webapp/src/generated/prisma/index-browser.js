@@ -258,10 +258,21 @@ exports.Prisma.GrantEligibilityAnalysisScalarFieldEnum = {
   organizationId: 'organizationId'
 };
 
+exports.Prisma.ApplicationStatusConfigScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  color: 'color',
+  displayOrder: 'displayOrder',
+  organizationId: 'organizationId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ApplicationScalarFieldEnum = {
   id: 'id',
   opportunityId: 'opportunityId',
   status: 'status',
+  statusId: 'statusId',
   title: 'title',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -515,6 +526,7 @@ exports.Prisma.ModelName = {
   KnowledgeBaseDocument: 'KnowledgeBaseDocument',
   GrantBookmark: 'GrantBookmark',
   GrantEligibilityAnalysis: 'GrantEligibilityAnalysis',
+  ApplicationStatusConfig: 'ApplicationStatusConfig',
   Application: 'Application',
   AiChat: 'AiChat',
   AiChatMessage: 'AiChatMessage',
