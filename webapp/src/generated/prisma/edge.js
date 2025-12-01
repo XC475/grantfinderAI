@@ -531,7 +531,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/gabriellevicarneiroramos/Desktop/grantfinder/grantfinderAI/webapp/src/generated/prisma",
+      "value": "/Users/ryanrodriguez/Desktop/GrantWare AI/GrantWare AI - Dev/grantfinderAI-A2/grantfinderAI/webapp/src/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -549,7 +549,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/gabriellevicarneiroramos/Desktop/grantfinder/grantfinderAI/webapp/prisma/schema.prisma",
+    "sourceFilePath": "/Users/ryanrodriguez/Desktop/GrantWare AI/GrantWare AI - Dev/grantfinderAI-A2/grantfinderAI/webapp/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

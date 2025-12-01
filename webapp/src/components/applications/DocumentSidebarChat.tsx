@@ -28,6 +28,7 @@ import { TypingIndicator } from "@/components/ui/typing-indicator";
 import { useAutosizeTextArea } from "@/hooks/use-autosize-textarea";
 import { ChatForm as BaseChatForm } from "@/components/ui/chat";
 import { FilePreview } from "@/components/ui/file-preview";
+import { TextAttachmentCard, type TextSelectionAttachment } from "@/components/ui/text-attachment-card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,6 +57,8 @@ interface DocumentSidebarChatProps {
   placeholder?: string;
   sourceDocuments?: SourceDocument[];
   onSourceDocumentsChange?: (docs: SourceDocument[]) => void;
+  textAttachments?: TextSelectionAttachment[];
+  onRemoveTextAttachment?: (index: number) => void;
 }
 
 export function DocumentSidebarChat({
@@ -70,6 +73,8 @@ export function DocumentSidebarChat({
   placeholder,
   sourceDocuments,
   onSourceDocumentsChange,
+  textAttachments,
+  onRemoveTextAttachment,
 }: DocumentSidebarChatProps) {
   const lastMessage = messages.at(-1);
   const isTyping = lastMessage?.role === "user";
@@ -203,6 +208,8 @@ export function DocumentSidebarChat({
               setFiles={setFiles}
               sourceDocuments={sourceDocuments}
               onSourceDocumentsChange={onSourceDocumentsChange}
+              textAttachments={textAttachments}
+              onRemoveTextAttachment={onRemoveTextAttachment}
             />
           )}
         </BaseChatForm>
@@ -342,6 +349,8 @@ interface SidebarMessageInputProps
   setFiles?: React.Dispatch<React.SetStateAction<File[] | null>>;
   sourceDocuments?: SourceDocument[];
   onSourceDocumentsChange?: (docs: SourceDocument[]) => void;
+  textAttachments?: TextSelectionAttachment[];
+  onRemoveTextAttachment?: (index: number) => void;
 }
 
 function SidebarMessageInput({
@@ -355,6 +364,8 @@ function SidebarMessageInput({
   setFiles,
   sourceDocuments,
   onSourceDocumentsChange,
+  textAttachments,
+  onRemoveTextAttachment,
   ...textareaProps
 }: SidebarMessageInputProps) {
   const [isDragging, setIsDragging] = useState(false);
@@ -476,10 +487,31 @@ function SidebarMessageInput({
 
   const showFileList = files && files.length > 0;
   const showSourceList = sourceDocuments && sourceDocuments.length > 0;
-  const hasContent = textareaProps.value !== "" || showFileList;
+  const showTextAttachments = textAttachments && textAttachments.length > 0;
+  const hasContent = textareaProps.value !== "" || showFileList || showTextAttachments;
+
+  console.log("🎨 [SidebarMessageInput] Rendering - showTextAttachments:", showTextAttachments, "textAttachments:", textAttachments);
 
   return (
     <div className="w-full px-3 py-3">
+      {/* Text Selection Attachments */}
+      {showTextAttachments && (
+        <div className="mb-3 flex flex-wrap gap-2">
+          <AnimatePresence mode="popLayout">
+            {textAttachments?.map((attachment, index) => (
+              <TextAttachmentCard
+                key={attachment.id}
+                attachment={attachment}
+                onRemove={() => {
+                  console.log("🗑️ [SidebarMessageInput] Removing attachment:", attachment.id);
+                  onRemoveTextAttachment?.(index);
+                }}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
+      )}
+
       {/* File Attachments Preview */}
       {showFileList && (
         <div className="mb-3 flex flex-wrap gap-2">

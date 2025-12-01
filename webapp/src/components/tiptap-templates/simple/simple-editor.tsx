@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { EditorContent, EditorContext, useEditor } from "@tiptap/react";
+import { EditorContent, EditorContext, useEditor, type Editor } from "@tiptap/react";
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit";
@@ -12,6 +12,7 @@ import { Typography } from "@tiptap/extension-typography";
 import { Highlight } from "@tiptap/extension-highlight";
 import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
+import { Underline } from "@tiptap/extension-underline";
 import { Selection } from "@tiptap/extensions";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { FontFamily } from "@tiptap/extension-font-family";
@@ -22,6 +23,11 @@ import { Markdown } from "@tiptap/markdown";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { Fragment, Slice } from "@tiptap/pm/model";
 import { Extension } from "@tiptap/core";
+
+import { HeadingWithId } from "@/components/tiptap-extensions/heading-with-id";
+import { useOutlineOptional } from "@/contexts/OutlineContext";
+import { List } from "lucide-react";
+import { toast } from "sonner";
 
 // --- UI Primitives ---
 import { Button } from "@/components/tiptap-ui-primitive/button";
@@ -69,6 +75,9 @@ import { FontFamilyDropdownMenu } from "@/components/tiptap-ui/font-family-dropd
 import { FontSizeDropdownMenu } from "@/components/tiptap-ui/font-size-dropdown-menu";
 import { TextColorPopover } from "@/components/tiptap-ui/text-color-popover";
 import { BackgroundColorPopover } from "@/components/tiptap-ui/background-color-popover";
+import { SelectionToolbar } from "@/components/tiptap-ui/selection-toolbar";
+import { OverflowMenu } from "@/components/tiptap-ui/overflow-menu";
+import { AlignIndentDropdownMenu } from "@/components/tiptap-ui/align-indent-dropdown-menu";
 
 // --- Icons ---
 import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon";
@@ -79,6 +88,7 @@ import { LinkIcon } from "@/components/tiptap-icons/link-icon";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
+import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
 
 // --- Components ---
 
@@ -87,6 +97,48 @@ import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss";
+
+// Extracted EditorToolbar component for use in header
+export interface EditorToolbarProps {
+  editor?: Editor | null;
+  isMobile?: boolean;
+}
+
+export const EditorToolbar = React.forwardRef<HTMLDivElement, EditorToolbarProps>(
+  ({ editor: providedEditor, isMobile = false }, ref) => {
+    const { editor } = useTiptapEditor(providedEditor);
+    const [mobileView, setMobileView] = React.useState<"main" | "highlighter" | "link">("main");
+
+  // Reset mobile view when switching between mobile and desktop
+  React.useEffect(() => {
+    if (!isMobile && mobileView !== "main") {
+      setMobileView("main");
+    }
+  }, [isMobile, mobileView]);
+
+  // Show toolbar immediately, even if editor isn't ready yet
+  // Buttons will be disabled automatically when editor is null
+  const isEditorReady = Boolean(editor);
+
+  return (
+    <Toolbar ref={ref} variant="fixed" data-editor-ready={isEditorReady}>
+      {mobileView === "main" ? (
+        <MainToolbarContent
+          onHighlighterClick={() => setMobileView("highlighter")}
+          onLinkClick={() => setMobileView("link")}
+          isMobile={isMobile}
+        />
+      ) : (
+        <MobileToolbarContent
+          type={mobileView === "highlighter" ? "highlighter" : "link"}
+          onBack={() => setMobileView("main")}
+        />
+      )}
+    </Toolbar>
+  );
+}
+);
+EditorToolbar.displayName = "EditorToolbar";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -97,10 +149,34 @@ const MainToolbarContent = ({
   onLinkClick: () => void;
   isMobile: boolean;
 }) => {
+  // Safe usage of useOutline using useOutlineOptional
+  const outlineContext = useOutlineOptional();
+
   return (
     <>
+      {outlineContext && !isMobile && (
+        <>
+          <ToolbarGroup>
+            <Button
+              data-style={outlineContext.isOpen ? "primary" : "ghost"}
+              onClick={() => {
+                // outlineContext.toggleOutline();
+                toast.info("Document Outline", {
+                  description: "This feature is currently under development and will be available soon.",
+                });
+              }}
+              title="Toggle Outline"
+              className="w-8 h-8 p-0"
+            >
+              <List className="h-4 w-4" />
+            </Button>
+          </ToolbarGroup>
+          <ToolbarSeparator />
+        </>
+      )}
       <Spacer />
 
+      {/* Group 1: Undo/Redo */}
       <ToolbarGroup>
         <UndoRedoButton action="undo" />
         <UndoRedoButton action="redo" />
@@ -108,19 +184,14 @@ const MainToolbarContent = ({
 
       <ToolbarSeparator />
 
+      {/* Group 2: Text Style */}
       <ToolbarGroup>
         <HeadingDropdownMenu levels={[1, 2, 3, 4]} portal={isMobile} />
-        <ListDropdownMenu
-          types={["bulletList", "orderedList", "taskList"]}
-          portal={isMobile}
-        />
-        <BlockquoteButton />
-        <CodeBlockButton />
-        <PageBreakButton />
       </ToolbarGroup>
 
       <ToolbarSeparator />
 
+      {/* Group 3: Font and Size */}
       <ToolbarGroup>
         <FontFamilyDropdownMenu portal={isMobile} />
         <FontSizeDropdownMenu portal={isMobile} />
@@ -128,44 +199,66 @@ const MainToolbarContent = ({
 
       <ToolbarSeparator />
 
+      {/* Group 4: Text Formatting */}
       <ToolbarGroup>
         <MarkButton type="bold" />
         <MarkButton type="italic" />
-        <MarkButton type="strike" />
-        <MarkButton type="code" />
         <MarkButton type="underline" />
+        <MarkButton type="strike" />
+      </ToolbarGroup>
+
+      <ToolbarSeparator />
+
+      {/* Group 5: Text Color and Highlight */}
+      <ToolbarGroup>
         {!isMobile ? (
           <>
             <TextColorPopover />
-            <BackgroundColorPopover />
             <ColorHighlightPopover />
           </>
         ) : (
           <ColorHighlightPopoverButton onClick={onHighlighterClick} />
         )}
+      </ToolbarGroup>
+
+      <ToolbarSeparator />
+
+      {/* Group 6: Link */}
+      <ToolbarGroup>
         {!isMobile ? <LinkPopover /> : <LinkButton onClick={onLinkClick} />}
       </ToolbarGroup>
 
       <ToolbarSeparator />
 
+      {/* Group 7: Alignment and Indent */}
       <ToolbarGroup>
-        <MarkButton type="superscript" />
-        <MarkButton type="subscript" />
+        <AlignIndentDropdownMenu portal={isMobile} />
       </ToolbarGroup>
 
       <ToolbarSeparator />
 
+      {/* Group 8: Lists */}
       <ToolbarGroup>
-        <TextAlignButton align="left" />
-        <TextAlignButton align="center" />
-        <TextAlignButton align="right" />
-        <TextAlignButton align="justify" />
+        <ListDropdownMenu
+          types={["bulletList", "orderedList", "taskList"]}
+          portal={isMobile}
+        />
       </ToolbarGroup>
 
       <ToolbarSeparator />
 
+      {/* Group 9: Insert Options */}
       <ToolbarGroup>
         <ImageUploadButton text="Add" />
+        <BlockquoteButton />
+        <PageBreakButton />
+      </ToolbarGroup>
+
+      <ToolbarSeparator />
+
+      {/* Group 10: More Options */}
+      <ToolbarGroup>
+        <OverflowMenu isMobile={isMobile} />
       </ToolbarGroup>
 
       <Spacer />
@@ -280,11 +373,19 @@ const MarkdownPaste = Extension.create({
 interface SimpleEditorProps {
   initialContent?: string;
   onContentChange?: (content: string) => void;
+  onSelectionAddToChat?: (text: string) => void;
+  onSelectionAskAI?: (text: string) => void;
+  onSelectionImproveWriting?: (text: string) => void;
+  onEditorReady?: (editor: Editor | null) => void;
 }
 
 export function SimpleEditor({
   initialContent,
   onContentChange,
+  onSelectionAddToChat,
+  onSelectionAskAI,
+  onSelectionImproveWriting,
+  onEditorReady,
 }: SimpleEditorProps = {}) {
   const isMobile = useIsMobile();
   const { height } = useWindowSize();
@@ -307,11 +408,15 @@ export function SimpleEditor({
     },
     extensions: [
       StarterKit.configure({
+        heading: false,
         horizontalRule: false,
         link: {
           openOnClick: false,
           enableClickSelection: true,
         },
+      }),
+      HeadingWithId.configure({
+        levels: [1, 2, 3, 4, 5, 6],
       }),
       Markdown,
       MarkdownPaste,
@@ -325,6 +430,7 @@ export function SimpleEditor({
       Typography,
       Superscript,
       Subscript,
+      Underline,
       Selection,
       TextStyle,
       FontFamily,
@@ -363,32 +469,24 @@ export function SimpleEditor({
     }
   }, [isMobile, mobileView]);
 
+  // Notify parent when editor is ready
+  React.useEffect(() => {
+    if (editor && onEditorReady) {
+      onEditorReady(editor);
+    }
+  }, [editor, onEditorReady]);
+
   return (
     <div className="simple-editor-wrapper">
       <EditorContext.Provider value={{ editor }}>
-        <Toolbar
-          ref={toolbarRef}
-          style={{
-            ...(isMobile
-              ? {
-                  bottom: `calc(100% - ${height - rect.y}px)`,
-                }
-              : {}),
-          }}
-        >
-          {mobileView === "main" ? (
-            <MainToolbarContent
-              onHighlighterClick={() => setMobileView("highlighter")}
-              onLinkClick={() => setMobileView("link")}
-              isMobile={isMobile}
-            />
-          ) : (
-            <MobileToolbarContent
-              type={mobileView === "highlighter" ? "highlighter" : "link"}
-              onBack={() => setMobileView("main")}
-            />
-          )}
-        </Toolbar>
+        {editor && (
+          <SelectionToolbar
+            editor={editor}
+            onAddToChat={onSelectionAddToChat}
+            onAskAI={onSelectionAskAI}
+            onImproveWriting={onSelectionImproveWriting}
+          />
+        )}
 
         <EditorContent
           editor={editor}

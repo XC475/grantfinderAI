@@ -24,6 +24,14 @@ interface FileAttachment {
   extractedText?: string;
 }
 
+interface TextSelectionAttachment {
+  id: string;
+  name: string;  // e.g., "Selected text from [Doc Name]"
+  type: 'text/selection';
+  content: string;  // The actual selected text
+  preview: string;  // First 40 chars for display
+}
+
 interface DocumentChatSidebarProps {
   documentId: string;
 }
@@ -58,6 +66,7 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
   const [editingTabId, setEditingTabId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState("");
   const [sourceDocuments, setSourceDocuments] = useState<SourceDocument[]>([]);
+  const [textAttachments, setTextAttachments] = useState<TextSelectionAttachment[]>([]);
   const abortControllerRef = useRef<AbortController | null>(null);
   const hasAutoLoaded = useRef(false);
   const editInputRef = useRef<HTMLInputElement>(null);
@@ -367,9 +376,21 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
         experimental_attachments: attachments,
       };
 
+      // If there are text attachments, append them to the message content
+      if (textAttachments.length > 0) {
+        const textContext = textAttachments
+          .map(att => `\n\nSelected text from document:\n"${att.content}"`)
+          .join('');
+        
+        userMessage.content = userMessage.content 
+          ? `${userMessage.content}${textContext}`
+          : textContext.trim();
+      }
+
       // Add user message immediately (after upload completes)
       setMessages((prev) => [...prev, userMessage]);
       setInput("");
+      setTextAttachments([]); // Clear text attachments after sending
       console.log("💬 [DocumentChat] Message added to chat - sending to AI");
 
       // Create abort controller for this request
@@ -556,6 +577,63 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
     );
   }, []);
 
+  // Listen for editor selection events (must be after handleSubmit is defined)
+  useEffect(() => {
+    console.log("🎧 [DocumentChatSidebar] Setting up event listeners, documentTitle:", documentTitle);
+    
+    const handleAddToChat = (event: CustomEvent<{ text: string }>) => {
+      console.log("📥 [DocumentChatSidebar] handleAddToChat event received:", event.detail);
+      const { text } = event.detail;
+      
+      // Create text selection attachment
+      const attachment: TextSelectionAttachment = {
+        id: `text-${Date.now()}`,
+        name: `Selected text from ${documentTitle}`,
+        type: 'text/selection',
+        content: text,
+        preview: text.slice(0, 40) + (text.length > 40 ? '...' : ''),
+      };
+      
+      console.log("📎 [DocumentChatSidebar] Created text attachment:", attachment);
+      setTextAttachments(prev => {
+        const newAttachments = [...prev, attachment];
+        console.log("📎 [DocumentChatSidebar] Updated textAttachments:", newAttachments);
+        return newAttachments;
+      });
+      // Don't modify input - let user type their question
+    };
+
+    const handleAskAI = (event: CustomEvent<{ text: string; prompt: string }>) => {
+      const { prompt } = event.detail;
+      setInput(prompt);
+      // Auto-submit after a short delay to ensure input is set
+      setTimeout(() => {
+        const fakeEvent = { preventDefault: () => {} };
+        handleSubmit(fakeEvent);
+      }, 100);
+    };
+
+    const handleImproveWriting = (event: CustomEvent<{ text: string; prompt: string }>) => {
+      const { prompt } = event.detail;
+      setInput(prompt);
+      // Auto-submit after a short delay to ensure input is set
+      setTimeout(() => {
+        const fakeEvent = { preventDefault: () => {} };
+        handleSubmit(fakeEvent);
+      }, 100);
+    };
+
+    window.addEventListener("editor-selection-add-to-chat", handleAddToChat as EventListener);
+    window.addEventListener("editor-selection-ask-ai", handleAskAI as EventListener);
+    window.addEventListener("editor-selection-improve-writing", handleImproveWriting as EventListener);
+
+    return () => {
+      window.removeEventListener("editor-selection-add-to-chat", handleAddToChat as EventListener);
+      window.removeEventListener("editor-selection-ask-ai", handleAskAI as EventListener);
+      window.removeEventListener("editor-selection-improve-writing", handleImproveWriting as EventListener);
+    };
+  }, [handleSubmit, documentTitle]);
+
   const handleSuggestedAction = (action: string) => {
     setInput(action);
     // Small delay to ensure the input is set before submitting
@@ -741,6 +819,11 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
             placeholder="How can I help you with this document?"
             sourceDocuments={sourceDocuments}
             onSourceDocumentsChange={setSourceDocuments}
+            textAttachments={textAttachments}
+            onRemoveTextAttachment={(index) => {
+              console.log("🗑️ [DocumentChatSidebar] Removing text attachment at index:", index);
+              setTextAttachments(prev => prev.filter((_, i) => i !== index));
+            }}
           />
         </div>
       </div>

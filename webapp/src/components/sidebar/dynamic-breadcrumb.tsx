@@ -4,6 +4,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useMemo, useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { FileText, ChevronRight, Edit, Copy, FolderInput, Download, Trash2 } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,9 +14,20 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+} from "@/components/ui/dropdown-menu";
+import { useDocumentOperationsOptional } from "@/contexts/DocumentOperationsContext";
 
 interface DynamicBreadcrumbProps {
   organizationSlug: string;
+  documentId?: string;
 }
 
 interface BreadcrumbItemData {
@@ -105,17 +117,23 @@ function getCollapsedBreadcrumbs(
 
 export function DynamicBreadcrumb({
   organizationSlug,
+  documentId,
 }: DynamicBreadcrumbProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [grantTitle, setGrantTitle] = useState<string | null>(null);
   const [documentTitle, setDocumentTitle] = useState<string | null>(null);
+  const [documentData, setDocumentData] = useState<{ folderId: string | null } | null>(null);
   const [applicationTitle, setApplicationTitle] = useState<string | null>(null);
   const [folderNames, setFolderNames] = useState<Record<string, string>>({});
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const [maxVisibleItems, setMaxVisibleItems] = useState(4);
+  
+  // Get document operations from context (optional - only available in editor layout)
+  const documentOperations = useDocumentOperationsOptional();
+  const { copyDocument, moveDocument, exportDocument } = documentOperations || {};
 
   const fromBookmarks = searchParams.get("from") === "bookmarks";
 
@@ -143,8 +161,8 @@ export function DynamicBreadcrumb({
     return () => window.removeEventListener("resize", updateMaxItems);
   }, []);
 
-  // Handler for double-clicking document title to edit
-  const handleDoubleClickTitle = () => {
+  // Handler for clicking document title to edit (changed from double-click)
+  const handleClickTitle = () => {
     if (documentTitle) {
       setEditedTitle(documentTitle);
       setIsEditingTitle(true);
@@ -399,6 +417,7 @@ export function DynamicBreadcrumb({
         .then((data) => {
           if (data.document && data.document.title) {
             setDocumentTitle(data.document.title);
+            setDocumentData({ folderId: data.document.folderId || null });
           }
         })
         .catch((error) => {
@@ -406,6 +425,7 @@ export function DynamicBreadcrumb({
         });
     } else {
       setDocumentTitle(null);
+      setDocumentData(null);
     }
   }, [pathname, organizationSlug]);
 
@@ -500,8 +520,64 @@ export function DynamicBreadcrumb({
                       {item.label}
                     </span>
                   ) : item.isLast && isEditorPage ? (
-                    // Editable document title on editor page
-                    <div className="flex items-center">
+                    // Editable document title on editor page with dropdown icon
+                    <div className="flex items-center gap-2.5">
+                      {/* Document Icon with Dropdown Menu */}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button
+                            className="flex items-center justify-center hover:bg-accent rounded p-1 transition-colors cursor-pointer"
+                            aria-label="Document options"
+                          >
+                            <FileText className="h-4 w-4 text-blue-500 shrink-0" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" side="bottom">
+                          <DropdownMenuItem onClick={handleClickTitle}>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Rename
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => documentId && copyDocument && copyDocument(documentId, documentTitle || "", documentData?.folderId || null)}
+                            disabled={!copyDocument}
+                          >
+                            <Copy className="h-4 w-4 mr-2" />
+                            Make a Copy
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => documentId && moveDocument && moveDocument(documentId, documentTitle || "", documentData?.folderId || null)}
+                            disabled={!moveDocument}
+                          >
+                            <FolderInput className="h-4 w-4 mr-2" />
+                            Move
+                          </DropdownMenuItem>
+                          <DropdownMenuSub>
+                            <DropdownMenuSubTrigger disabled={!exportDocument}>
+                              <Download className="h-4 w-4 mr-2" />
+                              Export
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent>
+                              <DropdownMenuItem onClick={() => documentId && exportDocument && exportDocument(documentId, "google-drive")}>
+                                Google Drive
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => documentId && exportDocument && exportDocument(documentId, "pdf")}>
+                                PDF
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => documentId && exportDocument && exportDocument(documentId, "docx")}>
+                                Word Doc
+                              </DropdownMenuItem>
+                            </DropdownMenuSubContent>
+                          </DropdownMenuSub>
+                          <DropdownMenuItem 
+                            onClick={() => console.log("Delete")}
+                            className="text-destructive focus:text-destructive cursor-pointer"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                      
                       {isEditingTitle ? (
                         <Input
                           ref={inputRef}
@@ -515,19 +591,19 @@ export function DynamicBreadcrumb({
                               handleCancelEdit();
                             }
                           }}
-                          className="h-7 px-2 py-1 text-base"
+                          className="h-auto px-2 py-1.5 text-[17px] font-semibold border-2 border-gray-300 rounded-md [&::selection]:bg-[rgba(90,139,242,0.4)] [&::selection]:text-black"
                           style={{
-                            width: `${Math.max(editedTitle.length * 8 + 20, 100)}px`,
+                            width: `${Math.max(editedTitle.length * 10 + 30, 150)}px`,
                           }}
                         />
                       ) : (
-                        <BreadcrumbPage
-                          title={item.label}
-                          onDoubleClick={handleDoubleClickTitle}
-                          className="cursor-text text-base"
+                        <button
+                          onClick={handleClickTitle}
+                          title="Click to rename"
+                          className="text-[17px] font-semibold cursor-pointer rounded-md px-2 py-1.5 transition-all duration-200 hover:border-2 hover:border-gray-300 border-2 border-transparent"
                         >
                           {truncatedLabel}
-                        </BreadcrumbPage>
+                        </button>
                       )}
                     </div>
                   ) : item.isLast ? (
