@@ -224,6 +224,16 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   services: 'services'
 };
 
+exports.Prisma.CustomFieldScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  value: 'value',
+  organizationId: 'organizationId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.GrantBookmarkScalarFieldEnum = {
   id: 'id',
   notes: 'notes',
@@ -535,6 +545,7 @@ exports.Prisma.ModelName = {
   User: 'User',
   UserAIContextSettings: 'UserAIContextSettings',
   Organization: 'Organization',
+  CustomField: 'CustomField',
   GrantBookmark: 'GrantBookmark',
   GrantEligibilityAnalysis: 'GrantEligibilityAnalysis',
   Application: 'Application',

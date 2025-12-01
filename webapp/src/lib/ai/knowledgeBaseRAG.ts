@@ -14,6 +14,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
  *
  *   {actual content}
  */
+
 function extractChunkContent(chunkContent: string): string {
   const lines = chunkContent.split("\n");
 
