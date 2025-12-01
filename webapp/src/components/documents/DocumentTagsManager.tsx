@@ -37,6 +37,17 @@ export function DocumentTagsManager() {
     fetchTags();
   }, []);
 
+  // Listen for custom event to open add dialog from parent
+  useEffect(() => {
+    const handleOpenAddDialog = () => {
+      setShowAddDialog(true);
+    };
+    window.addEventListener("open-add-tag-dialog", handleOpenAddDialog);
+    return () => {
+      window.removeEventListener("open-add-tag-dialog", handleOpenAddDialog);
+    };
+  }, []);
+
   const fetchTags = async () => {
     try {
       setLoading(true);
@@ -159,20 +170,6 @@ export function DocumentTagsManager() {
   return (
     <>
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold">Document Tags</h3>
-            <p className="text-sm text-muted-foreground">
-              Manage tags to organize your documents. Tags can be assigned to
-              documents to help categorize and filter them.
-            </p>
-          </div>
-          <Button onClick={() => setShowAddDialog(true)} size="sm">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Tag
-          </Button>
-        </div>
-
         {tags.length === 0 ? (
           <div className="text-center py-8 border-2 border-dashed rounded-lg">
             <p className="text-muted-foreground mb-4">
@@ -260,7 +257,10 @@ export function DocumentTagsManager() {
             >
               Cancel
             </Button>
-            <Button onClick={handleAddTag} disabled={saving || !newTagName.trim()}>
+            <Button
+              onClick={handleAddTag}
+              disabled={saving || !newTagName.trim()}
+            >
               {saving ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -348,12 +348,12 @@ export function DocumentTagsManager() {
           <DialogHeader>
             <DialogTitle>Delete Tag</DialogTitle>
             <DialogDescription>
-              {deletingTag?._count.documents > 0 ? (
+              {deletingTag && deletingTag._count.documents > 0 ? (
                 <>
-                  Cannot delete tag &quot;{deletingTag?.name}&quot; because it
-                  is being used by {deletingTag._count.documents} document
-                  {deletingTag._count.documents !== 1 ? "s" : ""}. Please
-                  remove the tag from all documents first.
+                  Cannot delete tag &quot;{deletingTag.name}&quot; because it is
+                  being used by {deletingTag._count.documents} document
+                  {deletingTag._count.documents !== 1 ? "s" : ""}. Please remove
+                  the tag from all documents first.
                 </>
               ) : (
                 <>
@@ -364,17 +364,11 @@ export function DocumentTagsManager() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDeletingTag(null)}
-            >
+            <Button variant="outline" onClick={() => setDeletingTag(null)}>
               Cancel
             </Button>
             {deletingTag?._count.documents === 0 && (
-              <Button
-                onClick={handleDeleteTag}
-                variant="destructive"
-              >
+              <Button onClick={handleDeleteTag} variant="destructive">
                 Delete
               </Button>
             )}
@@ -384,4 +378,3 @@ export function DocumentTagsManager() {
     </>
   );
 }
-

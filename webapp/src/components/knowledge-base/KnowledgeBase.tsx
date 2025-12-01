@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, FileText, Brain } from "lucide-react";
+import { Loader2, FileText } from "lucide-react";
 import { KnowledgeBaseTagList } from "./KnowledgeBaseTagList";
 import { Button } from "@/components/ui/button";
 import { AddDocumentsModal } from "./AddDocumentsModal";
@@ -186,24 +186,18 @@ export function KnowledgeBase({
   return (
     <div className="space-y-6">
       <div>
-        <div className="flex items-center gap-2 pb-2 border-b">
-          <Brain className="h-5 w-5 text-muted-foreground" />
-          <h3 className="font-semibold">Knowledge Base</h3>
-        </div>
-        <div className="mt-4">
-          <p className="text-sm text-muted-foreground">
-            <span className="font-semibold text-foreground">Documents </span>
-            you create, upload, or import are{" "}
-            <span className="font-semibold text-foreground">
-              automatically added to your knowledge base by default
-            </span>
-            . This allows{" "}
-            <span className="font-semibold text-foreground">
-              AI assistants to use them as context
-            </span>{" "}
-            when helping you with grant applications and other tasks.
-          </p>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          <span className="font-semibold text-foreground">Documents </span>
+          you create, upload, or import are{" "}
+          <span className="font-semibold text-foreground">
+            automatically added to your knowledge base by default
+          </span>
+          . This allows{" "}
+          <span className="font-semibold text-foreground">
+            AI assistants to use them as context
+          </span>{" "}
+          when helping you with grant applications and other tasks.
+        </p>
       </div>
 
       {documentsByTag.length > 0 ? (

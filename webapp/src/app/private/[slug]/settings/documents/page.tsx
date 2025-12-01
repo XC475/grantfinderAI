@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { Loader2, Plus, Brain } from "lucide-react";
+import { Loader2, Plus, Brain, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { KnowledgeBase } from "@/components/knowledge-base/KnowledgeBase";
 import { AddDocumentsModal } from "@/components/knowledge-base/AddDocumentsModal";
@@ -46,35 +46,54 @@ export default function DocumentsPage() {
 
   return (
     <div className="space-y-8 p-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Documents</h1>
-          <p className="text-muted-foreground">
-            Manage document tags and knowledge base settings
-          </p>
-        </div>
-        <Button onClick={() => setShowAddDocumentsModal(true)} size="lg">
-          <Plus className="mr-2 h-4 w-4" />
-          Add
-        </Button>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Documents</h1>
+        <p className="text-muted-foreground">
+          Manage document tags and knowledge base settings
+        </p>
       </div>
 
       {organizationId && (
         <>
           {/* Document Tags Section */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b">
-              <Brain className="h-5 w-5 text-muted-foreground" />
-              <h2 className="text-xl font-semibold">Document Tags</h2>
+            <div className="flex items-center justify-between pb-2 border-b">
+              <div className="flex items-center gap-2">
+                <Tag className="h-5 w-5 text-muted-foreground" />
+                <h2 className="text-xl font-semibold">Document Tags</h2>
+              </div>
+              <Button
+                onClick={() => {
+                  // Trigger the add dialog in DocumentTagsManager
+                  const event = new CustomEvent("open-add-tag-dialog");
+                  window.dispatchEvent(event);
+                }}
+                size="sm"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add
+              </Button>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">
+                Manage tags to organize your documents. Tags can be assigned to
+                documents to help categorize and filter them.
+              </p>
             </div>
             <DocumentTagsManager />
           </div>
 
           {/* Knowledge Base Section */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b">
-              <Brain className="h-5 w-5 text-muted-foreground" />
-              <h2 className="text-xl font-semibold">Knowledge Base</h2>
+            <div className="flex items-center justify-between pb-2 border-b">
+              <div className="flex items-center gap-2">
+                <Brain className="h-5 w-5 text-muted-foreground" />
+                <h2 className="text-xl font-semibold">Knowledge Base</h2>
+              </div>
+              <Button onClick={() => setShowAddDocumentsModal(true)} size="sm">
+                <Plus className="mr-2 h-4 w-4" />
+                Add
+              </Button>
             </div>
             <KnowledgeBase
               organizationSlug={slug}
