@@ -16,6 +16,11 @@ export interface DistrictInfo {
   strategicPlan: string | null;
   annualOperatingBudget: string | null;
   fiscalYearEnd: string | null;
+  customFields?: Array<{
+    name: string;
+    description: string | null;
+    value: string;
+  }>;
 }
 
 export function buildSystemPrompt(
@@ -160,5 +165,16 @@ ${info.missionStatement || "Not provided"}
 **Strategic Plan:**  
 ${info.strategicPlan || "Not provided"}
 
-**Critical Usage Instruction:** Every grant recommendation you provide, you MUST leverage this profile data to ensure relevance.`;
+${
+  info.customFields && info.customFields.length > 0
+    ? `**Custom Fields:**\n${info.customFields
+        .map(
+          (field) =>
+            `- **${field.name}**: ${field.value}${
+              field.description ? `\n  *${field.description}*` : ""
+            }`
+        )
+        .join("\n")}\n`
+    : ""
+}**Critical Usage Instruction:** Every grant recommendation you provide, you MUST leverage this profile data to ensure relevance.`;
 }

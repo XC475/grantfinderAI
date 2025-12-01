@@ -140,10 +140,27 @@ model Organization {
   eligibilityAnalyses    GrantEligibilityAnalysis[]
   recommendations        Recommendation[]
   users                  User[]                      @relation("UserOrganization")
+  customFields           CustomField[]
 
   @@index([leaId])
   @@index([state])
   @@map("organizations")
+  @@schema("app")
+}
+
+model CustomField {
+  id             String       @id @default(cuid())
+  name           String
+  description    String?
+  value          String
+  organizationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, name])
+  @@index([organizationId])
+  @@map("custom_fields")
   @@schema("app")
 }
 

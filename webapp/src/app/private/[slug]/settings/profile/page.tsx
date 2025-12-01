@@ -60,6 +60,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { CustomFieldsManager } from "@/components/organization/CustomFieldsManager";
 
 // Grade level options with numeric values
 const GRADE_OPTIONS = [
@@ -1294,14 +1295,31 @@ export default function ProfilePage() {
         </TabsContent>
 
         <TabsContent value="custom-fields" className="space-y-8">
-          <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg">
-            <div className="text-center space-y-4">
-              <h3 className="text-xl font-semibold">Custom Fields</h3>
-              <p className="text-muted-foreground max-w-md">
-                Custom fields functionality is coming soon. You&apos;ll be able
-                to add custom metadata fields to your organization profile.
+          <div className="space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-muted-foreground" />
+                <h3 className="font-semibold">Custom Fields</h3>
+              </div>
+              <Button
+                onClick={() => {
+                  const event = new CustomEvent("open-add-custom-field-dialog");
+                  window.dispatchEvent(event);
+                }}
+                size="sm"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add
+              </Button>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">
+                Add custom metadata fields to your organization profile. These
+                fields will be included in AI prompts to provide additional
+                context about your organization.
               </p>
             </div>
+            <CustomFieldsManager />
           </div>
         </TabsContent>
       </Tabs>
