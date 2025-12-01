@@ -27,7 +27,7 @@ export default function AISettingsPage() {
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            We're working on bringing you powerful AI customization options to
+            We&apos;re working on bringing you powerful AI customization options to
             enhance your grant writing experience.
           </p>
         </CardContent>
