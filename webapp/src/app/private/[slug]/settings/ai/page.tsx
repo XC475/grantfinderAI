@@ -159,7 +159,7 @@ export default function AISettingsPage() {
               <div>
                 <p className="font-medium">Organization Profile</p>
                 <p className="text-sm text-muted-foreground">
-                  Organization name, mission, budget, and district information
+                  Organization name, mission, budget, and profile information
                 </p>
               </div>
             </div>
@@ -262,7 +262,7 @@ export default function AISettingsPage() {
               <div>
                 <p className="font-medium">Organization Profile</p>
                 <p className="text-sm text-muted-foreground">
-                  Organization name, mission, budget, and district information
+                  Organization name, mission, budget, and profile information
                 </p>
               </div>
             </div>

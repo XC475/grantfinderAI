@@ -5,7 +5,7 @@
 import { NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
-import { createChatAgent, DistrictInfo } from "@/lib/ai/chat-agent";
+import { createChatAgent, OrganizationInfo } from "@/lib/ai/chat-agent";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { getSourceDocumentContext } from "@/lib/documentContext";
 import { searchKnowledgeBase } from "@/lib/ai/knowledgeBaseRAG";
@@ -166,8 +166,8 @@ export async function POST(req: NextRequest) {
       : `${protocol}://${host}`;
 
     // Only include organization profile if enabled in user settings
-    const districtInfo: DistrictInfo | null =
-      userAISettings.enableOrgProfileChat && organization.leaId
+    const organizationInfo: OrganizationInfo | null =
+      userAISettings.enableOrgProfileChat
         ? {
             id: organization.id,
             name: organization.name,
@@ -175,10 +175,6 @@ export async function POST(req: NextRequest) {
             state: organization.state,
             zipCode: organization.zipCode,
             countyName: organization.countyName,
-            enrollment: organization.enrollment,
-            numberOfSchools: organization.numberOfSchools,
-            lowestGrade: organization.lowestGrade,
-            highestGrade: organization.highestGrade,
             missionStatement: organization.missionStatement,
             strategicPlan: organization.strategicPlan,
             annualOperatingBudget: organization.annualOperatingBudget
@@ -195,7 +191,7 @@ export async function POST(req: NextRequest) {
 
     // 8. Create chat agent (pass settings to control grant search tool)
     const agent = await createChatAgent(
-      districtInfo,
+      organizationInfo,
       baseUrl,
       userAISettings
     );

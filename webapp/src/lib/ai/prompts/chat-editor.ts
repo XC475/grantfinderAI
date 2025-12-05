@@ -10,10 +10,6 @@ export interface OrganizationInfo {
   state: string | null;
   zipCode: string | null;
   countyName: string | null;
-  enrollment: number | null;
-  numberOfSchools: number | null;
-  lowestGrade: number | null;
-  highestGrade: number | null;
   missionStatement: string | null;
   strategicPlan: string | null;
   annualOperatingBudget: Decimal | null;
@@ -106,9 +102,6 @@ export function buildEditorSystemPrompt(options: EditorPromptOptions): string {
 
 ORGANIZATION CONTEXT:
 You are assisting ${organizationInfo.name}${organizationInfo.city && organizationInfo.state ? ` located in ${organizationInfo.city}, ${organizationInfo.state}` : ""}.
-${organizationInfo.enrollment ? `Enrollment: ${organizationInfo.enrollment.toLocaleString()} students` : ""}
-${organizationInfo.numberOfSchools ? `Number of Schools: ${organizationInfo.numberOfSchools}` : ""}
-${organizationInfo.lowestGrade && organizationInfo.highestGrade ? `Grade Range: ${organizationInfo.lowestGrade} - ${organizationInfo.highestGrade}` : ""}
 ${organizationInfo.missionStatement ? `\nMission Statement: ${organizationInfo.missionStatement}` : ""}
 ${organizationInfo.strategicPlan ? `\nStrategic Plan: ${organizationInfo.strategicPlan}` : ""}
 ${organizationInfo.annualOperatingBudget ? `\nAnnual Operating Budget: $${Number(organizationInfo.annualOperatingBudget).toLocaleString()}` : ""}

@@ -5,6 +5,7 @@
 The GrantWare AI Writing Editor is a sophisticated rich text editing system built on **TipTap** (a headless editor framework) with integrated AI assistance. It provides a Google Docs-like editing experience with auto-save, version control, and a contextually-aware AI chat assistant that understands the document being edited.
 
 **Key Technologies:**
+
 - **TipTap** (ProseMirror-based rich text editor)
 - **Next.js 15** (App Router)
 - **React** (Client components)
@@ -81,18 +82,21 @@ ConditionalLayout
 **File:** `webapp/src/app/private/[slug]/editor/[documentId]/page.tsx`
 
 **Responsibilities:**
+
 - Fetches document data from API
 - Manages document state (loading, saving)
 - Handles save operations
 - Renders `DocumentEditor` component
 
 **Key Features:**
+
 - Server-side document fetching
 - Error handling (404, unauthorized)
 - Loading states
 - Save callback with version increment
 
 **Code Flow:**
+
 ```typescript
 1. Extract documentId from params
 2. Fetch document via GET /api/documents/[documentId]
@@ -105,18 +109,21 @@ ConditionalLayout
 **File:** `webapp/src/components/applications/DocumentEditor.tsx`
 
 **Responsibilities:**
+
 - Wraps TipTap SimpleEditor
 - Manages auto-save logic (2-second debounce)
 - Updates DocumentContext with title/content
 - Handles save status indicators
 
 **Key Features:**
+
 - **Auto-save:** Debounced save after 2 seconds of inactivity
 - **Save Status:** Tracks "saved", "saving", "unsaved" states
 - **Context Integration:** Updates DocumentContext for AI assistant
 - **Content Management:** Tracks last saved content to prevent unnecessary saves
 
 **State Management:**
+
 ```typescript
 - title: Local state from document prop
 - content: Local state from document prop
@@ -125,6 +132,7 @@ ConditionalLayout
 ```
 
 **Auto-Save Logic:**
+
 ```typescript
 1. User types → content changes
 2. useEffect triggers on content change
@@ -140,12 +148,14 @@ ConditionalLayout
 **File:** `webapp/src/components/tiptap-templates/simple/simple-editor.tsx`
 
 **Responsibilities:**
+
 - Initializes TipTap editor instance
 - Configures editor extensions
 - Renders toolbar and editor content
 - Handles mobile/desktop responsive behavior
 
 **TipTap Extensions Configured:**
+
 - **StarterKit:** Basic formatting (bold, italic, headings, lists, etc.)
 - **TextAlign:** Left, center, right, justify
 - **TaskList/TaskItem:** Checkbox lists
@@ -157,6 +167,7 @@ ConditionalLayout
 - **HorizontalRule:** Custom horizontal rule node
 
 **Editor Configuration:**
+
 ```typescript
 {
   immediatelyRender: false,
@@ -179,6 +190,7 @@ ConditionalLayout
 ```
 
 **Toolbar Structure:**
+
 - **Undo/Redo:** History navigation
 - **Headings:** Dropdown (H1-H4)
 - **Lists:** Dropdown (bullet, ordered, task)
@@ -191,6 +203,7 @@ ConditionalLayout
 - **Image Upload:** File upload button
 
 **Mobile Support:**
+
 - Responsive toolbar (collapses on mobile)
 - Mobile-specific views for highlighter and link tools
 - Touch-friendly interactions
@@ -200,6 +213,7 @@ ConditionalLayout
 **File:** `webapp/src/components/applications/DocumentChatSidebar.tsx`
 
 **Responsibilities:**
+
 - Manages chat sessions (tabs)
 - Handles chat persistence (localStorage + database)
 - Coordinates with DocumentContext for document content
@@ -207,6 +221,7 @@ ConditionalLayout
 - Handles streaming AI responses
 
 **Key Features:**
+
 - **Tab Management:** Multiple chat sessions per document
 - **Session Persistence:** Restores tabs and active chat on page reload
 - **Tab Renaming:** Double-click to edit tab titles
@@ -216,6 +231,7 @@ ConditionalLayout
 - **Streaming Responses:** Real-time AI response display
 
 **State Management:**
+
 ```typescript
 - messages: Current chat messages
 - chatId: Active chat session ID
@@ -227,12 +243,14 @@ ConditionalLayout
 ```
 
 **LocalStorage Keys:**
+
 ```typescript
 - `lastEditorChat_${documentId}`: Last active chat ID
 - `openEditorTabs_${documentId}`: Array of open tab IDs
 ```
 
 **Chat Session Flow:**
+
 ```typescript
 1. On mount → Load all sessions for document
 2. Restore openTabs from localStorage
@@ -245,6 +263,7 @@ ConditionalLayout
 ```
 
 **File Upload Flow:**
+
 ```typescript
 1. User selects files (via button, drag-drop, or paste)
 2. Files uploaded to /api/chat/upload
@@ -258,6 +277,7 @@ ConditionalLayout
 **File:** `webapp/src/components/applications/DocumentSidebarChat.tsx`
 
 **Responsibilities:**
+
 - Renders chat messages
 - Handles message input
 - Manages file attachments UI
@@ -265,6 +285,7 @@ ConditionalLayout
 - Provides stop/cancel functionality
 
 **Key Features:**
+
 - **Message Display:** User and assistant messages with markdown
 - **Auto-scroll:** Scrolls to bottom on new messages
 - **Scroll-to-bottom Button:** Appears when user scrolls up
@@ -274,6 +295,7 @@ ConditionalLayout
 - **Stop Generation:** Cancel ongoing AI response
 
 **Input Features:**
+
 - Auto-resizing textarea (max 240px height)
 - Enter to send, Shift+Enter for new line
 - File attachment button
@@ -284,11 +306,13 @@ ConditionalLayout
 **File:** `webapp/src/contexts/DocumentContext.tsx`
 
 **Responsibilities:**
+
 - Provides document title and content to all child components
 - Tracks save status
 - Enables AI assistant to access current document state
 
 **Context API:**
+
 ```typescript
 interface DocumentContextType {
   documentTitle: string;
@@ -301,6 +325,7 @@ interface DocumentContextType {
 ```
 
 **Usage:**
+
 - Wraps editor page in `ConditionalLayout`
 - `DocumentEditor` updates context on content changes
 - `DocumentChatSidebar` reads context for AI prompts
@@ -322,6 +347,7 @@ interface DocumentContextType {
 **Authorization:** User must belong to document's organization
 
 **Response:**
+
 ```typescript
 {
   document: {
@@ -343,6 +369,7 @@ interface DocumentContextType {
 **Purpose:** Update document content, title, or folder
 
 **Request Body:**
+
 ```typescript
 {
   title?: string;
@@ -353,6 +380,7 @@ interface DocumentContextType {
 ```
 
 **Features:**
+
 - Auto-increments version
 - Updates `updatedAt` timestamp
 - Handles folder changes (auto-unlinks from application if moved)
@@ -369,6 +397,7 @@ interface DocumentContextType {
 **Purpose:** Create a new standalone document
 
 **Request Body:**
+
 ```typescript
 {
   title: string;
@@ -399,6 +428,7 @@ interface DocumentContextType {
 **Purpose:** Update an application document
 
 **Features:**
+
 - Auto-increments version
 - Updates `updatedAt`
 - Validates user has access to application
@@ -412,6 +442,7 @@ interface DocumentContextType {
 **Purpose:** Send message to editor assistant and receive streaming response
 
 **Request Body:**
+
 ```typescript
 {
   messages: Array<{
@@ -427,16 +458,19 @@ interface DocumentContextType {
 ```
 
 **Response:**
+
 - **Streaming:** Server-Sent Events (text/plain)
 - **Header:** `X-Chat-Id` (new chat ID if created)
 
 **AI Context Building:**
+
 1. **Document Context:** Current document title and content
-2. **Organization Context:** Organization details (name, location, enrollment, mission, etc.)
+2. **Organization Context:** Organization details (name, location, mission, etc.)
 3. **Application Context:** Grant opportunity details (if document linked to application)
 4. **Attachment Context:** Extracted text from attached files
 
 **System Prompt Structure:**
+
 ```
 You are a helpful assistant for a grant writing application called GrantWare.
 You are helping the user with their document titled "{documentTitle}".
@@ -457,6 +491,7 @@ ATTACHED FILES:
 ```
 
 **Chat Creation:**
+
 - If `chatId` is null, creates new chat
 - Context: `DRAFTING`
 - Metadata includes:
@@ -466,11 +501,13 @@ ATTACHED FILES:
   - `opportunityId` (if applicable)
 
 **Message Persistence:**
+
 - User messages saved immediately
 - Assistant messages saved after stream completes
 - Handles client disconnection gracefully
 
 **Streaming Implementation:**
+
 ```typescript
 1. Create OpenAI streaming completion
 2. Create ReadableStream
@@ -490,6 +527,7 @@ ATTACHED FILES:
 **Purpose:** List all chat sessions for a document
 
 **Response:**
+
 ```typescript
 {
   chats: Array<{
@@ -498,7 +536,7 @@ ATTACHED FILES:
     createdAt: string;
     updatedAt: string;
     messageCount: number;
-  }>
+  }>;
 }
 ```
 
@@ -509,6 +547,7 @@ ATTACHED FILES:
 **Purpose:** Get a specific chat session with all messages
 
 **Response:**
+
 ```typescript
 {
   chat: {
@@ -533,6 +572,7 @@ ATTACHED FILES:
 **Purpose:** Update chat session title
 
 **Request Body:**
+
 ```typescript
 {
   title: string;
@@ -675,6 +715,7 @@ POST /api/chat/editor (includes context in prompt)
 **File:** `webapp/src/components/tiptap-templates/simple/simple-editor.scss`
 
 **Key Styles:**
+
 - **Font:** DM Sans for editor content
 - **Max Width:** 648px centered
 - **Padding:** 3rem horizontal, 30vh bottom (for infinite scroll feel)
@@ -683,6 +724,7 @@ POST /api/chat/editor (includes context in prompt)
 **File:** `webapp/src/components/applications/editor-overrides.css`
 
 **Overrides:**
+
 - Removes max-width constraints for sidebar layout
 - Adjusts padding for document editor context
 - Ensures proper overflow handling
@@ -708,11 +750,13 @@ POST /api/chat/editor (includes context in prompt)
 **File:** `webapp/src/components/layouts/ConditionalLayout.tsx`
 
 **Detection:**
+
 - Detects `/editor/[documentId]` route
 - Wraps with `DocumentProvider`
 - Renders `DocumentEditorLayoutContent` with resizable panels
 
 **Features:**
+
 - **Save Status Indicator:** Shows save status in header
 - **Sidebar Toggle:** Button to show/hide AI assistant
 - **Resizable Panels:** Adjustable editor/assistant split (60/40 default)
@@ -722,6 +766,7 @@ POST /api/chat/editor (includes context in prompt)
 **File:** `webapp/src/components/folders/DocumentsView.tsx`
 
 **Integration:**
+
 - Lists documents in folder structure
 - Click document → Navigate to editor
 - Create document → Navigate to new editor
@@ -731,6 +776,7 @@ POST /api/chat/editor (includes context in prompt)
 **File:** `webapp/src/components/applications/ApplicationPage.tsx`
 
 **Integration:**
+
 - Documents can be linked to applications
 - Application context available in AI assistant
 - Grant opportunity details included in AI prompts
@@ -769,6 +815,7 @@ POST /api/chat/editor (includes context in prompt)
 **Location:** `webapp/src/components/tiptap-ui/` and `webapp/src/components/tiptap-node/`
 
 **UI Components:**
+
 - Heading dropdown menu
 - List dropdown menu
 - Mark buttons (bold, italic, etc.)
@@ -781,6 +828,7 @@ POST /api/chat/editor (includes context in prompt)
 - Undo/redo buttons
 
 **Node Extensions:**
+
 - Image upload node (custom)
 - Horizontal rule node (custom)
 
@@ -870,7 +918,7 @@ model Document {
   updatedAt      DateTime     @updatedAt
   organizationId String
   folderId       String?
-  
+
   application    Application? @relation(...)
   folder         Folder?      @relation(...)
   organization   Organization @relation(...)
@@ -932,7 +980,6 @@ The Writing Editor is a comprehensive, production-ready rich text editing system
 ✅ **Responsive design** (Mobile and desktop support)  
 ✅ **Version control** (Auto-incrementing versions)  
 ✅ **Organization context** (AI knows organization details)  
-✅ **Application context** (AI knows grant opportunity if linked)  
+✅ **Application context** (AI knows grant opportunity if linked)
 
 The system is well-architected with clear separation of concerns, proper state management, and comprehensive error handling. It integrates seamlessly with the broader GrantWare AI application while maintaining its own specialized functionality for document editing and AI-assisted writing.
-

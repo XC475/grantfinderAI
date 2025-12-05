@@ -5,7 +5,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { ToolMessage } from "@langchain/core/messages";
 import type { ToolCall } from "@langchain/core/messages/tool";
 import { createGrantSearchTool } from "@/lib/ai/tools/grant-search-tool";
-import { DistrictInfo } from "@/lib/ai/prompts/chat-assistant";
+import { OrganizationInfo } from "@/lib/ai/prompts/chat-assistant";
 
 interface RecommendationResult {
   opportunity_id: number;
@@ -75,59 +75,29 @@ export async function POST(_req: NextRequest) {
       );
     }
 
-    // 5. Prepare district context
-    const districtInfo: DistrictInfo | null = organization.leaId
-      ? {
-          id: organization.id,
-          name: organization.name,
-          city: organization.city,
-          state: organization.state,
-          zipCode: organization.zipCode,
-          countyName: organization.countyName,
-          enrollment: organization.enrollment,
-          numberOfSchools: organization.numberOfSchools,
-          lowestGrade: organization.lowestGrade,
-          highestGrade: organization.highestGrade,
-          missionStatement: organization.missionStatement,
-          strategicPlan: organization.strategicPlan,
-          annualOperatingBudget: organization.annualOperatingBudget
-            ? organization.annualOperatingBudget.toString()
-            : null,
-          fiscalYearEnd: organization.fiscalYearEnd,
-          customFields: organization.customFields.map((field) => ({
-            name: field.name,
-            description: field.description,
-            value: field.value,
-          })),
-        }
-      : null;
+    // 5. Prepare organization context
+    const organizationInfo: OrganizationInfo = {
+      id: organization.id,
+      name: organization.name,
+      city: organization.city,
+      state: organization.state,
+      zipCode: organization.zipCode,
+      countyName: organization.countyName,
+      missionStatement: organization.missionStatement,
+      strategicPlan: organization.strategicPlan,
+      annualOperatingBudget: organization.annualOperatingBudget
+        ? organization.annualOperatingBudget.toString()
+        : null,
+      fiscalYearEnd: organization.fiscalYearEnd,
+      customFields: organization.customFields.map((field) => ({
+        name: field.name,
+        description: field.description,
+        value: field.value,
+      })),
+    };
 
     // 6. Build the recommendations prompt
-    const systemPrompt = buildRecommendationsPrompt(
-      districtInfo || {
-        id: organization.id,
-        name: organization.name,
-        city: organization.city,
-        state: organization.state,
-        zipCode: organization.zipCode,
-        countyName: organization.countyName,
-        enrollment: organization.enrollment,
-        numberOfSchools: organization.numberOfSchools,
-        lowestGrade: organization.lowestGrade,
-        highestGrade: organization.highestGrade,
-        missionStatement: organization.missionStatement,
-        strategicPlan: organization.strategicPlan,
-        annualOperatingBudget: organization.annualOperatingBudget
-          ? organization.annualOperatingBudget.toString()
-          : null,
-        fiscalYearEnd: organization.fiscalYearEnd,
-        customFields: organization.customFields.map((field) => ({
-          name: field.name,
-          description: field.description,
-          value: field.value,
-        })),
-      }
-    );
+    const systemPrompt = buildRecommendationsPrompt(organizationInfo);
 
     // 7. Initialize OpenAI model
     const model = new ChatOpenAI({
@@ -138,7 +108,7 @@ export async function POST(_req: NextRequest) {
     // 8. Create grant search tool with organization services
     const organizationServices = organization.services || [];
     const grantSearchTool = createGrantSearchTool(
-      districtInfo,
+      organizationInfo,
       organizationServices
     );
 
@@ -289,7 +259,7 @@ export async function POST(_req: NextRequest) {
                   opportunityId: rec.opportunity_id.toString(),
                   fitScore: Math.round(rec.fit_score),
                   fitDescription: rec.fit_description,
-                  districtName: organization.name,
+                  organizationName: organization.name,
                   queryDate: new Date(),
                 },
               });
@@ -328,39 +298,36 @@ export async function POST(_req: NextRequest) {
   }
 }
 
-function buildRecommendationsPrompt(districtInfo: DistrictInfo): string {
-  const stateCode = districtInfo.state || "US";
+function buildRecommendationsPrompt(organizationInfo: OrganizationInfo): string {
+  const stateCode = organizationInfo.state || "US";
 
   return `<task_summary>
-You are a **Grants Recommendations Analyst** for the K–12 school district ${districtInfo.name}.
+You are a **Grants Recommendations Analyst** for ${organizationInfo.name}.
 
 Goal:
-1. ALWAYS evaluate the district profile defined in your context.
-2. ALWAYS call your Grants Vector Store tool to retrieve the top 20 grants which correlate with the district profile.
-3. ALWAYS evaluate and rank the grants you receive based on how well they fit the district's eligibility, scale, and needs.
+1. ALWAYS evaluate the organization profile defined in your context.
+2. ALWAYS call your Grants Vector Store tool to retrieve the top 20 grants which correlate with the organization profile.
+3. ALWAYS evaluate and rank the grants you receive based on how well they fit the organization's eligibility, scale, and needs.
 4. ALWAYS Return:
  - A **fit_score** (0–100%)  
  - A **fit_description** (a concise, plain-language summary written for a non-technical user explaining why this grant fits)
-- The **fit_description** must be **straight to the point** — no introductions, no phrases like "This grant is…" or "The district should…". Just state the fit directly.
+- The **fit_description** must be **straight to the point** — no introductions, no phrases like "This grant is…" or "The organization should…". Just state the fit directly.
 </task_summary>
 
 <context>
-Below is the user's district information. This data is pulled from their authenticated district profile and represents **real-time context about who you're helping**.
+Below is the user's organization information. This data is pulled from their authenticated organization profile and represents **real-time context about who you're helping**.
 **Critical Usage Instruction:** You should ALWAYS leverage this profile data to ensure recommendation relevance.
 
-**Current District:** ${districtInfo.name}
-- **Location:** ${districtInfo.city || "N/A"}, ${stateCode}, ${districtInfo.zipCode || "N/A"}
-- **County:** ${districtInfo.countyName || "N/A"}
-- **Enrolled Students:** ${districtInfo.enrollment || "N/A"}
-- **Grade Levels:** ${districtInfo.lowestGrade || "N/A"} – ${districtInfo.highestGrade || "N/A"}
-- **Number of Schools:** ${districtInfo.numberOfSchools || "N/A"}
-- **Annual Operating Budget:** ${districtInfo.annualOperatingBudget ? `$${districtInfo.annualOperatingBudget}` : "N/A"}
+**Current Organization:** ${organizationInfo.name}
+- **Location:** ${organizationInfo.city || "N/A"}, ${stateCode}, ${organizationInfo.zipCode || "N/A"}
+- **County:** ${organizationInfo.countyName || "N/A"}
+- **Annual Operating Budget:** ${organizationInfo.annualOperatingBudget ? `$${organizationInfo.annualOperatingBudget}` : "N/A"}
 
 **Mission Statement:** 
-${districtInfo.missionStatement || "Not provided"}
+${organizationInfo.missionStatement || "Not provided"}
 
 **Strategic Plan:** 
-${districtInfo.strategicPlan || "Not provided"}
+${organizationInfo.strategicPlan || "Not provided"}
 </context>
 
 <available_tools>
@@ -371,12 +338,12 @@ ${districtInfo.strategicPlan || "Not provided"}
 
 <grant_vector_store_tool_call>
   <goal>
-    Collect enough focused context to return **<= 20 highly relevant grants** for the district.
+    Collect enough focused context to return **<= 20 highly relevant grants** for the organization.
   </goal>
   
   <search_input>
     You should ALWAYS use the organization profile's strategic plan, mission statement to generate the best semantic search input for the tool.
-    The input should represent the essence of what the user or district is seeking funding for, expressed in natural language that aligns with the provided vector store's embedded grants structures.
+    The input should represent the essence of what the user or organization is seeking funding for, expressed in natural language that aligns with the provided vector store's embedded grants structures.
     
     When generating the query, extract and incorporate from context:
     - Main funding topic or intent (e.g., literacy, STEM, SEL, CTE, facilities).  
@@ -384,7 +351,7 @@ ${districtInfo.strategicPlan || "Not provided"}
     - Time and budget signals (deadline urgency, award size, or matching fund limits).  
     - Geographic focus (federal, state, local, county).  
     - Disqualifiers (prior-award-only, invite-only, consortium-only, research-only).  
-    - Top 3–5 strategic keywords from the district mission or plan.  
+    - Top 3–5 strategic keywords from the organization mission or plan.  
     
     Return the generated search input as your query parameter.
   </search_input>
@@ -403,14 +370,14 @@ ${districtInfo.strategicPlan || "Not provided"}
 
   <ranking_and_filters>
     - **Drop immediately:**  
-      • Not eligible for public districts/LEAs  
+      • Not eligible for the organization type  
       • Prior-awardees/invite-only  
       • Deadline passed  
     - **Prioritize:**  
       • Matches strategic keywords  
       • Relevant to state/county  
       • First-time-friendly  
-      • Reasonable award for district size  
+      • Reasonable award for organization size  
       • Deadline within 14–90 days  
     - **Deprioritize:**  
       • Research-only (unless requested)  
@@ -428,7 +395,7 @@ ${districtInfo.strategicPlan || "Not provided"}
 
   <final_output>
     - Generate the ranked grant list using the defined <output_structure>.  
-    - Include one sentence per item explaining *why it fits* the district.  
+    - Include one sentence per item explaining *why it fits* the organization.  
   </final_output>
 
   <tool_usage_policy>
@@ -449,8 +416,8 @@ Return a JSON array of recommendation objects. Each object must follow this stru
     "opportunity_title": "<title from tool results>",
     "fit_score": <0-100 integer>,
     "fit_description": "<concise plain-language summary explaining why this grant fits>",
-    "organization_name": "${districtInfo.name}",
-    "organization_id": "${districtInfo.id}",
+    "organization_name": "${organizationInfo.name}",
+    "organization_id": "${organizationInfo.id}",
     "query_date": "${new Date().toISOString()}"
   }
 ]
@@ -460,7 +427,7 @@ CRITICAL RULES:
 - fit_score must be an integer between 0-100
 - opportunity_id must be extracted from the tool results (the 'id' field)
 - opportunity_title must be extracted from the tool results (the 'title' field)
-- fit_description should be concise (2-3 sentences max) and explain WHY the grant fits the district's needs, priorities, and eligibility
-- Do NOT include phrases like "This grant is" or "The district should" in fit_description
+- fit_description should be concise (2-3 sentences max) and explain WHY the grant fits the organization's needs, priorities, and eligibility
+- Do NOT include phrases like "This grant is" or "The organization should" in fit_description
 </output_policy>`;
 }

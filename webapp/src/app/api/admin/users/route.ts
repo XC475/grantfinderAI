@@ -41,9 +41,7 @@ export async function POST(request: NextRequest) {
       organizationId, // Required for 'add_to_existing'
       role = "MEMBER", // User's role in organization
       system_admin = false, // System admin flag
-      organizationType, // 'school_district' or 'custom' for 'create_new'
-      districtData, // For school district orgs
-      customOrgData, // For custom orgs
+      orgData, // Organization data for 'create_new'
     } = body;
 
     // Validate input
@@ -73,11 +71,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (mode === "create_new" && !organizationType) {
+    if (mode === "create_new" && !orgData?.name) {
       return NextResponse.json(
         {
-          error:
-            "organizationType ('school_district' or 'custom') is required for create_new mode",
+          error: "Organization name is required for create_new mode",
         },
         { status: 400 }
       );
@@ -87,100 +84,43 @@ export async function POST(request: NextRequest) {
     let newOrganizationCreated = false;
 
     // If creating new organization, handle that first
-    if (mode === "create_new") {
-      if (organizationType === "school_district" && districtData?.leaId) {
-        // Create organization with district data
-        const districtInfo = {
-          leaId: districtData.leaId,
-          state: districtData.state,
-          stateLeaId: districtData.stateLeaId,
-          city: districtData.city,
-          zipCode: districtData.zipCode,
-          phone: districtData.phone,
-          latitude: districtData.latitude,
-          longitude: districtData.longitude,
-          countyName: districtData.countyName,
-          enrollment: districtData.enrollment,
-          numberOfSchools: districtData.numberOfSchools,
-          lowestGrade: districtData.lowestGrade,
-          highestGrade: districtData.highestGrade,
-          urbanCentricLocale: districtData.urbanCentricLocale,
-          districtDataYear: districtData.districtDataYear || 2022,
-        };
+    if (mode === "create_new" && orgData?.name) {
+      // Generate slug from organization name
+      const slug = orgData.name
+        .toLowerCase()
+        .replace(/[^\w-]/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-+|-+$/g, "");
 
-        // Generate slug from district name
-        const slug = districtData.name
-          .toLowerCase()
-          .replace(/[^\w-]/g, "-")
-          .replace(/-+/g, "-")
-          .replace(/^-+|-+$/g, "");
-
-        // Ensure slug is unique
-        let slugCounter = 0;
-        let uniqueSlug = slug;
-        while (
-          await prisma.organization.findUnique({ where: { slug: uniqueSlug } })
-        ) {
-          slugCounter++;
-          uniqueSlug = `${slug}-${slugCounter}`;
-        }
-
-        const newOrg = await prisma.organization.create({
-          data: {
-            name: districtData.name,
-            slug: uniqueSlug,
-            ...districtInfo,
-          },
-        });
-
-        // Create default tags for new organization
-        await createDefaultTags(newOrg.id);
-
-        targetOrganizationId = newOrg.id;
-        newOrganizationCreated = true;
-      } else if (organizationType === "custom" && customOrgData?.name) {
-        // Create custom organization
-        const slug = customOrgData.name
-          .toLowerCase()
-          .replace(/[^\w-]/g, "-")
-          .replace(/-+/g, "-")
-          .replace(/^-+|-+$/g, "");
-
-        // Ensure slug is unique
-        let slugCounter = 0;
-        let uniqueSlug = slug;
-        while (
-          await prisma.organization.findUnique({ where: { slug: uniqueSlug } })
-        ) {
-          slugCounter++;
-          uniqueSlug = `${slug}-${slugCounter}`;
-        }
-
-        const newOrg = await prisma.organization.create({
-          data: {
-            name: customOrgData.name,
-            slug: uniqueSlug,
-            website: customOrgData.website || null,
-            email: customOrgData.email || null,
-            phone: customOrgData.phone || null,
-            address: customOrgData.address || null,
-            city: customOrgData.city || null,
-            state: customOrgData.state || null,
-            zipCode: customOrgData.zipCode || null,
-          },
-        });
-
-        // Create default tags for new organization
-        await createDefaultTags(newOrg.id);
-
-        targetOrganizationId = newOrg.id;
-        newOrganizationCreated = true;
-      } else {
-        return NextResponse.json(
-          { error: "Invalid organization data provided" },
-          { status: 400 }
-        );
+      // Ensure slug is unique
+      let slugCounter = 0;
+      let uniqueSlug = slug;
+      while (
+        await prisma.organization.findUnique({ where: { slug: uniqueSlug } })
+      ) {
+        slugCounter++;
+        uniqueSlug = `${slug}-${slugCounter}`;
       }
+
+      const newOrg = await prisma.organization.create({
+        data: {
+          name: orgData.name,
+          slug: uniqueSlug,
+          website: orgData.website || null,
+          email: orgData.email || null,
+          phone: orgData.phone || null,
+          address: orgData.address || null,
+          city: orgData.city || null,
+          state: orgData.state || null,
+          zipCode: orgData.zipCode || null,
+        },
+      });
+
+      // Create default tags for new organization
+      await createDefaultTags(newOrg.id);
+
+      targetOrganizationId = newOrg.id;
+      newOrganizationCreated = true;
     }
 
     // Verify organization exists
@@ -321,15 +261,6 @@ export async function POST(request: NextRequest) {
         organizationSlug: updatedUser?.organization?.slug,
         organizationName: updatedUser?.organization?.name,
         organizationId: updatedUser?.organization?.id,
-        districtInfo: updatedUser?.organization?.leaId
-          ? {
-              name: updatedUser.organization.name,
-              leaId: updatedUser.organization.leaId,
-              state: updatedUser.organization.state,
-              city: updatedUser.organization.city,
-              enrollment: updatedUser.organization.enrollment,
-            }
-          : null,
       },
     });
   } catch (error) {
@@ -383,10 +314,8 @@ export async function GET() {
           select: {
             slug: true,
             name: true,
-            leaId: true,
             state: true,
             city: true,
-            enrollment: true,
             countyName: true,
           },
         },

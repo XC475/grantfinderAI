@@ -17,7 +17,7 @@ const categories = [
     icon: Search,
     samplePrompts: [
       "Search for grants related to STEM education programs",
-      "Find grants for improving student achievement in our district",
+      "Find grants for improving community programs in our organization",
       "Search for funding opportunities for technology upgrades",
       "Look for grants supporting after-school programs",
     ],

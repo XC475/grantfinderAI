@@ -214,16 +214,6 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   zipCode: 'zipCode',
   strategicPlan: 'strategicPlan',
   countyName: 'countyName',
-  districtDataYear: 'districtDataYear',
-  enrollment: 'enrollment',
-  highestGrade: 'highestGrade',
-  latitude: 'latitude',
-  leaId: 'leaId',
-  longitude: 'longitude',
-  lowestGrade: 'lowestGrade',
-  numberOfSchools: 'numberOfSchools',
-  stateLeaId: 'stateLeaId',
-  urbanCentricLocale: 'urbanCentricLocale',
   logoUrl: 'logoUrl',
   services: 'services'
 };
@@ -308,7 +298,7 @@ exports.Prisma.RecommendationScalarFieldEnum = {
   opportunityId: 'opportunityId',
   fitScore: 'fitScore',
   fitDescription: 'fitDescription',
-  districtName: 'districtName',
+  organizationName: 'organizationName',
   queryDate: 'queryDate',
   createdAt: 'createdAt'
 };

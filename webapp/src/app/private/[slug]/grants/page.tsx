@@ -87,7 +87,7 @@ interface Recommendation {
   opportunityId: string;
   fitScore: number;
   fitDescription: string;
-  districtName: string;
+  organizationName: string;
   queryDate: string;
   createdAt: string;
   grant?: Grant;

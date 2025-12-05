@@ -35,7 +35,6 @@ import {
   Image as ImageIcon,
   Info,
   Save,
-  GraduationCap,
   Plus,
   Trash2,
   ChevronDown,
@@ -61,25 +60,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CustomFieldsManager } from "@/components/organization/CustomFieldsManager";
-
-// Grade level options with numeric values
-const GRADE_OPTIONS = [
-  { value: -2, label: "Pre-Kindergarten (Pre-K / PK)" },
-  { value: -1, label: "Transitional Kindergarten (TK)" },
-  { value: 0, label: "Kindergarten (K)" },
-  { value: 1, label: "1st Grade" },
-  { value: 2, label: "2nd Grade" },
-  { value: 3, label: "3rd Grade" },
-  { value: 4, label: "4th Grade" },
-  { value: 5, label: "5th Grade" },
-  { value: 6, label: "6th Grade" },
-  { value: 7, label: "7th Grade" },
-  { value: 8, label: "8th Grade" },
-  { value: 9, label: "9th Grade (Freshman)" },
-  { value: 10, label: "10th Grade (Sophomore)" },
-  { value: 11, label: "11th Grade (Junior)" },
-  { value: 12, label: "12th Grade (Senior)" },
-];
 
 // Services options matching Prisma enum
 const SERVICES_OPTIONS = [
@@ -107,10 +87,6 @@ interface Organization {
   city: string | null;
   state: string | null;
   zipCode: string | null;
-  enrollment: number | null;
-  numberOfSchools: number | null;
-  lowestGrade: number | null;
-  highestGrade: number | null;
   services: string[] | null;
   createdAt: string;
   updatedAt: string;
@@ -1163,131 +1139,6 @@ export default function ProfilePage() {
                       />
                     </PopoverContent>
                   </Popover>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* School Information */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b">
-              <GraduationCap className="h-5 w-5 text-muted-foreground" />
-              <h3 className="font-semibold">School Information</h3>
-            </div>
-            <div className="grid gap-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="enrollment">Total Enrollment</Label>
-                  <Input
-                    id="enrollment"
-                    type="number"
-                    value={organization.enrollment || ""}
-                    onChange={(e) =>
-                      setOrganization({
-                        ...organization,
-                        enrollment: e.target.value
-                          ? parseInt(e.target.value)
-                          : null,
-                      })
-                    }
-                    placeholder="e.g., 5000"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Total number of students enrolled
-                  </p>
-                </div>
-
-                <div className="grid gap-2">
-                  <Label htmlFor="numberOfSchools">Number of Schools</Label>
-                  <Input
-                    id="numberOfSchools"
-                    type="number"
-                    value={organization.numberOfSchools || ""}
-                    onChange={(e) =>
-                      setOrganization({
-                        ...organization,
-                        numberOfSchools: e.target.value
-                          ? parseInt(e.target.value)
-                          : null,
-                      })
-                    }
-                    placeholder="e.g., 12"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Total number of schools in your district
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="lowestGrade">Lowest Grade</Label>
-                  <Select
-                    value={
-                      organization.lowestGrade !== null &&
-                      organization.lowestGrade !== undefined
-                        ? organization.lowestGrade.toString()
-                        : ""
-                    }
-                    onValueChange={(value) =>
-                      setOrganization({
-                        ...organization,
-                        lowestGrade: value ? parseInt(value) : null,
-                      })
-                    }
-                  >
-                    <SelectTrigger id="lowestGrade">
-                      <SelectValue placeholder="Select lowest grade level" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {GRADE_OPTIONS.map((grade) => (
-                        <SelectItem
-                          key={grade.value}
-                          value={grade.value.toString()}
-                        >
-                          {grade.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-muted-foreground">
-                    Lowest grade level your organization serves
-                  </p>
-                </div>
-
-                <div className="grid gap-2">
-                  <Label htmlFor="highestGrade">Highest Grade</Label>
-                  <Select
-                    value={
-                      organization.highestGrade !== null &&
-                      organization.highestGrade !== undefined
-                        ? organization.highestGrade.toString()
-                        : ""
-                    }
-                    onValueChange={(value) =>
-                      setOrganization({
-                        ...organization,
-                        highestGrade: value ? parseInt(value) : null,
-                      })
-                    }
-                  >
-                    <SelectTrigger id="highestGrade">
-                      <SelectValue placeholder="Select highest grade level" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {GRADE_OPTIONS.map((grade) => (
-                        <SelectItem
-                          key={grade.value}
-                          value={grade.value.toString()}
-                        >
-                          {grade.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-muted-foreground">
-                    Highest grade level your organization serves
-                  </p>
                 </div>
               </div>
             </div>

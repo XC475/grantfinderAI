@@ -124,16 +124,6 @@ model Organization {
   zipCode                String?
   strategicPlan          String?
   countyName             String?
-  districtDataYear       Int?
-  enrollment             Int?
-  highestGrade           Int?
-  latitude               Float?
-  leaId                  String?                     @unique
-  longitude              Float?
-  lowestGrade            Int?
-  numberOfSchools        Int?
-  stateLeaId             String?
-  urbanCentricLocale     Int?
   logoUrl                String?
   services               opportunity_services_enum[] @default([k12_education])
   aiChats                AiChat[]
@@ -146,7 +136,6 @@ model Organization {
   users                  User[]                      @relation("UserOrganization")
   customFields           CustomField[]
 
-  @@index([leaId])
   @@index([state])
   @@map("organizations")
   @@schema("app")
@@ -265,13 +254,13 @@ model AiChatMessage {
 }
 
 model Recommendation {
-  id             String       @id @default(cuid())
-  organizationId String
-  opportunityId  String
-  fitScore       Int
-  fitDescription String
-  districtName   String
-  queryDate      DateTime
+  id               String       @id @default(cuid())
+  organizationId   String
+  opportunityId    String
+  fitScore         Int
+  fitDescription   String
+  organizationName String
+  queryDate        DateTime
   createdAt      DateTime     @default(now())
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 

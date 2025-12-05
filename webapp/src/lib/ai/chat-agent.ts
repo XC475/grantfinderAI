@@ -4,13 +4,13 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { createAgent } from "langchain";
 import { createGrantSearchTool } from "./tools/grant-search-tool";
-import { buildSystemPrompt, DistrictInfo } from "./prompts/chat-assistant";
+import { buildSystemPrompt, OrganizationInfo } from "./prompts/chat-assistant";
 import { UserAIContextSettings } from "@/types/ai-settings";
 
-export type { DistrictInfo } from "./prompts/chat-assistant";
+export type { OrganizationInfo } from "./prompts/chat-assistant";
 
 export async function createChatAgent(
-  districtInfo: DistrictInfo | null,
+  organizationInfo: OrganizationInfo | null,
   baseUrl: string,
   userSettings?: UserAIContextSettings | null
 ) {
@@ -23,13 +23,13 @@ export async function createChatAgent(
 
   // Create tools - only include grant search if enabled in settings
   const enableGrantSearch = userSettings?.enableGrantSearchChat ?? true;
-  const tools = enableGrantSearch ? [createGrantSearchTool(districtInfo)] : [];
+  const tools = enableGrantSearch ? [createGrantSearchTool(organizationInfo)] : [];
 
   // The createAgent function returns a ReactAgent which has invoke() and stream() methods
   const agent = createAgent({
     model,
     tools,
-    systemPrompt: buildSystemPrompt(districtInfo, baseUrl, userSettings),
+    systemPrompt: buildSystemPrompt(organizationInfo, baseUrl, userSettings),
   });
 
   return agent;

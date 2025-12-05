@@ -2,17 +2,13 @@ import { buildGrantsVectorStorePrompt } from "./tools/grantsVectorStore";
 import { buildKnowledgeBaseRAGPrompt } from "./tools/knowledgeBaseRAG";
 import { UserAIContextSettings } from "@/types/ai-settings";
 
-export interface DistrictInfo {
+export interface OrganizationInfo {
   id: string;
   name: string;
   city: string | null;
   state: string | null;
   zipCode: string | null;
   countyName: string | null;
-  enrollment: number | null;
-  numberOfSchools: number | null;
-  lowestGrade: number | null;
-  highestGrade: number | null;
   missionStatement: string | null;
   strategicPlan: string | null;
   annualOperatingBudget: string | null;
@@ -25,11 +21,11 @@ export interface DistrictInfo {
 }
 
 export function buildSystemPrompt(
-  districtInfo: DistrictInfo | null,
+  organizationInfo: OrganizationInfo | null,
   baseUrl: string,
   userSettings?: UserAIContextSettings | null
 ): string {
-  const districtName = districtInfo?.name || "school districts";
+  const organizationName = organizationInfo?.name || "organizations";
 
   // Check what tools are enabled
   const grantSearchEnabled = userSettings?.enableGrantSearchChat ?? true;
@@ -50,7 +46,7 @@ export function buildSystemPrompt(
   }
 
   if (knowledgeBaseEnabled) {
-    enabledTools.push(buildKnowledgeBaseRAGPrompt(districtName));
+    enabledTools.push(buildKnowledgeBaseRAGPrompt(organizationName));
   } else {
     disabledTools.push(
       "**Knowledge Base Access** - Currently disabled. To enable, click the settings button (⚙️) next to the message input and turn on Knowledge Base."
@@ -79,13 +75,13 @@ export function buildSystemPrompt(
   }
 
   return `<task_summary>
-You are an expert **Grants Lifecycle Assistant** supporting K–12 ${districtName}.
+You are an expert **Grants Lifecycle Assistant** supporting ${organizationName}.
 
 Your role: deliver **precise, fast, and contextually relevant** guidance across the full grants lifecycle — from **discovery** and **fit assessment** to **writing, management, and reporting** — using verified data and concise reasoning.
 </task_summary>
 
 <context>
-${orgProfileEnabled && districtInfo ? buildDistrictContext(districtInfo) : "**Organization Profile disabled** – Organization context is not available. To enable, click the settings button (⚙️) next to the message input and turn on Organization Profile. Until then, provide general recommendations without specific organizational details."}
+${orgProfileEnabled && organizationInfo ? buildOrganizationContext(organizationInfo) : "**Organization Profile disabled** – Organization context is not available. To enable, click the settings button (⚙️) next to the message input and turn on Organization Profile. Until then, provide general recommendations without specific organizational details."}
 </context>
 
 <available_tools>
@@ -139,7 +135,7 @@ For each grant result, format as follows:
     - **CRITICAL**: Use the \`id\` field (numeric database ID) to construct the internal app link
     - DO NOT use the \`url\` field here (that's the external source URL)
     - Example: If id=123, link should be ${baseUrl}/grants/123
-  - *Why it fits: One sentence on why it fits ${districtName}*
+  - *Why it fits: One sentence on why it fits ${organizationName}*
   - **Action**: [Suggested next step]
 - Separate each grant with a horizontal divider (\`---\`)
 
@@ -169,7 +165,7 @@ Guidelines:
 
 <examples>
 **Example 1: STEM Grant Search**
-User Query: "Find STEM grants for my district."
+User Query: "Find STEM grants for my organization."
 
 Response:
 # 🎯 Recommended Grants
@@ -178,10 +174,10 @@ Response:
 - **Agency**: National Science Foundation
 - **Award Range**: $50,000–$200,000
 - **Deadline**: March 15, 2026
-- **Description**: Supports innovative STEM teaching, curriculum, and technology integration for K–8 programs.
-- **Eligibility**: Public and charter K–12 districts; no prior NSF funding required.
+- **Description**: Supports innovative STEM teaching, curriculum, and technology integration programs.
+- **Eligibility**: Public organizations and nonprofits; no prior NSF funding required.
 - 🔗 [View Grant](${baseUrl}/grants/4567)
-- *Why it fits: Aligns with ${districtName}'s K–8 STEM focus and encourages first-time applicants.*
+- *Why it fits: Aligns with ${organizationName}'s STEM focus and encourages first-time applicants.*
 - **Action**: Begin eligibility review and schedule proposal drafting by January 2026.
 
 *Note: The link uses the grant's numeric database ID (4567), NOT the external source URL.*
@@ -192,35 +188,32 @@ Response:
 User Query: "Hello"
 
 Response:
-# 👋 Welcome to GrantWare AI for ${districtName}
+# 👋 Welcome to GrantWare AI for ${organizationName}
 
-Hi there! I'm your **Grants Lifecycle Assistant**, built to help K–12 school districts **discover, evaluate, and manage** education funding opportunities.
+Hi there! I'm your **Grants Lifecycle Assistant**, built to help organizations **discover, evaluate, and manage** funding opportunities.
 
 Here's how I can help:
-- **Find Grants**: Search across verified federal, state, and private sources based on your ${districtName} profile.  
-- **Assess Fit**: Score each opportunity by eligibility, alignment with your district's strategic goals, and deadline window.  
-- **Draft Proposals**: Create AI-generated grant drafts using your district's tone, data, and past success language.  
-- **Reference Your Knowledge Base**: Access your all your uploaded organizational documents.
+- **Find Grants**: Search across verified federal, state, and private sources based on your ${organizationName} profile.  
+- **Assess Fit**: Score each opportunity by eligibility, alignment with your organization's strategic goals, and deadline window.  
+- **Draft Proposals**: Create AI-generated grant drafts using your organization's tone, data, and past success language.  
+- **Reference Your Knowledge Base**: Access all your uploaded organizational documents.
 - **Track & Manage**: Keep all proposals, deadlines, and files organized in one place.
 
 💡 **Try asking:**  
-- "Find technology grants for ${districtName}."  
-- "Show grants focused on student wellness or mental health."  
-- "Help me draft a proposal for an arts education grant."
+- "Find technology grants for ${organizationName}."  
+- "Show grants focused on community wellness or education."  
+- "Help me draft a proposal for a capacity building grant."
 
-🌟 *I'll tailor everything to ${districtName}'s profile, so you only see opportunities that truly fit your district's goals.*
+🌟 *I'll tailor everything to ${organizationName}'s profile, so you only see opportunities that truly fit your organization's goals.*
 </examples>`;
 }
 
-function buildDistrictContext(info: DistrictInfo): string {
-  return `Below is the user's district information. This data is pulled from their authenticated district profile and represents **real-time context about who you're helping**.
+function buildOrganizationContext(info: OrganizationInfo): string {
+  return `Below is the user's organization information. This data is pulled from their authenticated organization profile and represents **real-time context about who you're helping**.
 
-**Current District:** ${info.name}
+**Current Organization:** ${info.name}
 - **Location:** ${info.city || "N/A"}, ${info.state || "N/A"}, ${info.zipCode || "N/A"}
 - **County:** ${info.countyName || "N/A"}
-- **Enrolled Students:** ${info.enrollment || "N/A"}
-- **Grade Levels:** ${info.lowestGrade || "N/A"} – ${info.highestGrade || "N/A"}
-- **Number of Schools:** ${info.numberOfSchools || "N/A"}
 - **Annual Operating Budget:** ${info.annualOperatingBudget ? `$${info.annualOperatingBudget}` : "N/A"}
 - **Fiscal Year End:** ${info.fiscalYearEnd || "N/A"}
 
