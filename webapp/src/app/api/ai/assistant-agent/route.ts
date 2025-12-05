@@ -8,6 +8,7 @@ import { DistrictInfo } from "@/lib/ai/prompts/chat-assistant";
 import { getSourceDocumentContext } from "@/lib/documentContext";
 import { searchKnowledgeBase } from "@/lib/ai/knowledgeBaseRAG";
 import { getActiveKnowledgeBase } from "@/lib/getOrgKnowledgeBase";
+import { getUserAIContextSettings } from "@/lib/aiContextSettings";
 
 interface FileAttachment {
   id: string;
@@ -47,6 +48,9 @@ export async function POST(req: NextRequest) {
 
     // 2. Get user's organization
     const userOrgId = organizationId || (await getUserOrganizationId(user.id));
+
+    // 2.5. Fetch user AI context settings
+    const userAISettings = await getUserAIContextSettings(user.id);
 
     // 3. Fetch organization data
     const organization = await prisma.organization.findUnique({
@@ -113,11 +117,9 @@ export async function POST(req: NextRequest) {
     );
 
     // Get general knowledge base context (user-filtered by AI settings)
-    const generalKBContext = await getActiveKnowledgeBase(
-      userOrgId,
-      user.id,
-      { context: "chat" }
-    );
+    const generalKBContext = await getActiveKnowledgeBase(userOrgId, user.id, {
+      context: "chat",
+    });
 
     // Combine all contexts
     let knowledgeBaseContext = "";
@@ -161,34 +163,40 @@ export async function POST(req: NextRequest) {
       ? `${protocol}://${host}/private/${organization.slug}`
       : `${protocol}://${host}`;
 
-    const districtInfo: DistrictInfo | null = organization.leaId
-      ? {
-          id: organization.id,
-          name: organization.name,
-          city: organization.city,
-          state: organization.state,
-          zipCode: organization.zipCode,
-          countyName: organization.countyName,
-          enrollment: organization.enrollment,
-          numberOfSchools: organization.numberOfSchools,
-          lowestGrade: organization.lowestGrade,
-          highestGrade: organization.highestGrade,
-          missionStatement: organization.missionStatement,
-          strategicPlan: organization.strategicPlan,
-          annualOperatingBudget: organization.annualOperatingBudget
-            ? organization.annualOperatingBudget.toString()
-            : null,
-          fiscalYearEnd: organization.fiscalYearEnd,
-          customFields: organization.customFields.map((field) => ({
-            name: field.name,
-            description: field.description,
-            value: field.value,
-          })),
-        }
-      : null;
+    // Only include organization profile if enabled in user settings
+    const districtInfo: DistrictInfo | null =
+      userAISettings.enableOrgProfileChat && organization.leaId
+        ? {
+            id: organization.id,
+            name: organization.name,
+            city: organization.city,
+            state: organization.state,
+            zipCode: organization.zipCode,
+            countyName: organization.countyName,
+            enrollment: organization.enrollment,
+            numberOfSchools: organization.numberOfSchools,
+            lowestGrade: organization.lowestGrade,
+            highestGrade: organization.highestGrade,
+            missionStatement: organization.missionStatement,
+            strategicPlan: organization.strategicPlan,
+            annualOperatingBudget: organization.annualOperatingBudget
+              ? organization.annualOperatingBudget.toString()
+              : null,
+            fiscalYearEnd: organization.fiscalYearEnd,
+            customFields: organization.customFields.map((field) => ({
+              name: field.name,
+              description: field.description,
+              value: field.value,
+            })),
+          }
+        : null;
 
-    // 8. Create agent
-    const agent = await createGrantsAgent(districtInfo, baseUrl);
+    // 8. Create agent (pass settings to control grant search tool)
+    const agent = await createGrantsAgent(
+      districtInfo,
+      baseUrl,
+      userAISettings
+    );
 
     // 9. Convert all messages to LangChain format (including last user message)
     // If message has attachments, append extracted text to content

@@ -6,6 +6,7 @@ import { getSourceDocumentContext } from "@/lib/documentContext";
 import { searchKnowledgeBase } from "@/lib/ai/knowledgeBaseRAG";
 import { getActiveKnowledgeBase } from "@/lib/getOrgKnowledgeBase";
 import { buildEditorSystemPrompt } from "@/lib/ai/prompts/chat-editor";
+import { getUserAIContextSettings } from "@/lib/aiContextSettings";
 
 interface FileAttachment {
   id: string;
@@ -49,6 +50,9 @@ export async function POST(req: NextRequest) {
     if (!documentId) {
       return new Response("Document ID is required", { status: 400 });
     }
+
+    // Get user AI context settings
+    const userAISettings = await getUserAIContextSettings(user.id);
 
     // Get user's organization
     const dbUser = await prisma.user.findUnique({
@@ -255,21 +259,25 @@ ${opportunity.raw_text}`;
     }
 
     // Build system prompt using the chat-editor prompt builder
+    // Pass userSettings so prompt can explicitly state what's enabled/disabled
     const systemPrompt = buildEditorSystemPrompt({
       documentTitle: documentTitle || document.title || "Untitled Document",
       documentContent: documentContent || "No content yet.",
-      organizationInfo: {
-        ...organization,
-        customFields: organization.customFields.map((field) => ({
-          name: field.name,
-          description: field.description,
-          value: field.value,
-        })),
-      },
+      organizationInfo: userAISettings.enableOrgProfileEditor
+        ? {
+            ...organization,
+            customFields: organization.customFields.map((field) => ({
+              name: field.name,
+              description: field.description,
+              value: field.value,
+            })),
+          }
+        : undefined,
       applicationContext,
       attachmentContext,
       sourceContext,
       knowledgeBaseContext,
+      userSettings: userAISettings,
     });
 
     // Prepare messages for OpenAI

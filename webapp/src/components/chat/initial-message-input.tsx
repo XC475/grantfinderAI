@@ -51,7 +51,7 @@ function getDocumentIcon(doc: SourceDocument) {
   return <File className="h-4 w-4 text-muted-foreground flex-shrink-0" />;
 }
 
-interface HeroChatInputProps {
+interface InitialMessageInputProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onSubmit: (files?: File[] | null, sources?: SourceDocument[]) => void;
@@ -61,7 +61,7 @@ interface HeroChatInputProps {
   onSourceDocumentsChange?: (docs: SourceDocument[]) => void;
 }
 
-export function HeroChatInput({
+export function InitialMessageInput({
   value,
   onChange,
   onSubmit,
@@ -69,7 +69,7 @@ export function HeroChatInput({
   className,
   sourceDocuments,
   onSourceDocumentsChange,
-}: HeroChatInputProps) {
+}: InitialMessageInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<File[] | null>(null);
@@ -327,3 +327,6 @@ export function HeroChatInput({
     </div>
   );
 }
+
+// Backward compatibility alias
+export const HeroChatInput = InitialMessageInput;

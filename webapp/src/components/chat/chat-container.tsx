@@ -12,12 +12,12 @@ import { ArrowDown, ThumbsDown, ThumbsUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAutoScroll } from "@/hooks/use-auto-scroll";
 import { Button } from "@/components/ui/button";
-import { type Message } from "@/components/ui/chat-message";
+import { type Message } from "@/components/chat/chat-message";
 import { CopyButton } from "@/components/ui/copy-button";
-import { MessageInput } from "@/components/ui/message-input";
-import { HeroChatInput } from "@/components/ui/hero-chat-input";
-import { MessageList } from "@/components/ui/message-list";
-import { PromptSuggestions } from "@/components/ui/prompt-suggestions";
+import { MessageInput } from "@/components/chat/message-input";
+import { InitialMessageInput } from "@/components/chat/initial-message-input";
+import { MessageList } from "@/components/chat/message-list";
+import { PromptSuggestions } from "@/components/chat/prompt-suggestions";
 import { ChatGreeting } from "@/components/chat/ChatGreeting";
 import { type SourceDocument } from "@/components/chat/SourcesModal";
 
@@ -219,7 +219,7 @@ export function Chat({
       <div className={cn("flex flex-col items-center justify-center min-h-[80vh] space-y-8 px-4", className)}>
         <ChatGreeting userName={userName || ""} />
         
-        <HeroChatInput
+        <InitialMessageInput
           value={input}
           onChange={handleInputChange}
           onSubmit={(files, sources) => {

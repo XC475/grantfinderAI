@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { DocumentSidebarChat } from "./DocumentSidebarChat";
-import { Message } from "@/components/ui/chat-message";
+import { Message } from "@/components/chat/chat-message";
 import { useDocument } from "@/contexts/DocumentContext";
 import { Button } from "@/components/ui/button";
 import {

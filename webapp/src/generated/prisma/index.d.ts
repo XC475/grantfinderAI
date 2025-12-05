@@ -6712,6 +6712,12 @@ export namespace Prisma {
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    enableOrgProfileChat: boolean | null
+    enableOrgProfileEditor: boolean | null
+    enableKnowledgeBaseChat: boolean | null
+    enableKnowledgeBaseEditor: boolean | null
+    enableGrantSearchChat: boolean | null
+    enableGrantSearchEditor: boolean | null
   }
 
   export type UserAIContextSettingsMaxAggregateOutputType = {
@@ -6719,6 +6725,12 @@ export namespace Prisma {
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    enableOrgProfileChat: boolean | null
+    enableOrgProfileEditor: boolean | null
+    enableKnowledgeBaseChat: boolean | null
+    enableKnowledgeBaseEditor: boolean | null
+    enableGrantSearchChat: boolean | null
+    enableGrantSearchEditor: boolean | null
   }
 
   export type UserAIContextSettingsCountAggregateOutputType = {
@@ -6726,8 +6738,12 @@ export namespace Prisma {
     userId: number
     createdAt: number
     updatedAt: number
-    enabledTagsChat: number
-    enabledTagsEditor: number
+    enableOrgProfileChat: number
+    enableOrgProfileEditor: number
+    enableKnowledgeBaseChat: number
+    enableKnowledgeBaseEditor: number
+    enableGrantSearchChat: number
+    enableGrantSearchEditor: number
     _all: number
   }
 
@@ -6737,6 +6753,12 @@ export namespace Prisma {
     userId?: true
     createdAt?: true
     updatedAt?: true
+    enableOrgProfileChat?: true
+    enableOrgProfileEditor?: true
+    enableKnowledgeBaseChat?: true
+    enableKnowledgeBaseEditor?: true
+    enableGrantSearchChat?: true
+    enableGrantSearchEditor?: true
   }
 
   export type UserAIContextSettingsMaxAggregateInputType = {
@@ -6744,6 +6766,12 @@ export namespace Prisma {
     userId?: true
     createdAt?: true
     updatedAt?: true
+    enableOrgProfileChat?: true
+    enableOrgProfileEditor?: true
+    enableKnowledgeBaseChat?: true
+    enableKnowledgeBaseEditor?: true
+    enableGrantSearchChat?: true
+    enableGrantSearchEditor?: true
   }
 
   export type UserAIContextSettingsCountAggregateInputType = {
@@ -6751,8 +6779,12 @@ export namespace Prisma {
     userId?: true
     createdAt?: true
     updatedAt?: true
-    enabledTagsChat?: true
-    enabledTagsEditor?: true
+    enableOrgProfileChat?: true
+    enableOrgProfileEditor?: true
+    enableKnowledgeBaseChat?: true
+    enableKnowledgeBaseEditor?: true
+    enableGrantSearchChat?: true
+    enableGrantSearchEditor?: true
     _all?: true
   }
 
@@ -6833,8 +6865,12 @@ export namespace Prisma {
     userId: string
     createdAt: Date
     updatedAt: Date
-    enabledTagsChat: string[]
-    enabledTagsEditor: string[]
+    enableOrgProfileChat: boolean
+    enableOrgProfileEditor: boolean
+    enableKnowledgeBaseChat: boolean
+    enableKnowledgeBaseEditor: boolean
+    enableGrantSearchChat: boolean
+    enableGrantSearchEditor: boolean
     _count: UserAIContextSettingsCountAggregateOutputType | null
     _min: UserAIContextSettingsMinAggregateOutputType | null
     _max: UserAIContextSettingsMaxAggregateOutputType | null
@@ -6859,8 +6895,12 @@ export namespace Prisma {
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    enabledTagsChat?: boolean
-    enabledTagsEditor?: boolean
+    enableOrgProfileChat?: boolean
+    enableOrgProfileEditor?: boolean
+    enableKnowledgeBaseChat?: boolean
+    enableKnowledgeBaseEditor?: boolean
+    enableGrantSearchChat?: boolean
+    enableGrantSearchEditor?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userAIContextSettings"]>
 
@@ -6869,8 +6909,12 @@ export namespace Prisma {
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    enabledTagsChat?: boolean
-    enabledTagsEditor?: boolean
+    enableOrgProfileChat?: boolean
+    enableOrgProfileEditor?: boolean
+    enableKnowledgeBaseChat?: boolean
+    enableKnowledgeBaseEditor?: boolean
+    enableGrantSearchChat?: boolean
+    enableGrantSearchEditor?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userAIContextSettings"]>
 
@@ -6879,8 +6923,12 @@ export namespace Prisma {
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    enabledTagsChat?: boolean
-    enabledTagsEditor?: boolean
+    enableOrgProfileChat?: boolean
+    enableOrgProfileEditor?: boolean
+    enableKnowledgeBaseChat?: boolean
+    enableKnowledgeBaseEditor?: boolean
+    enableGrantSearchChat?: boolean
+    enableGrantSearchEditor?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userAIContextSettings"]>
 
@@ -6889,11 +6937,15 @@ export namespace Prisma {
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    enabledTagsChat?: boolean
-    enabledTagsEditor?: boolean
+    enableOrgProfileChat?: boolean
+    enableOrgProfileEditor?: boolean
+    enableKnowledgeBaseChat?: boolean
+    enableKnowledgeBaseEditor?: boolean
+    enableGrantSearchChat?: boolean
+    enableGrantSearchEditor?: boolean
   }
 
-  export type UserAIContextSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "createdAt" | "updatedAt" | "enabledTagsChat" | "enabledTagsEditor", ExtArgs["result"]["userAIContextSettings"]>
+  export type UserAIContextSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "createdAt" | "updatedAt" | "enableOrgProfileChat" | "enableOrgProfileEditor" | "enableKnowledgeBaseChat" | "enableKnowledgeBaseEditor" | "enableGrantSearchChat" | "enableGrantSearchEditor", ExtArgs["result"]["userAIContextSettings"]>
   export type UserAIContextSettingsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -6914,8 +6966,12 @@ export namespace Prisma {
       userId: string
       createdAt: Date
       updatedAt: Date
-      enabledTagsChat: string[]
-      enabledTagsEditor: string[]
+      enableOrgProfileChat: boolean
+      enableOrgProfileEditor: boolean
+      enableKnowledgeBaseChat: boolean
+      enableKnowledgeBaseEditor: boolean
+      enableGrantSearchChat: boolean
+      enableGrantSearchEditor: boolean
     }, ExtArgs["result"]["userAIContextSettings"]>
     composites: {}
   }
@@ -7344,8 +7400,12 @@ export namespace Prisma {
     readonly userId: FieldRef<"UserAIContextSettings", 'String'>
     readonly createdAt: FieldRef<"UserAIContextSettings", 'DateTime'>
     readonly updatedAt: FieldRef<"UserAIContextSettings", 'DateTime'>
-    readonly enabledTagsChat: FieldRef<"UserAIContextSettings", 'String[]'>
-    readonly enabledTagsEditor: FieldRef<"UserAIContextSettings", 'String[]'>
+    readonly enableOrgProfileChat: FieldRef<"UserAIContextSettings", 'Boolean'>
+    readonly enableOrgProfileEditor: FieldRef<"UserAIContextSettings", 'Boolean'>
+    readonly enableKnowledgeBaseChat: FieldRef<"UserAIContextSettings", 'Boolean'>
+    readonly enableKnowledgeBaseEditor: FieldRef<"UserAIContextSettings", 'Boolean'>
+    readonly enableGrantSearchChat: FieldRef<"UserAIContextSettings", 'Boolean'>
+    readonly enableGrantSearchEditor: FieldRef<"UserAIContextSettings", 'Boolean'>
   }
     
 
@@ -24578,8 +24638,12 @@ export namespace Prisma {
     userId: 'userId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    enabledTagsChat: 'enabledTagsChat',
-    enabledTagsEditor: 'enabledTagsEditor'
+    enableOrgProfileChat: 'enableOrgProfileChat',
+    enableOrgProfileEditor: 'enableOrgProfileEditor',
+    enableKnowledgeBaseChat: 'enableKnowledgeBaseChat',
+    enableKnowledgeBaseEditor: 'enableKnowledgeBaseEditor',
+    enableGrantSearchChat: 'enableGrantSearchChat',
+    enableGrantSearchEditor: 'enableGrantSearchEditor'
   };
 
   export type UserAIContextSettingsScalarFieldEnum = (typeof UserAIContextSettingsScalarFieldEnum)[keyof typeof UserAIContextSettingsScalarFieldEnum]
@@ -25490,8 +25554,12 @@ export namespace Prisma {
     userId?: UuidFilter<"UserAIContextSettings"> | string
     createdAt?: DateTimeFilter<"UserAIContextSettings"> | Date | string
     updatedAt?: DateTimeFilter<"UserAIContextSettings"> | Date | string
-    enabledTagsChat?: StringNullableListFilter<"UserAIContextSettings">
-    enabledTagsEditor?: StringNullableListFilter<"UserAIContextSettings">
+    enableOrgProfileChat?: BoolFilter<"UserAIContextSettings"> | boolean
+    enableOrgProfileEditor?: BoolFilter<"UserAIContextSettings"> | boolean
+    enableKnowledgeBaseChat?: BoolFilter<"UserAIContextSettings"> | boolean
+    enableKnowledgeBaseEditor?: BoolFilter<"UserAIContextSettings"> | boolean
+    enableGrantSearchChat?: BoolFilter<"UserAIContextSettings"> | boolean
+    enableGrantSearchEditor?: BoolFilter<"UserAIContextSettings"> | boolean
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -25500,8 +25568,12 @@ export namespace Prisma {
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    enabledTagsChat?: SortOrder
-    enabledTagsEditor?: SortOrder
+    enableOrgProfileChat?: SortOrder
+    enableOrgProfileEditor?: SortOrder
+    enableKnowledgeBaseChat?: SortOrder
+    enableKnowledgeBaseEditor?: SortOrder
+    enableGrantSearchChat?: SortOrder
+    enableGrantSearchEditor?: SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -25513,8 +25585,12 @@ export namespace Prisma {
     NOT?: UserAIContextSettingsWhereInput | UserAIContextSettingsWhereInput[]
     createdAt?: DateTimeFilter<"UserAIContextSettings"> | Date | string
     updatedAt?: DateTimeFilter<"UserAIContextSettings"> | Date | string
-    enabledTagsChat?: StringNullableListFilter<"UserAIContextSettings">
-    enabledTagsEditor?: StringNullableListFilter<"UserAIContextSettings">
+    enableOrgProfileChat?: BoolFilter<"UserAIContextSettings"> | boolean
+    enableOrgProfileEditor?: BoolFilter<"UserAIContextSettings"> | boolean
+    enableKnowledgeBaseChat?: BoolFilter<"UserAIContextSettings"> | boolean
+    enableKnowledgeBaseEditor?: BoolFilter<"UserAIContextSettings"> | boolean
+    enableGrantSearchChat?: BoolFilter<"UserAIContextSettings"> | boolean
+    enableGrantSearchEditor?: BoolFilter<"UserAIContextSettings"> | boolean
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "userId">
 
@@ -25523,8 +25599,12 @@ export namespace Prisma {
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    enabledTagsChat?: SortOrder
-    enabledTagsEditor?: SortOrder
+    enableOrgProfileChat?: SortOrder
+    enableOrgProfileEditor?: SortOrder
+    enableKnowledgeBaseChat?: SortOrder
+    enableKnowledgeBaseEditor?: SortOrder
+    enableGrantSearchChat?: SortOrder
+    enableGrantSearchEditor?: SortOrder
     _count?: UserAIContextSettingsCountOrderByAggregateInput
     _max?: UserAIContextSettingsMaxOrderByAggregateInput
     _min?: UserAIContextSettingsMinOrderByAggregateInput
@@ -25538,8 +25618,12 @@ export namespace Prisma {
     userId?: UuidWithAggregatesFilter<"UserAIContextSettings"> | string
     createdAt?: DateTimeWithAggregatesFilter<"UserAIContextSettings"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"UserAIContextSettings"> | Date | string
-    enabledTagsChat?: StringNullableListFilter<"UserAIContextSettings">
-    enabledTagsEditor?: StringNullableListFilter<"UserAIContextSettings">
+    enableOrgProfileChat?: BoolWithAggregatesFilter<"UserAIContextSettings"> | boolean
+    enableOrgProfileEditor?: BoolWithAggregatesFilter<"UserAIContextSettings"> | boolean
+    enableKnowledgeBaseChat?: BoolWithAggregatesFilter<"UserAIContextSettings"> | boolean
+    enableKnowledgeBaseEditor?: BoolWithAggregatesFilter<"UserAIContextSettings"> | boolean
+    enableGrantSearchChat?: BoolWithAggregatesFilter<"UserAIContextSettings"> | boolean
+    enableGrantSearchEditor?: BoolWithAggregatesFilter<"UserAIContextSettings"> | boolean
   }
 
   export type OrganizationWhereInput = {
@@ -27228,8 +27312,12 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    enabledTagsChat?: UserAIContextSettingsCreateenabledTagsChatInput | string[]
-    enabledTagsEditor?: UserAIContextSettingsCreateenabledTagsEditorInput | string[]
+    enableOrgProfileChat?: boolean
+    enableOrgProfileEditor?: boolean
+    enableKnowledgeBaseChat?: boolean
+    enableKnowledgeBaseEditor?: boolean
+    enableGrantSearchChat?: boolean
+    enableGrantSearchEditor?: boolean
     user: UserCreateNestedOneWithoutAiContextSettingsInput
   }
 
@@ -27238,16 +27326,24 @@ export namespace Prisma {
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    enabledTagsChat?: UserAIContextSettingsCreateenabledTagsChatInput | string[]
-    enabledTagsEditor?: UserAIContextSettingsCreateenabledTagsEditorInput | string[]
+    enableOrgProfileChat?: boolean
+    enableOrgProfileEditor?: boolean
+    enableKnowledgeBaseChat?: boolean
+    enableKnowledgeBaseEditor?: boolean
+    enableGrantSearchChat?: boolean
+    enableGrantSearchEditor?: boolean
   }
 
   export type UserAIContextSettingsUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    enabledTagsChat?: UserAIContextSettingsUpdateenabledTagsChatInput | string[]
-    enabledTagsEditor?: UserAIContextSettingsUpdateenabledTagsEditorInput | string[]
+    enableOrgProfileChat?: BoolFieldUpdateOperationsInput | boolean
+    enableOrgProfileEditor?: BoolFieldUpdateOperationsInput | boolean
+    enableKnowledgeBaseChat?: BoolFieldUpdateOperationsInput | boolean
+    enableKnowledgeBaseEditor?: BoolFieldUpdateOperationsInput | boolean
+    enableGrantSearchChat?: BoolFieldUpdateOperationsInput | boolean
+    enableGrantSearchEditor?: BoolFieldUpdateOperationsInput | boolean
     user?: UserUpdateOneRequiredWithoutAiContextSettingsNestedInput
   }
 
@@ -27256,8 +27352,12 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    enabledTagsChat?: UserAIContextSettingsUpdateenabledTagsChatInput | string[]
-    enabledTagsEditor?: UserAIContextSettingsUpdateenabledTagsEditorInput | string[]
+    enableOrgProfileChat?: BoolFieldUpdateOperationsInput | boolean
+    enableOrgProfileEditor?: BoolFieldUpdateOperationsInput | boolean
+    enableKnowledgeBaseChat?: BoolFieldUpdateOperationsInput | boolean
+    enableKnowledgeBaseEditor?: BoolFieldUpdateOperationsInput | boolean
+    enableGrantSearchChat?: BoolFieldUpdateOperationsInput | boolean
+    enableGrantSearchEditor?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserAIContextSettingsCreateManyInput = {
@@ -27265,16 +27365,24 @@ export namespace Prisma {
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    enabledTagsChat?: UserAIContextSettingsCreateenabledTagsChatInput | string[]
-    enabledTagsEditor?: UserAIContextSettingsCreateenabledTagsEditorInput | string[]
+    enableOrgProfileChat?: boolean
+    enableOrgProfileEditor?: boolean
+    enableKnowledgeBaseChat?: boolean
+    enableKnowledgeBaseEditor?: boolean
+    enableGrantSearchChat?: boolean
+    enableGrantSearchEditor?: boolean
   }
 
   export type UserAIContextSettingsUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    enabledTagsChat?: UserAIContextSettingsUpdateenabledTagsChatInput | string[]
-    enabledTagsEditor?: UserAIContextSettingsUpdateenabledTagsEditorInput | string[]
+    enableOrgProfileChat?: BoolFieldUpdateOperationsInput | boolean
+    enableOrgProfileEditor?: BoolFieldUpdateOperationsInput | boolean
+    enableKnowledgeBaseChat?: BoolFieldUpdateOperationsInput | boolean
+    enableKnowledgeBaseEditor?: BoolFieldUpdateOperationsInput | boolean
+    enableGrantSearchChat?: BoolFieldUpdateOperationsInput | boolean
+    enableGrantSearchEditor?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserAIContextSettingsUncheckedUpdateManyInput = {
@@ -27282,8 +27390,12 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    enabledTagsChat?: UserAIContextSettingsUpdateenabledTagsChatInput | string[]
-    enabledTagsEditor?: UserAIContextSettingsUpdateenabledTagsEditorInput | string[]
+    enableOrgProfileChat?: BoolFieldUpdateOperationsInput | boolean
+    enableOrgProfileEditor?: BoolFieldUpdateOperationsInput | boolean
+    enableKnowledgeBaseChat?: BoolFieldUpdateOperationsInput | boolean
+    enableKnowledgeBaseEditor?: BoolFieldUpdateOperationsInput | boolean
+    enableGrantSearchChat?: BoolFieldUpdateOperationsInput | boolean
+    enableGrantSearchEditor?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrganizationCreateInput = {
@@ -29261,14 +29373,6 @@ export namespace Prisma {
     _max?: NestedEnumOrganizationRoleFilter<$PrismaModel>
   }
 
-  export type StringNullableListFilter<$PrismaModel = never> = {
-    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    has?: string | StringFieldRefInput<$PrismaModel> | null
-    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
-    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
-    isEmpty?: boolean
-  }
-
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
@@ -29279,8 +29383,12 @@ export namespace Prisma {
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    enabledTagsChat?: SortOrder
-    enabledTagsEditor?: SortOrder
+    enableOrgProfileChat?: SortOrder
+    enableOrgProfileEditor?: SortOrder
+    enableKnowledgeBaseChat?: SortOrder
+    enableKnowledgeBaseEditor?: SortOrder
+    enableGrantSearchChat?: SortOrder
+    enableGrantSearchEditor?: SortOrder
   }
 
   export type UserAIContextSettingsMaxOrderByAggregateInput = {
@@ -29288,6 +29396,12 @@ export namespace Prisma {
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    enableOrgProfileChat?: SortOrder
+    enableOrgProfileEditor?: SortOrder
+    enableKnowledgeBaseChat?: SortOrder
+    enableKnowledgeBaseEditor?: SortOrder
+    enableGrantSearchChat?: SortOrder
+    enableGrantSearchEditor?: SortOrder
   }
 
   export type UserAIContextSettingsMinOrderByAggregateInput = {
@@ -29295,6 +29409,12 @@ export namespace Prisma {
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    enableOrgProfileChat?: SortOrder
+    enableOrgProfileEditor?: SortOrder
+    enableKnowledgeBaseChat?: SortOrder
+    enableKnowledgeBaseEditor?: SortOrder
+    enableGrantSearchChat?: SortOrder
+    enableGrantSearchEditor?: SortOrder
   }
 
   export type DecimalNullableFilter<$PrismaModel = never> = {
@@ -30525,28 +30645,10 @@ export namespace Prisma {
     update?: XOR<XOR<UserAIContextSettingsUpdateToOneWithWhereWithoutUserInput, UserAIContextSettingsUpdateWithoutUserInput>, UserAIContextSettingsUncheckedUpdateWithoutUserInput>
   }
 
-  export type UserAIContextSettingsCreateenabledTagsChatInput = {
-    set: string[]
-  }
-
-  export type UserAIContextSettingsCreateenabledTagsEditorInput = {
-    set: string[]
-  }
-
   export type UserCreateNestedOneWithoutAiContextSettingsInput = {
     create?: XOR<UserCreateWithoutAiContextSettingsInput, UserUncheckedCreateWithoutAiContextSettingsInput>
     connectOrCreate?: UserCreateOrConnectWithoutAiContextSettingsInput
     connect?: UserWhereUniqueInput
-  }
-
-  export type UserAIContextSettingsUpdateenabledTagsChatInput = {
-    set?: string[]
-    push?: string | string[]
-  }
-
-  export type UserAIContextSettingsUpdateenabledTagsEditorInput = {
-    set?: string[]
-    push?: string | string[]
   }
 
   export type UserUpdateOneRequiredWithoutAiContextSettingsNestedInput = {
@@ -32213,16 +32315,24 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    enabledTagsChat?: UserAIContextSettingsCreateenabledTagsChatInput | string[]
-    enabledTagsEditor?: UserAIContextSettingsCreateenabledTagsEditorInput | string[]
+    enableOrgProfileChat?: boolean
+    enableOrgProfileEditor?: boolean
+    enableKnowledgeBaseChat?: boolean
+    enableKnowledgeBaseEditor?: boolean
+    enableGrantSearchChat?: boolean
+    enableGrantSearchEditor?: boolean
   }
 
   export type UserAIContextSettingsUncheckedCreateWithoutUserInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    enabledTagsChat?: UserAIContextSettingsCreateenabledTagsChatInput | string[]
-    enabledTagsEditor?: UserAIContextSettingsCreateenabledTagsEditorInput | string[]
+    enableOrgProfileChat?: boolean
+    enableOrgProfileEditor?: boolean
+    enableKnowledgeBaseChat?: boolean
+    enableKnowledgeBaseEditor?: boolean
+    enableGrantSearchChat?: boolean
+    enableGrantSearchEditor?: boolean
   }
 
   export type UserAIContextSettingsCreateOrConnectWithoutUserInput = {
@@ -32391,16 +32501,24 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    enabledTagsChat?: UserAIContextSettingsUpdateenabledTagsChatInput | string[]
-    enabledTagsEditor?: UserAIContextSettingsUpdateenabledTagsEditorInput | string[]
+    enableOrgProfileChat?: BoolFieldUpdateOperationsInput | boolean
+    enableOrgProfileEditor?: BoolFieldUpdateOperationsInput | boolean
+    enableKnowledgeBaseChat?: BoolFieldUpdateOperationsInput | boolean
+    enableKnowledgeBaseEditor?: BoolFieldUpdateOperationsInput | boolean
+    enableGrantSearchChat?: BoolFieldUpdateOperationsInput | boolean
+    enableGrantSearchEditor?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserAIContextSettingsUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    enabledTagsChat?: UserAIContextSettingsUpdateenabledTagsChatInput | string[]
-    enabledTagsEditor?: UserAIContextSettingsUpdateenabledTagsEditorInput | string[]
+    enableOrgProfileChat?: BoolFieldUpdateOperationsInput | boolean
+    enableOrgProfileEditor?: BoolFieldUpdateOperationsInput | boolean
+    enableKnowledgeBaseChat?: BoolFieldUpdateOperationsInput | boolean
+    enableKnowledgeBaseEditor?: BoolFieldUpdateOperationsInput | boolean
+    enableGrantSearchChat?: BoolFieldUpdateOperationsInput | boolean
+    enableGrantSearchEditor?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrganizationUpsertWithoutUsersInput = {

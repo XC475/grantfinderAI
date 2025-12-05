@@ -89,13 +89,17 @@ model User {
 }
 
 model UserAIContextSettings {
-  id                String   @id @default(cuid())
-  userId            String   @unique @db.Uuid
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  enabledTagsChat   String[]
-  enabledTagsEditor String[]
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                        String   @id @default(cuid())
+  userId                    String   @unique @db.Uuid
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+  enableOrgProfileChat      Boolean  @default(true)
+  enableOrgProfileEditor    Boolean  @default(true)
+  enableKnowledgeBaseChat   Boolean  @default(true)
+  enableKnowledgeBaseEditor Boolean  @default(true)
+  enableGrantSearchChat     Boolean  @default(true)
+  enableGrantSearchEditor   Boolean  @default(true)
+  user                      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_ai_context_settings")
   @@schema("app")

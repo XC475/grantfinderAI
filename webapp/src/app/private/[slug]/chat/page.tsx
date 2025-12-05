@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ChatDemo } from "@/components/chat/Chat";
-import { Message } from "@/components/ui/chat-message";
+import { Message } from "@/components/chat/chat-message";
 import { Loading } from "@/components/ui/spinner";
 import { type SourceDocument } from "@/components/chat/SourcesModal";
 

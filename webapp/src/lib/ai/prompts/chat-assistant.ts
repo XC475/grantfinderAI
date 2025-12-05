@@ -1,5 +1,6 @@
 import { buildGrantsVectorStorePrompt } from "./tools/grantsVectorStore";
 import { buildKnowledgeBaseRAGPrompt } from "./tools/knowledgeBaseRAG";
+import { UserAIContextSettings } from "@/types/ai-settings";
 
 export interface DistrictInfo {
   id: string;
@@ -25,9 +26,47 @@ export interface DistrictInfo {
 
 export function buildSystemPrompt(
   districtInfo: DistrictInfo | null,
-  baseUrl: string
+  baseUrl: string,
+  userSettings?: UserAIContextSettings | null
 ): string {
   const districtName = districtInfo?.name || "school districts";
+
+  // Check what tools are enabled
+  const grantSearchEnabled = userSettings?.enableGrantSearchChat ?? true;
+  const knowledgeBaseEnabled = userSettings?.enableKnowledgeBaseChat ?? true;
+  const orgProfileEnabled = userSettings?.enableOrgProfileChat ?? true;
+
+  // Build available tools section based on enabled capabilities
+  let availableToolsSection = "";
+  const enabledTools: string[] = [];
+  const disabledTools: string[] = [];
+
+  if (grantSearchEnabled) {
+    enabledTools.push(buildGrantsVectorStorePrompt());
+  } else {
+    disabledTools.push(
+      "**Grant Search** - This capability is currently disabled in user settings. You cannot search the grants database."
+    );
+  }
+
+  if (knowledgeBaseEnabled) {
+    enabledTools.push(buildKnowledgeBaseRAGPrompt(districtName));
+  } else {
+    disabledTools.push(
+      "**Knowledge Base Access** - This capability is currently disabled in user settings. You cannot access uploaded organizational documents."
+    );
+  }
+
+  if (enabledTools.length > 0) {
+    availableToolsSection = enabledTools.join("\n\n");
+  }
+
+  if (disabledTools.length > 0) {
+    const disabledSection =
+      "\n\n**Disabled Capabilities:**\n" +
+      disabledTools.map((tool) => `- ${tool}`).join("\n");
+    availableToolsSection += disabledSection;
+  }
 
   return `<task_summary>
 You are an expert **Grants Lifecycle Assistant** supporting K–12 ${districtName}.
@@ -36,19 +75,18 @@ Your role: deliver **precise, fast, and contextually relevant** guidance across 
 </task_summary>
 
 <context>
-${districtInfo ? buildDistrictContext(districtInfo) : "**No district linked** – Provide general grant recommendations."}
+${orgProfileEnabled && districtInfo ? buildDistrictContext(districtInfo) : "**Organization Profile disabled** – Organization context is not available. Provide general recommendations without specific organizational details."}
 </context>
 
 <available_tools>
-${buildGrantsVectorStorePrompt()}
-
-${buildKnowledgeBaseRAGPrompt(districtName)}
+${availableToolsSection || "**No tools available** - All AI capabilities are currently disabled in user settings."}
 </available_tools>
 
 <tool_usage_policy>
 - **ALWAYS rely on available tools** to retrieve information or perform actions.  
 - **NEVER fabricate or assume external data** — only use tool outputs or provided context.  
 - For casual or conversational inputs (e.g., greetings, feedback), **do not call tools** — respond fast and naturally as a helpful assistant.
+- **If a user asks about a disabled capability**, politely inform them that the feature is currently turned off in their AI settings and guide them to Settings → AI Capabilities to enable it.
 </tool_usage_policy>
 
 <output_structure>

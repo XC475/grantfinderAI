@@ -1,5 +1,6 @@
 import { Decimal } from "@prisma/client/runtime/library";
 import { buildKnowledgeBaseRAGPrompt } from "./tools/knowledgeBaseRAG";
+import { UserAIContextSettings } from "@/types/ai-settings";
 
 export interface OrganizationInfo {
   id: string;
@@ -26,11 +27,12 @@ export interface OrganizationInfo {
 export interface EditorPromptOptions {
   documentTitle: string;
   documentContent: string;
-  organizationInfo: OrganizationInfo;
+  organizationInfo?: OrganizationInfo;
   applicationContext?: string;
   attachmentContext?: string;
   sourceContext?: string;
   knowledgeBaseContext?: string;
+  userSettings?: UserAIContextSettings | null;
 }
 
 export function buildEditorSystemPrompt(options: EditorPromptOptions): string {
@@ -42,10 +44,16 @@ export function buildEditorSystemPrompt(options: EditorPromptOptions): string {
     attachmentContext = "",
     sourceContext = "",
     knowledgeBaseContext = "",
+    userSettings = null,
   } = options;
 
-  // Build organization context
-  const organizationContext = `
+  // Check settings for enabled capabilities
+  const orgProfileEnabled = userSettings?.enableOrgProfileEditor ?? true;
+  const knowledgeBaseEnabled = userSettings?.enableKnowledgeBaseEditor ?? true;
+
+  // Build organization context only if organizationInfo is provided AND enabled
+  const organizationContext = orgProfileEnabled && organizationInfo
+    ? `
 
 ORGANIZATION CONTEXT:
 You are assisting ${organizationInfo.name}${organizationInfo.city && organizationInfo.state ? ` located in ${organizationInfo.city}, ${organizationInfo.state}` : ""}.
@@ -65,7 +73,16 @@ ${organizationInfo.customFields && organizationInfo.customFields.length > 0
             }`
         )
         .join("\n")}`
-    : ""}`;
+    : ""}`
+    : !orgProfileEnabled
+    ? "\n\nORGANIZATION CONTEXT: **Disabled** - Organization profile access is currently turned off in your AI settings."
+    : "";
+
+  const knowledgeBasePrompt = knowledgeBaseEnabled
+    ? (organizationInfo
+        ? buildKnowledgeBaseRAGPrompt(organizationInfo.name)
+        : "You have access to uploaded organizational documents when available.")
+    : "**Knowledge Base Access: Disabled** - This capability is currently turned off in your AI settings. You cannot access uploaded organizational documents.";
 
   return `You are a helpful assistant for a grant writing application called GrantWare. 
 You are helping the user with their document titled "${documentTitle}".
@@ -79,8 +96,7 @@ You are helping the user with their document titled "${documentTitle}".
 
 ## Knowledge Base Access
 
-${buildKnowledgeBaseRAGPrompt(organizationInfo.name)}
-
+${knowledgeBasePrompt}
 ${organizationContext}
 ${applicationContext}
 
@@ -98,6 +114,8 @@ available, ensure your suggestions align with the grant opportunity's requiremen
 When users ask about organizational resources, budgets, strategic plans, past proposals, or 
 uploaded materials, acknowledge that you can access their knowledge base and use it to provide 
 accurate, contextually relevant assistance for grant management.
+
+**If a user asks about a disabled capability**, politely inform them that the feature is currently turned off in their AI settings and guide them to Settings → AI Capabilities to enable it.
 
 OUTPUT FORMAT:
 Use **clean, well-structured markdown** with clear visual hierarchy.

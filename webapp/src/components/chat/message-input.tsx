@@ -517,7 +517,10 @@ export function MessageInput({
                 aria-label="Stop generating"
                 onClick={stop}
               >
-                <Square className="h-4 w-4 animate-pulse text-white" fill="currentColor" />
+                <Square
+                  className="h-4 w-4 animate-pulse text-white"
+                  fill="currentColor"
+                />
               </Button>
             ) : (
               <Button
