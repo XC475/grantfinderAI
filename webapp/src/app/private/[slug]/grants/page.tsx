@@ -755,18 +755,7 @@ function GrantsSearchPage() {
 
   // Memoized computed values
   const isProfileComplete = useMemo(() => {
-    if (!organization) return false;
-    return !!(
-      organization.name &&
-      organization.state &&
-      organization.city &&
-      organization.phone &&
-      organization.email &&
-      organization.missionStatement &&
-      organization.strategicPlan &&
-      organization.annualOperatingBudget &&
-      organization.fiscalYearEnd
-    );
+    return !!organization?.name;
   }, [organization]);
 
   const hasActiveFilters = useMemo(() => {
@@ -1328,20 +1317,24 @@ function GrantsSearchPage() {
             </div>
           ) : (
             <>
-              {/* Profile Incomplete Alert */}
-              {!isProfileComplete && (
-                <Alert variant="destructive">
+              {/* Profile Incomplete Warning */}
+              {(!organization?.missionStatement ||
+                !organization?.strategicPlan) && (
+                <Alert variant="default" className="mb-6">
                   <AlertCircle className="h-4 w-4" />
                   <AlertTitle>Profile Incomplete</AlertTitle>
                   <AlertDescription className="flex items-center justify-between">
                     <span>
-                      Please complete all required fields in your organization
-                      profile to get personalized grant recommendations.
+                      Recommendations may be more general. Complete your mission
+                      statement and strategic plan for better personalized
+                      results.
                     </span>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => router.push(`/private/${slug}/settings/profile`)}
+                      onClick={() =>
+                        router.push(`/private/${slug}/settings/profile`)
+                      }
                     >
                       Go to Profile
                     </Button>
@@ -1358,9 +1351,8 @@ function GrantsSearchPage() {
                       Ready to Get Recommendations
                     </h3>
                     <p className="text-sm text-muted-foreground text-center mb-6 max-w-md">
-                      Your profile is complete! Click the button below to
-                      generate AI-powered grant recommendations tailored to your
-                      organization.
+                      Click the button below to generate AI-powered grant
+                      recommendations tailored to your organization.
                     </p>
                     <Button
                       onClick={handleRunRecommendations}

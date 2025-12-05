@@ -87,25 +87,25 @@ export async function POST(request: NextRequest) {
     if (mode === "create_new" && orgData?.name) {
       // Generate slug from organization name
       const slug = orgData.name
-        .toLowerCase()
-        .replace(/[^\w-]/g, "-")
-        .replace(/-+/g, "-")
-        .replace(/^-+|-+$/g, "");
+          .toLowerCase()
+          .replace(/[^\w-]/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-+|-+$/g, "");
 
-      // Ensure slug is unique
-      let slugCounter = 0;
-      let uniqueSlug = slug;
-      while (
-        await prisma.organization.findUnique({ where: { slug: uniqueSlug } })
-      ) {
-        slugCounter++;
-        uniqueSlug = `${slug}-${slugCounter}`;
-      }
+        // Ensure slug is unique
+        let slugCounter = 0;
+        let uniqueSlug = slug;
+        while (
+          await prisma.organization.findUnique({ where: { slug: uniqueSlug } })
+        ) {
+          slugCounter++;
+          uniqueSlug = `${slug}-${slugCounter}`;
+        }
 
-      const newOrg = await prisma.organization.create({
-        data: {
+        const newOrg = await prisma.organization.create({
+          data: {
           name: orgData.name,
-          slug: uniqueSlug,
+            slug: uniqueSlug,
           website: orgData.website || null,
           email: orgData.email || null,
           phone: orgData.phone || null,
@@ -113,14 +113,14 @@ export async function POST(request: NextRequest) {
           city: orgData.city || null,
           state: orgData.state || null,
           zipCode: orgData.zipCode || null,
-        },
-      });
+          },
+        });
 
-      // Create default tags for new organization
-      await createDefaultTags(newOrg.id);
+        // Create default tags for new organization
+        await createDefaultTags(newOrg.id);
 
-      targetOrganizationId = newOrg.id;
-      newOrganizationCreated = true;
+        targetOrganizationId = newOrg.id;
+        newOrganizationCreated = true;
     }
 
     // Verify organization exists

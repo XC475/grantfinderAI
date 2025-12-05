@@ -215,8 +215,8 @@ export default function AdminUsersPage() {
         requestBody.organizationId = selectedOrganization;
       } else if (mode === "create_new") {
         if (!orgData.name) {
-          throw new Error("Please enter an organization name");
-        }
+            throw new Error("Please enter an organization name");
+          }
         requestBody.orgData = orgData;
       }
 
@@ -453,86 +453,86 @@ export default function AdminUsersPage() {
                       <h3 className="font-semibold">Create Organization</h3>
 
                       {/* Organization Form */}
-                      <div className="space-y-3">
-                        <div className="space-y-2">
-                          <Label htmlFor="orgName">Organization Name *</Label>
-                          <Input
-                            id="orgName"
+                        <div className="space-y-3">
+                          <div className="space-y-2">
+                            <Label htmlFor="orgName">Organization Name *</Label>
+                            <Input
+                              id="orgName"
                             value={orgData.name}
-                            onChange={(e) =>
+                              onChange={(e) =>
                               setOrgData({
                                 ...orgData,
-                                name: e.target.value,
-                              })
-                            }
+                                  name: e.target.value,
+                                })
+                              }
                             required={mode === "create_new"}
-                            placeholder="Enter organization name"
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="space-y-2">
-                            <Label htmlFor="orgWebsite">Website</Label>
-                            <Input
-                              id="orgWebsite"
-                              type="url"
+                              placeholder="Enter organization name"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-2">
+                              <Label htmlFor="orgWebsite">Website</Label>
+                              <Input
+                                id="orgWebsite"
+                                type="url"
                               value={orgData.website}
-                              onChange={(e) =>
+                                onChange={(e) =>
                                 setOrgData({
                                   ...orgData,
-                                  website: e.target.value,
-                                })
-                              }
-                              placeholder="https://example.com"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="orgEmail">Email</Label>
-                            <Input
-                              id="orgEmail"
-                              type="email"
+                                    website: e.target.value,
+                                  })
+                                }
+                                placeholder="https://example.com"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="orgEmail">Email</Label>
+                              <Input
+                                id="orgEmail"
+                                type="email"
                               value={orgData.email}
-                              onChange={(e) =>
+                                onChange={(e) =>
                                 setOrgData({
                                   ...orgData,
-                                  email: e.target.value,
-                                })
-                              }
-                              placeholder="contact@example.com"
-                            />
+                                    email: e.target.value,
+                                  })
+                                }
+                                placeholder="contact@example.com"
+                              />
+                            </div>
                           </div>
-                          </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="space-y-2">
-                            <Label htmlFor="orgPhone">Phone</Label>
-                            <Input
-                              id="orgPhone"
-                              type="tel"
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-2">
+                              <Label htmlFor="orgPhone">Phone</Label>
+                              <Input
+                                id="orgPhone"
+                                type="tel"
                               value={orgData.phone}
-                              onChange={(e) =>
+                                onChange={(e) =>
                                 setOrgData({
                                   ...orgData,
-                                  phone: e.target.value,
-                                })
-                              }
-                              placeholder="(123) 456-7890"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="orgCity">City</Label>
-                            <Input
-                              id="orgCity"
+                                    phone: e.target.value,
+                                  })
+                                }
+                                placeholder="(123) 456-7890"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="orgCity">City</Label>
+                              <Input
+                                id="orgCity"
                               value={orgData.city}
-                              onChange={(e) =>
+                                onChange={(e) =>
                                 setOrgData({
                                   ...orgData,
-                                  city: e.target.value,
-                                })
-                              }
-                              placeholder="City"
-                            />
+                                    city: e.target.value,
+                                  })
+                                }
+                                placeholder="City"
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
                     </div>
                   )}
 
@@ -726,9 +726,9 @@ export default function AdminUsersPage() {
                             {user.organization.name}
                           </div>
                           {(user.organization.city || user.organization.state) && (
-                            <div className="text-xs text-muted-foreground">
+                          <div className="text-xs text-muted-foreground">
                               {user.organization.city}{user.organization.city && user.organization.state && ", "}{user.organization.state}
-                            </div>
+                          </div>
                           )}
                         </div>
                       ) : (

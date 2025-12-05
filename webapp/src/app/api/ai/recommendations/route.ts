@@ -60,40 +60,25 @@ export async function POST(_req: NextRequest) {
       );
     }
 
-    // 4. Validate organization profile completeness
-    if (
-      !organization.missionStatement ||
-      !organization.strategicPlan ||
-      !organization.state
-    ) {
-      return NextResponse.json(
-        {
-          error:
-            "Organization profile incomplete. Please complete your mission statement, strategic plan, and location information.",
-        },
-        { status: 400 }
-      );
-    }
-
-    // 5. Prepare organization context
+    // 4. Prepare organization context (no validation required - works with partial profiles)
     const organizationInfo: OrganizationInfo = {
-      id: organization.id,
-      name: organization.name,
-      city: organization.city,
-      state: organization.state,
-      zipCode: organization.zipCode,
-      countyName: organization.countyName,
-      missionStatement: organization.missionStatement,
-      strategicPlan: organization.strategicPlan,
-      annualOperatingBudget: organization.annualOperatingBudget
-        ? organization.annualOperatingBudget.toString()
-        : null,
-      fiscalYearEnd: organization.fiscalYearEnd,
-      customFields: organization.customFields.map((field) => ({
-        name: field.name,
-        description: field.description,
-        value: field.value,
-      })),
+          id: organization.id,
+          name: organization.name,
+          city: organization.city,
+          state: organization.state,
+          zipCode: organization.zipCode,
+          countyName: organization.countyName,
+          missionStatement: organization.missionStatement,
+          strategicPlan: organization.strategicPlan,
+          annualOperatingBudget: organization.annualOperatingBudget
+            ? organization.annualOperatingBudget.toString()
+            : null,
+          fiscalYearEnd: organization.fiscalYearEnd,
+          customFields: organization.customFields.map((field) => ({
+            name: field.name,
+            description: field.description,
+            value: field.value,
+          })),
     };
 
     // 6. Build the recommendations prompt

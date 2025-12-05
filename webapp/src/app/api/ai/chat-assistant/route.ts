@@ -221,7 +221,7 @@ export async function POST(req: NextRequest) {
         
         // Then add source context if available
         if (sourceContext) {
-          content = `${sourceContext}\n\n${content}`;
+        content = `${sourceContext}\n\n${content}`;
         }
       }
 
