@@ -232,28 +232,6 @@ This is handled in the API routes (`/api/ai/chat-assistant` and `/api/ai/editor-
 
 ---
 
-## Debug Logging
-
-Both agents include comprehensive logging for debugging settings flow:
-
-```
-🤖 [ChatAgent] Creating agent with settings: {
-  enableGrantSearchChat: true,
-  enableKnowledgeBaseChat: true,
-  enableOrgProfileChat: true,
-  settingsId: 'xxx',
-  userId: 'xxx'
-}
-🔧 [ChatAgent] Tools configuration: {
-  enableGrantSearch: true,
-  toolsCount: 1,
-  toolNames: ['search_grants']
-}
-✅ [ChatAgent] Agent created successfully
-```
-
----
-
 ## Data Flow
 
 ```

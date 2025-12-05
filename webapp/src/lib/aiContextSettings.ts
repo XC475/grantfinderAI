@@ -7,15 +7,12 @@ import { UserAIContextSettings } from "@/types/ai-settings";
 export async function getUserAIContextSettings(
   userId: string
 ): Promise<UserAIContextSettings> {
-  console.log("🔍 [AIContextSettings] Fetching settings for userId:", userId);
-  
   const settings = await prisma.userAIContextSettings.findUnique({
     where: { userId },
   });
 
   // Return defaults if no settings exist
   if (!settings) {
-    console.log("📋 [AIContextSettings] No settings found, using defaults");
     return {
       id: "",
       userId,
@@ -29,17 +26,6 @@ export async function getUserAIContextSettings(
       updatedAt: new Date(),
     };
   }
-
-  console.log("📋 [AIContextSettings] Found settings from DB:", {
-    id: settings.id,
-    enableGrantSearchChat: settings.enableGrantSearchChat,
-    enableGrantSearchEditor: settings.enableGrantSearchEditor,
-    enableKnowledgeBaseChat: settings.enableKnowledgeBaseChat,
-    enableKnowledgeBaseEditor: settings.enableKnowledgeBaseEditor,
-    enableOrgProfileChat: settings.enableOrgProfileChat,
-    enableOrgProfileEditor: settings.enableOrgProfileEditor,
-    updatedAt: settings.updatedAt,
-  });
 
   return settings;
 }

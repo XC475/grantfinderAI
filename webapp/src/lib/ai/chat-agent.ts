@@ -14,15 +14,6 @@ export async function createChatAgent(
   baseUrl: string,
   userSettings?: UserAIContextSettings | null
 ) {
-  // Log incoming settings for debugging
-  console.log("🤖 [ChatAgent] Creating agent with settings:", {
-    enableGrantSearchChat: userSettings?.enableGrantSearchChat ?? "default (true)",
-    enableKnowledgeBaseChat: userSettings?.enableKnowledgeBaseChat ?? "default (true)",
-    enableOrgProfileChat: userSettings?.enableOrgProfileChat ?? "default (true)",
-    settingsId: userSettings?.id || "none",
-    userId: userSettings?.userId || "none",
-  });
-
   // Initialize LLM
   const model = new ChatOpenAI({
     modelName: "gpt-4o-mini",
@@ -34,21 +25,12 @@ export async function createChatAgent(
   const enableGrantSearch = userSettings?.enableGrantSearchChat ?? true;
   const tools = enableGrantSearch ? [createGrantSearchTool(districtInfo)] : [];
 
-  // Log tools being created
-  console.log("🔧 [ChatAgent] Tools configuration:", {
-    enableGrantSearch,
-    toolsCount: tools.length,
-    toolNames: tools.map(t => t.name),
-  });
-
   // The createAgent function returns a ReactAgent which has invoke() and stream() methods
   const agent = createAgent({
     model,
     tools,
     systemPrompt: buildSystemPrompt(districtInfo, baseUrl, userSettings),
   });
-
-  console.log("✅ [ChatAgent] Agent created successfully");
 
   return agent;
 }

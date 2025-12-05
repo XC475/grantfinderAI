@@ -186,21 +186,6 @@ This ensures the AI always sees and respects the current state, regardless of wh
 
 ---
 
-## Debug Logging
-
-Both endpoints include comprehensive logging for debugging:
-
-```
-🔍 [AIContextSettings] Fetching settings for userId: xxx
-📋 [AIContextSettings] Found settings from DB: { ... }
-⚙️ [Chat/Editor Assistant API] User AI Settings fetched: { ... }
-🤖 [ChatAgent/EditorAgent] Creating agent with settings: { ... }
-🔧 [ChatAgent/EditorAgent] Tools configuration: { toolsCount: 1, toolNames: ['search_grants'] }
-✅ [ChatAgent/EditorAgent] Agent created successfully
-```
-
----
-
 ## Architecture
 
 ```

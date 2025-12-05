@@ -41,15 +41,6 @@ export async function createEditorAgent(
   promptOptions: EditorPromptOptions,
   userSettings?: UserAIContextSettings | null
 ) {
-  // Log incoming settings for debugging
-  console.log("📝 [EditorAgent] Creating agent with settings:", {
-    enableGrantSearchEditor: userSettings?.enableGrantSearchEditor ?? "default (true)",
-    enableKnowledgeBaseEditor: userSettings?.enableKnowledgeBaseEditor ?? "default (true)",
-    enableOrgProfileEditor: userSettings?.enableOrgProfileEditor ?? "default (true)",
-    settingsId: userSettings?.id || "none",
-    userId: userSettings?.userId || "none",
-  });
-
   // Initialize LLM
   const model = new ChatOpenAI({
     modelName: "gpt-4o-mini",
@@ -62,13 +53,6 @@ export async function createEditorAgent(
   const districtInfo = toDistrictInfo(promptOptions.organizationInfo);
   const tools = enableGrantSearch ? [createGrantSearchTool(districtInfo)] : [];
 
-  // Log tools being created
-  console.log("🔧 [EditorAgent] Tools configuration:", {
-    enableGrantSearch,
-    toolsCount: tools.length,
-    toolNames: tools.map(t => t.name),
-  });
-
   // Build the editor system prompt
   const systemPrompt = buildEditorSystemPrompt(promptOptions);
 
@@ -78,8 +62,6 @@ export async function createEditorAgent(
     tools,
     systemPrompt,
   });
-
-  console.log("✅ [EditorAgent] Agent created successfully");
 
   return agent;
 }

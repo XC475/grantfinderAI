@@ -54,16 +54,6 @@ export async function POST(req: NextRequest) {
     // 2.5. Fetch user AI context settings
     const userAISettings = await getUserAIContextSettings(user.id);
 
-    // Log AI settings for debugging
-    console.log("⚙️ [Chat Assistant API] User AI Settings fetched:", {
-      userId: user.id,
-      enableGrantSearchChat: userAISettings.enableGrantSearchChat,
-      enableKnowledgeBaseChat: userAISettings.enableKnowledgeBaseChat,
-      enableOrgProfileChat: userAISettings.enableOrgProfileChat,
-      settingsId: userAISettings.id || "defaults",
-      updatedAt: userAISettings.updatedAt,
-    });
-
     // 3. Fetch organization data
     const organization = await prisma.organization.findUnique({
       where: { id: userOrgId },

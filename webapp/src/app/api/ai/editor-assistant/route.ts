@@ -65,16 +65,6 @@ export async function POST(req: NextRequest) {
     // Get user AI context settings
     const userAISettings = await getUserAIContextSettings(user.id);
 
-    // Log AI settings for debugging
-    console.log("⚙️ [Editor Assistant API] User AI Settings fetched:", {
-      userId: user.id,
-      enableGrantSearchEditor: userAISettings.enableGrantSearchEditor,
-      enableKnowledgeBaseEditor: userAISettings.enableKnowledgeBaseEditor,
-      enableOrgProfileEditor: userAISettings.enableOrgProfileEditor,
-      settingsId: userAISettings.id || "defaults",
-      updatedAt: userAISettings.updatedAt,
-    });
-
     // Get user's organization
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
