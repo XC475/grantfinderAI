@@ -405,7 +405,7 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
           attachments: msg.experimental_attachments,
         }));
 
-        const response = await fetch("/api/chat/editor", {
+        const response = await fetch("/api/ai/editor-assistant", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

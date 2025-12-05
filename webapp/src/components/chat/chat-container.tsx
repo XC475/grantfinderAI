@@ -14,8 +14,8 @@ import { useAutoScroll } from "@/hooks/use-auto-scroll";
 import { Button } from "@/components/ui/button";
 import { type Message } from "@/components/chat/chat-message";
 import { CopyButton } from "@/components/ui/copy-button";
-import { MessageInput } from "@/components/chat/message-input";
-import { InitialMessageInput } from "@/components/chat/initial-message-input";
+import { MessageInput } from "./message-input";
+import { InitialMessageInput } from "./initial-message-input";
 import { MessageList } from "@/components/chat/message-list";
 import { PromptSuggestions } from "@/components/chat/prompt-suggestions";
 import { ChatGreeting } from "@/components/chat/ChatGreeting";
@@ -222,7 +222,7 @@ export function Chat({
         <InitialMessageInput
           value={input}
           onChange={handleInputChange}
-          onSubmit={(files, sources) => {
+          onSubmit={(files?: File[] | null, sources?: SourceDocument[]) => {
             if (files && files.length > 0) {
               // Handle file upload
               const fileList = createFileList(files);

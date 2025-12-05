@@ -52,28 +52,28 @@ interface SourcesModalProps {
 function getDocumentIcon(document: Document) {
   if (!document.fileType) {
     // Regular editable document
-    return <FileText className="h-4 w-4 text-blue-500 flex-shrink-0" />;
+    return <FileText className="h-4 w-4 text-blue-500 shrink-0" />;
   }
 
   // File uploads - different icons based on type
   if (document.fileType === "application/pdf") {
-    return <FileText className="h-4 w-4 text-red-500 flex-shrink-0" />;
+    return <FileText className="h-4 w-4 text-red-500 shrink-0" />;
   }
   if (
     document.fileType ===
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
   ) {
-    return <FileText className="h-4 w-4 text-blue-600 flex-shrink-0" />;
+    return <FileText className="h-4 w-4 text-blue-600 shrink-0" />;
   }
   if (document.fileType === "text/csv") {
-    return <Table className="h-4 w-4 text-green-600 flex-shrink-0" />;
+    return <Table className="h-4 w-4 text-green-600 shrink-0" />;
   }
   if (document.fileType === "text/plain") {
-    return <File className="h-4 w-4 text-gray-600 flex-shrink-0" />;
+    return <File className="h-4 w-4 text-gray-600 shrink-0" />;
   }
 
   // Default file icon
-  return <File className="h-4 w-4 text-muted-foreground flex-shrink-0" />;
+  return <File className="h-4 w-4 text-muted-foreground shrink-0" />;
 }
 
 export function SourcesModal({
@@ -210,12 +210,12 @@ export function SourcesModal({
         >
           {children.length > 0 || folderDocs.length > 0 ? (
             isExpanded ? (
-              <ChevronDown className="h-4 w-4 flex-shrink-0" />
+              <ChevronDown className="h-4 w-4 shrink-0" />
             ) : (
-              <ChevronRight className="h-4 w-4 flex-shrink-0" />
+              <ChevronRight className="h-4 w-4 shrink-0" />
             )
           ) : (
-            <div className="h-4 w-4 flex-shrink-0" />
+            <div className="h-4 w-4 shrink-0" />
           )}
           <FolderIcon isApplicationFolder={!!folder.applicationId} />
           <span className="font-medium truncate">{folder.name}</span>

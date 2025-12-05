@@ -1,11 +1,15 @@
+// Editor Assistant API Endpoint
+// Uses the editor agent with LangChain and grant search tool
+// Context: DRAFTING - linked to documentId/applicationId
+
 import { NextRequest } from "next/server";
-import OpenAI from "openai";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
+import { createEditorAgent } from "@/lib/ai/editor-agent";
+import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { getSourceDocumentContext } from "@/lib/documentContext";
 import { searchKnowledgeBase } from "@/lib/ai/knowledgeBaseRAG";
 import { getActiveKnowledgeBase } from "@/lib/getOrgKnowledgeBase";
-import { buildEditorSystemPrompt } from "@/lib/ai/prompts/chat-editor";
 import { getUserAIContextSettings } from "@/lib/aiContextSettings";
 
 interface FileAttachment {
@@ -17,9 +21,16 @@ interface FileAttachment {
   extractedText?: string;
 }
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+interface ChatMessage {
+  role: string;
+  content: string;
+  attachments?: FileAttachment[];
+}
+
+interface StreamChunk {
+  content?: string;
+  output?: string;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -53,6 +64,16 @@ export async function POST(req: NextRequest) {
 
     // Get user AI context settings
     const userAISettings = await getUserAIContextSettings(user.id);
+
+    // Log AI settings for debugging
+    console.log("⚙️ [Editor Assistant API] User AI Settings fetched:", {
+      userId: user.id,
+      enableGrantSearchEditor: userAISettings.enableGrantSearchEditor,
+      enableKnowledgeBaseEditor: userAISettings.enableKnowledgeBaseEditor,
+      enableOrgProfileEditor: userAISettings.enableOrgProfileEditor,
+      settingsId: userAISettings.id || "defaults",
+      updatedAt: userAISettings.updatedAt,
+    });
 
     // Get user's organization
     const dbUser = await prisma.user.findUnique({
@@ -258,78 +279,80 @@ ${opportunity.raw_text}`;
       });
     }
 
-    // Build system prompt using the chat-editor prompt builder
-    // Pass userSettings so prompt can explicitly state what's enabled/disabled
-    const systemPrompt = buildEditorSystemPrompt({
-      documentTitle: documentTitle || document.title || "Untitled Document",
-      documentContent: documentContent || "No content yet.",
-      organizationInfo: userAISettings.enableOrgProfileEditor
-        ? {
-            ...organization,
-            customFields: organization.customFields.map((field) => ({
-              name: field.name,
-              description: field.description,
-              value: field.value,
-            })),
-          }
-        : undefined,
-      applicationContext,
-      attachmentContext,
-      sourceContext,
-      knowledgeBaseContext,
-      userSettings: userAISettings,
-    });
+    // Create editor agent with LangChain (upgraded from raw OpenAI)
+    const agent = await createEditorAgent(
+      {
+        documentTitle: documentTitle || document.title || "Untitled Document",
+        documentContent: documentContent || "No content yet.",
+        organizationInfo: userAISettings.enableOrgProfileEditor
+          ? {
+              ...organization,
+              customFields: organization.customFields.map((field) => ({
+                name: field.name,
+                description: field.description,
+                value: field.value,
+              })),
+            }
+          : undefined,
+        applicationContext,
+        attachmentContext,
+        sourceContext,
+        knowledgeBaseContext,
+        userSettings: userAISettings,
+      },
+      userAISettings
+    );
 
-    // Prepare messages for OpenAI
-    // Append attachment text to user messages (same as normal chat)
-    const openAiMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
-      { role: "system", content: systemPrompt },
-      ...messages.map(
-        (msg: {
-          role: string;
-          content: string;
-          attachments?: FileAttachment[];
-        }) => {
-          let content = msg.content;
+    // Build current settings status to inject into user message
+    // This ensures the AI always sees the CURRENT state, not conversation history patterns
+    const settingsStatusContext = `[CURRENT AI SETTINGS - These override any previous conversation patterns]
+• Grant Search: ${userAISettings.enableGrantSearchEditor ? "✅ ENABLED - You CAN use the search_grants tool" : "❌ DISABLED - Do NOT search for grants, inform user to enable it"}
+• Knowledge Base: ${userAISettings.enableKnowledgeBaseEditor ? "✅ ENABLED" : "❌ DISABLED"}
+• Organization Profile: ${userAISettings.enableOrgProfileEditor ? "✅ ENABLED" : "❌ DISABLED"}
+[END SETTINGS - Always respect these current settings, not past responses]
 
-          // Append extracted text from attachments to user messages
-          if (
-            msg.role === "user" &&
-            msg.attachments &&
-            msg.attachments.length > 0
-          ) {
-            const attachmentTexts = msg.attachments
-              .map((attachment) => {
-                if (attachment.extractedText) {
-                  return `\n\n[Attached: ${attachment.name}]\nFile contents:\n${attachment.extractedText}`;
-                }
-                return `\n\n[Attached: ${attachment.name}]`;
-              })
-              .join("\n");
+`;
 
-            content = content + attachmentTexts;
-          }
+    // Convert messages to LangChain format
+    const langChainMessages = messages.map((m: ChatMessage, index: number) => {
+      let content = m.content;
 
-          return {
-            role: msg.role as "user" | "assistant",
-            content: content,
-          } satisfies OpenAI.Chat.ChatCompletionMessageParam;
+      // For the last user message, prepend settings status and source document context
+      const isLastUserMessage =
+        index === messages.length - 1 && m.role === "user";
+      
+      if (isLastUserMessage) {
+        // Always prepend settings status to ensure AI sees current state
+        content = `${settingsStatusContext}${content}`;
+        
+        // Then add source context if available
+        if (sourceContext) {
+          content = `${sourceContext}\n\n${content}`;
         }
-      ),
-    ];
+      }
 
-    // Create streaming completion
-    const stream = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: openAiMessages,
-      stream: true,
-      temperature: 0.7,
-      max_tokens: 2000,
+      // Append extracted text from attachments to user messages
+      if (m.role === "user" && m.attachments && m.attachments.length > 0) {
+        const attachmentTexts = m.attachments
+          .map((attachment) => {
+            if (attachment.extractedText) {
+              return `\n\n[Attached: ${attachment.name}]\nFile contents:\n${attachment.extractedText}`;
+            }
+            return `\n\n[Attached: ${attachment.name}]`;
+          })
+          .join("\n");
+
+        content = content + attachmentTexts;
+      }
+
+      return m.role === "user"
+        ? new HumanMessage(content)
+        : new AIMessage(content);
     });
 
-    // Create a readable stream for the response
+    // Execute agent and stream response
+    let fullResponse = "";
     const encoder = new TextEncoder();
-    let fullText = "";
     let clientDisconnected = false;
 
     // Save response to database after stream completes
@@ -339,12 +362,12 @@ ${opportunity.raw_text}`;
         await prisma.aiChatMessage.create({
           data: {
             role: "ASSISTANT",
-            content: fullText,
+            content: fullResponse,
             chatId: chat.id,
             metadata: {
               timestamp: Date.now(),
               model: "gpt-4o-mini",
-              source: "editor",
+              source: "editor-agent",
               clientDisconnected,
             },
           },
@@ -356,17 +379,81 @@ ${opportunity.raw_text}`;
           data: { updatedAt: new Date() },
         });
       } catch (error) {
-        console.error("❌ [Editor Chat] Error saving to database:", error);
+        console.error("❌ [Editor Assistant] Error saving to database:", error);
       }
     };
 
-    const readableStream = new ReadableStream({
+    const stream = new ReadableStream({
       async start(controller) {
         try {
-          for await (const chunk of stream) {
-            const content = chunk.choices[0]?.delta?.content || "";
-            if (content) {
-              fullText += content;
+          // Stream the agent's response with stream_mode="messages" for token streaming
+          const streamResult = await agent.stream(
+            {
+              messages: langChainMessages,
+            },
+            {
+              streamMode: "messages",
+            }
+          );
+
+          for await (const chunk of streamResult) {
+            // Extract content from LangChain streaming chunks
+            // LangChain streams chunks as [message, metadata] tuples in "messages" mode
+            let content = "";
+            let shouldStream = false;
+
+            // According to LangChain docs, filter based on langgraph_node metadata
+            if (Array.isArray(chunk)) {
+              // Chunk is [message, metadata] tuple
+              const [message, metadata] = chunk;
+
+              // Check metadata to determine if this is from the model or tools
+              const node = metadata?.langgraph_node;
+
+              if (
+                node === "model" ||
+                node === "model_request" ||
+                node === "__start__"
+              ) {
+                // This is from the LLM - stream it to the user
+                shouldStream = true;
+
+                // Extract content from the message
+                if (typeof message === "string") {
+                  content = message;
+                } else if (message?.content) {
+                  content =
+                    typeof message.content === "string"
+                      ? message.content
+                      : JSON.stringify(message.content);
+                }
+              } else if (node === "tools") {
+                // This is from tool execution - don't stream to user
+                // (silently filtered)
+              } else {
+                // Unknown node - don't stream
+                // (silently filtered)
+              }
+            } else if (chunk && typeof chunk === "object") {
+              // Handle non-tuple chunks (fallback for compatibility)
+              const chunkObj = chunk as StreamChunk;
+              if (chunkObj.content) {
+                content = chunkObj.content;
+                shouldStream = true;
+              } else if (chunkObj.output) {
+                content = chunkObj.output;
+                shouldStream = true;
+              }
+            } else if (typeof chunk === "string") {
+              // Direct string chunk
+              content = chunk;
+              shouldStream = true;
+            }
+
+            // Stream only LLM responses to the client
+            if (shouldStream && content) {
+              fullResponse += content;
+
               try {
                 controller.enqueue(encoder.encode(content));
               } catch {
@@ -388,8 +475,11 @@ ${opportunity.raw_text}`;
           await saveToDatabase();
         } catch (error) {
           clientDisconnected = true;
+          console.error("❌ [Editor Assistant] Stream error:", error);
           // Still save to database even on error
-          await saveToDatabase();
+          if (fullResponse) {
+            await saveToDatabase();
+          }
           controller.error(error);
         }
       },
@@ -398,7 +488,7 @@ ${opportunity.raw_text}`;
       },
     });
 
-    return new Response(readableStream, {
+    return new Response(stream, {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
         "X-Chat-Id": chat.id,
@@ -406,8 +496,11 @@ ${opportunity.raw_text}`;
       },
     });
   } catch (error) {
-    console.error("Error in editor chat API:", error);
-    return new Response("Error processing request", { status: 500 });
+    console.error("❌ [Editor Assistant] Error:", error);
+    return new Response(
+      error instanceof Error ? error.message : "Error processing request",
+      { status: 500 }
+    );
   }
 }
 

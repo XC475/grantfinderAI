@@ -45,7 +45,7 @@ export function buildSystemPrompt(
     enabledTools.push(buildGrantsVectorStorePrompt());
   } else {
     disabledTools.push(
-      "**Grant Search** - This capability is currently disabled in user settings. You cannot search the grants database."
+      "**Grant Search** - Currently disabled. To enable, click the settings button (⚙️) next to the message input and turn on Grant Search."
     );
   }
 
@@ -53,12 +53,22 @@ export function buildSystemPrompt(
     enabledTools.push(buildKnowledgeBaseRAGPrompt(districtName));
   } else {
     disabledTools.push(
-      "**Knowledge Base Access** - This capability is currently disabled in user settings. You cannot access uploaded organizational documents."
+      "**Knowledge Base Access** - Currently disabled. To enable, click the settings button (⚙️) next to the message input and turn on Knowledge Base."
     );
   }
 
+  // Build a clear status summary at the top
+  const statusSummary = `**Current Settings Status (as of this message):**
+- Grant Search: ${grantSearchEnabled ? "✅ ENABLED" : "❌ DISABLED"}
+- Knowledge Base: ${knowledgeBaseEnabled ? "✅ ENABLED" : "❌ DISABLED"}
+- Organization Profile: ${orgProfileEnabled ? "✅ ENABLED" : "❌ DISABLED"}
+
+`;
+
   if (enabledTools.length > 0) {
-    availableToolsSection = enabledTools.join("\n\n");
+    availableToolsSection = statusSummary + enabledTools.join("\n\n");
+  } else {
+    availableToolsSection = statusSummary;
   }
 
   if (disabledTools.length > 0) {
@@ -75,7 +85,7 @@ Your role: deliver **precise, fast, and contextually relevant** guidance across 
 </task_summary>
 
 <context>
-${orgProfileEnabled && districtInfo ? buildDistrictContext(districtInfo) : "**Organization Profile disabled** – Organization context is not available. Provide general recommendations without specific organizational details."}
+${orgProfileEnabled && districtInfo ? buildDistrictContext(districtInfo) : "**Organization Profile disabled** – Organization context is not available. To enable, click the settings button (⚙️) next to the message input and turn on Organization Profile. Until then, provide general recommendations without specific organizational details."}
 </context>
 
 <available_tools>
@@ -83,10 +93,27 @@ ${availableToolsSection || "**No tools available** - All AI capabilities are cur
 </available_tools>
 
 <tool_usage_policy>
+**IMPORTANT: Settings can change mid-conversation.** Users may enable or disable capabilities between messages. ALWAYS check the <available_tools> section above for the CURRENT state of each capability. Do NOT assume a capability is still enabled/disabled based on your previous responses in this conversation - the settings may have changed.
+
 - **ALWAYS rely on available tools** to retrieve information or perform actions.  
 - **NEVER fabricate or assume external data** — only use tool outputs or provided context.  
 - For casual or conversational inputs (e.g., greetings, feedback), **do not call tools** — respond fast and naturally as a helpful assistant.
-- **If a user asks about a disabled capability**, politely inform them that the feature is currently turned off in their AI settings and guide them to Settings → AI Capabilities to enable it.
+- **If a user asks about a disabled capability**, politely inform them that the feature is currently turned off. Guide them to click the **settings button (⚙️)** next to the message input to enable it. They'll see toggles for Organization Profile, Knowledge Base, and Grant Search.
+
+**CRITICAL - When Grant Search is DISABLED (check <available_tools> to confirm current state):**
+- **ABSOLUTELY DO NOT** invent, fabricate, or make up ANY grant information. This includes:
+  - Grant names or titles
+  - Agencies or organizations
+  - Award amounts or ranges
+  - Deadlines or dates
+  - Eligibility requirements
+  - URLs or links
+- When a user asks to search for grants and Grant Search is disabled, you MUST:
+  1. Clearly state: "Grant search is currently turned off in your settings."
+  2. Explain: "I cannot search for or provide grant information without this feature enabled."
+  3. Guide them: "To enable it, click the settings button (⚙️) next to the message input and turn on Grant Search."
+- **DO NOT** try to be "helpful" by guessing or suggesting grants from general knowledge. This could mislead users with outdated or incorrect information.
+- You may discuss general grant writing tips, proposal strategies, or answer questions about the grant process without needing the search tool.
 </tool_usage_policy>
 
 <output_structure>

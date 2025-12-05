@@ -179,7 +179,7 @@ export function ChatDemo(props: ChatDemoProps) {
           attachments: msg.experimental_attachments,
         }));
 
-        const response = await fetch("/api/ai/assistant-agent", {
+        const response = await fetch("/api/ai/chat-assistant", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

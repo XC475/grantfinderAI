@@ -40,6 +40,7 @@ import {
   type SourceDocument,
 } from "@/components/chat/SourcesModal";
 import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
+import { AISettingsDropdown } from "@/components/chat/ai-settings-dropdown";
 
 interface DocumentSidebarChatProps {
   handleSubmit: (
@@ -666,6 +667,14 @@ function SidebarMessageInput({
               </DropdownMenuContent>
             </DropdownMenu>
           )}
+
+          {/* Settings Button with AI Toggles */}
+          <AISettingsDropdown
+            assistantType="editor"
+            size="small"
+            align="end"
+            disabled={isGenerating}
+          />
 
           {isGenerating && stop ? (
             <Button
