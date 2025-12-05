@@ -381,7 +381,7 @@ export function ChatDemo(props: ChatDemoProps) {
         sourceDocuments={sourceDocuments}
         onSourceDocumentsChange={setSourceDocuments}
         suggestions={[
-          "Find grants for improving student achievement in our district",
+          "Find grants for improving community programs in our organization",
           "Help me find grants for teacher professional development",
           "Search for grants to support special education services",
         ]}

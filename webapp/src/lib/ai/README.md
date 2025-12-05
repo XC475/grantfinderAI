@@ -29,12 +29,12 @@ This directory contains the core AI functionality for GrantWare AI, including La
 LangChain agent for the main chat interface. Handles general grant discovery, eligibility questions, and lifecycle support.
 
 ```typescript
-import { createChatAgent, DistrictInfo } from "@/lib/ai/chat-agent";
+import { createChatAgent, OrganizationInfo } from "@/lib/ai/chat-agent";
 
 const agent = await createChatAgent(
-  districtInfo,   // Organization/district context
-  baseUrl,        // App base URL for grant links
-  userSettings    // AI capability toggles
+  organizationInfo,   // Organization context
+  baseUrl,            // App base URL for grant links
+  userSettings        // AI capability toggles
 );
 
 // Stream response
@@ -132,14 +132,14 @@ const grants = await searchGrants(query, {
 System prompt for the main chat agent. Builds a comprehensive prompt including:
 
 ```typescript
-import { buildSystemPrompt, DistrictInfo } from "@/lib/ai/prompts/chat-assistant";
+import { buildSystemPrompt, OrganizationInfo } from "@/lib/ai/prompts/chat-assistant";
 
-const prompt = buildSystemPrompt(districtInfo, baseUrl, userSettings);
+const prompt = buildSystemPrompt(organizationInfo, baseUrl, userSettings);
 ```
 
 **Prompt Sections:**
 1. **Task Summary:** Grants lifecycle assistant role
-2. **Context:** Organization/district profile
+2. **Context:** Organization profile
 3. **Available Tools:** Grant search, knowledge base (based on settings)
 4. **Tool Usage Policy:** When to use tools vs respond directly
 5. **Output Structure:** Markdown formatting rules, grant result templates
@@ -182,7 +182,7 @@ LangChain tool for semantic grant search.
 ```typescript
 import { createGrantSearchTool } from "@/lib/ai/tools/grant-search-tool";
 
-const tool = createGrantSearchTool(districtInfo, organizationServices);
+const tool = createGrantSearchTool(organizationInfo, organizationServices);
 ```
 
 **Tool Schema:**

@@ -1,10 +1,10 @@
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { z } from "zod";
 import { searchGrants } from "../vector-store";
-import { DistrictInfo } from "../prompts/chat-assistant";
+import { OrganizationInfo } from "../prompts/chat-assistant";
 
 export function createGrantSearchTool(
-  districtInfo: DistrictInfo | null,
+  organizationInfo: OrganizationInfo | null,
   organizationServices: string[] = []
 ) {
   return new DynamicStructuredTool({
@@ -13,8 +13,7 @@ export function createGrantSearchTool(
 Use this when the user asks to find, search for, or get recommendations on grants.
 The search uses semantic similarity to find relevant opportunities based on the query meaning.
 Status: posted (only returns currently open grants).
-${districtInfo?.state ? `The district is located in ${districtInfo.state}.` : ""}
-${districtInfo?.enrollment ? `The district has ${districtInfo.enrollment} students enrolled.` : ""}`,
+${organizationInfo?.state ? `The organization is located in ${organizationInfo.state}.` : ""}`,
 
     schema: z.object({
       query: z
@@ -30,20 +29,20 @@ ${districtInfo?.enrollment ? `The district has ${districtInfo.enrollment} studen
         .optional()
         .describe(
           "Two-letter state code to filter grants (e.g., 'MA', 'NY', 'CA'). Use 'US' for federal grants. " +
-            "If the district has a state, prefer that state's grants unless user specifies otherwise."
+            "If the organization has a state, prefer that state's grants unless user specifies otherwise."
         ),
     }),
 
     func: async ({ query, stateCode }) => {
       console.log(`🔧 Tool invoked: search_grants`);
       console.log(`   Query: "${query}"`);
-      console.log(`   State: ${stateCode || districtInfo?.state || "any"}`);
+      console.log(`   State: ${stateCode || organizationInfo?.state || "any"}`);
       console.log(`   Status: posted`);
       console.log(`   Services: ${organizationServices.join(", ") || "any"}`);
 
       try {
         const results = await searchGrants(query, {
-          stateCode: stateCode || districtInfo?.state || undefined,
+          stateCode: stateCode || organizationInfo?.state || undefined,
           status: "posted",
           services:
             organizationServices.length > 0 ? organizationServices : undefined,

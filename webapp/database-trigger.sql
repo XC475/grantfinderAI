@@ -8,7 +8,7 @@ declare
   v_name text := coalesce(new.raw_user_meta_data->>'name', split_part(new.email, '@', 1));
   v_existing_org_id text := new.raw_user_meta_data->>'organizationId';
   v_role text := coalesce(new.raw_user_meta_data->>'role', 'MEMBER');
-  v_district_name text := new.raw_user_meta_data->>'districtName';
+  v_organization_name text := new.raw_user_meta_data->>'organizationName';
   v_org_name text;
   v_slug text;
   v_slug_counter integer := 0;
@@ -22,14 +22,14 @@ begin
     v_organization_id := 'org_' || replace(new.id::text, '-', '');
     
     -- Determine organization name
-    if v_district_name is not null and v_district_name != '' then
-      v_org_name := v_district_name;
+    if v_organization_name is not null and v_organization_name != '' then
+      v_org_name := v_organization_name;
     else
       v_org_name := v_name || '''s Organization';
     end if;
     
     -- Generate unique slug with conflict resolution
-    v_slug := lower(trim(coalesce(v_district_name, v_name)));
+    v_slug := lower(trim(coalesce(v_organization_name, v_name)));
     v_slug := regexp_replace(v_slug, '[^\w-]', '-', 'g');  -- Replace spaces & special chars with hyphens
     v_slug := regexp_replace(v_slug, '-+', '-', 'g');      -- Replace multiple hyphens with single
     v_slug := regexp_replace(v_slug, '^-+|-+$', '', 'g');  -- Remove leading/trailing hyphens

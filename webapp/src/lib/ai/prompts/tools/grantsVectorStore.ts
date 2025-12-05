@@ -1,6 +1,6 @@
 export function buildGrantsVectorStorePrompt(): string {
   return `- **Grants Vector Store:**  
-  Use it to find the most **relevant funding opportunities** based on meaning — not just keywords — by comparing user or district queries to stored grant descriptions, eligibility, and priorities.
+  Use it to find the most **relevant funding opportunities** based on meaning — not just keywords — by comparing user or organization queries to stored grant descriptions, eligibility, and priorities.
   
   The vector store contains grants with the following structure and field types:
   
@@ -21,7 +21,7 @@ export function buildGrantsVectorStorePrompt(): string {
   
   **Financial Details:**
   - **Total Funding**: Aggregate amount available across all awards (e.g., "$3,000,000", "$500,000")
-  - **Award Range**: Individual award sizes if specified (e.g., "$50,000-$200,000 per district")
+  - **Award Range**: Individual award sizes if specified (e.g., "$50,000-$200,000 per organization")
   - **Cost Sharing Required**: Whether matching funds needed - "Yes" or "No"
   
   **Timeline:**
@@ -30,7 +30,7 @@ export function buildGrantsVectorStorePrompt(): string {
   
   **Program Details:**
   - **Description**: Full text covering objectives, eligibility, requirements, outcomes, and application process (typically 500-2000 words)
-  - **Eligibility**: Who can apply - often includes entity types (e.g., "Public school districts", "Nonprofit organizations", "Charter schools")
+  - **Eligibility**: Who can apply - often includes entity types (e.g., "Public organizations", "Nonprofit organizations", "Educational institutions")
   
   **Contact & Links:**
   - **Contact**: Name of program officer (e.g., "Stacey Williams", "Dr. Jane Smith")

@@ -10,12 +10,12 @@ import {
   OrganizationInfo,
 } from "./prompts/chat-editor";
 import { UserAIContextSettings } from "@/types/ai-settings";
-import { DistrictInfo } from "./prompts/chat-assistant";
+import { OrganizationInfo as GrantSearchOrgInfo } from "./prompts/chat-assistant";
 
 export type { OrganizationInfo, EditorPromptOptions } from "./prompts/chat-editor";
 
-// Convert OrganizationInfo to DistrictInfo format for the grant search tool
-function toDistrictInfo(org: OrganizationInfo | undefined): DistrictInfo | null {
+// Convert OrganizationInfo to format for the grant search tool
+function toGrantSearchOrgInfo(org: OrganizationInfo | undefined): GrantSearchOrgInfo | null {
   if (!org) return null;
   
   return {
@@ -25,10 +25,6 @@ function toDistrictInfo(org: OrganizationInfo | undefined): DistrictInfo | null 
     state: org.state,
     zipCode: org.zipCode,
     countyName: org.countyName,
-    enrollment: org.enrollment,
-    numberOfSchools: org.numberOfSchools,
-    lowestGrade: org.lowestGrade,
-    highestGrade: org.highestGrade,
     missionStatement: org.missionStatement,
     strategicPlan: org.strategicPlan,
     annualOperatingBudget: org.annualOperatingBudget?.toString() ?? null,
@@ -50,8 +46,8 @@ export async function createEditorAgent(
 
   // Create tools - only include grant search if enabled in settings
   const enableGrantSearch = userSettings?.enableGrantSearchEditor ?? true;
-  const districtInfo = toDistrictInfo(promptOptions.organizationInfo);
-  const tools = enableGrantSearch ? [createGrantSearchTool(districtInfo)] : [];
+  const organizationInfo = toGrantSearchOrgInfo(promptOptions.organizationInfo);
+  const tools = enableGrantSearch ? [createGrantSearchTool(organizationInfo)] : [];
 
   // Build the editor system prompt
   const systemPrompt = buildEditorSystemPrompt(promptOptions);

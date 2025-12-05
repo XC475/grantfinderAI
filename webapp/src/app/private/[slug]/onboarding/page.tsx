@@ -248,7 +248,7 @@ export default function OnboardingPage() {
                     Personalized Recommendations
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Get grant suggestions tailored to your district&apos;s
+                    Get grant suggestions tailored to your organization&apos;s
                     profile and needs
                   </p>
                 </div>

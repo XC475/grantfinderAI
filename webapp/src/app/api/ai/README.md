@@ -110,7 +110,7 @@ The editor assistant automatically includes:
 
 1. **Document Content:** Current state of the document being edited
 2. **Application Context:** If document belongs to an application, includes the grant opportunity details
-3. **Organization Info:** District/organization profile for personalized suggestions
+3. **Organization Info:** Organization profile for personalized suggestions
 
 ### Used By
 
