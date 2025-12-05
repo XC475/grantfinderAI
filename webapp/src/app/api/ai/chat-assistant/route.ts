@@ -1,13 +1,16 @@
-// src/app/api/ai/assistant-agent/route.ts
+// Chat Assistant API Endpoint
+// Uses the chat agent with LangChain and grant search tool
+// Context: GENERAL - standalone conversations
+
 import { NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
-import { createGrantsAgent } from "@/lib/ai/agent";
+import { createChatAgent, DistrictInfo } from "@/lib/ai/chat-agent";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
-import { DistrictInfo } from "@/lib/ai/prompts/chat-assistant";
 import { getSourceDocumentContext } from "@/lib/documentContext";
 import { searchKnowledgeBase } from "@/lib/ai/knowledgeBaseRAG";
 import { getActiveKnowledgeBase } from "@/lib/getOrgKnowledgeBase";
+import { getUserAIContextSettings } from "@/lib/aiContextSettings";
 
 interface FileAttachment {
   id: string;
@@ -47,6 +50,9 @@ export async function POST(req: NextRequest) {
 
     // 2. Get user's organization
     const userOrgId = organizationId || (await getUserOrganizationId(user.id));
+
+    // 2.5. Fetch user AI context settings
+    const userAISettings = await getUserAIContextSettings(user.id);
 
     // 3. Fetch organization data
     const organization = await prisma.organization.findUnique({
@@ -113,11 +119,9 @@ export async function POST(req: NextRequest) {
     );
 
     // Get general knowledge base context (user-filtered by AI settings)
-    const generalKBContext = await getActiveKnowledgeBase(
-      userOrgId,
-      user.id,
-      { context: "chat" }
-    );
+    const generalKBContext = await getActiveKnowledgeBase(userOrgId, user.id, {
+      context: "chat",
+    });
 
     // Combine all contexts
     let knowledgeBaseContext = "";
@@ -161,45 +165,68 @@ export async function POST(req: NextRequest) {
       ? `${protocol}://${host}/private/${organization.slug}`
       : `${protocol}://${host}`;
 
-    const districtInfo: DistrictInfo | null = organization.leaId
-      ? {
-          id: organization.id,
-          name: organization.name,
-          city: organization.city,
-          state: organization.state,
-          zipCode: organization.zipCode,
-          countyName: organization.countyName,
-          enrollment: organization.enrollment,
-          numberOfSchools: organization.numberOfSchools,
-          lowestGrade: organization.lowestGrade,
-          highestGrade: organization.highestGrade,
-          missionStatement: organization.missionStatement,
-          strategicPlan: organization.strategicPlan,
-          annualOperatingBudget: organization.annualOperatingBudget
-            ? organization.annualOperatingBudget.toString()
-            : null,
-          fiscalYearEnd: organization.fiscalYearEnd,
-          customFields: organization.customFields.map((field) => ({
-            name: field.name,
-            description: field.description,
-            value: field.value,
-          })),
-        }
-      : null;
+    // Only include organization profile if enabled in user settings
+    const districtInfo: DistrictInfo | null =
+      userAISettings.enableOrgProfileChat && organization.leaId
+        ? {
+            id: organization.id,
+            name: organization.name,
+            city: organization.city,
+            state: organization.state,
+            zipCode: organization.zipCode,
+            countyName: organization.countyName,
+            enrollment: organization.enrollment,
+            numberOfSchools: organization.numberOfSchools,
+            lowestGrade: organization.lowestGrade,
+            highestGrade: organization.highestGrade,
+            missionStatement: organization.missionStatement,
+            strategicPlan: organization.strategicPlan,
+            annualOperatingBudget: organization.annualOperatingBudget
+              ? organization.annualOperatingBudget.toString()
+              : null,
+            fiscalYearEnd: organization.fiscalYearEnd,
+            customFields: organization.customFields.map((field) => ({
+              name: field.name,
+              description: field.description,
+              value: field.value,
+            })),
+          }
+        : null;
 
-    // 8. Create agent
-    const agent = await createGrantsAgent(districtInfo, baseUrl);
+    // 8. Create chat agent (pass settings to control grant search tool)
+    const agent = await createChatAgent(
+      districtInfo,
+      baseUrl,
+      userAISettings
+    );
 
-    // 9. Convert all messages to LangChain format (including last user message)
+    // 9. Build current settings status to inject into user message
+    // This ensures the AI always sees the CURRENT state, not conversation history patterns
+    const settingsStatusContext = `[CURRENT AI SETTINGS - These override any previous conversation patterns]
+• Grant Search: ${userAISettings.enableGrantSearchChat ? "✅ ENABLED - You CAN use the search_grants tool" : "❌ DISABLED - Do NOT search for grants, inform user to enable it"}
+• Knowledge Base: ${userAISettings.enableKnowledgeBaseChat ? "✅ ENABLED" : "❌ DISABLED"}
+• Organization Profile: ${userAISettings.enableOrgProfileChat ? "✅ ENABLED" : "❌ DISABLED"}
+[END SETTINGS - Always respect these current settings, not past responses]
+
+`;
+
+    // 10. Convert all messages to LangChain format (including last user message)
     // If message has attachments, append extracted text to content
     const langChainMessages = messages.map((m: ChatMessage, index: number) => {
       let content = m.content;
 
-      // For the last user message, prepend source document context if available
+      // For the last user message, prepend settings status and source document context
       const isLastUserMessage =
         index === messages.length - 1 && m.role === "user";
-      if (isLastUserMessage && sourceContext) {
-        content = `${sourceContext}\n\n${content}`;
+      
+      if (isLastUserMessage) {
+        // Always prepend settings status to ensure AI sees current state
+        content = `${settingsStatusContext}${content}`;
+        
+        // Then add source context if available
+        if (sourceContext) {
+          content = `${sourceContext}\n\n${content}`;
+        }
       }
 
       // Append extracted text from attachments to user messages
@@ -237,7 +264,7 @@ export async function POST(req: NextRequest) {
             metadata: {
               timestamp: Date.now(),
               model: "gpt-4o-mini",
-              source: "langchain-agent",
+              source: "chat-agent",
               clientDisconnected,
             },
           },
@@ -248,7 +275,7 @@ export async function POST(req: NextRequest) {
           data: { updatedAt: new Date() },
         });
       } catch (error) {
-        console.error("❌ [Assistant Agent] Error saving to database:", error);
+        console.error("❌ [Chat Assistant] Error saving to database:", error);
       }
     };
 
@@ -344,7 +371,7 @@ export async function POST(req: NextRequest) {
           await saveToDatabase();
         } catch (error) {
           clientDisconnected = true;
-          console.error("❌ [Assistant Agent] Stream error:", error);
+          console.error("❌ [Chat Assistant] Stream error:", error);
           // Still save to database even on error
           if (fullResponse) {
             await saveToDatabase();
@@ -366,7 +393,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("❌ [Assistant Agent] Error:", error);
+    console.error("❌ [Chat Assistant] Error:", error);
     return new Response(
       error instanceof Error ? error.message : "Error processing request",
       { status: 500 }
@@ -394,3 +421,4 @@ function generateChatTitle(firstMessage: string): string {
     ? firstMessage.substring(0, 47) + "..."
     : firstMessage;
 }
+

@@ -2,16 +2,6 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  ArrowUp,
-  Paperclip,
-  Square,
-  Plus,
-  FileText,
-  X,
-  File,
-  Table,
-} from "lucide-react";
 import Image from "next/image";
 import { omit } from "remeda";
 
@@ -31,6 +21,7 @@ import {
   type SourceDocument,
 } from "@/components/chat/SourcesModal";
 import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
+import { AISettingsDropdown } from "./ai-settings-dropdown";
 
 interface MessageInputBaseProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -60,35 +51,27 @@ type MessageInputProps =
   | MessageInputWithoutAttachmentProps
   | MessageInputWithAttachmentsProps;
 
-const placeholderTexts = [
-  "Ask anything...",
-  "Help with search...",
-  "Help with writing...",
-  "Find grants...",
-  "Get recommendations...",
-];
+import {
+  PLACEHOLDER_TEXTS,
+  DEFAULT_PLACEHOLDER,
+  PLACEHOLDER_ANIMATION,
+  SUPPORTED_FILE_TYPES,
+  TEXT_PASTE_THRESHOLD,
+  BUTTON_ICONS,
+  ICON_SIZES,
+  getFileTypeIcon,
+  getFileTypeIconColor,
+} from "./constants";
+
+const placeholderTexts = PLACEHOLDER_TEXTS;
 
 // Helper function to get document icon based on file type
 function getDocumentIcon(doc: SourceDocument) {
-  if (!doc.fileType) {
-    return <FileText className="h-4 w-4 text-blue-500 flex-shrink-0" />;
-  }
-  if (doc.fileType === "application/pdf") {
-    return <FileText className="h-4 w-4 text-red-500 flex-shrink-0" />;
-  }
-  if (
-    doc.fileType ===
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-  ) {
-    return <FileText className="h-4 w-4 text-blue-600 flex-shrink-0" />;
-  }
-  if (doc.fileType === "text/csv") {
-    return <Table className="h-4 w-4 text-green-600 flex-shrink-0" />;
-  }
-  if (doc.fileType === "text/plain") {
-    return <File className="h-4 w-4 text-gray-600 flex-shrink-0" />;
-  }
-  return <File className="h-4 w-4 text-muted-foreground flex-shrink-0" />;
+  const IconComponent = getFileTypeIcon(doc.fileType);
+  const colorClass = getFileTypeIconColor(doc.fileType);
+  return (
+    <IconComponent className={`${ICON_SIZES.sm} ${colorClass} shrink-0`} />
+  );
 }
 
 export function MessageInput({
@@ -119,7 +102,7 @@ export function MessageInput({
   useEffect(() => {
     if (placeholder || !isEmpty) {
       // Use custom placeholder or default if chat has messages
-      setCurrentPlaceholder(placeholder || "Ask AI...");
+      setCurrentPlaceholder(placeholder || DEFAULT_PLACEHOLDER);
       return;
     }
 
@@ -145,9 +128,9 @@ export function MessageInput({
           currentIndex = (currentIndex + 1) % placeholderTexts.length;
           currentCharIndex = 0;
           isPaused = false;
-        }, 2000); // Pause for 2 seconds before changing
+        }, PLACEHOLDER_ANIMATION.pauseDuration);
       }
-    }, 100); // Type one character every 100ms
+    }, PLACEHOLDER_ANIMATION.typingSpeed);
 
     return () => {
       clearInterval(typingInterval);
@@ -202,10 +185,9 @@ export function MessageInput({
     if (!items) return;
 
     const text = event.clipboardData.getData("text");
-    if (text && text.length > 500 && props.allowAttachments) {
+    if (text && text.length > TEXT_PASTE_THRESHOLD && props.allowAttachments) {
       event.preventDefault();
       const blob = new Blob([text], { type: "text/plain" });
-      // @ts-expect-error - File constructor signature issue in some environments
       const file: File = new File([blob], "Pasted text", {
         type: "text/plain",
         lastModified: Date.now(),
@@ -364,7 +346,7 @@ export function MessageInput({
                       }}
                       aria-label="Remove source"
                     >
-                      <X className="h-2.5 w-2.5" />
+                      <BUTTON_ICONS.close className="h-2.5 w-2.5" />
                     </button>
                   )}
                 </motion.div>
@@ -446,64 +428,77 @@ export function MessageInput({
 
           {/* Buttons Row - Bottom section */}
           <div className="flex items-center justify-between px-4 pb-3 pt-1">
-            {/* Plus Button - Bottom left */}
-            {props.allowAttachments ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                  >
-                    <Plus className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-56">
-                  <DropdownMenuItem
-                    onClick={async () => {
-                      const files = await showFileUploadDialog();
-                      addFiles(files);
-                    }}
-                    className="cursor-pointer"
-                  >
-                    <Paperclip className="mr-2 h-4 w-4" />
-                    <span>Attach files</span>
-                  </DropdownMenuItem>
-                  {props.onSourceDocumentsChange && (
+            {/* Left buttons group */}
+            <div className="flex items-center gap-1">
+              {/* Plus Button */}
+              {props.allowAttachments ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                    >
+                      <BUTTON_ICONS.plus className={ICON_SIZES.md} />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-56">
                     <DropdownMenuItem
-                      onClick={() => setSourcesModalOpen(true)}
+                      onClick={async () => {
+                        const files = await showFileUploadDialog();
+                        addFiles(files);
+                      }}
                       className="cursor-pointer"
                     >
-                      <FileText className="mr-2 h-4 w-4" />
-                      <span>Add sources</span>
+                      <BUTTON_ICONS.attach
+                        className={`mr-2 ${ICON_SIZES.sm}`}
+                      />
+                      <span>Attach files</span>
                     </DropdownMenuItem>
-                  )}
-                  <GoogleDriveImportPicker
-                    mode="attach"
-                    onFilesSelected={handleDriveFilesSelected}
-                  >
-                    {({ onClick }) => (
+                    {props.onSourceDocumentsChange && (
                       <DropdownMenuItem
-                        onClick={onClick}
+                        onClick={() => setSourcesModalOpen(true)}
                         className="cursor-pointer"
                       >
-                        <Image
-                          src="/logos/google-drive.svg"
-                          alt="Google Drive"
-                          width={16}
-                          height={16}
-                          className="mr-2"
+                        <BUTTON_ICONS.sources
+                          className={`mr-2 ${ICON_SIZES.sm}`}
                         />
-                        <span>Google Drive</span>
+                        <span>Add sources</span>
                       </DropdownMenuItem>
                     )}
-                  </GoogleDriveImportPicker>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <div className="h-9 w-9" />
-            )}
+                    <GoogleDriveImportPicker
+                      mode="attach"
+                      onFilesSelected={handleDriveFilesSelected}
+                    >
+                      {({ onClick }) => (
+                        <DropdownMenuItem
+                          onClick={onClick}
+                          className="cursor-pointer"
+                        >
+                          <Image
+                            src="/logos/google-drive.svg"
+                            alt="Google Drive"
+                            width={16}
+                            height={16}
+                            className="mr-2"
+                          />
+                          <span>Google Drive</span>
+                        </DropdownMenuItem>
+                      )}
+                    </GoogleDriveImportPicker>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <div className="h-9 w-9" />
+              )}
+
+              {/* Settings Button with AI Toggles */}
+              <AISettingsDropdown
+                assistantType="chat"
+                disabled={isGenerating}
+              />
+            </div>
 
             {/* Send/Stop Button - Bottom right */}
             {isGenerating && stop ? (
@@ -517,7 +512,10 @@ export function MessageInput({
                 aria-label="Stop generating"
                 onClick={stop}
               >
-                <Square className="h-4 w-4 animate-pulse text-white" fill="currentColor" />
+                <BUTTON_ICONS.stop
+                  className={`${ICON_SIZES.sm} animate-pulse text-white`}
+                  fill="currentColor"
+                />
               </Button>
             ) : (
               <Button
@@ -537,7 +535,9 @@ export function MessageInput({
                   isGenerating
                 }
               >
-                <ArrowUp className="h-5 w-5 text-white" />
+                <BUTTON_ICONS.submit
+                  className={`${ICON_SIZES.md} text-white`}
+                />
               </Button>
             )}
           </div>
@@ -545,7 +545,7 @@ export function MessageInput({
           {/* Drag & Drop Overlay */}
           {props.allowAttachments && isDragging && (
             <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center space-x-2 rounded-3xl border border-dashed border-primary bg-primary/5 text-sm text-muted-foreground">
-              <Paperclip className="h-4 w-4" />
+              <BUTTON_ICONS.attach className={ICON_SIZES.sm} />
               <span>Drop your files here to attach them.</span>
             </div>
           )}
@@ -573,9 +573,7 @@ function showFileUploadDialog() {
 
   input.type = "file";
   input.multiple = true;
-  // Accept only supported file types: PDF, Word, Text, CSV
-  input.accept =
-    ".pdf,.docx,.txt,.csv,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv";
+  input.accept = SUPPORTED_FILE_TYPES.accept;
   input.click();
 
   return new Promise<File[] | null>((resolve) => {

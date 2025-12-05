@@ -3,8 +3,8 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 
 import { cn } from "@/lib/utils";
-import { Chat } from "@/components/ui/chat";
-import { Message } from "@/components/ui/chat-message";
+import { Chat } from "@/components/chat/chat-container";
+import { Message } from "@/components/chat/chat-message";
 import { type SourceDocument } from "@/components/chat/SourcesModal";
 import { validateMultipleFiles } from "@/lib/clientUploadValidation";
 
@@ -179,7 +179,7 @@ export function ChatDemo(props: ChatDemoProps) {
           attachments: msg.experimental_attachments,
         }));
 
-        const response = await fetch("/api/ai/assistant-agent", {
+        const response = await fetch("/api/ai/chat-assistant", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -1,5 +1,6 @@
 import { buildGrantsVectorStorePrompt } from "./tools/grantsVectorStore";
 import { buildKnowledgeBaseRAGPrompt } from "./tools/knowledgeBaseRAG";
+import { UserAIContextSettings } from "@/types/ai-settings";
 
 export interface DistrictInfo {
   id: string;
@@ -25,9 +26,57 @@ export interface DistrictInfo {
 
 export function buildSystemPrompt(
   districtInfo: DistrictInfo | null,
-  baseUrl: string
+  baseUrl: string,
+  userSettings?: UserAIContextSettings | null
 ): string {
   const districtName = districtInfo?.name || "school districts";
+
+  // Check what tools are enabled
+  const grantSearchEnabled = userSettings?.enableGrantSearchChat ?? true;
+  const knowledgeBaseEnabled = userSettings?.enableKnowledgeBaseChat ?? true;
+  const orgProfileEnabled = userSettings?.enableOrgProfileChat ?? true;
+
+  // Build available tools section based on enabled capabilities
+  let availableToolsSection = "";
+  const enabledTools: string[] = [];
+  const disabledTools: string[] = [];
+
+  if (grantSearchEnabled) {
+    enabledTools.push(buildGrantsVectorStorePrompt());
+  } else {
+    disabledTools.push(
+      "**Grant Search** - Currently disabled. To enable, click the settings button (⚙️) next to the message input and turn on Grant Search."
+    );
+  }
+
+  if (knowledgeBaseEnabled) {
+    enabledTools.push(buildKnowledgeBaseRAGPrompt(districtName));
+  } else {
+    disabledTools.push(
+      "**Knowledge Base Access** - Currently disabled. To enable, click the settings button (⚙️) next to the message input and turn on Knowledge Base."
+    );
+  }
+
+  // Build a clear status summary at the top
+  const statusSummary = `**Current Settings Status (as of this message):**
+- Grant Search: ${grantSearchEnabled ? "✅ ENABLED" : "❌ DISABLED"}
+- Knowledge Base: ${knowledgeBaseEnabled ? "✅ ENABLED" : "❌ DISABLED"}
+- Organization Profile: ${orgProfileEnabled ? "✅ ENABLED" : "❌ DISABLED"}
+
+`;
+
+  if (enabledTools.length > 0) {
+    availableToolsSection = statusSummary + enabledTools.join("\n\n");
+  } else {
+    availableToolsSection = statusSummary;
+  }
+
+  if (disabledTools.length > 0) {
+    const disabledSection =
+      "\n\n**Disabled Capabilities:**\n" +
+      disabledTools.map((tool) => `- ${tool}`).join("\n");
+    availableToolsSection += disabledSection;
+  }
 
   return `<task_summary>
 You are an expert **Grants Lifecycle Assistant** supporting K–12 ${districtName}.
@@ -36,19 +85,35 @@ Your role: deliver **precise, fast, and contextually relevant** guidance across 
 </task_summary>
 
 <context>
-${districtInfo ? buildDistrictContext(districtInfo) : "**No district linked** – Provide general grant recommendations."}
+${orgProfileEnabled && districtInfo ? buildDistrictContext(districtInfo) : "**Organization Profile disabled** – Organization context is not available. To enable, click the settings button (⚙️) next to the message input and turn on Organization Profile. Until then, provide general recommendations without specific organizational details."}
 </context>
 
 <available_tools>
-${buildGrantsVectorStorePrompt()}
-
-${buildKnowledgeBaseRAGPrompt(districtName)}
+${availableToolsSection || "**No tools available** - All AI capabilities are currently disabled in user settings."}
 </available_tools>
 
 <tool_usage_policy>
+**IMPORTANT: Settings can change mid-conversation.** Users may enable or disable capabilities between messages. ALWAYS check the <available_tools> section above for the CURRENT state of each capability. Do NOT assume a capability is still enabled/disabled based on your previous responses in this conversation - the settings may have changed.
+
 - **ALWAYS rely on available tools** to retrieve information or perform actions.  
 - **NEVER fabricate or assume external data** — only use tool outputs or provided context.  
 - For casual or conversational inputs (e.g., greetings, feedback), **do not call tools** — respond fast and naturally as a helpful assistant.
+- **If a user asks about a disabled capability**, politely inform them that the feature is currently turned off. Guide them to click the **settings button (⚙️)** next to the message input to enable it. They'll see toggles for Organization Profile, Knowledge Base, and Grant Search.
+
+**CRITICAL - When Grant Search is DISABLED (check <available_tools> to confirm current state):**
+- **ABSOLUTELY DO NOT** invent, fabricate, or make up ANY grant information. This includes:
+  - Grant names or titles
+  - Agencies or organizations
+  - Award amounts or ranges
+  - Deadlines or dates
+  - Eligibility requirements
+  - URLs or links
+- When a user asks to search for grants and Grant Search is disabled, you MUST:
+  1. Clearly state: "Grant search is currently turned off in your settings."
+  2. Explain: "I cannot search for or provide grant information without this feature enabled."
+  3. Guide them: "To enable it, click the settings button (⚙️) next to the message input and turn on Grant Search."
+- **DO NOT** try to be "helpful" by guessing or suggesting grants from general knowledge. This could mislead users with outdated or incorrect information.
+- You may discuss general grant writing tips, proposal strategies, or answer questions about the grant process without needing the search tool.
 </tool_usage_policy>
 
 <output_structure>

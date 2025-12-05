@@ -1,16 +1,6 @@
 "use client";
 
 import React, { useCallback, useRef, useState, useEffect } from "react";
-import {
-  Paperclip,
-  ArrowUp,
-  X,
-  Plus,
-  Upload,
-  FileText,
-  File,
-  Table,
-} from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -27,31 +17,24 @@ import {
   type SourceDocument,
 } from "@/components/chat/SourcesModal";
 import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
+import { AISettingsDropdown } from "./ai-settings-dropdown";
+import {
+  BUTTON_ICONS,
+  ICON_SIZES,
+  getFileTypeIcon,
+  getFileTypeIconColor,
+} from "./constants";
 
 // Helper function to get document icon based on file type
 function getDocumentIcon(doc: SourceDocument) {
-  if (!doc.fileType) {
-    return <FileText className="h-4 w-4 text-blue-500 flex-shrink-0" />;
-  }
-  if (doc.fileType === "application/pdf") {
-    return <FileText className="h-4 w-4 text-red-500 flex-shrink-0" />;
-  }
-  if (
-    doc.fileType ===
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-  ) {
-    return <FileText className="h-4 w-4 text-blue-600 flex-shrink-0" />;
-  }
-  if (doc.fileType === "text/csv") {
-    return <Table className="h-4 w-4 text-green-600 flex-shrink-0" />;
-  }
-  if (doc.fileType === "text/plain") {
-    return <File className="h-4 w-4 text-gray-600 flex-shrink-0" />;
-  }
-  return <File className="h-4 w-4 text-muted-foreground flex-shrink-0" />;
+  const IconComponent = getFileTypeIcon(doc.fileType);
+  const colorClass = getFileTypeIconColor(doc.fileType);
+  return (
+    <IconComponent className={`${ICON_SIZES.sm} ${colorClass} shrink-0`} />
+  );
 }
 
-interface HeroChatInputProps {
+interface InitialMessageInputProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onSubmit: (files?: File[] | null, sources?: SourceDocument[]) => void;
@@ -61,7 +44,7 @@ interface HeroChatInputProps {
   onSourceDocumentsChange?: (docs: SourceDocument[]) => void;
 }
 
-export function HeroChatInput({
+export function InitialMessageInput({
   value,
   onChange,
   onSubmit,
@@ -69,7 +52,7 @@ export function HeroChatInput({
   className,
   sourceDocuments,
   onSourceDocumentsChange,
-}: HeroChatInputProps) {
+}: InitialMessageInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<File[] | null>(null);
@@ -174,7 +157,7 @@ export function HeroChatInput({
                     }}
                     aria-label="Remove source"
                   >
-                    <X className="h-2.5 w-2.5" />
+                    <BUTTON_ICONS.close className="h-2.5 w-2.5" />
                   </button>
                 )}
               </motion.div>
@@ -196,7 +179,7 @@ export function HeroChatInput({
                 onClick={() => handleRemoveFile(index)}
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
-                <X className="h-4 w-4" />
+                <BUTTON_ICONS.close className={ICON_SIZES.sm} />
               </button>
             </div>
           ))}
@@ -238,57 +221,63 @@ export function HeroChatInput({
 
         {/* Buttons Row - Bottom section */}
         <div className="flex items-center justify-between px-4 pb-3 pt-1">
-          {/* Plus Button - Bottom left */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-              >
-                <Plus className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56">
-              <DropdownMenuItem
-                onClick={handleAttachClick}
-                className="cursor-pointer"
-              >
-                <Paperclip className="mr-2 h-4 w-4" />
-                <span>Attach files</span>
-              </DropdownMenuItem>
-              {onSourceDocumentsChange && (
+          {/* Left buttons group */}
+          <div className="flex items-center gap-1">
+            {/* Plus Button */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                >
+                  <BUTTON_ICONS.plus className={ICON_SIZES.md} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
                 <DropdownMenuItem
-                  onClick={() => setSourcesModalOpen(true)}
+                  onClick={handleAttachClick}
                   className="cursor-pointer"
                 >
-                  <FileText className="mr-2 h-4 w-4" />
-                  <span>Add sources</span>
+                  <BUTTON_ICONS.attach className={`mr-2 ${ICON_SIZES.sm}`} />
+                  <span>Attach files</span>
                 </DropdownMenuItem>
-              )}
-              <GoogleDriveImportPicker
-                mode="attach"
-                onFilesSelected={handleDriveFilesSelected}
-              >
-                {({ onClick }) => (
+                {onSourceDocumentsChange && (
                   <DropdownMenuItem
-                    onClick={onClick}
+                    onClick={() => setSourcesModalOpen(true)}
                     className="cursor-pointer"
                   >
-                    <Image
-                      src="/logos/google-drive.svg"
-                      alt="Google Drive"
-                      width={16}
-                      height={16}
-                      className="mr-2"
-                    />
-                    <span>Google Drive</span>
+                    <BUTTON_ICONS.sources className={`mr-2 ${ICON_SIZES.sm}`} />
+                    <span>Add sources</span>
                   </DropdownMenuItem>
                 )}
-              </GoogleDriveImportPicker>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <GoogleDriveImportPicker
+                  mode="attach"
+                  onFilesSelected={handleDriveFilesSelected}
+                >
+                  {({ onClick }) => (
+                    <DropdownMenuItem
+                      onClick={onClick}
+                      className="cursor-pointer"
+                    >
+                      <Image
+                        src="/logos/google-drive.svg"
+                        alt="Google Drive"
+                        width={16}
+                        height={16}
+                        className="mr-2"
+                      />
+                      <span>Google Drive</span>
+                    </DropdownMenuItem>
+                  )}
+                </GoogleDriveImportPicker>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Settings Button with AI Toggles */}
+            <AISettingsDropdown assistantType="chat" />
+          </div>
 
           {/* Send Button - Bottom right (Claude-style) */}
           <Button
@@ -300,14 +289,14 @@ export function HeroChatInput({
               "dark:bg-[#d4917c] dark:hover:bg-[#c27d68]"
             )}
           >
-            <ArrowUp className="h-5 w-5 text-white" />
+            <BUTTON_ICONS.submit className={`${ICON_SIZES.md} text-white`} />
           </Button>
         </div>
 
         {/* Drag & Drop Overlay */}
         {isDragging && (
           <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center space-x-2 rounded-3xl border border-dashed border-primary bg-primary/5 text-sm text-muted-foreground">
-            <Paperclip className="h-4 w-4" />
+            <BUTTON_ICONS.attach className={ICON_SIZES.sm} />
             <span>Drop your files here to attach them.</span>
           </div>
         )}
@@ -327,3 +316,6 @@ export function HeroChatInput({
     </div>
   );
 }
+
+// Backward compatibility alias
+export const HeroChatInput = InitialMessageInput;

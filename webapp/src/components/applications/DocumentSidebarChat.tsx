@@ -22,11 +22,11 @@ import {
   ChatMessage,
   type ChatMessageProps,
   type Message,
-} from "@/components/ui/chat-message";
+} from "@/components/chat/chat-message";
 import { CopyButton } from "@/components/ui/copy-button";
 import { TypingIndicator } from "@/components/ui/typing-indicator";
 import { useAutosizeTextArea } from "@/hooks/use-autosize-textarea";
-import { ChatForm as BaseChatForm } from "@/components/ui/chat";
+import { ChatForm as BaseChatForm } from "@/components/chat/chat-container";
 import { FilePreview } from "@/components/ui/file-preview";
 import { TextAttachmentCard, type TextSelectionAttachment } from "@/components/ui/text-attachment-card";
 import {
@@ -40,6 +40,7 @@ import {
   type SourceDocument,
 } from "@/components/chat/SourcesModal";
 import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
+import { AISettingsDropdown } from "@/components/chat/ai-settings-dropdown";
 
 interface DocumentSidebarChatProps {
   handleSubmit: (
@@ -274,7 +275,7 @@ export const ChatContainer = forwardRef<
 });
 ChatContainer.displayName = "ChatContainer";
 
-// Removed local ChatForm and ChatFormProps - now using BaseChatForm from @/components/ui/chat
+// Removed local ChatForm and ChatFormProps - now using BaseChatForm from @/components/chat/chat-container
 // which properly manages file state and clears files after submission
 
 type AdditionalMessageOptions = Omit<ChatMessageProps, keyof Message>;
@@ -666,6 +667,14 @@ function SidebarMessageInput({
               </DropdownMenuContent>
             </DropdownMenu>
           )}
+
+          {/* Settings Button with AI Toggles */}
+          <AISettingsDropdown
+            assistantType="editor"
+            size="small"
+            align="end"
+            disabled={isGenerating}
+          />
 
           {isGenerating && stop ? (
             <Button

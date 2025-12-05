@@ -70,29 +70,21 @@ export async function searchKnowledgeBase(
   const topK = options?.topK || 5;
 
   try {
-    // Get user AI context settings if userId provided
-    let enabledTagNames: string[] | null = null;
+    // Check if knowledge base is enabled for this context
     if (options?.userId && options?.context) {
       const settings = await prisma.userAIContextSettings.findUnique({
         where: { userId: options.userId },
       });
-      enabledTagNames =
-        options.context === "chat"
-          ? settings?.enabledTagsChat || null
-          : settings?.enabledTagsEditor || null;
-    }
 
-    // Get tag IDs for enabled tags
-    let tagIds: string[] | null = null;
-    if (enabledTagNames && enabledTagNames.length > 0) {
-      const tags = await prisma.documentTag.findMany({
-        where: {
-          organizationId,
-          name: { in: enabledTagNames },
-        },
-        select: { id: true },
-      });
-      tagIds = tags.map((t) => t.id);
+      const isEnabled =
+        options.context === "chat"
+          ? (settings?.enableKnowledgeBaseChat ?? true)
+          : (settings?.enableKnowledgeBaseEditor ?? true);
+
+      // If knowledge base is disabled, return empty string
+      if (!isEnabled) {
+        return "";
+      }
     }
 
     // Generate embedding for query
@@ -102,15 +94,6 @@ export async function searchKnowledgeBase(
     });
     const queryEmbedding = embeddingResponse.data[0].embedding;
     const embeddingArrayString = `[${queryEmbedding.join(",")}]`;
-
-    // Build tag filter SQL if user settings exist
-    let tagFilterSQL = "";
-    if (tagIds && tagIds.length > 0) {
-      const tagIdsList = tagIds
-        .map((id) => `'${id.replace(/'/g, "''")}'`)
-        .join(",");
-      tagFilterSQL = `AND d."fileTagId" = ANY(ARRAY[${tagIdsList}]::TEXT[])`;
-    }
 
     // Search using cosine similarity in app.document_vectors
     // Use $queryRawUnsafe to properly handle vector array syntax
@@ -134,7 +117,6 @@ export async function searchKnowledgeBase(
       WHERE dv.organization_id = $1
         AND d."isKnowledgeBase" = true
         AND d."vectorizationStatus" = 'COMPLETED'
-        ${tagFilterSQL}
       ORDER BY dv.embedding <=> '${escapedEmbedding}'::vector
       LIMIT $2
     `;

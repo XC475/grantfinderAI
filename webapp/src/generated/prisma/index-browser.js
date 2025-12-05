@@ -187,8 +187,12 @@ exports.Prisma.UserAIContextSettingsScalarFieldEnum = {
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  enabledTagsChat: 'enabledTagsChat',
-  enabledTagsEditor: 'enabledTagsEditor'
+  enableOrgProfileChat: 'enableOrgProfileChat',
+  enableOrgProfileEditor: 'enableOrgProfileEditor',
+  enableKnowledgeBaseChat: 'enableKnowledgeBaseChat',
+  enableKnowledgeBaseEditor: 'enableKnowledgeBaseEditor',
+  enableGrantSearchChat: 'enableGrantSearchChat',
+  enableGrantSearchEditor: 'enableGrantSearchEditor'
 };
 
 exports.Prisma.OrganizationScalarFieldEnum = {

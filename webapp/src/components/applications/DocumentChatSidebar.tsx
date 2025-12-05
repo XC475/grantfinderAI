@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { DocumentSidebarChat } from "./DocumentSidebarChat";
-import { Message } from "@/components/ui/chat-message";
+import { Message } from "@/components/chat/chat-message";
 import { useDocument } from "@/contexts/DocumentContext";
 import { Button } from "@/components/ui/button";
 import {
@@ -405,7 +405,7 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
           attachments: msg.experimental_attachments,
         }));
 
-        const response = await fetch("/api/chat/editor", {
+        const response = await fetch("/api/ai/editor-assistant", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

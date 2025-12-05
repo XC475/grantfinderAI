@@ -3,8 +3,6 @@ import { getFileTagLabel } from "@/lib/fileTags";
 
 interface KBRetrievalOptions {
   context: "chat" | "editor";
-  includeFileTags?: string[];
-  excludeFileTags?: string[];
 }
 
 /**
@@ -13,7 +11,7 @@ interface KBRetrievalOptions {
  *
  * @param organizationId - The ID of the organization (documents are org-level)
  * @param userId - The ID of the user (for fetching user-specific AI context settings)
- * @param options - Retrieval options including context type and filters
+ * @param options - Retrieval options including context type
  */
 export async function getActiveKnowledgeBase(
   organizationId: string,
@@ -26,68 +24,22 @@ export async function getActiveKnowledgeBase(
       where: { userId },
     });
 
-    // 2. Determine enabled tag names based on context
-    const enabledTagNames =
+    // 2. Check if knowledge base is enabled for this context
+    const isEnabled =
       options.context === "chat"
-        ? settings?.enabledTagsChat
-        : settings?.enabledTagsEditor;
+        ? (settings?.enableKnowledgeBaseChat ?? true)
+        : (settings?.enableKnowledgeBaseEditor ?? true);
 
-    // 3. Get tag IDs for enabled tags
-    let tagIdsToInclude: string[] | undefined;
-    if (enabledTagNames && enabledTagNames.length > 0) {
-      const tags = await prisma.documentTag.findMany({
-        where: {
-          organizationId,
-          name: { in: enabledTagNames },
-        },
-        select: { id: true },
-      });
-      tagIdsToInclude = tags.map((t) => t.id);
+    // If knowledge base is disabled, return empty string
+    if (!isEnabled) {
+      return "";
     }
 
-    // 4. Apply filters
-    if (options.includeFileTags) {
-      const includeTagIds = await prisma.documentTag.findMany({
-        where: {
-          organizationId,
-          name: { in: options.includeFileTags },
-        },
-        select: { id: true },
-      });
-      const includeIds = includeTagIds.map((t) => t.id);
-      if (tagIdsToInclude) {
-        tagIdsToInclude = tagIdsToInclude.filter((id) =>
-          includeIds.includes(id)
-        );
-      } else {
-        tagIdsToInclude = includeIds;
-      }
-    }
-
-    if (options.excludeFileTags) {
-      const excludeTagIds = await prisma.documentTag.findMany({
-        where: {
-          organizationId,
-          name: { in: options.excludeFileTags },
-        },
-        select: { id: true },
-      });
-      const excludeIds = excludeTagIds.map((t) => t.id);
-      if (tagIdsToInclude) {
-        tagIdsToInclude = tagIdsToInclude.filter(
-          (id) => !excludeIds.includes(id)
-        );
-      }
-    }
-
-    // 5. Query documents marked as knowledge base (still org-level)
+    // 3. Query documents marked as knowledge base (all documents, no tag filtering)
     const docs = await prisma.document.findMany({
       where: {
         organizationId,
         isKnowledgeBase: true,
-        ...(tagIdsToInclude && tagIdsToInclude.length > 0
-          ? { fileTagId: { in: tagIdsToInclude } }
-          : {}),
         extractedText: { not: null },
       },
       select: {
@@ -118,7 +70,7 @@ export async function getActiveKnowledgeBase(
       return "";
     }
 
-    // 5. Filter out any documents with null extractedText (defensive check)
+    // 4. Filter out any documents with null extractedText (defensive check)
     // Type assertion is safe here because:
     // - We filter for extractedText: { not: null } in the query
     // - We filter again here as a defensive check
@@ -131,7 +83,7 @@ export async function getActiveKnowledgeBase(
       return "";
     }
 
-    // 6. Format for AI with type labels and metadata from FKs
+    // 5. Format for AI with type labels and metadata from FKs
     return formatDocsForAI(validDocs);
   } catch (error) {
     console.error("Error fetching active knowledge base:", error);
