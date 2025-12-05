@@ -170,6 +170,35 @@ Users can toggle AI capabilities via settings. Each endpoint respects:
 | Knowledge Base       | `enableKnowledgeBaseChat` | `enableKnowledgeBaseEditor` |
 | Grant Search         | `enableGrantSearchChat`   | `enableGrantSearchEditor`   |
 
+### Settings Status Injection
+
+To ensure the AI respects current settings even mid-conversation (overriding conversation history patterns), both endpoints inject the current settings status directly into each user message:
+
+```
+[CURRENT AI SETTINGS - These override any previous conversation patterns]
+• Grant Search: ✅ ENABLED - You CAN use the search_grants tool
+• Knowledge Base: ✅ ENABLED
+• Organization Profile: ✅ ENABLED
+[END SETTINGS - Always respect these current settings, not past responses]
+```
+
+This ensures the AI always sees and respects the current state, regardless of what was said earlier in the conversation.
+
+---
+
+## Debug Logging
+
+Both endpoints include comprehensive logging for debugging:
+
+```
+🔍 [AIContextSettings] Fetching settings for userId: xxx
+📋 [AIContextSettings] Found settings from DB: { ... }
+⚙️ [Chat/Editor Assistant API] User AI Settings fetched: { ... }
+🤖 [ChatAgent/EditorAgent] Creating agent with settings: { ... }
+🔧 [ChatAgent/EditorAgent] Tools configuration: { toolsCount: 1, toolNames: ['search_grants'] }
+✅ [ChatAgent/EditorAgent] Agent created successfully
+```
+
 ---
 
 ## Architecture

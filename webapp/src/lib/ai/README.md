@@ -216,6 +216,42 @@ Users can toggle AI capabilities. Both agents respect these settings:
 
 Settings are stored in `UserAIContextSettings` model and managed via `/api/user/ai-context-settings`.
 
+### Settings Status Injection
+
+To ensure the AI respects current settings even mid-conversation (overriding conversation history patterns), the API routes inject the current settings status directly into each user message:
+
+```
+[CURRENT AI SETTINGS - These override any previous conversation patterns]
+• Grant Search: ✅ ENABLED - You CAN use the search_grants tool
+• Knowledge Base: ✅ ENABLED
+• Organization Profile: ✅ ENABLED
+[END SETTINGS - Always respect these current settings, not past responses]
+```
+
+This is handled in the API routes (`/api/ai/chat-assistant` and `/api/ai/editor-assistant`), not in the agents themselves.
+
+---
+
+## Debug Logging
+
+Both agents include comprehensive logging for debugging settings flow:
+
+```
+🤖 [ChatAgent] Creating agent with settings: {
+  enableGrantSearchChat: true,
+  enableKnowledgeBaseChat: true,
+  enableOrgProfileChat: true,
+  settingsId: 'xxx',
+  userId: 'xxx'
+}
+🔧 [ChatAgent] Tools configuration: {
+  enableGrantSearch: true,
+  toolsCount: 1,
+  toolNames: ['search_grants']
+}
+✅ [ChatAgent] Agent created successfully
+```
+
 ---
 
 ## Data Flow
@@ -244,13 +280,21 @@ User Message
 │  ┌─────────────────────────────────────────────────┐   │
 │  │ 3. Create Agent                                  │   │
 │  │    - createChatAgent() or createEditorAgent()   │   │
-│  │    - Attach tools (grant search)                │   │
-│  │    - Build system prompt                        │   │
+│  │    - Attach tools (grant search if enabled)     │   │
+│  │    - Build system prompt with settings status   │   │
 │  └─────────────────────────────────────────────────┘   │
 │                         │                               │
 │                         ▼                               │
 │  ┌─────────────────────────────────────────────────┐   │
-│  │ 4. Execute & Stream                             │   │
+│  │ 4. Inject Settings Status                        │   │
+│  │    - Prepend current settings to user message   │   │
+│  │    - Ensures AI sees current state, not history │   │
+│  │    - Overrides conversation pattern following   │   │
+│  └─────────────────────────────────────────────────┘   │
+│                         │                               │
+│                         ▼                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │ 5. Execute & Stream                             │   │
 │  │    - agent.stream({ messages })                 │   │
 │  │    - Filter LLM vs tool outputs                 │   │
 │  │    - Stream to client                           │   │
@@ -258,7 +302,7 @@ User Message
 │                         │                               │
 │                         ▼                               │
 │  ┌─────────────────────────────────────────────────┐   │
-│  │ 5. Persist                                       │   │
+│  │ 6. Persist                                       │   │
 │  │    - Save user message                          │   │
 │  │    - Save assistant response                    │   │
 │  │    - Update chat timestamp                      │   │
