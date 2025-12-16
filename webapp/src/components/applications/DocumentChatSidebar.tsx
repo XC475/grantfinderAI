@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { History, Plus, X, ChevronDown, FileText } from "lucide-react";
+import { History, Plus, ChevronDown, FileText, PanelRight } from "lucide-react";
 import { SourcesModal, type SourceDocument } from "@/components/chat/SourcesModal";
 import { AISettingsDropdown } from "@/components/chat/ai-settings-dropdown";
 import { validateMultipleFiles } from "@/lib/clientUploadValidation";
@@ -35,6 +35,7 @@ interface TextSelectionAttachment {
 
 interface DocumentChatSidebarProps {
   documentId: string;
+  onToggleSidebar?: () => void;
 }
 
 interface ChatSession {
@@ -55,23 +56,19 @@ interface ChatMessageResponse {
   } | null;
 }
 
-export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
+export function DocumentChatSidebar({ documentId, onToggleSidebar }: DocumentChatSidebarProps) {
   const { documentTitle, documentContent } = useDocument();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [chatId, setChatId] = useState<string | null>(null);
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
-  const [openTabs, setOpenTabs] = useState<string[]>([]); // Track which chats are open in tabs
   const [loadingSessions, setLoadingSessions] = useState(false);
-  const [editingTabId, setEditingTabId] = useState<string | null>(null);
-  const [editingTitle, setEditingTitle] = useState("");
   const [sourceDocuments, setSourceDocuments] = useState<SourceDocument[]>([]);
   const [textAttachments, setTextAttachments] = useState<TextSelectionAttachment[]>([]);
   const [sourcesModalOpen, setSourcesModalOpen] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const hasAutoLoaded = useRef(false);
-  const editInputRef = useRef<HTMLInputElement>(null);
 
   const loadChatSessions = useCallback(async () => {
     try {
@@ -91,7 +88,7 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
   }, [documentId]);
 
   const loadChatSession = useCallback(
-    async (sessionId: string, skipAddingToTabs = false) => {
+    async (sessionId: string) => {
       try {
         setIsLoading(true);
         const response = await fetch(`/api/chats/editor/${sessionId}`);
@@ -108,22 +105,6 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
           );
           setMessages(loadedMessages);
           setChatId(sessionId);
-
-          // Add to open tabs if not already there (and not in restore mode)
-          if (!skipAddingToTabs) {
-            setOpenTabs((currentTabs) => {
-              if (!currentTabs.includes(sessionId)) {
-                const newOpenTabs = [...currentTabs, sessionId];
-
-                // Save to localStorage
-                const openTabsKey = `openEditorTabs_${documentId}`;
-                localStorage.setItem(openTabsKey, JSON.stringify(newOpenTabs));
-
-                return newOpenTabs;
-              }
-              return currentTabs;
-            });
-          }
 
           // Save to localStorage for persistence across refreshes
           const lastChatKey = `lastEditorChat_${documentId}`;
@@ -153,17 +134,6 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
           const sessions = data.chats || [];
           setChatSessions(sessions);
 
-          // Restore open tabs from localStorage
-          const openTabsKey = `openEditorTabs_${documentId}`;
-          const savedOpenTabs = localStorage.getItem(openTabsKey);
-          const restoredTabs = savedOpenTabs ? JSON.parse(savedOpenTabs) : [];
-
-          // Filter to only include tabs that still exist
-          const validTabs = restoredTabs.filter((tabId: string) =>
-            sessions.some((s: ChatSession) => s.id === tabId)
-          );
-          setOpenTabs(validTabs);
-
           // Try to restore the last active chat from localStorage
           const lastChatKey = `lastEditorChat_${documentId}`;
           const lastChatId = localStorage.getItem(lastChatKey);
@@ -181,8 +151,7 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
             const chatToLoad = savedChat ? savedChat.id : sessions[0].id;
             console.log("💬 [DocumentChat] Auto-loading session:", chatToLoad);
 
-            // Skip adding to tabs since we already restored them
-            await loadChatSession(chatToLoad, true);
+            await loadChatSession(chatToLoad);
           }
         }
       } catch (error) {
@@ -195,85 +164,11 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
     loadAndRestoreSession();
   }, [documentId, loadChatSession]);
 
-  const closeTab = (tabId: string) => {
-    // Remove from open tabs
-    const newOpenTabs = openTabs.filter((id) => id !== tabId);
-    setOpenTabs(newOpenTabs);
-
-    // Save to localStorage
-    const openTabsKey = `openEditorTabs_${documentId}`;
-    localStorage.setItem(openTabsKey, JSON.stringify(newOpenTabs));
-
-    // If closing the active tab, switch to another tab
-    if (tabId === chatId) {
-      if (newOpenTabs.length > 0) {
-        // Find the index of the closed tab
-        const closedIndex = openTabs.indexOf(tabId);
-        // Switch to the previous tab, or the next one if it was the first
-        const nextTabId = newOpenTabs[Math.max(0, closedIndex - 1)];
-        loadChatSession(nextTabId);
-      } else {
-        // No more tabs, start fresh
-        startNewChat();
-      }
-    }
-
-    console.log("💬 [DocumentChat] Closed tab:", tabId);
-  };
-
-  const startEditingTab = (tabId: string, currentTitle: string) => {
-    setEditingTabId(tabId);
-    setEditingTitle(currentTitle);
-    // Focus the input after state updates
-    setTimeout(() => {
-      editInputRef.current?.focus();
-      editInputRef.current?.select();
-    }, 0);
-  };
-
-  const saveTabTitle = async (tabId: string) => {
-    if (!editingTitle.trim()) {
-      cancelEditingTab();
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/chats/editor/${tabId}/title`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ title: editingTitle.trim() }),
-      });
-
-      if (response.ok) {
-        // Update local state
-        setChatSessions((prev) =>
-          prev.map((session) =>
-            session.id === tabId
-              ? { ...session, title: editingTitle.trim() }
-              : session
-          )
-        );
-        console.log("💬 [DocumentChat] Renamed tab:", tabId);
-      }
-    } catch (error) {
-      console.error("Error renaming tab:", error);
-    } finally {
-      cancelEditingTab();
-    }
-  };
-
-  const cancelEditingTab = () => {
-    setEditingTabId(null);
-    setEditingTitle("");
-  };
-
   const startNewChat = () => {
     setMessages([]);
     setChatId(null);
 
-    // Don't clear open tabs, just clear the active chat
+    // Clear the last active chat from localStorage
     const lastChatKey = `lastEditorChat_${documentId}`;
     localStorage.removeItem(lastChatKey);
 
@@ -435,16 +330,9 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
           if (newChatId) {
             setChatId(newChatId);
 
-            // Add to open tabs
-            const newOpenTabs = [...openTabs, newChatId];
-            setOpenTabs(newOpenTabs);
-
-            // Save both to localStorage
+            // Save to localStorage for persistence
             const lastChatKey = `lastEditorChat_${documentId}`;
             localStorage.setItem(lastChatKey, newChatId);
-
-            const openTabsKey = `openEditorTabs_${documentId}`;
-            localStorage.setItem(openTabsKey, JSON.stringify(newOpenTabs));
 
             console.log(
               "💬 [DocumentChat] New chat created with ID:",
@@ -567,7 +455,6 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
       documentTitle,
       documentContent,
       chatId,
-      openTabs,
       loadChatSessions,
       textAttachments,
       sourceDocuments,
@@ -664,124 +551,79 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
 
   return (
     <div className="flex flex-col h-full bg-background">
-      {/* Header with tabs and icon buttons */}
-      <div className="flex items-center border-b bg-background">
-        {/* Tabs section - scrollable */}
-        <div className="flex-1 flex items-center overflow-x-auto scrollbar-thin scrollbar-thumb-muted">
-          {openTabs.length === 0 ? (
-            <div className="px-4 py-2 text-sm text-muted-foreground">
-              No active chats
-            </div>
+      {/* Header with chat title and icon buttons */}
+      <div className="flex h-16 shrink-0 items-center gap-1 px-3 border-b bg-background">
+        {/* Left: Current chat title */}
+        <div className="flex-1 min-w-0">
+          {chatId ? (
+            <span className="text-sm font-medium text-foreground truncate block">
+              {chatSessions.find((s) => s.id === chatId)?.title || "Chat"}
+            </span>
           ) : (
-            openTabs.map((tabId) => {
-              const session = chatSessions.find((s) => s.id === tabId);
-              if (!session) return null;
-
-              const isEditing = editingTabId === session.id;
-
-              return (
-                <div
-                  key={session.id}
-                  className={`
-                    group flex items-center gap-2 px-3 py-2 border-r hover:bg-muted/50 transition-colors
-                    min-w-[120px] max-w-[200px] flex-shrink-0
-                    ${chatId === session.id ? "bg-muted" : ""}
-                  `}
-                >
-                  {isEditing ? (
-                    <input
-                      ref={editInputRef}
-                      type="text"
-                      value={editingTitle}
-                      onChange={(e) => setEditingTitle(e.target.value)}
-                      onBlur={() => saveTabTitle(session.id)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          saveTabTitle(session.id);
-                        } else if (e.key === "Escape") {
-                          cancelEditingTab();
-                        }
-                      }}
-                      className="text-sm flex-1 bg-background border-none outline-none focus:ring-1 focus:ring-primary rounded px-1"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  ) : (
-                    <span
-                      className="text-sm truncate flex-1 text-left cursor-pointer"
-                      onClick={() => loadChatSession(session.id)}
-                      onDoubleClick={() =>
-                        startEditingTab(session.id, session.title || "")
-                      }
-                    >
-                      {session.title}
-                    </span>
-                  )}
-                  {!isEditing && (
-                    <X
-                      className={`h-3 w-3 transition-opacity ${
-                        chatId === session.id
-                          ? "opacity-0 group-hover:opacity-100"
-                          : "opacity-0"
-                      }`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        closeTab(session.id);
-                      }}
-                    />
-                  )}
-                </div>
-              );
-            })
+            <span className="text-sm text-muted-foreground">New chat</span>
           )}
         </div>
 
-        {/* Icon buttons on the right */}
-        <div className="flex items-center gap-1 px-2 border-l">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                disabled={loadingSessions}
-              >
-                <History className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-64">
-              {chatSessions.length === 0 ? (
-                <div className="px-2 py-4 text-sm text-muted-foreground text-center">
-                  No previous sessions
-                </div>
-              ) : (
-                chatSessions.map((session) => (
-                  <DropdownMenuItem
-                    key={session.id}
-                    onClick={() => loadChatSession(session.id)}
-                    className="flex flex-col items-start py-2"
-                  >
-                    <div className="font-medium text-sm truncate w-full">
-                      {session.title}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {new Date(session.createdAt).toLocaleDateString()} •{" "}
-                      {session.messageCount} messages
-                    </div>
-                  </DropdownMenuItem>
-                ))
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {/* Right: Icon buttons */}
+        {/* History dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              disabled={loadingSessions}
+            >
+              <History className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-64">
+            {chatSessions.length === 0 ? (
+              <div className="px-2 py-4 text-sm text-muted-foreground text-center">
+                No previous sessions
+              </div>
+            ) : (
+              chatSessions.map((session) => (
+                <DropdownMenuItem
+                  key={session.id}
+                  onClick={() => loadChatSession(session.id)}
+                  className="flex flex-col items-start py-2"
+                >
+                  <div className="font-medium text-sm truncate w-full">
+                    {session.title}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {new Date(session.createdAt).toLocaleDateString()} •{" "}
+                    {session.messageCount} messages
+                  </div>
+                </DropdownMenuItem>
+              ))
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
+        {/* New chat button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          onClick={startNewChat}
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+
+        {/* Panel toggle button */}
+        {onToggleSidebar && (
           <Button
             variant="ghost"
             size="icon"
             className="h-8 w-8"
-            onClick={startNewChat}
+            onClick={onToggleSidebar}
           >
-            <Plus className="h-4 w-4" />
+            <PanelRight className="h-4 w-4 rotate-180" />
+            <span className="sr-only">Close Assistant Sidebar</span>
           </Button>
-        </div>
+        )}
       </div>
 
       {/* Main content area */}
