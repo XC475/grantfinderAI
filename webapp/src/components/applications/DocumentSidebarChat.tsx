@@ -543,93 +543,97 @@ function SidebarMessageInput({
           </div>
         )}
 
-        <div className="relative flex w-full items-center">
-          <div className="relative w-full">
-            <textarea
-              aria-label="Write your prompt here"
-              placeholder={placeholder || "Ask anything..."}
-              ref={textAreaRef}
-              onKeyDown={onKeyDown}
-              onPaste={handlePaste}
-              className={cn(
-                "z-10 w-full grow resize-none rounded-xl bg-transparent border-0 text-sm placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
-                "p-3 pr-20",
-                className
-              )}
-              {...textareaProps}
-            />
-          </div>
+        {/* Textarea */}
+        <div className="w-full">
+          <textarea
+            aria-label="Write your prompt here"
+            placeholder={placeholder || "How can I help you with this document?"}
+            ref={textAreaRef}
+            onKeyDown={onKeyDown}
+            onPaste={handlePaste}
+            className={cn(
+              "z-10 w-full grow resize-none rounded-t-xl bg-transparent border-0 text-sm placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+              "p-3",
+              className
+            )}
+            {...textareaProps}
+          />
         </div>
 
-        <div className="absolute right-3 top-3 z-20 flex gap-1">
-          {setFiles && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="ghost"
-                  className="h-8 w-8"
-                  aria-label="Add content"
-                  disabled={isGenerating}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
-                <DropdownMenuItem
-                  onClick={async () => {
-                    const selectedFiles = await showFileUploadDialog();
-                    if (selectedFiles) {
-                      addFiles(selectedFiles);
-                    }
-                  }}
-                  className="cursor-pointer"
-                >
-                  <Paperclip className="mr-2 h-4 w-4" />
-                  <span>Attach files</span>
-                </DropdownMenuItem>
-                {onSourceDocumentsChange && (
+        {/* Bottom Control Bar */}
+        <div className="flex items-center justify-between flex-wrap gap-1 px-2 pb-2">
+          {/* Left group: + and AI settings */}
+          <div className="flex items-center gap-1">
+            {setFiles && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8"
+                    aria-label="Add content"
+                    disabled={isGenerating}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
                   <DropdownMenuItem
-                    onClick={() => setSourcesModalOpen(true)}
+                    onClick={async () => {
+                      const selectedFiles = await showFileUploadDialog();
+                      if (selectedFiles) {
+                        addFiles(selectedFiles);
+                      }
+                    }}
                     className="cursor-pointer"
                   >
-                    <FileText className="mr-2 h-4 w-4" />
-                    <span>Add sources</span>
+                    <Paperclip className="mr-2 h-4 w-4" />
+                    <span>Attach files</span>
                   </DropdownMenuItem>
-                )}
-                <GoogleDriveImportPicker
-                  mode="attach"
-                  onFilesSelected={handleDriveFilesSelected}
-                >
-                  {({ onClick }) => (
+                  {onSourceDocumentsChange && (
                     <DropdownMenuItem
-                      onClick={onClick}
+                      onClick={() => setSourcesModalOpen(true)}
                       className="cursor-pointer"
                     >
-                      <Image
-                        src="/logos/google-drive.svg"
-                        alt="Google Drive"
-                        width={16}
-                        height={16}
-                        className="mr-2"
-                      />
-                      <span>Google Drive</span>
+                      <FileText className="mr-2 h-4 w-4" />
+                      <span>Add sources</span>
                     </DropdownMenuItem>
                   )}
-                </GoogleDriveImportPicker>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+                  <GoogleDriveImportPicker
+                    mode="attach"
+                    onFilesSelected={handleDriveFilesSelected}
+                  >
+                    {({ onClick }) => (
+                      <DropdownMenuItem
+                        onClick={onClick}
+                        className="cursor-pointer"
+                      >
+                        <Image
+                          src="/logos/google-drive.svg"
+                          alt="Google Drive"
+                          width={16}
+                          height={16}
+                          className="mr-2"
+                        />
+                        <span>Google Drive</span>
+                      </DropdownMenuItem>
+                    )}
+                  </GoogleDriveImportPicker>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
-          {/* Settings Button with AI Toggles */}
-          <AISettingsDropdown
-            assistantType="editor"
-            size="small"
-            align="end"
-            disabled={isGenerating}
-          />
+            {/* AI Settings Button */}
+            <AISettingsDropdown
+              assistantType="editor"
+              size="small"
+              align="start"
+              disabled={isGenerating}
+            />
+          </div>
 
+          {/* Right: Send / Stop button */}
           {isGenerating && stop ? (
             <Button
               type="button"
