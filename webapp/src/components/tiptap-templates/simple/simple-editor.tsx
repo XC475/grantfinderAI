@@ -25,9 +25,6 @@ import { Fragment, Slice } from "@tiptap/pm/model";
 import { Extension } from "@tiptap/core";
 
 import { HeadingWithId } from "@/components/tiptap-extensions/heading-with-id";
-import { useOutlineOptional } from "@/contexts/OutlineContext";
-import { List } from "lucide-react";
-import { toast } from "sonner";
 
 // --- UI Primitives ---
 import { Button } from "@/components/tiptap-ui-primitive/button";
@@ -149,31 +146,8 @@ const MainToolbarContent = ({
   onLinkClick: () => void;
   isMobile: boolean;
 }) => {
-  // Safe usage of useOutline using useOutlineOptional
-  const outlineContext = useOutlineOptional();
-
   return (
     <>
-      {outlineContext && !isMobile && (
-        <>
-          <ToolbarGroup>
-            <Button
-              data-style={outlineContext.isOpen ? "primary" : "ghost"}
-              onClick={() => {
-                // outlineContext.toggleOutline();
-                toast.info("Document Outline", {
-                  description: "This feature is currently under development and will be available soon.",
-                });
-              }}
-              title="Toggle Outline"
-              className="w-8 h-8 p-0"
-            >
-              <List className="h-4 w-4" />
-            </Button>
-          </ToolbarGroup>
-          <ToolbarSeparator />
-        </>
-      )}
       <Spacer />
 
       {/* Group 1: Undo/Redo */}
