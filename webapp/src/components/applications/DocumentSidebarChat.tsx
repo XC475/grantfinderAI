@@ -38,6 +38,7 @@ import {
 } from "@/components/chat/SourcesModal";
 import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
 import { AISettingsDropdown } from "@/components/chat/ai-settings-dropdown";
+import { TextAnimate } from "@/components/ui/text-animate";
 
 interface DocumentSidebarChatProps {
   handleSubmit: (
@@ -59,6 +60,8 @@ interface DocumentSidebarChatProps {
   onRemoveTextAttachment?: (index: number) => void;
   sourcesModalOpen?: boolean;
   setSourcesModalOpen?: (open: boolean) => void;
+  /** Show centered hero branding when chat is empty (editor assistant only) */
+  showEmptyHero?: boolean;
 }
 
 export function DocumentSidebarChat({
@@ -77,6 +80,7 @@ export function DocumentSidebarChat({
   onRemoveTextAttachment,
   sourcesModalOpen,
   setSourcesModalOpen,
+  showEmptyHero = false,
 }: DocumentSidebarChatProps) {
   const lastMessage = messages.at(-1);
   const isTyping = lastMessage?.role === "user";
@@ -191,6 +195,28 @@ export function DocumentSidebarChat({
               messageOptions={messageOptions}
             />
           </ChatMessages>
+        ) : showEmptyHero ? (
+          <div className="flex flex-col items-center text-center px-4 pt-6">
+            <TextAnimate
+              animation="blurInUp"
+              by="character"
+              once
+              className="text-2xl md:text-3xl font-normal text-foreground font-sans"
+              as="h1"
+            >
+              GrantWare AI
+            </TextAnimate>
+            <TextAnimate
+              animation="blurInUp"
+              by="character"
+              once
+              className="text-xl md:text-2xl font-normal text-muted-foreground font-sans mt-1"
+              as="h2"
+              delay={0.2}
+            >
+              Co‑Pilot
+            </TextAnimate>
+          </div>
         ) : null}
       </div>
 

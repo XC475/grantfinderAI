@@ -68,7 +68,6 @@ export function DocumentChatSidebar({ documentId, onToggleSidebar }: DocumentCha
   const [textAttachments, setTextAttachments] = useState<TextSelectionAttachment[]>([]);
   const [sourcesModalOpen, setSourcesModalOpen] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
-  const hasAutoLoaded = useRef(false);
 
   const loadChatSessions = useCallback(async () => {
     try {
@@ -121,9 +120,9 @@ export function DocumentChatSidebar({ documentId, onToggleSidebar }: DocumentCha
     [documentId]
   );
 
-  // Load chat sessions on mount and auto-load most recent
+  // Load chat sessions on mount (do not auto-restore — user can select from history)
   useEffect(() => {
-    const loadAndRestoreSession = async () => {
+    const loadSessions = async () => {
       try {
         setLoadingSessions(true);
         const response = await fetch(
@@ -133,26 +132,8 @@ export function DocumentChatSidebar({ documentId, onToggleSidebar }: DocumentCha
           const data = await response.json();
           const sessions = data.chats || [];
           setChatSessions(sessions);
-
-          // Try to restore the last active chat from localStorage
-          const lastChatKey = `lastEditorChat_${documentId}`;
-          const lastChatId = localStorage.getItem(lastChatKey);
-
-          // Auto-load the saved chat or most recent session
-          if (!hasAutoLoaded.current && sessions.length > 0) {
-            hasAutoLoaded.current = true;
-
-            // Find the saved chat in sessions
-            const savedChat = lastChatId
-              ? sessions.find((s: ChatSession) => s.id === lastChatId)
-              : null;
-
-            // Load saved chat if it exists, otherwise load most recent
-            const chatToLoad = savedChat ? savedChat.id : sessions[0].id;
-            console.log("💬 [DocumentChat] Auto-loading session:", chatToLoad);
-
-            await loadChatSession(chatToLoad);
-          }
+          // Start on default screen (empty messages, no chatId)
+          // User can load prior sessions from the history dropdown
         }
       } catch (error) {
         console.error("Error loading chat sessions:", error);
@@ -161,8 +142,8 @@ export function DocumentChatSidebar({ documentId, onToggleSidebar }: DocumentCha
       }
     };
 
-    loadAndRestoreSession();
-  }, [documentId, loadChatSession]);
+    loadSessions();
+  }, [documentId]);
 
   const startNewChat = () => {
     setMessages([]);
@@ -699,6 +680,7 @@ export function DocumentChatSidebar({ documentId, onToggleSidebar }: DocumentCha
             }}
             sourcesModalOpen={sourcesModalOpen}
             setSourcesModalOpen={setSourcesModalOpen}
+            showEmptyHero
           />
         </div>
       </div>
