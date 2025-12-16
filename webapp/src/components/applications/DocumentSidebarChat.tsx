@@ -8,9 +8,6 @@ import {
   Plus,
   Paperclip,
   FileText,
-  X,
-  File,
-  Table,
 } from "lucide-react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
@@ -27,8 +24,8 @@ import { CopyButton } from "@/components/ui/copy-button";
 import { TypingIndicator } from "@/components/ui/typing-indicator";
 import { useAutosizeTextArea } from "@/hooks/use-autosize-textarea";
 import { ChatForm as BaseChatForm } from "@/components/chat/chat-container";
-import { FilePreview } from "@/components/ui/file-preview";
-import { TextAttachmentCard, type TextSelectionAttachment } from "@/components/ui/text-attachment-card";
+import { AttachmentChip } from "@/components/ui/attachment-chip";
+import { type TextSelectionAttachment } from "@/components/ui/text-attachment-card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,6 +57,8 @@ interface DocumentSidebarChatProps {
   onSourceDocumentsChange?: (docs: SourceDocument[]) => void;
   textAttachments?: TextSelectionAttachment[];
   onRemoveTextAttachment?: (index: number) => void;
+  sourcesModalOpen?: boolean;
+  setSourcesModalOpen?: (open: boolean) => void;
 }
 
 export function DocumentSidebarChat({
@@ -76,6 +75,8 @@ export function DocumentSidebarChat({
   onSourceDocumentsChange,
   textAttachments,
   onRemoveTextAttachment,
+  sourcesModalOpen,
+  setSourcesModalOpen,
 }: DocumentSidebarChatProps) {
   const lastMessage = messages.at(-1);
   const isTyping = lastMessage?.role === "user";
@@ -211,6 +212,8 @@ export function DocumentSidebarChat({
               onSourceDocumentsChange={onSourceDocumentsChange}
               textAttachments={textAttachments}
               onRemoveTextAttachment={onRemoveTextAttachment}
+              sourcesModalOpen={sourcesModalOpen}
+              setSourcesModalOpen={setSourcesModalOpen}
             />
           )}
         </BaseChatForm>
@@ -317,29 +320,6 @@ function SidebarMessageList({
   );
 }
 
-// Helper function to get document icon based on file type
-function getDocumentIcon(doc: SourceDocument) {
-  if (!doc.fileType) {
-    return <FileText className="h-4 w-4 text-blue-500 shrink-0" />;
-  }
-  if (doc.fileType === "application/pdf") {
-    return <FileText className="h-4 w-4 text-red-500 shrink-0" />;
-  }
-  if (
-    doc.fileType ===
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-  ) {
-    return <FileText className="h-4 w-4 text-blue-600 shrink-0" />;
-  }
-  if (doc.fileType === "text/csv") {
-    return <Table className="h-4 w-4 text-green-600 shrink-0" />;
-  }
-  if (doc.fileType === "text/plain") {
-    return <File className="h-4 w-4 text-gray-600 shrink-0" />;
-  }
-  return <File className="h-4 w-4 text-muted-foreground shrink-0" />;
-}
-
 interface SidebarMessageInputProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   value: string;
@@ -352,6 +332,8 @@ interface SidebarMessageInputProps
   onSourceDocumentsChange?: (docs: SourceDocument[]) => void;
   textAttachments?: TextSelectionAttachment[];
   onRemoveTextAttachment?: (index: number) => void;
+  sourcesModalOpen?: boolean;
+  setSourcesModalOpen?: (open: boolean) => void;
 }
 
 function SidebarMessageInput({
@@ -367,10 +349,15 @@ function SidebarMessageInput({
   onSourceDocumentsChange,
   textAttachments,
   onRemoveTextAttachment,
+  sourcesModalOpen: sourcesModalOpenProp,
+  setSourcesModalOpen: setSourcesModalOpenProp,
   ...textareaProps
 }: SidebarMessageInputProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const [sourcesModalOpen, setSourcesModalOpen] = useState(false);
+  // Use local state as fallback if props not provided
+  const [localSourcesModalOpen, setLocalSourcesModalOpen] = useState(false);
+  const sourcesModalOpen = sourcesModalOpenProp ?? localSourcesModalOpen;
+  const setSourcesModalOpen = setSourcesModalOpenProp ?? setLocalSourcesModalOpen;
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (submitOnEnter && event.key === "Enter" && !event.shiftKey) {
@@ -489,39 +476,47 @@ function SidebarMessageInput({
   const showFileList = files && files.length > 0;
   const showSourceList = sourceDocuments && sourceDocuments.length > 0;
   const showTextAttachments = textAttachments && textAttachments.length > 0;
+  const showAnyAttachments = showFileList || showSourceList || showTextAttachments;
   const hasContent = textareaProps.value !== "" || showFileList || showTextAttachments;
-
-  console.log("🎨 [SidebarMessageInput] Rendering - showTextAttachments:", showTextAttachments, "textAttachments:", textAttachments);
 
   return (
     <div className="w-full px-3 py-3">
-      {/* Text Selection Attachments */}
-      {showTextAttachments && (
+      {/* Unified Attachments Section */}
+      {showAnyAttachments && (
         <div className="mb-3 flex flex-wrap gap-2">
           <AnimatePresence mode="popLayout">
+            {/* Text Selection Attachments */}
             {textAttachments?.map((attachment, index) => (
-              <TextAttachmentCard
+              <AttachmentChip
                 key={attachment.id}
-                attachment={attachment}
-                onRemove={() => {
-                  console.log("🗑️ [SidebarMessageInput] Removing attachment:", attachment.id);
-                  onRemoveTextAttachment?.(index);
-                }}
+                type="text"
+                title={attachment.name}
+                preview={attachment.preview}
+                onRemove={() => onRemoveTextAttachment?.(index)}
               />
             ))}
-          </AnimatePresence>
-        </div>
-      )}
-
-      {/* File Attachments Preview */}
-      {showFileList && (
-        <div className="mb-3 flex flex-wrap gap-2">
-          <AnimatePresence mode="popLayout">
+            {/* File Attachments */}
             {files?.map((file, index) => (
-              <FilePreview
+              <AttachmentChip
                 key={file.name + String(file.lastModified)}
-                file={file}
+                type="file"
+                title={file.name}
+                fileType={file.type}
                 onRemove={() => removeFile(index)}
+              />
+            ))}
+            {/* Source Documents */}
+            {sourceDocuments?.map((doc) => (
+              <AttachmentChip
+                key={doc.id}
+                type="source"
+                title={doc.title}
+                fileType={doc.fileType}
+                onRemove={
+                  onSourceDocumentsChange
+                    ? () => onSourceDocumentsChange(sourceDocuments.filter((d) => d.id !== doc.id))
+                    : undefined
+                }
               />
             ))}
           </AnimatePresence>
@@ -550,47 +545,6 @@ function SidebarMessageInput({
 
         <div className="relative flex w-full items-center">
           <div className="relative w-full">
-            {/* Source Documents Preview */}
-            {showSourceList && (
-              <div className="mb-2 flex flex-wrap gap-2">
-                <AnimatePresence mode="popLayout">
-                  {sourceDocuments?.map((doc) => (
-                    <motion.div
-                      key={doc.id}
-                      className="relative flex max-w-[180px] rounded-md border border-primary/30 bg-primary/5 p-1.5 pr-2 text-xs"
-                      layout
-                      initial={{ opacity: 0, y: "100%" }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: "100%" }}
-                    >
-                      <div className="flex w-full items-center space-x-2">
-                        <div className="grid h-8 w-8 shrink-0 place-items-center rounded-sm border bg-muted">
-                          {getDocumentIcon(doc)}
-                        </div>
-                        <span className="w-full truncate text-muted-foreground text-xs">
-                          {doc.title}
-                        </span>
-                      </div>
-                      {onSourceDocumentsChange && (
-                        <button
-                          className="absolute -right-1.5 -top-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full border bg-background"
-                          type="button"
-                          onClick={() => {
-                            onSourceDocumentsChange(
-                              sourceDocuments.filter((d) => d.id !== doc.id)
-                            );
-                          }}
-                          aria-label="Remove source"
-                        >
-                          <X className="h-2 w-2" />
-                        </button>
-                      )}
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
-            )}
-
             <textarea
               aria-label="Write your prompt here"
               placeholder={placeholder || "Ask anything..."}

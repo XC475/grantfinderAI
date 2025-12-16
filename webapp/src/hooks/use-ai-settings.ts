@@ -7,6 +7,9 @@ import type {
   AIContextUpdateRequest,
 } from "@/types/ai-settings";
 
+// Custom event name for cross-instance sync
+const AI_SETTINGS_UPDATED_EVENT = "ai-settings-updated";
+
 // Default settings when no record exists
 const DEFAULT_SETTINGS: Omit<
   UserAIContextSettings,
@@ -65,6 +68,25 @@ export function useAISettings(): UseAISettingsReturn {
     fetchSettings();
   }, [fetchSettings]);
 
+  // Listen for updates from other instances
+  useEffect(() => {
+    const handleSettingsUpdate = (e: CustomEvent<UserAIContextSettings>) => {
+      // Update local state directly from the event payload
+      setSettings(e.detail);
+    };
+
+    window.addEventListener(
+      AI_SETTINGS_UPDATED_EVENT,
+      handleSettingsUpdate as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        AI_SETTINGS_UPDATED_EVENT,
+        handleSettingsUpdate as EventListener
+      );
+    };
+  }, []);
+
   const toggleSetting = useCallback(
     async (field: AISettingsField) => {
       if (!settings) return;
@@ -90,6 +112,11 @@ export function useAISettings(): UseAISettingsReturn {
 
         const updatedSettings = await response.json();
         setSettings(updatedSettings);
+
+        // Broadcast to other instances
+        window.dispatchEvent(
+          new CustomEvent(AI_SETTINGS_UPDATED_EVENT, { detail: updatedSettings })
+        );
 
         // Get friendly label for toast
         const labels: Record<AISettingsField, string> = {

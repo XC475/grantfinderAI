@@ -11,8 +11,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { History, Plus, X } from "lucide-react";
-import { type SourceDocument } from "@/components/chat/SourcesModal";
+import { History, Plus, X, ChevronDown, FileText } from "lucide-react";
+import { SourcesModal, type SourceDocument } from "@/components/chat/SourcesModal";
+import { AISettingsDropdown } from "@/components/chat/ai-settings-dropdown";
 import { validateMultipleFiles } from "@/lib/clientUploadValidation";
 
 interface FileAttachment {
@@ -67,6 +68,7 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
   const [editingTitle, setEditingTitle] = useState("");
   const [sourceDocuments, setSourceDocuments] = useState<SourceDocument[]>([]);
   const [textAttachments, setTextAttachments] = useState<TextSelectionAttachment[]>([]);
+  const [sourcesModalOpen, setSourcesModalOpen] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const hasAutoLoaded = useRef(false);
   const editInputRef = useRef<HTMLInputElement>(null);
@@ -368,29 +370,35 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
         }
       }
 
+      // Convert text attachments to file attachment format for the API
+      const textAsAttachments: FileAttachment[] = textAttachments.map((att) => ({
+        id: att.id,
+        name: att.name,
+        type: att.type,
+        size: att.content.length,
+        url: "",
+        extractedText: att.content,
+      }));
+
+      // Combine file attachments with text selection attachments
+      const allAttachments = [
+        ...(attachments || []),
+        ...textAsAttachments,
+      ];
+
       const userMessage: Message = {
         id: `user-${Date.now()}`,
         role: "user",
-        content: input.trim() || "(Sent files)",
+        content: input.trim() || (allAttachments.length > 0 ? "(Sent attachments)" : ""),
         createdAt: new Date(),
-        experimental_attachments: attachments,
+        experimental_attachments: allAttachments.length > 0 ? allAttachments : undefined,
       };
-
-      // If there are text attachments, append them to the message content
-      if (textAttachments.length > 0) {
-        const textContext = textAttachments
-          .map(att => `\n\nSelected text from document:\n"${att.content}"`)
-          .join('');
-        
-        userMessage.content = userMessage.content 
-          ? `${userMessage.content}${textContext}`
-          : textContext.trim();
-      }
 
       // Add user message immediately (after upload completes)
       setMessages((prev) => [...prev, userMessage]);
       setInput("");
       setTextAttachments([]); // Clear text attachments after sending
+      setSourceDocuments([]); // Clear source documents after sending
       console.log("💬 [DocumentChat] Message added to chat - sending to AI");
 
       // Create abort controller for this request
@@ -561,6 +569,8 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
       chatId,
       openTabs,
       loadChatSessions,
+      textAttachments,
+      sourceDocuments,
     ]
   );
 
@@ -636,20 +646,20 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
 
   const handleSuggestedAction = (action: string) => {
     setInput(action);
-    // Small delay to ensure the input is set before submitting
-    setTimeout(() => {
-      const fakeEvent = { preventDefault: () => {} };
-      handleSubmit(fakeEvent);
-    }, 100);
+    // Fill only - user can edit before sending
   };
 
   const isEmpty = messages.length === 0;
 
   const suggestedActions = [
-    "Summarize this document for me",
-    "Suggest sources for me to use with this document",
-    "Create a list of action items in this document",
-    "Summarize my sources",
+    "Summarize this document",
+    "Create an outline for this section",
+    "Strengthen the case for support",
+    "Identify missing requirements",
+    "Tighten and reduce word count",
+    "Improve clarity and flow",
+    "Extract key action items",
+    "Check for consistency issues",
   ];
 
   return (
@@ -778,29 +788,50 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
       <div className="flex-1 flex flex-col overflow-hidden min-h-0 p-1 pt-2">
         {isEmpty && (
           <div className="flex-shrink-0 p-4 overflow-y-auto">
-            {/* Suggested actions when empty */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium mb-2">Suggested actions</h3>
-                <div className="space-y-2">
+            {/* Quick actions: Add sources, AI capabilities, Suggested prompts */}
+            <div className="space-y-3">
+              {/* Add sources button */}
+              <Button
+                variant="outline"
+                className="w-full justify-start gap-2 text-sm font-normal"
+                onClick={() => setSourcesModalOpen(true)}
+              >
+                <FileText className="h-4 w-4" />
+                <span>Add sources</span>
+              </Button>
+
+              {/* AI capabilities dropdown */}
+              <AISettingsDropdown
+                assistantType="editor"
+                size="small"
+                align="start"
+                triggerVariant="button"
+                triggerLabel="AI capabilities"
+              />
+
+              {/* Suggested prompts dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-between text-sm font-normal"
+                  >
+                    <span>Suggested prompts</span>
+                    <ChevronDown className="h-4 w-4 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
                   {suggestedActions.map((action, index) => (
-                    <button
+                    <DropdownMenuItem
                       key={index}
                       onClick={() => handleSuggestedAction(action)}
-                      className="w-full text-left text-sm p-3 rounded-md border hover:bg-muted/50 transition-colors"
+                      className="cursor-pointer"
                     >
                       {action}
-                    </button>
+                    </DropdownMenuItem>
                   ))}
-                </div>
-              </div>
-
-              {/* Sources section (placeholder) */}
-              <div className="pt-4 border-t">
-                <div className="flex items-center gap-2 p-3 rounded-md border">
-                  <span className="text-sm font-medium">📄 Sources</span>
-                </div>
-              </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         )}
@@ -824,6 +855,8 @@ export function DocumentChatSidebar({ documentId }: DocumentChatSidebarProps) {
               console.log("🗑️ [DocumentChatSidebar] Removing text attachment at index:", index);
               setTextAttachments(prev => prev.filter((_, i) => i !== index));
             }}
+            sourcesModalOpen={sourcesModalOpen}
+            setSourcesModalOpen={setSourcesModalOpen}
           />
         </div>
       </div>
