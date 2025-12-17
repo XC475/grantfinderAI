@@ -147,6 +147,10 @@ export function ApplicationsTable({
   const [globalFilter, setGlobalFilter] = useState("");
   const [activeTab, setActiveTab] = useState("all");
 
+  // Visible status filters in the tab row (capped)
+  const MAX_VISIBLE_STATUSES = 5;
+  const [visibleStatusKeys, setVisibleStatusKeys] = useState<string[]>([]);
+
   // Column order state
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
 
@@ -366,35 +370,137 @@ export function ApplicationsTable({
     }
   };
 
-  // Filter applications by tab
+  // Status filter configuration (tabs)
+  const statusFilters = useMemo(
+    () => [
+      // Order matters here – it controls the left-to-right order of the filters
+      {
+        value: "draft",
+        label: "Draft",
+        statuses: ["DRAFT"],
+      },
+      {
+        value: "in_progress",
+        label: "In Progress",
+        statuses: ["IN_PROGRESS"],
+      },
+      {
+        value: "ready_to_submit",
+        label: "Ready to Submit",
+        statuses: ["READY_TO_SUBMIT"],
+      },
+      {
+        value: "submitted",
+        label: "Submitted",
+        statuses: ["SUBMITTED"],
+      },
+      {
+        value: "under_review",
+        label: "Under Review",
+        statuses: ["UNDER_REVIEW"],
+      },
+      {
+        value: "awarded",
+        label: "Awarded",
+        statuses: ["AWARDED"],
+      },
+      {
+        value: "rejected",
+        label: "Rejected",
+        statuses: ["REJECTED"],
+      },
+      {
+        value: "withdrawn",
+        label: "Withdrawn",
+        statuses: ["WITHDRAWN"],
+      },
+    ],
+    []
+  );
+
+  // Count applications per status filter (used for badges and defaults)
+  const statusCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const filter of statusFilters) {
+      counts[filter.value] = applications.filter((app) =>
+        filter.statuses.includes(app.status)
+      ).length;
+    }
+    return counts;
+  }, [applications, statusFilters]);
+
+  // Initialize visible status tabs on first render (up to MAX_VISIBLE_STATUSES)
+  useEffect(() => {
+    if (visibleStatusKeys.length > 0) return;
+
+    const orderedKeys = statusFilters.map((f) => f.value);
+
+    // Prefer statuses that actually have applications
+    const nonEmptyKeys = orderedKeys.filter(
+      (key) => (statusCounts[key] ?? 0) > 0
+    );
+
+    const initial: string[] = [];
+    for (const key of nonEmptyKeys) {
+      if (initial.length >= MAX_VISIBLE_STATUSES) break;
+      if (!initial.includes(key)) initial.push(key);
+    }
+
+    // If we still have room, fill from remaining statuses (in order)
+    if (initial.length < Math.min(MAX_VISIBLE_STATUSES, orderedKeys.length)) {
+      for (const key of orderedKeys) {
+        if (initial.length >= MAX_VISIBLE_STATUSES) break;
+        if (!initial.includes(key)) initial.push(key);
+      }
+    }
+
+    setVisibleStatusKeys(initial);
+  }, [statusCounts, statusFilters, visibleStatusKeys.length]);
+
+  // Filter applications by active tab
   const filteredApplications = useMemo(() => {
     if (activeTab === "all") return applications;
-    if (activeTab === "draft") {
-      return applications.filter((app) => app.status === "DRAFT");
-    }
-    if (activeTab === "submitted") {
-      return applications.filter(
-        (app) => app.status === "SUBMITTED" || app.status === "UNDER_REVIEW"
-      );
-    }
-    if (activeTab === "approved") {
-      return applications.filter(
-        (app) => app.status === "APPROVED" || app.status === "AWARDED"
-      );
-    }
-    return applications;
-  }, [applications, activeTab]);
+    const filter = statusFilters.find((f) => f.value === activeTab);
+    if (!filter) return applications;
+    return applications.filter((app) => filter.statuses.includes(app.status));
+  }, [applications, activeTab, statusFilters]);
 
-  // Count for badges
-  const draftCount = applications.filter(
-    (app) => app.status === "DRAFT"
-  ).length;
-  const submittedCount = applications.filter(
-    (app) => app.status === "SUBMITTED" || app.status === "UNDER_REVIEW"
-  ).length;
-  const approvedCount = applications.filter(
-    (app) => app.status === "APPROVED" || app.status === "AWARDED"
-  ).length;
+  // Handle toggling a status in the overflow menu
+  const handleToggleVisibleStatus = (value: string, checked: boolean) => {
+    setVisibleStatusKeys((current) => {
+      // Removing from visible list
+      if (!checked) {
+        const next = current.filter((key) => key !== value);
+        if (activeTab === value) {
+          setActiveTab("all");
+        }
+        return next;
+      }
+
+      // Adding to visible list
+      if (current.includes(value)) {
+        return current;
+      }
+
+      if (current.length >= MAX_VISIBLE_STATUSES) {
+        toast.error("You can show up to 5 filters at a time.");
+        return current;
+      }
+
+      // Preserve canonical order by inserting based on statusFilters
+      const orderedKeys = statusFilters.map((f) => f.value);
+      const next = [...current, value];
+      next.sort(
+        (a, b) => orderedKeys.indexOf(a) - orderedKeys.indexOf(b)
+      );
+
+      return next;
+    });
+
+    if (checked) {
+      setActiveTab(value);
+    }
+  };
 
   const table = useReactTable({
     data: filteredApplications,
@@ -530,54 +636,16 @@ export function ApplicationsTable({
   return (
     <div className="space-y-4">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="flex items-center justify-between mb-4">
-          <TabsList>
-            <TabsTrigger value="all">All Applications</TabsTrigger>
-            <TabsTrigger value="draft">
-              Draft
-              {draftCount > 0 && (
-                <Badge
-                  variant="secondary"
-                  className="ml-2 px-1.5 py-0.5 text-xs"
-                >
-                  {draftCount}
-                </Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="submitted">
-              Submitted
-              {submittedCount > 0 && (
-                <Badge
-                  variant="secondary"
-                  className="ml-2 px-1.5 py-0.5 text-xs"
-                >
-                  {submittedCount}
-                </Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="approved">
-              Approved
-              {approvedCount > 0 && (
-                <Badge
-                  variant="secondary"
-                  className="ml-2 px-1.5 py-0.5 text-xs"
-                >
-                  {approvedCount}
-                </Badge>
-              )}
-            </TabsTrigger>
-          </TabsList>
-
+        <div className="mb-4 space-y-2">
+          {/* Top row: Search + Columns (left aligned, above filter bar) */}
           <div className="flex items-center gap-2">
-            {/* Search Input */}
             <Input
               placeholder="Search applications..."
               value={globalFilter ?? ""}
               onChange={(event) => setGlobalFilter(event.target.value)}
-              className="w-[250px]"
+              className="w-[260px]"
             />
 
-            {/* Customize Columns */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm">
@@ -585,7 +653,7 @@ export function ApplicationsTable({
                   Columns
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[200px]">
+              <DropdownMenuContent align="start" className="w-[200px]">
                 <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {table
@@ -620,10 +688,81 @@ export function ApplicationsTable({
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+
+          {/* Second row: status bar + More filters (More filters adjacent to bar) */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <TabsList className="flex flex-nowrap gap-1 overflow-x-auto flex-shrink-0">
+                <TabsTrigger value="all">All Applications</TabsTrigger>
+                {statusFilters
+                  .filter((filter) => visibleStatusKeys.includes(filter.value))
+                  .map((filter) => {
+                    const count = statusCounts[filter.value] ?? 0;
+                    return (
+                      <TabsTrigger key={filter.value} value={filter.value}>
+                        {filter.label}
+                        {count > 0 && (
+                          <Badge
+                            variant="secondary"
+                            className="ml-2 px-1.5 py-0.5 text-xs"
+                          >
+                            {count}
+                          </Badge>
+                        )}
+                      </TabsTrigger>
+                    );
+                  })}
+              </TabsList>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    More filters
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-[220px]">
+                  <DropdownMenuLabel>Status filters</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {statusFilters.map((filter) => {
+                    const count = statusCounts[filter.value] ?? 0;
+                    const checked = visibleStatusKeys.includes(filter.value);
+                    const disabled =
+                      !checked &&
+                      visibleStatusKeys.length >= MAX_VISIBLE_STATUSES;
+
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={filter.value}
+                        checked={checked}
+                        disabled={disabled}
+                        className="flex items-center justify-between gap-2"
+                        onCheckedChange={(value) =>
+                          handleToggleVisibleStatus(
+                            filter.value,
+                            Boolean(value)
+                          )
+                        }
+                      >
+                        <span>{filter.label}</span>
+                        {count > 0 && (
+                          <span className="text-xs text-muted-foreground">
+                            {count}
+                          </span>
+                        )}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+
+          {/* Spacer to visually separate controls from table */}
+          <div className="h-1" />
         </div>
 
         <TabsContent value={activeTab} className="mt-0">
-          <div className="rounded-md border **:data-[slot=table-container]:overflow-visible">
+          <div className="rounded-md border">
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}

@@ -112,11 +112,6 @@ export default function ApplicationsPage({
   return (
     <>
       <div className="space-y-6">
-        <p className="text-muted-foreground">
-          {applications.length}{" "}
-          {applications.length === 1 ? "application" : "applications"}
-        </p>
-
         <ApplicationsTable
           applications={applications}
           slug={slug}
