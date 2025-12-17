@@ -91,7 +91,8 @@ export function AISettingsDropdown({
   const { settings, loading, updating, toggleSetting } = useAISettings();
 
   // Get the field names based on assistant type
-  const fields: Record<string, AISettingsField> =
+  // These are only boolean fields, not toggleModelVisibility or model selection fields
+  const fields: Record<string, "enableOrgProfileChat" | "enableOrgProfileEditor" | "enableKnowledgeBaseChat" | "enableKnowledgeBaseEditor" | "enableGrantSearchChat" | "enableGrantSearchEditor"> =
     assistantType === "chat"
       ? {
           orgProfile: "enableOrgProfileChat",

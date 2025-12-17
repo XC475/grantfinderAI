@@ -43,7 +43,7 @@ export function ModelSelector({
   const allAvailableModels = getAvailableModels(userTier);
   const visibleModels = getVisibleModels(
     allAvailableModels,
-    enabledModelIds,
+    enabledModelIds ?? null, // Convert undefined to null
     userTier
   );
   const comingSoonModels = getComingSoonModels();

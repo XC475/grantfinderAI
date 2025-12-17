@@ -445,7 +445,7 @@ function captureCursorFormatting(editor: Editor): CursorFormatting {
   const headingAttrs = editor.getAttributes("heading");
 
   // Start with direct attribute check
-  let formatting: CursorFormatting = {
+  const formatting: CursorFormatting = {
     marks: {
       bold: editor.isActive("bold"),
       italic: editor.isActive("italic"),

@@ -69,11 +69,18 @@ export function useAISettings(): UseAISettingsReturn {
       // Use a fixed date to avoid hydration mismatches
       const now = new Date();
       setSettings({
-        ...DEFAULT_SETTINGS,
-        enabledModelsChat: null,
-        enabledModelsEditor: null,
         id: "",
         userId: "",
+        enableOrgProfileChat: DEFAULT_SETTINGS.enableOrgProfileChat,
+        enableOrgProfileEditor: DEFAULT_SETTINGS.enableOrgProfileEditor,
+        enableKnowledgeBaseChat: DEFAULT_SETTINGS.enableKnowledgeBaseChat,
+        enableKnowledgeBaseEditor: DEFAULT_SETTINGS.enableKnowledgeBaseEditor,
+        enableGrantSearchChat: DEFAULT_SETTINGS.enableGrantSearchChat,
+        enableGrantSearchEditor: DEFAULT_SETTINGS.enableGrantSearchEditor,
+        selectedModelChat: DEFAULT_SETTINGS.selectedModelChat,
+        selectedModelEditor: DEFAULT_SETTINGS.selectedModelEditor,
+        enabledModelsChat: null,
+        enabledModelsEditor: null,
         createdAt: now,
         updatedAt: now,
       });

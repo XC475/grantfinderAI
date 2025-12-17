@@ -6,7 +6,7 @@
  * Run with: npx tsx scripts/migrate-model-visibility-defaults.ts
  */
 
-import { PrismaClient } from "../src/generated/prisma";
+import { PrismaClient, Prisma } from "../src/generated/prisma";
 import { getDefaultEnabledModels } from "../src/lib/ai/models";
 import type { SubscriptionTier } from "../src/types/subscriptions";
 
@@ -117,8 +117,10 @@ async function main() {
   const totalAISettings = await prisma.userAIContextSettings.count();
   const usersWithModelVisibility = await prisma.userAIContextSettings.count({
     where: {
-      enabledModelsChat: { not: null },
-      enabledModelsEditor: { not: null },
+      AND: [
+        { enabledModelsChat: { not: Prisma.JsonNull } },
+        { enabledModelsEditor: { not: Prisma.JsonNull } },
+      ],
     },
   });
 

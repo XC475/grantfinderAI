@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 import { getModelUsage } from "@/lib/subscriptions/model-access";
+import type { ModelUsage } from "@/types/subscriptions";
 
 // GET /api/organizations/[id]/subscription/usage
 export async function GET(
@@ -34,9 +35,9 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get("userId") || user.id;
 
-    // Get usage for all models (for now, just return empty array)
-    // This can be enhanced to return usage for all models
-    const usage = [];
+        // Get usage for all models (for now, just return empty array)
+        // This can be enhanced to return usage for all models
+        const usage: ModelUsage[] = [];
 
     return NextResponse.json({ usage });
   } catch (error) {

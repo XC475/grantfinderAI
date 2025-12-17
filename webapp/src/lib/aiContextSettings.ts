@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { UserAIContextSettings } from "@/types/ai-settings";
+import { DEFAULT_MODEL } from "@/lib/ai/models";
 
 /**
  * Get user's AI context settings with defaults if not found
@@ -22,12 +23,41 @@ export async function getUserAIContextSettings(
       enableKnowledgeBaseEditor: true,
       enableGrantSearchChat: true,
       enableGrantSearchEditor: true,
+      selectedModelChat: DEFAULT_MODEL,
+      selectedModelEditor: DEFAULT_MODEL,
+      enabledModelsChat: null,
+      enabledModelsEditor: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
   }
 
-  return settings;
+  // Parse JSON fields from Prisma
+  const parseJsonStringArray = (jsonValue: unknown): string[] | null => {
+    if (jsonValue === null || jsonValue === undefined) {
+      return null;
+    }
+    if (Array.isArray(jsonValue)) {
+      return jsonValue.filter((item): item is string => typeof item === 'string');
+    }
+    if (typeof jsonValue === 'string') {
+      try {
+        const parsed = JSON.parse(jsonValue);
+        return Array.isArray(parsed)
+          ? parsed.filter((item): item is string => typeof item === 'string')
+          : null;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  return {
+    ...settings,
+    enabledModelsChat: parseJsonStringArray(settings.enabledModelsChat),
+    enabledModelsEditor: parseJsonStringArray(settings.enabledModelsEditor),
+  };
 }
 
 /**
@@ -70,6 +100,10 @@ export function getDefaultSettings(): Omit<
     enableKnowledgeBaseEditor: true,
     enableGrantSearchChat: true,
     enableGrantSearchEditor: true,
+    selectedModelChat: DEFAULT_MODEL,
+    selectedModelEditor: DEFAULT_MODEL,
+    enabledModelsChat: null,
+    enabledModelsEditor: null,
   };
 }
 
