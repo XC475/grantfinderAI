@@ -4,21 +4,12 @@ import * as React from "react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import type { Editor } from "@tiptap/core";
 import { Button } from "@/components/ui/button";
-import {
-  Wand2,
-  MessageSquarePlus,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { MessageSquarePlus } from "lucide-react";
 
 // Import toolbar components
-import { HeadingDropdownMenu } from "@/components/tiptap-ui/heading-dropdown-menu";
-import { FontFamilyDropdownMenu } from "@/components/tiptap-ui/font-family-dropdown-menu";
-import { FontSizeDropdownMenu } from "@/components/tiptap-ui/font-size-dropdown-menu";
 import { MarkButton } from "@/components/tiptap-ui/mark-button";
 import { TextColorPopover } from "@/components/tiptap-ui/text-color-popover";
 import { ColorHighlightPopover } from "@/components/tiptap-ui/color-highlight-popover";
-import { AlignIndentDropdownMenu } from "@/components/tiptap-ui/align-indent-dropdown-menu";
-import { SelectionOverflowMenu } from "./selection-overflow-menu";
 import { ImproveWritingDropdown } from "@/components/tiptap-ui/improve-writing-dropdown";
 
 // Import toolbar primitives
@@ -139,13 +130,6 @@ export function SelectionToolbar({
         <ToolbarGroup>
           <TextColorPopover editor={editor} />
           <ColorHighlightPopover editor={editor} />
-        </ToolbarGroup>
-
-        <ToolbarSeparator />
-
-        {/* More Options */}
-        <ToolbarGroup>
-          <SelectionOverflowMenu editor={editor} />
         </ToolbarGroup>
       </div>
     </BubbleMenu>

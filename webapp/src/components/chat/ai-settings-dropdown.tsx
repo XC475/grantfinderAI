@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, Building2, Brain, Search } from "lucide-react";
+import { Loader2, Building2, Brain, Search, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -26,6 +26,10 @@ interface AISettingsDropdownProps {
   size?: "default" | "small";
   /** Alignment of the dropdown */
   align?: "start" | "end";
+  /** Trigger style */
+  triggerVariant?: "icon" | "button";
+  /** Optional label when using button trigger */
+  triggerLabel?: string;
 }
 
 interface SettingRowProps {
@@ -81,11 +85,14 @@ export function AISettingsDropdown({
   className,
   size = "default",
   align = "start",
+  triggerVariant = "icon",
+  triggerLabel,
 }: AISettingsDropdownProps) {
   const { settings, loading, updating, toggleSetting } = useAISettings();
 
   // Get the field names based on assistant type
-  const fields: Record<string, AISettingsField> =
+  // These are only boolean fields, not toggleModelVisibility or model selection fields
+  const fields: Record<string, "enableOrgProfileChat" | "enableOrgProfileEditor" | "enableKnowledgeBaseChat" | "enableKnowledgeBaseEditor" | "enableGrantSearchChat" | "enableGrantSearchEditor"> =
     assistantType === "chat"
       ? {
           orgProfile: "enableOrgProfileChat",
@@ -105,16 +112,32 @@ export function AISettingsDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={`${buttonSize} rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors ${className || ""}`}
-          aria-label="AI Settings"
-          disabled={disabled}
-        >
-          <BUTTON_ICONS.settings className={iconSize} />
-        </Button>
+        {triggerVariant === "button" ? (
+          <Button
+            type="button"
+            variant="outline"
+            className={`w-full justify-between text-sm font-normal ${className || ""}`}
+            aria-label="AI Settings"
+            disabled={disabled}
+          >
+            <span className="flex items-center gap-2">
+              <BUTTON_ICONS.settings className="h-4 w-4" />
+              {triggerLabel ?? "AI capabilities"}
+            </span>
+            <ChevronDown className="h-4 w-4 opacity-60" />
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={`${buttonSize} rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors ${className || ""}`}
+            aria-label="AI Settings"
+            disabled={disabled}
+          >
+            <BUTTON_ICONS.settings className={iconSize} />
+          </Button>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align={align} className="w-72">
         <DropdownMenuLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wide">

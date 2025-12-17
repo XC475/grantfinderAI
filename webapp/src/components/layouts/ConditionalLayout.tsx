@@ -109,21 +109,23 @@ function DocumentEditorLayoutContent({
               {/* Toolbar will render on client */}
             </div>
 
-            {/* Right section: Saved status + panel toggle */}
+            {/* Right section: Saved status + panel toggle (toggle only when sidebar closed) */}
             <div className="flex items-center gap-3 px-4 shrink-0">
               <SaveStatusIndicator />
-              <Separator orientation="vertical" className="h-4" />
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="size-7"
-              >
-                <PanelRight className="h-4 w-4" />
-                <span className="sr-only">
-                  {isSidebarOpen ? "Close" : "Open"} Assistant Sidebar
-                </span>
-              </Button>
+              {!isSidebarOpen && (
+                <>
+                  <Separator orientation="vertical" className="h-4" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="size-7"
+                  >
+                    <PanelRight className="h-4 w-4" />
+                    <span className="sr-only">Open Assistant Sidebar</span>
+                  </Button>
+                </>
+              )}
             </div>
           </header>
           <div className="flex-1 flex flex-col overflow-auto bg-white">
@@ -159,23 +161,23 @@ function DocumentEditorLayoutContent({
               </EditorContext.Provider>
             </div>
 
-            {/* Right section: Saved status + panel toggle */}
+            {/* Right section: Saved status + panel toggle (toggle only when sidebar closed) */}
             <div className="flex items-center gap-3 px-4 shrink-0">
               <SaveStatusIndicator />
-              <Separator orientation="vertical" className="h-4" />
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="size-7"
-              >
-                <PanelRight
-                  className={`h-4 w-4 transition-transform ${isSidebarOpen ? "rotate-180" : ""}`}
-                />
-                <span className="sr-only">
-                  {isSidebarOpen ? "Close" : "Open"} Assistant Sidebar
-                </span>
-              </Button>
+              {!isSidebarOpen && (
+                <>
+                  <Separator orientation="vertical" className="h-4" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="size-7"
+                  >
+                    <PanelRight className="h-4 w-4" />
+                    <span className="sr-only">Open Assistant Sidebar</span>
+                  </Button>
+                </>
+              )}
             </div>
           </header>
           <div className="flex-1 flex flex-col overflow-auto bg-white">
@@ -195,13 +197,10 @@ function DocumentEditorLayoutContent({
           maxSize={60}
         >
           <div className="h-full flex flex-col border-l bg-background">
-            {/* Header aligned with breadcrumbs */}
-            <div className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
-              <h2 className="text-lg font-semibold">Assistant</h2>
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <DocumentChatSidebar documentId={documentId} />
-            </div>
+            <DocumentChatSidebar
+              documentId={documentId}
+              onToggleSidebar={() => setIsSidebarOpen(false)}
+            />
           </div>
         </ResizablePanel>
       )}

@@ -11,6 +11,11 @@ import { getSourceDocumentContext } from "@/lib/documentContext";
 import { searchKnowledgeBase } from "@/lib/ai/knowledgeBaseRAG";
 import { getActiveKnowledgeBase } from "@/lib/getOrgKnowledgeBase";
 import { getUserAIContextSettings } from "@/lib/aiContextSettings";
+import {
+  checkModelAccess,
+  incrementModelUsage,
+} from "@/lib/subscriptions/model-access";
+import { DEFAULT_MODEL } from "@/lib/ai/models";
 
 interface FileAttachment {
   id: string;
@@ -52,6 +57,7 @@ export async function POST(req: NextRequest) {
       documentContent,
       chatId,
       sourceDocumentIds,
+      selectedModel,
     } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
@@ -99,6 +105,57 @@ export async function POST(req: NextRequest) {
 
     if (!organization) {
       return new Response("Organization not found", { status: 404 });
+    }
+
+    // Determine the model to use (from request, user settings, or default)
+    const modelId =
+      selectedModel || userAISettings?.selectedModelEditor || DEFAULT_MODEL;
+
+    // Validate model access before proceeding
+    const accessCheck = await checkModelAccess(
+      organization.id,
+      user.id,
+      modelId
+    );
+
+    if (!accessCheck.hasAccess) {
+      if (accessCheck.reason === "subscription_required") {
+        return new Response(
+          JSON.stringify({
+            error: "Model requires higher subscription tier",
+            requiredTier: accessCheck.requiredTier,
+            currentTier: accessCheck.currentTier,
+          }),
+          {
+            status: 403,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      if (accessCheck.reason === "usage_limit_exceeded") {
+        return new Response(
+          JSON.stringify({
+            error: "Monthly usage limit exceeded",
+            usageCount: accessCheck.usageCount,
+            monthlyLimit: accessCheck.monthlyLimit,
+          }),
+          {
+            status: 429,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({
+          error: "Model is not available",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     // Get the document with application relationship
@@ -286,7 +343,8 @@ ${opportunity.raw_text}`;
         knowledgeBaseContext,
         userSettings: userAISettings,
       },
-      userAISettings
+      userAISettings,
+      modelId
     );
 
     // Build current settings status to inject into user message
@@ -352,7 +410,7 @@ ${opportunity.raw_text}`;
             chatId: chat.id,
             metadata: {
               timestamp: Date.now(),
-              model: "gpt-4o-mini",
+              model: modelId,
               source: "editor-agent",
               clientDisconnected,
             },
@@ -364,6 +422,9 @@ ${opportunity.raw_text}`;
           where: { id: chat.id },
           data: { updatedAt: new Date() },
         });
+
+        // Increment model usage counter
+        await incrementModelUsage(organization.id, user.id, modelId);
       } catch (error) {
         console.error("❌ [Editor Assistant] Error saving to database:", error);
       }

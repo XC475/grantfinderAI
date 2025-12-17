@@ -99,6 +99,10 @@ model UserAIContextSettings {
   enableKnowledgeBaseEditor Boolean  @default(true)
   enableGrantSearchChat     Boolean  @default(true)
   enableGrantSearchEditor   Boolean  @default(true)
+  selectedModelChat         String   @default("gpt-4o-mini")
+  selectedModelEditor       String   @default("gpt-4o-mini")
+  enabledModelsChat         Json?
+  enabledModelsEditor       Json?
   user                      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_ai_context_settings")
@@ -135,6 +139,7 @@ model Organization {
   recommendations        Recommendation[]
   users                  User[]                      @relation("UserOrganization")
   customFields           CustomField[]
+  subscription           OrganizationSubscription?
 
   @@index([state])
   @@map("organizations")
@@ -379,6 +384,39 @@ model Folder {
   @@schema("app")
 }
 
+model OrganizationSubscription {
+  id                String              @id @default(cuid())
+  organizationId    String              @unique
+  tier              SubscriptionTier    @default(FREE)
+  status            SubscriptionStatus  @default(ACTIVE)
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  cancelAtPeriodEnd  Boolean             @default(false)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  organization      Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("organization_subscriptions")
+  @@schema("app")
+}
+
+model ModelUsage {
+  id                String   @id @default(cuid())
+  organizationId    String
+  userId            String   @db.Uuid
+  modelId           String
+  month             Int
+  year              Int
+  requestCount      Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([organizationId, userId, modelId, month, year])
+  @@index([organizationId, month, year])
+  @@map("model_usage")
+  @@schema("app")
+}
+
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model k12_education_opportunities {
   id                  Int                                       @id @default(autoincrement())
@@ -453,6 +491,24 @@ enum VectorizationStatus {
   PROCESSING
   COMPLETED
   FAILED
+
+  @@schema("app")
+}
+
+enum SubscriptionTier {
+  FREE
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+
+  @@schema("app")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIAL
+  CANCELLED
+  EXPIRED
 
   @@schema("app")
 }

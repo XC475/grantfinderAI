@@ -8,9 +8,6 @@ import {
   Plus,
   Paperclip,
   FileText,
-  X,
-  File,
-  Table,
 } from "lucide-react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
@@ -27,8 +24,8 @@ import { CopyButton } from "@/components/ui/copy-button";
 import { TypingIndicator } from "@/components/ui/typing-indicator";
 import { useAutosizeTextArea } from "@/hooks/use-autosize-textarea";
 import { ChatForm as BaseChatForm } from "@/components/chat/chat-container";
-import { FilePreview } from "@/components/ui/file-preview";
-import { TextAttachmentCard, type TextSelectionAttachment } from "@/components/ui/text-attachment-card";
+import { AttachmentChip } from "@/components/ui/attachment-chip";
+import { type TextSelectionAttachment } from "@/components/ui/text-attachment-card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,6 +38,9 @@ import {
 } from "@/components/chat/SourcesModal";
 import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
 import { AISettingsDropdown } from "@/components/chat/ai-settings-dropdown";
+import { ModelSelector } from "@/components/chat/model-selector";
+import { TextAnimate } from "@/components/ui/text-animate";
+import type { SubscriptionTier } from "@/types/subscriptions";
 
 interface DocumentSidebarChatProps {
   handleSubmit: (
@@ -60,6 +60,16 @@ interface DocumentSidebarChatProps {
   onSourceDocumentsChange?: (docs: SourceDocument[]) => void;
   textAttachments?: TextSelectionAttachment[];
   onRemoveTextAttachment?: (index: number) => void;
+  sourcesModalOpen?: boolean;
+  setSourcesModalOpen?: (open: boolean) => void;
+  /** Show centered hero branding when chat is empty (editor assistant only) */
+  showEmptyHero?: boolean;
+  /** Model selector props */
+  selectedModel?: string;
+  onModelChange?: (modelId: string) => void;
+  userTier?: SubscriptionTier;
+  enabledModelIds?: string[] | null;
+  loadingModelSettings?: boolean;
 }
 
 export function DocumentSidebarChat({
@@ -76,6 +86,14 @@ export function DocumentSidebarChat({
   onSourceDocumentsChange,
   textAttachments,
   onRemoveTextAttachment,
+  sourcesModalOpen,
+  setSourcesModalOpen,
+  showEmptyHero = false,
+  selectedModel,
+  onModelChange,
+  userTier,
+  enabledModelIds,
+  loadingModelSettings,
 }: DocumentSidebarChatProps) {
   const lastMessage = messages.at(-1);
   const isTyping = lastMessage?.role === "user";
@@ -190,6 +208,28 @@ export function DocumentSidebarChat({
               messageOptions={messageOptions}
             />
           </ChatMessages>
+        ) : showEmptyHero ? (
+          <div className="flex flex-col items-center text-center px-4 pt-6">
+            <TextAnimate
+              animation="blurInUp"
+              by="character"
+              once
+              className="text-2xl md:text-3xl font-normal text-foreground font-sans"
+              as="h1"
+            >
+              GrantWare AI
+            </TextAnimate>
+            <TextAnimate
+              animation="blurInUp"
+              by="character"
+              once
+              className="text-xl md:text-2xl font-normal text-muted-foreground font-sans mt-1"
+              as="h2"
+              delay={0.2}
+            >
+              Co‑Pilot
+            </TextAnimate>
+          </div>
         ) : null}
       </div>
 
@@ -211,6 +251,13 @@ export function DocumentSidebarChat({
               onSourceDocumentsChange={onSourceDocumentsChange}
               textAttachments={textAttachments}
               onRemoveTextAttachment={onRemoveTextAttachment}
+              sourcesModalOpen={sourcesModalOpen}
+              setSourcesModalOpen={setSourcesModalOpen}
+              selectedModel={selectedModel}
+              onModelChange={onModelChange}
+              userTier={userTier}
+              enabledModelIds={enabledModelIds}
+              loadingModelSettings={loadingModelSettings}
             />
           )}
         </BaseChatForm>
@@ -317,29 +364,6 @@ function SidebarMessageList({
   );
 }
 
-// Helper function to get document icon based on file type
-function getDocumentIcon(doc: SourceDocument) {
-  if (!doc.fileType) {
-    return <FileText className="h-4 w-4 text-blue-500 shrink-0" />;
-  }
-  if (doc.fileType === "application/pdf") {
-    return <FileText className="h-4 w-4 text-red-500 shrink-0" />;
-  }
-  if (
-    doc.fileType ===
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-  ) {
-    return <FileText className="h-4 w-4 text-blue-600 shrink-0" />;
-  }
-  if (doc.fileType === "text/csv") {
-    return <Table className="h-4 w-4 text-green-600 shrink-0" />;
-  }
-  if (doc.fileType === "text/plain") {
-    return <File className="h-4 w-4 text-gray-600 shrink-0" />;
-  }
-  return <File className="h-4 w-4 text-muted-foreground shrink-0" />;
-}
-
 interface SidebarMessageInputProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   value: string;
@@ -352,6 +376,13 @@ interface SidebarMessageInputProps
   onSourceDocumentsChange?: (docs: SourceDocument[]) => void;
   textAttachments?: TextSelectionAttachment[];
   onRemoveTextAttachment?: (index: number) => void;
+  sourcesModalOpen?: boolean;
+  setSourcesModalOpen?: (open: boolean) => void;
+  selectedModel?: string;
+  onModelChange?: (modelId: string) => void;
+  userTier?: SubscriptionTier;
+  enabledModelIds?: string[] | null;
+  loadingModelSettings?: boolean;
 }
 
 function SidebarMessageInput({
@@ -367,10 +398,20 @@ function SidebarMessageInput({
   onSourceDocumentsChange,
   textAttachments,
   onRemoveTextAttachment,
+  sourcesModalOpen: sourcesModalOpenProp,
+  setSourcesModalOpen: setSourcesModalOpenProp,
+  selectedModel,
+  onModelChange,
+  userTier,
+  enabledModelIds,
+  loadingModelSettings,
   ...textareaProps
 }: SidebarMessageInputProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const [sourcesModalOpen, setSourcesModalOpen] = useState(false);
+  // Use local state as fallback if props not provided
+  const [localSourcesModalOpen, setLocalSourcesModalOpen] = useState(false);
+  const sourcesModalOpen = sourcesModalOpenProp ?? localSourcesModalOpen;
+  const setSourcesModalOpen = setSourcesModalOpenProp ?? setLocalSourcesModalOpen;
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (submitOnEnter && event.key === "Enter" && !event.shiftKey) {
@@ -489,39 +530,47 @@ function SidebarMessageInput({
   const showFileList = files && files.length > 0;
   const showSourceList = sourceDocuments && sourceDocuments.length > 0;
   const showTextAttachments = textAttachments && textAttachments.length > 0;
+  const showAnyAttachments = showFileList || showSourceList || showTextAttachments;
   const hasContent = textareaProps.value !== "" || showFileList || showTextAttachments;
-
-  console.log("🎨 [SidebarMessageInput] Rendering - showTextAttachments:", showTextAttachments, "textAttachments:", textAttachments);
 
   return (
     <div className="w-full px-3 py-3">
-      {/* Text Selection Attachments */}
-      {showTextAttachments && (
+      {/* Unified Attachments Section */}
+      {showAnyAttachments && (
         <div className="mb-3 flex flex-wrap gap-2">
           <AnimatePresence mode="popLayout">
+            {/* Text Selection Attachments */}
             {textAttachments?.map((attachment, index) => (
-              <TextAttachmentCard
+              <AttachmentChip
                 key={attachment.id}
-                attachment={attachment}
-                onRemove={() => {
-                  console.log("🗑️ [SidebarMessageInput] Removing attachment:", attachment.id);
-                  onRemoveTextAttachment?.(index);
-                }}
+                type="text"
+                title={attachment.name}
+                preview={attachment.preview}
+                onRemove={() => onRemoveTextAttachment?.(index)}
               />
             ))}
-          </AnimatePresence>
-        </div>
-      )}
-
-      {/* File Attachments Preview */}
-      {showFileList && (
-        <div className="mb-3 flex flex-wrap gap-2">
-          <AnimatePresence mode="popLayout">
+            {/* File Attachments */}
             {files?.map((file, index) => (
-              <FilePreview
+              <AttachmentChip
                 key={file.name + String(file.lastModified)}
-                file={file}
+                type="file"
+                title={file.name}
+                fileType={file.type}
                 onRemove={() => removeFile(index)}
+              />
+            ))}
+            {/* Source Documents */}
+            {sourceDocuments?.map((doc) => (
+              <AttachmentChip
+                key={doc.id}
+                type="source"
+                title={doc.title}
+                fileType={doc.fileType}
+                onRemove={
+                  onSourceDocumentsChange
+                    ? () => onSourceDocumentsChange(sourceDocuments.filter((d) => d.id !== doc.id))
+                    : undefined
+                }
               />
             ))}
           </AnimatePresence>
@@ -548,134 +597,109 @@ function SidebarMessageInput({
           </div>
         )}
 
-        <div className="relative flex w-full items-center">
-          <div className="relative w-full">
-            {/* Source Documents Preview */}
-            {showSourceList && (
-              <div className="mb-2 flex flex-wrap gap-2">
-                <AnimatePresence mode="popLayout">
-                  {sourceDocuments?.map((doc) => (
-                    <motion.div
-                      key={doc.id}
-                      className="relative flex max-w-[180px] rounded-md border border-primary/30 bg-primary/5 p-1.5 pr-2 text-xs"
-                      layout
-                      initial={{ opacity: 0, y: "100%" }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: "100%" }}
-                    >
-                      <div className="flex w-full items-center space-x-2">
-                        <div className="grid h-8 w-8 shrink-0 place-items-center rounded-sm border bg-muted">
-                          {getDocumentIcon(doc)}
-                        </div>
-                        <span className="w-full truncate text-muted-foreground text-xs">
-                          {doc.title}
-                        </span>
-                      </div>
-                      {onSourceDocumentsChange && (
-                        <button
-                          className="absolute -right-1.5 -top-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full border bg-background"
-                          type="button"
-                          onClick={() => {
-                            onSourceDocumentsChange(
-                              sourceDocuments.filter((d) => d.id !== doc.id)
-                            );
-                          }}
-                          aria-label="Remove source"
-                        >
-                          <X className="h-2 w-2" />
-                        </button>
-                      )}
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
+        {/* Textarea */}
+        <div className="w-full">
+          <textarea
+            aria-label="Write your prompt here"
+            placeholder={placeholder || "How can I help you with this document?"}
+            ref={textAreaRef}
+            onKeyDown={onKeyDown}
+            onPaste={handlePaste}
+            className={cn(
+              "z-10 w-full grow resize-none rounded-t-xl bg-transparent border-0 text-sm placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+              "p-3",
+              className
             )}
-
-            <textarea
-              aria-label="Write your prompt here"
-              placeholder={placeholder || "Ask anything..."}
-              ref={textAreaRef}
-              onKeyDown={onKeyDown}
-              onPaste={handlePaste}
-              className={cn(
-                "z-10 w-full grow resize-none rounded-xl bg-transparent border-0 text-sm placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
-                "p-3 pr-20",
-                className
-              )}
-              {...textareaProps}
-            />
-          </div>
+            {...textareaProps}
+          />
         </div>
 
-        <div className="absolute right-3 top-3 z-20 flex gap-1">
-          {setFiles && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="ghost"
-                  className="h-8 w-8"
-                  aria-label="Add content"
-                  disabled={isGenerating}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
-                <DropdownMenuItem
-                  onClick={async () => {
-                    const selectedFiles = await showFileUploadDialog();
-                    if (selectedFiles) {
-                      addFiles(selectedFiles);
-                    }
-                  }}
-                  className="cursor-pointer"
-                >
-                  <Paperclip className="mr-2 h-4 w-4" />
-                  <span>Attach files</span>
-                </DropdownMenuItem>
-                {onSourceDocumentsChange && (
+        {/* Bottom Control Bar */}
+        <div className="flex items-center justify-between flex-wrap gap-1 px-2 pb-2">
+          {/* Left group: + and AI settings */}
+          <div className="flex items-center gap-1">
+            {setFiles && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                    aria-label="Add content"
+                    disabled={isGenerating}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
                   <DropdownMenuItem
-                    onClick={() => setSourcesModalOpen(true)}
+                    onClick={async () => {
+                      const selectedFiles = await showFileUploadDialog();
+                      if (selectedFiles) {
+                        addFiles(selectedFiles);
+                      }
+                    }}
                     className="cursor-pointer"
                   >
-                    <FileText className="mr-2 h-4 w-4" />
-                    <span>Add sources</span>
+                    <Paperclip className="mr-2 h-4 w-4" />
+                    <span>Attach files</span>
                   </DropdownMenuItem>
-                )}
-                <GoogleDriveImportPicker
-                  mode="attach"
-                  onFilesSelected={handleDriveFilesSelected}
-                >
-                  {({ onClick }) => (
+                  {onSourceDocumentsChange && (
                     <DropdownMenuItem
-                      onClick={onClick}
+                      onClick={() => setSourcesModalOpen(true)}
                       className="cursor-pointer"
                     >
-                      <Image
-                        src="/logos/google-drive.svg"
-                        alt="Google Drive"
-                        width={16}
-                        height={16}
-                        className="mr-2"
-                      />
-                      <span>Google Drive</span>
+                      <FileText className="mr-2 h-4 w-4" />
+                      <span>Add sources</span>
                     </DropdownMenuItem>
                   )}
-                </GoogleDriveImportPicker>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+                  <GoogleDriveImportPicker
+                    mode="attach"
+                    onFilesSelected={handleDriveFilesSelected}
+                  >
+                    {({ onClick }) => (
+                      <DropdownMenuItem
+                        onClick={onClick}
+                        className="cursor-pointer"
+                      >
+                        <Image
+                          src="/logos/google-drive.svg"
+                          alt="Google Drive"
+                          width={16}
+                          height={16}
+                          className="mr-2"
+                        />
+                        <span>Google Drive</span>
+                      </DropdownMenuItem>
+                    )}
+                  </GoogleDriveImportPicker>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
-          {/* Settings Button with AI Toggles */}
-          <AISettingsDropdown
-            assistantType="editor"
-            size="small"
-            align="end"
-            disabled={isGenerating}
-          />
+            {/* AI Settings Button */}
+            <AISettingsDropdown
+              assistantType="editor"
+              size="small"
+              align="start"
+              disabled={isGenerating}
+            />
 
+            {/* Model Selector */}
+            {selectedModel && onModelChange && (
+              <ModelSelector
+                selectedModel={selectedModel}
+                onModelChange={onModelChange}
+                assistantType="editor"
+                userTier={userTier}
+                enabledModelIds={enabledModelIds}
+                disabled={isGenerating || loadingModelSettings}
+              />
+            )}
+          </div>
+
+          {/* Right: Send / Stop button */}
           {isGenerating && stop ? (
             <Button
               type="button"

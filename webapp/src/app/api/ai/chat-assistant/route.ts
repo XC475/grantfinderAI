@@ -11,6 +11,11 @@ import { getSourceDocumentContext } from "@/lib/documentContext";
 import { searchKnowledgeBase } from "@/lib/ai/knowledgeBaseRAG";
 import { getActiveKnowledgeBase } from "@/lib/getOrgKnowledgeBase";
 import { getUserAIContextSettings } from "@/lib/aiContextSettings";
+import {
+  checkModelAccess,
+  incrementModelUsage,
+} from "@/lib/subscriptions/model-access";
+import { DEFAULT_MODEL } from "@/lib/ai/models";
 
 interface FileAttachment {
   id: string;
@@ -34,8 +39,13 @@ interface StreamChunk {
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, chatId, organizationId, sourceDocumentIds } =
-      await req.json();
+    const {
+      messages,
+      chatId,
+      organizationId,
+      sourceDocumentIds,
+      selectedModel,
+    } = await req.json();
 
     // 1. Authenticate user
     const supabase = await createClient();
@@ -66,6 +76,57 @@ export async function POST(req: NextRequest) {
 
     if (!organization) {
       return new Response("Organization not found", { status: 404 });
+    }
+
+    // 3.5. Determine the model to use (from request, user settings, or default)
+    const modelId =
+      selectedModel || userAISettings?.selectedModelChat || DEFAULT_MODEL;
+
+    // 3.6. Validate model access before proceeding
+    const accessCheck = await checkModelAccess(
+      organization.id,
+      user.id,
+      modelId
+    );
+
+    if (!accessCheck.hasAccess) {
+      if (accessCheck.reason === "subscription_required") {
+        return new Response(
+          JSON.stringify({
+            error: "Model requires higher subscription tier",
+            requiredTier: accessCheck.requiredTier,
+            currentTier: accessCheck.currentTier,
+          }),
+          {
+            status: 403,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      if (accessCheck.reason === "usage_limit_exceeded") {
+        return new Response(
+          JSON.stringify({
+            error: "Monthly usage limit exceeded",
+            usageCount: accessCheck.usageCount,
+            monthlyLimit: accessCheck.monthlyLimit,
+          }),
+          {
+            status: 429,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({
+          error: "Model is not available",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     // 4. Get the last user message
@@ -193,7 +254,8 @@ export async function POST(req: NextRequest) {
     const agent = await createChatAgent(
       organizationInfo,
       baseUrl,
-      userAISettings
+      userAISettings,
+      modelId
     );
 
     // 9. Build current settings status to inject into user message
@@ -259,7 +321,7 @@ export async function POST(req: NextRequest) {
             chatId: chat.id,
             metadata: {
               timestamp: Date.now(),
-              model: "gpt-4o-mini",
+              model: modelId,
               source: "chat-agent",
               clientDisconnected,
             },
@@ -270,6 +332,9 @@ export async function POST(req: NextRequest) {
           where: { id: chat.id },
           data: { updatedAt: new Date() },
         });
+
+        // Increment model usage counter
+        await incrementModelUsage(organization.id, user.id, modelId);
       } catch (error) {
         console.error("❌ [Chat Assistant] Error saving to database:", error);
       }
