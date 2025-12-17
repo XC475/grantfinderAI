@@ -194,7 +194,9 @@ exports.Prisma.UserAIContextSettingsScalarFieldEnum = {
   enableGrantSearchChat: 'enableGrantSearchChat',
   enableGrantSearchEditor: 'enableGrantSearchEditor',
   selectedModelChat: 'selectedModelChat',
-  selectedModelEditor: 'selectedModelEditor'
+  selectedModelEditor: 'selectedModelEditor',
+  enabledModelsChat: 'enabledModelsChat',
+  enabledModelsEditor: 'enabledModelsEditor'
 };
 
 exports.Prisma.OrganizationScalarFieldEnum = {

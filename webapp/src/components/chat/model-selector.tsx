@@ -15,6 +15,7 @@ import {
   AVAILABLE_MODELS,
   getAvailableModels,
   getComingSoonModels,
+  getVisibleModels,
   type AIModel,
 } from "@/lib/ai/models";
 import type { SubscriptionTier } from "@/types/subscriptions";
@@ -24,6 +25,7 @@ interface ModelSelectorProps {
   onModelChange: (modelId: string) => void;
   assistantType: "chat" | "editor";
   userTier?: SubscriptionTier;
+  enabledModelIds?: string[] | null;
   disabled?: boolean;
   onUpgradeClick?: () => void;
 }
@@ -33,11 +35,17 @@ export function ModelSelector({
   onModelChange,
   assistantType,
   userTier = "free",
+  enabledModelIds,
   disabled,
   onUpgradeClick,
 }: ModelSelectorProps) {
   const currentModel = AVAILABLE_MODELS.find((m) => m.id === selectedModel);
-  const availableModels = getAvailableModels(userTier);
+  const allAvailableModels = getAvailableModels(userTier);
+  const visibleModels = getVisibleModels(
+    allAvailableModels,
+    enabledModelIds,
+    userTier
+  );
   const comingSoonModels = getComingSoonModels();
 
   return (
@@ -70,7 +78,7 @@ export function ModelSelector({
 
         {/* Available Models */}
         <div className="py-1">
-          {availableModels.map((model) => (
+          {visibleModels.map((model) => (
             <DropdownMenuItem
               key={model.id}
               onClick={() => onModelChange(model.id)}

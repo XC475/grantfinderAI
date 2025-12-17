@@ -68,6 +68,8 @@ interface DocumentSidebarChatProps {
   selectedModel?: string;
   onModelChange?: (modelId: string) => void;
   userTier?: SubscriptionTier;
+  enabledModelIds?: string[] | null;
+  loadingModelSettings?: boolean;
 }
 
 export function DocumentSidebarChat({
@@ -90,6 +92,8 @@ export function DocumentSidebarChat({
   selectedModel,
   onModelChange,
   userTier,
+  enabledModelIds,
+  loadingModelSettings,
 }: DocumentSidebarChatProps) {
   const lastMessage = messages.at(-1);
   const isTyping = lastMessage?.role === "user";
@@ -252,6 +256,8 @@ export function DocumentSidebarChat({
               selectedModel={selectedModel}
               onModelChange={onModelChange}
               userTier={userTier}
+              enabledModelIds={enabledModelIds}
+              loadingModelSettings={loadingModelSettings}
             />
           )}
         </BaseChatForm>
@@ -375,6 +381,8 @@ interface SidebarMessageInputProps
   selectedModel?: string;
   onModelChange?: (modelId: string) => void;
   userTier?: SubscriptionTier;
+  enabledModelIds?: string[] | null;
+  loadingModelSettings?: boolean;
 }
 
 function SidebarMessageInput({
@@ -395,6 +403,8 @@ function SidebarMessageInput({
   selectedModel,
   onModelChange,
   userTier,
+  enabledModelIds,
+  loadingModelSettings,
   ...textareaProps
 }: SidebarMessageInputProps) {
   const [isDragging, setIsDragging] = useState(false);
@@ -683,7 +693,8 @@ function SidebarMessageInput({
                 onModelChange={onModelChange}
                 assistantType="editor"
                 userTier={userTier}
-                disabled={isGenerating}
+                enabledModelIds={enabledModelIds}
+                disabled={isGenerating || loadingModelSettings}
               />
             )}
           </div>

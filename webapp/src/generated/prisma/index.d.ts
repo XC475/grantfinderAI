@@ -6960,6 +6960,8 @@ export namespace Prisma {
     enableGrantSearchEditor: number
     selectedModelChat: number
     selectedModelEditor: number
+    enabledModelsChat: number
+    enabledModelsEditor: number
     _all: number
   }
 
@@ -7007,6 +7009,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: true
     selectedModelChat?: true
     selectedModelEditor?: true
+    enabledModelsChat?: true
+    enabledModelsEditor?: true
     _all?: true
   }
 
@@ -7095,6 +7099,8 @@ export namespace Prisma {
     enableGrantSearchEditor: boolean
     selectedModelChat: string
     selectedModelEditor: string
+    enabledModelsChat: JsonValue | null
+    enabledModelsEditor: JsonValue | null
     _count: UserAIContextSettingsCountAggregateOutputType | null
     _min: UserAIContextSettingsMinAggregateOutputType | null
     _max: UserAIContextSettingsMaxAggregateOutputType | null
@@ -7127,6 +7133,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: boolean
     selectedModelChat?: boolean
     selectedModelEditor?: boolean
+    enabledModelsChat?: boolean
+    enabledModelsEditor?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userAIContextSettings"]>
 
@@ -7143,6 +7151,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: boolean
     selectedModelChat?: boolean
     selectedModelEditor?: boolean
+    enabledModelsChat?: boolean
+    enabledModelsEditor?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userAIContextSettings"]>
 
@@ -7159,6 +7169,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: boolean
     selectedModelChat?: boolean
     selectedModelEditor?: boolean
+    enabledModelsChat?: boolean
+    enabledModelsEditor?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userAIContextSettings"]>
 
@@ -7175,9 +7187,11 @@ export namespace Prisma {
     enableGrantSearchEditor?: boolean
     selectedModelChat?: boolean
     selectedModelEditor?: boolean
+    enabledModelsChat?: boolean
+    enabledModelsEditor?: boolean
   }
 
-  export type UserAIContextSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "createdAt" | "updatedAt" | "enableOrgProfileChat" | "enableOrgProfileEditor" | "enableKnowledgeBaseChat" | "enableKnowledgeBaseEditor" | "enableGrantSearchChat" | "enableGrantSearchEditor" | "selectedModelChat" | "selectedModelEditor", ExtArgs["result"]["userAIContextSettings"]>
+  export type UserAIContextSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "createdAt" | "updatedAt" | "enableOrgProfileChat" | "enableOrgProfileEditor" | "enableKnowledgeBaseChat" | "enableKnowledgeBaseEditor" | "enableGrantSearchChat" | "enableGrantSearchEditor" | "selectedModelChat" | "selectedModelEditor" | "enabledModelsChat" | "enabledModelsEditor", ExtArgs["result"]["userAIContextSettings"]>
   export type UserAIContextSettingsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -7206,6 +7220,8 @@ export namespace Prisma {
       enableGrantSearchEditor: boolean
       selectedModelChat: string
       selectedModelEditor: string
+      enabledModelsChat: Prisma.JsonValue | null
+      enabledModelsEditor: Prisma.JsonValue | null
     }, ExtArgs["result"]["userAIContextSettings"]>
     composites: {}
   }
@@ -7642,6 +7658,8 @@ export namespace Prisma {
     readonly enableGrantSearchEditor: FieldRef<"UserAIContextSettings", 'Boolean'>
     readonly selectedModelChat: FieldRef<"UserAIContextSettings", 'String'>
     readonly selectedModelEditor: FieldRef<"UserAIContextSettings", 'String'>
+    readonly enabledModelsChat: FieldRef<"UserAIContextSettings", 'Json'>
+    readonly enabledModelsEditor: FieldRef<"UserAIContextSettings", 'Json'>
   }
     
 
@@ -26941,7 +26959,9 @@ export namespace Prisma {
     enableGrantSearchChat: 'enableGrantSearchChat',
     enableGrantSearchEditor: 'enableGrantSearchEditor',
     selectedModelChat: 'selectedModelChat',
-    selectedModelEditor: 'selectedModelEditor'
+    selectedModelEditor: 'selectedModelEditor',
+    enabledModelsChat: 'enabledModelsChat',
+    enabledModelsEditor: 'enabledModelsEditor'
   };
 
   export type UserAIContextSettingsScalarFieldEnum = (typeof UserAIContextSettingsScalarFieldEnum)[keyof typeof UserAIContextSettingsScalarFieldEnum]
@@ -27908,6 +27928,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: BoolFilter<"UserAIContextSettings"> | boolean
     selectedModelChat?: StringFilter<"UserAIContextSettings"> | string
     selectedModelEditor?: StringFilter<"UserAIContextSettings"> | string
+    enabledModelsChat?: JsonNullableFilter<"UserAIContextSettings">
+    enabledModelsEditor?: JsonNullableFilter<"UserAIContextSettings">
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -27924,6 +27946,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: SortOrder
     selectedModelChat?: SortOrder
     selectedModelEditor?: SortOrder
+    enabledModelsChat?: SortOrderInput | SortOrder
+    enabledModelsEditor?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -27943,6 +27967,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: BoolFilter<"UserAIContextSettings"> | boolean
     selectedModelChat?: StringFilter<"UserAIContextSettings"> | string
     selectedModelEditor?: StringFilter<"UserAIContextSettings"> | string
+    enabledModelsChat?: JsonNullableFilter<"UserAIContextSettings">
+    enabledModelsEditor?: JsonNullableFilter<"UserAIContextSettings">
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "userId">
 
@@ -27959,6 +27985,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: SortOrder
     selectedModelChat?: SortOrder
     selectedModelEditor?: SortOrder
+    enabledModelsChat?: SortOrderInput | SortOrder
+    enabledModelsEditor?: SortOrderInput | SortOrder
     _count?: UserAIContextSettingsCountOrderByAggregateInput
     _max?: UserAIContextSettingsMaxOrderByAggregateInput
     _min?: UserAIContextSettingsMinOrderByAggregateInput
@@ -27980,6 +28008,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: BoolWithAggregatesFilter<"UserAIContextSettings"> | boolean
     selectedModelChat?: StringWithAggregatesFilter<"UserAIContextSettings"> | string
     selectedModelEditor?: StringWithAggregatesFilter<"UserAIContextSettings"> | string
+    enabledModelsChat?: JsonNullableWithAggregatesFilter<"UserAIContextSettings">
+    enabledModelsEditor?: JsonNullableWithAggregatesFilter<"UserAIContextSettings">
   }
 
   export type OrganizationWhereInput = {
@@ -29779,6 +29809,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: boolean
     selectedModelChat?: string
     selectedModelEditor?: string
+    enabledModelsChat?: NullableJsonNullValueInput | InputJsonValue
+    enabledModelsEditor?: NullableJsonNullValueInput | InputJsonValue
     user: UserCreateNestedOneWithoutAiContextSettingsInput
   }
 
@@ -29795,6 +29827,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: boolean
     selectedModelChat?: string
     selectedModelEditor?: string
+    enabledModelsChat?: NullableJsonNullValueInput | InputJsonValue
+    enabledModelsEditor?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type UserAIContextSettingsUpdateInput = {
@@ -29809,6 +29843,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: BoolFieldUpdateOperationsInput | boolean
     selectedModelChat?: StringFieldUpdateOperationsInput | string
     selectedModelEditor?: StringFieldUpdateOperationsInput | string
+    enabledModelsChat?: NullableJsonNullValueInput | InputJsonValue
+    enabledModelsEditor?: NullableJsonNullValueInput | InputJsonValue
     user?: UserUpdateOneRequiredWithoutAiContextSettingsNestedInput
   }
 
@@ -29825,6 +29861,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: BoolFieldUpdateOperationsInput | boolean
     selectedModelChat?: StringFieldUpdateOperationsInput | string
     selectedModelEditor?: StringFieldUpdateOperationsInput | string
+    enabledModelsChat?: NullableJsonNullValueInput | InputJsonValue
+    enabledModelsEditor?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type UserAIContextSettingsCreateManyInput = {
@@ -29840,6 +29878,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: boolean
     selectedModelChat?: string
     selectedModelEditor?: string
+    enabledModelsChat?: NullableJsonNullValueInput | InputJsonValue
+    enabledModelsEditor?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type UserAIContextSettingsUpdateManyMutationInput = {
@@ -29854,6 +29894,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: BoolFieldUpdateOperationsInput | boolean
     selectedModelChat?: StringFieldUpdateOperationsInput | string
     selectedModelEditor?: StringFieldUpdateOperationsInput | string
+    enabledModelsChat?: NullableJsonNullValueInput | InputJsonValue
+    enabledModelsEditor?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type UserAIContextSettingsUncheckedUpdateManyInput = {
@@ -29869,6 +29911,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: BoolFieldUpdateOperationsInput | boolean
     selectedModelChat?: StringFieldUpdateOperationsInput | string
     selectedModelEditor?: StringFieldUpdateOperationsInput | string
+    enabledModelsChat?: NullableJsonNullValueInput | InputJsonValue
+    enabledModelsEditor?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type OrganizationCreateInput = {
@@ -31965,6 +32009,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: SortOrder
     selectedModelChat?: SortOrder
     selectedModelEditor?: SortOrder
+    enabledModelsChat?: SortOrder
+    enabledModelsEditor?: SortOrder
   }
 
   export type UserAIContextSettingsMaxOrderByAggregateInput = {
@@ -35076,6 +35122,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: boolean
     selectedModelChat?: string
     selectedModelEditor?: string
+    enabledModelsChat?: NullableJsonNullValueInput | InputJsonValue
+    enabledModelsEditor?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type UserAIContextSettingsUncheckedCreateWithoutUserInput = {
@@ -35090,6 +35138,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: boolean
     selectedModelChat?: string
     selectedModelEditor?: string
+    enabledModelsChat?: NullableJsonNullValueInput | InputJsonValue
+    enabledModelsEditor?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type UserAIContextSettingsCreateOrConnectWithoutUserInput = {
@@ -35248,6 +35298,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: BoolFieldUpdateOperationsInput | boolean
     selectedModelChat?: StringFieldUpdateOperationsInput | string
     selectedModelEditor?: StringFieldUpdateOperationsInput | string
+    enabledModelsChat?: NullableJsonNullValueInput | InputJsonValue
+    enabledModelsEditor?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type UserAIContextSettingsUncheckedUpdateWithoutUserInput = {
@@ -35262,6 +35314,8 @@ export namespace Prisma {
     enableGrantSearchEditor?: BoolFieldUpdateOperationsInput | boolean
     selectedModelChat?: StringFieldUpdateOperationsInput | string
     selectedModelEditor?: StringFieldUpdateOperationsInput | string
+    enabledModelsChat?: NullableJsonNullValueInput | InputJsonValue
+    enabledModelsEditor?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type OrganizationUpsertWithoutUsersInput = {

@@ -101,6 +101,8 @@ model UserAIContextSettings {
   enableGrantSearchEditor   Boolean  @default(true)
   selectedModelChat         String   @default("gpt-4o-mini")
   selectedModelEditor       String   @default("gpt-4o-mini")
+  enabledModelsChat         Json?
+  enabledModelsEditor       Json?
   user                      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_ai_context_settings")

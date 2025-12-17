@@ -74,8 +74,8 @@ export function DocumentChatSidebar({ documentId, onToggleSidebar }: DocumentCha
   const abortControllerRef = useRef<AbortController | null>(null);
 
   // Get AI settings and subscription
-  const { settings, changeModel } = useAISettings();
-  const { tier } = useSubscription(organizationId);
+  const { settings, changeModel, loading: loadingAISettings } = useAISettings();
+  const { tier, loading: loadingSubscription } = useSubscription(organizationId);
 
   // Fetch organization ID from document
   useEffect(() => {
@@ -742,6 +742,8 @@ export function DocumentChatSidebar({ documentId, onToggleSidebar }: DocumentCha
             selectedModel={settings?.selectedModelEditor || "gpt-4o-mini"}
             onModelChange={settings ? (modelId) => changeModel("editor", modelId) : undefined}
             userTier={tier}
+            enabledModelIds={settings?.enabledModelsEditor || null}
+            loadingModelSettings={loadingAISettings || loadingSubscription}
           />
         </div>
       </div>

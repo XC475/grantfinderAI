@@ -6,13 +6,13 @@ import type {
   UserAIContextSettings,
   AIContextUpdateRequest,
 } from "@/types/ai-settings";
-import { DEFAULT_MODEL, isValidModelId } from "@/lib/ai/models";
+import { DEFAULT_MODEL, isValidModelId, findModelById } from "@/lib/ai/models";
 
 // Custom event name for cross-instance sync
 const AI_SETTINGS_UPDATED_EVENT = "ai-settings-updated";
 
 // Default settings when no record exists
-const DEFAULT_SETTINGS: Omit<
+  const DEFAULT_SETTINGS: Omit<
   UserAIContextSettings,
   "id" | "userId" | "createdAt" | "updatedAt"
 > = {
@@ -24,6 +24,8 @@ const DEFAULT_SETTINGS: Omit<
   enableGrantSearchEditor: true,
   selectedModelChat: DEFAULT_MODEL,
   selectedModelEditor: DEFAULT_MODEL,
+  enabledModelsChat: null,
+  enabledModelsEditor: null,
 };
 
 export type AISettingsField = AIContextUpdateRequest["field"];
@@ -34,6 +36,11 @@ interface UseAISettingsReturn {
   updating: Record<string, boolean>;
   toggleSetting: (field: AISettingsField) => Promise<void>;
   changeModel: (assistantType: "chat" | "editor", modelId: string) => Promise<void>;
+  toggleModelVisibility: (
+    assistantType: "chat" | "editor",
+    modelId: string,
+    enabled: boolean
+  ) => Promise<void>;
   refetch: () => Promise<void>;
 }
 
@@ -49,19 +56,26 @@ export function useAISettings(): UseAISettingsReturn {
     try {
       setLoading(true);
       const response = await fetch("/api/user/ai-context-settings");
-      if (!response.ok) throw new Error("Failed to fetch settings");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+        throw new Error(errorData.error || `Failed to fetch settings: ${response.status} ${response.statusText}`);
+      }
 
       const data = await response.json();
       setSettings(data);
     } catch (error) {
       console.error("Error fetching AI context settings:", error);
       // Use defaults on error
+      // Use a fixed date to avoid hydration mismatches
+      const now = new Date();
       setSettings({
         ...DEFAULT_SETTINGS,
+        enabledModelsChat: null,
+        enabledModelsEditor: null,
         id: "",
         userId: "",
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: now,
+        updatedAt: now,
       });
     } finally {
       setLoading(false);
@@ -110,18 +124,29 @@ export function useAISettings(): UseAISettingsReturn {
         return;
       }
 
-      const currentValue = settings[field] as boolean;
+      // TypeScript type narrowing - field is now a boolean field
+      type BooleanField = Extract<
+        AISettingsField,
+        | "enableOrgProfileChat"
+        | "enableOrgProfileEditor"
+        | "enableKnowledgeBaseChat"
+        | "enableKnowledgeBaseEditor"
+        | "enableGrantSearchChat"
+        | "enableGrantSearchEditor"
+      >;
+      const booleanField = field as BooleanField;
+      const currentValue = settings[booleanField] as boolean;
       const newValue = !currentValue;
 
       // Optimistic update
-      setSettings((prev) => (prev ? { ...prev, [field]: newValue } : prev));
-      setUpdating((prev) => ({ ...prev, [field]: true }));
+      setSettings((prev) => (prev ? { ...prev, [booleanField]: newValue } : prev));
+      setUpdating((prev) => ({ ...prev, [booleanField]: true }));
 
       try {
         const response = await fetch("/api/user/ai-context-settings", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ field, enabled: newValue }),
+          body: JSON.stringify({ field: booleanField, enabled: newValue }),
         });
 
         if (!response.ok) {
@@ -138,7 +163,7 @@ export function useAISettings(): UseAISettingsReturn {
         );
 
         // Get friendly label for toast
-        const labels: Record<AISettingsField, string> = {
+        const labels: Partial<Record<AISettingsField, string>> = {
           enableOrgProfileChat: "Organization Profile",
           enableOrgProfileEditor: "Organization Profile",
           enableKnowledgeBaseChat: "Knowledge Base",
@@ -149,7 +174,10 @@ export function useAISettings(): UseAISettingsReturn {
           selectedModelEditor: "Editor Model",
         };
 
-        toast.success(`${newValue ? "Enabled" : "Disabled"} ${labels[field]}`);
+        const label = labels[field];
+        if (label) {
+          toast.success(`${newValue ? "Enabled" : "Disabled"} ${label}`);
+        }
       } catch (error) {
         console.error("Error updating settings:", error);
         // Revert optimistic update on error
@@ -221,12 +249,96 @@ export function useAISettings(): UseAISettingsReturn {
     [settings]
   );
 
+  const toggleModelVisibility = useCallback(
+    async (
+      assistantType: "chat" | "editor",
+      modelId: string,
+      enabled: boolean
+    ) => {
+      if (!settings) return;
+
+      // Validate model ID
+      const model = findModelById(modelId);
+      if (!model) {
+        toast.error(`Model not found: ${modelId}`);
+        return;
+      }
+
+      const enabledField =
+        assistantType === "chat" ? "enabledModelsChat" : "enabledModelsEditor";
+      const currentEnabled = settings[enabledField] || [];
+
+      // Optimistic update
+      let updatedEnabled: string[];
+      if (enabled) {
+        updatedEnabled = currentEnabled.includes(modelId)
+          ? currentEnabled
+          : [...currentEnabled, modelId];
+      } else {
+        updatedEnabled = currentEnabled.filter((id) => id !== modelId);
+      }
+
+      setSettings((prev) =>
+        prev ? { ...prev, [enabledField]: updatedEnabled } : prev
+      );
+      setUpdating((prev) => ({ ...prev, [`${enabledField}-${modelId}`]: true }));
+
+      try {
+        const response = await fetch("/api/user/ai-context-settings", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            field: "toggleModelVisibility",
+            modelId,
+            assistantType,
+            enabled,
+          }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Failed to update model visibility");
+        }
+
+        const updatedSettings = await response.json();
+        setSettings(updatedSettings);
+
+        // Broadcast to other instances
+        window.dispatchEvent(
+          new CustomEvent(AI_SETTINGS_UPDATED_EVENT, { detail: updatedSettings })
+        );
+
+        toast.success(
+          `${model.name} ${enabled ? "enabled" : "disabled"} for ${assistantType} assistant`
+        );
+      } catch (error) {
+        console.error("Error updating model visibility:", error);
+        // Revert optimistic update on error
+        setSettings((prev) =>
+          prev ? { ...prev, [enabledField]: currentEnabled } : prev
+        );
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Failed to update model visibility"
+        );
+      } finally {
+        setUpdating((prev) => ({
+          ...prev,
+          [`${enabledField}-${modelId}`]: false,
+        }));
+      }
+    },
+    [settings]
+  );
+
   return {
     settings,
     loading,
     updating,
     toggleSetting,
     changeModel,
+    toggleModelVisibility,
     refetch: fetchSettings,
   };
 }

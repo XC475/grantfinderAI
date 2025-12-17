@@ -174,3 +174,63 @@ export function isValidModelId(modelId: string): boolean {
   return AVAILABLE_MODELS.some((m) => m.id === modelId);
 }
 
+/**
+ * Get models that should be visible in the selector based on user preferences
+ * If enabledModelIds is null or empty, returns all available models for the tier
+ */
+export function getVisibleModels(
+  allModels: AIModel[],
+  enabledModelIds: string[] | null,
+  userTier: SubscriptionTier
+): AIModel[] {
+  // If no preferences set, show all available models
+  if (!enabledModelIds || enabledModelIds.length === 0) {
+    return allModels.filter(
+      (m) =>
+        m.available &&
+        (!m.requiredTier || hasAccessToTier(userTier, m.requiredTier))
+    );
+  }
+
+  // Filter to only enabled models that user has access to
+  return allModels.filter(
+    (m) =>
+      enabledModelIds.includes(m.id) &&
+      m.available &&
+      (!m.requiredTier || hasAccessToTier(userTier, m.requiredTier))
+  );
+}
+
+/**
+ * Get default enabled models for a user tier (all available model IDs)
+ * Always includes the default free model
+ */
+export function getDefaultEnabledModels(userTier: SubscriptionTier): string[] {
+  const availableModels = getAvailableModels(userTier);
+  const modelIds = availableModels.map((m) => m.id);
+  
+  // Ensure default free model is always included
+  if (!modelIds.includes(DEFAULT_MODEL)) {
+    modelIds.push(DEFAULT_MODEL);
+  }
+  
+  return modelIds;
+}
+
+/**
+ * Get all models (available + coming soon) that a user can see based on their tier
+ * This includes models they have subscription access to, even if not yet available
+ */
+export function getAllModelsForTier(userTier: SubscriptionTier): AIModel[] {
+  return AVAILABLE_MODELS.filter(
+    (m) => !m.requiredTier || hasAccessToTier(userTier, m.requiredTier)
+  );
+}
+
+/**
+ * Check if a model is the default free tier model that cannot be disabled
+ */
+export function isDefaultFreeModel(modelId: string): boolean {
+  return modelId === DEFAULT_MODEL;
+}
+

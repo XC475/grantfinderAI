@@ -9,6 +9,8 @@ export interface UserAIContextSettings {
   enableGrantSearchEditor: boolean;
   selectedModelChat: string;
   selectedModelEditor: string;
+  enabledModelsChat: string[] | null;
+  enabledModelsEditor: string[] | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,9 +24,12 @@ export interface AIContextUpdateRequest {
     | "enableGrantSearchChat"
     | "enableGrantSearchEditor"
     | "selectedModelChat"
-    | "selectedModelEditor";
+    | "selectedModelEditor"
+    | "toggleModelVisibility";
   enabled?: boolean;
   value?: string; // For model selection updates
+  modelId?: string; // For model visibility toggles
+  assistantType?: "chat" | "editor"; // For model visibility toggles
 }
 
 export type AIContextType =
