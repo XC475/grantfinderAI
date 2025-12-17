@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 
-// GET /api/organizations/[orgId]/subscription
+// GET /api/organizations/[id]/subscription
 export async function GET(
   request: NextRequest,
-  { params }: { params: { orgId: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = await createClient();
   const {
@@ -18,26 +18,28 @@ export async function GET(
   }
 
   try {
+    const { id: orgId } = await params;
+    
     // Verify user has access to this organization
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
       select: { organizationId: true },
     });
 
-    if (!dbUser || dbUser.organizationId !== params.orgId) {
+    if (!dbUser || dbUser.organizationId !== orgId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Get or create subscription (defaults to FREE)
     const subscription = await prisma.organizationSubscription.findUnique({
-      where: { organizationId: params.orgId },
+      where: { organizationId: orgId },
     });
 
     if (!subscription) {
       // Return default FREE subscription
       return NextResponse.json({
         id: "",
-        organizationId: params.orgId,
+        organizationId: orgId,
         tier: "FREE",
         status: "ACTIVE",
         currentPeriodStart: null,

@@ -3,10 +3,10 @@ import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
 import { getModelUsage } from "@/lib/subscriptions/model-access";
 
-// GET /api/organizations/[orgId]/subscription/usage
+// GET /api/organizations/[id]/subscription/usage
 export async function GET(
   request: NextRequest,
-  { params }: { params: { orgId: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = await createClient();
   const {
@@ -19,13 +19,15 @@ export async function GET(
   }
 
   try {
+    const { id: orgId } = await params;
+    
     // Verify user has access to this organization
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
       select: { organizationId: true },
     });
 
-    if (!dbUser || dbUser.organizationId !== params.orgId) {
+    if (!dbUser || dbUser.organizationId !== orgId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
