@@ -7,6 +7,8 @@ export interface UserAIContextSettings {
   enableKnowledgeBaseEditor: boolean;
   enableGrantSearchChat: boolean;
   enableGrantSearchEditor: boolean;
+  selectedModelChat: string;
+  selectedModelEditor: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -18,8 +20,11 @@ export interface AIContextUpdateRequest {
     | "enableKnowledgeBaseChat"
     | "enableKnowledgeBaseEditor"
     | "enableGrantSearchChat"
-    | "enableGrantSearchEditor";
-  enabled: boolean;
+    | "enableGrantSearchEditor"
+    | "selectedModelChat"
+    | "selectedModelEditor";
+  enabled?: boolean;
+  value?: string; // For model selection updates
 }
 
 export type AIContextType =

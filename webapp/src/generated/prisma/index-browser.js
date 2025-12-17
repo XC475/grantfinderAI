@@ -192,7 +192,9 @@ exports.Prisma.UserAIContextSettingsScalarFieldEnum = {
   enableKnowledgeBaseChat: 'enableKnowledgeBaseChat',
   enableKnowledgeBaseEditor: 'enableKnowledgeBaseEditor',
   enableGrantSearchChat: 'enableGrantSearchChat',
-  enableGrantSearchEditor: 'enableGrantSearchEditor'
+  enableGrantSearchEditor: 'enableGrantSearchEditor',
+  selectedModelChat: 'selectedModelChat',
+  selectedModelEditor: 'selectedModelEditor'
 };
 
 exports.Prisma.OrganizationScalarFieldEnum = {
@@ -365,6 +367,30 @@ exports.Prisma.FolderScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.OrganizationSubscriptionScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  tier: 'tier',
+  status: 'status',
+  currentPeriodStart: 'currentPeriodStart',
+  currentPeriodEnd: 'currentPeriodEnd',
+  cancelAtPeriodEnd: 'cancelAtPeriodEnd',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ModelUsageScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  userId: 'userId',
+  modelId: 'modelId',
+  month: 'month',
+  year: 'year',
+  requestCount: 'requestCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.K12_education_opportunitiesScalarFieldEnum = {
   id: 'id',
   opportunity_id: 'opportunity_id',
@@ -499,6 +525,20 @@ exports.VectorizationStatus = exports.$Enums.VectorizationStatus = {
   FAILED: 'FAILED'
 };
 
+exports.SubscriptionTier = exports.$Enums.SubscriptionTier = {
+  FREE: 'FREE',
+  STARTER: 'STARTER',
+  PROFESSIONAL: 'PROFESSIONAL',
+  ENTERPRISE: 'ENTERPRISE'
+};
+
+exports.SubscriptionStatus = exports.$Enums.SubscriptionStatus = {
+  ACTIVE: 'ACTIVE',
+  TRIAL: 'TRIAL',
+  CANCELLED: 'CANCELLED',
+  EXPIRED: 'EXPIRED'
+};
+
 exports.k12_education_opportunity_category_enum = exports.$Enums.k12_education_opportunity_category_enum = {
   stem_education: 'stem_education',
   math_and_science_education: 'math_and_science_education',
@@ -551,6 +591,8 @@ exports.Prisma.ModelName = {
   DocumentVector: 'DocumentVector',
   DocumentTag: 'DocumentTag',
   Folder: 'Folder',
+  OrganizationSubscription: 'OrganizationSubscription',
+  ModelUsage: 'ModelUsage',
   k12_education_opportunities: 'k12_education_opportunities'
 };
 

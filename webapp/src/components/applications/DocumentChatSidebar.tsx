@@ -14,7 +14,10 @@ import {
 import { History, Plus, ChevronDown, FileText, PanelRight } from "lucide-react";
 import { SourcesModal, type SourceDocument } from "@/components/chat/SourcesModal";
 import { AISettingsDropdown } from "@/components/chat/ai-settings-dropdown";
+import { ModelSelector } from "@/components/chat/model-selector";
 import { validateMultipleFiles } from "@/lib/clientUploadValidation";
+import { useAISettings } from "@/hooks/use-ai-settings";
+import { useSubscription } from "@/hooks/use-subscription";
 
 interface FileAttachment {
   id: string;
@@ -67,7 +70,34 @@ export function DocumentChatSidebar({ documentId, onToggleSidebar }: DocumentCha
   const [sourceDocuments, setSourceDocuments] = useState<SourceDocument[]>([]);
   const [textAttachments, setTextAttachments] = useState<TextSelectionAttachment[]>([]);
   const [sourcesModalOpen, setSourcesModalOpen] = useState(false);
+  const [organizationId, setOrganizationId] = useState<string | undefined>(undefined);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Get AI settings and subscription
+  const { settings, changeModel } = useAISettings();
+  const { tier } = useSubscription(organizationId);
+
+  // Fetch organization ID from document
+  useEffect(() => {
+    const fetchOrgId = async () => {
+      try {
+        const response = await fetch(`/api/documents/${documentId}`);
+        if (response.ok) {
+          const data = await response.json();
+          // Get organizationId from document (via application or direct)
+          const orgId = data.organizationId || data.application?.organizationId;
+          if (orgId) {
+            setOrganizationId(orgId);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching organization ID:", error);
+      }
+    };
+    if (documentId) {
+      fetchOrgId();
+    }
+  }, [documentId]);
 
   const loadChatSessions = useCallback(async () => {
     try {
@@ -301,6 +331,7 @@ export function DocumentChatSidebar({ documentId, onToggleSidebar }: DocumentCha
             documentContent,
             chatId,
             sourceDocumentIds: sourceDocuments.map((doc) => doc.id),
+            selectedModel: settings?.selectedModelEditor || "gpt-4o-mini",
           }),
           signal: abortController.signal,
         });
@@ -325,6 +356,33 @@ export function DocumentChatSidebar({ documentId, onToggleSidebar }: DocumentCha
         }
 
         if (!response.ok) {
+          // Handle model access errors
+          if (response.status === 403) {
+            const errorData = await response.json().catch(() => ({}));
+            const errorMessage: Message = {
+              id: `error-${Date.now()}`,
+              role: "assistant",
+              content: `This model requires a ${errorData.requiredTier || "higher"} subscription. Your current plan is ${errorData.currentTier || "free"}. Please upgrade or select a different model.`,
+              createdAt: new Date(),
+            };
+            setMessages((prev) => [...prev, errorMessage]);
+            setIsLoading(false);
+            return;
+          }
+
+          if (response.status === 429) {
+            const errorData = await response.json().catch(() => ({}));
+            const errorMessage: Message = {
+              id: `error-${Date.now()}`,
+              role: "assistant",
+              content: `Monthly usage limit reached (${errorData.usageCount || 0}/${errorData.monthlyLimit || "?"} requests). Please wait until next month or upgrade your plan.`,
+              createdAt: new Date(),
+            };
+            setMessages((prev) => [...prev, errorMessage]);
+            setIsLoading(false);
+            return;
+          }
+
           throw new Error(`API responded with status: ${response.status}`);
         }
 
@@ -533,7 +591,7 @@ export function DocumentChatSidebar({ documentId, onToggleSidebar }: DocumentCha
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header with chat title and icon buttons */}
-      <div className="flex h-16 shrink-0 items-center gap-1 px-3 border-b bg-background">
+      <div className="flex h-16 shrink-0 items-center gap-2 px-3 border-b bg-background">
         {/* Left: Current chat title */}
         <div className="flex-1 min-w-0">
           {chatId ? (
@@ -681,6 +739,9 @@ export function DocumentChatSidebar({ documentId, onToggleSidebar }: DocumentCha
             sourcesModalOpen={sourcesModalOpen}
             setSourcesModalOpen={setSourcesModalOpen}
             showEmptyHero
+            selectedModel={settings?.selectedModelEditor || "gpt-4o-mini"}
+            onModelChange={settings ? (modelId) => changeModel("editor", modelId) : undefined}
+            userTier={tier}
           />
         </div>
       </div>

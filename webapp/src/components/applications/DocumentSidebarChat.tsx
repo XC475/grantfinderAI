@@ -38,7 +38,9 @@ import {
 } from "@/components/chat/SourcesModal";
 import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
 import { AISettingsDropdown } from "@/components/chat/ai-settings-dropdown";
+import { ModelSelector } from "@/components/chat/model-selector";
 import { TextAnimate } from "@/components/ui/text-animate";
+import type { SubscriptionTier } from "@/types/subscriptions";
 
 interface DocumentSidebarChatProps {
   handleSubmit: (
@@ -62,6 +64,10 @@ interface DocumentSidebarChatProps {
   setSourcesModalOpen?: (open: boolean) => void;
   /** Show centered hero branding when chat is empty (editor assistant only) */
   showEmptyHero?: boolean;
+  /** Model selector props */
+  selectedModel?: string;
+  onModelChange?: (modelId: string) => void;
+  userTier?: SubscriptionTier;
 }
 
 export function DocumentSidebarChat({
@@ -81,6 +87,9 @@ export function DocumentSidebarChat({
   sourcesModalOpen,
   setSourcesModalOpen,
   showEmptyHero = false,
+  selectedModel,
+  onModelChange,
+  userTier,
 }: DocumentSidebarChatProps) {
   const lastMessage = messages.at(-1);
   const isTyping = lastMessage?.role === "user";
@@ -240,6 +249,9 @@ export function DocumentSidebarChat({
               onRemoveTextAttachment={onRemoveTextAttachment}
               sourcesModalOpen={sourcesModalOpen}
               setSourcesModalOpen={setSourcesModalOpen}
+              selectedModel={selectedModel}
+              onModelChange={onModelChange}
+              userTier={userTier}
             />
           )}
         </BaseChatForm>
@@ -360,6 +372,9 @@ interface SidebarMessageInputProps
   onRemoveTextAttachment?: (index: number) => void;
   sourcesModalOpen?: boolean;
   setSourcesModalOpen?: (open: boolean) => void;
+  selectedModel?: string;
+  onModelChange?: (modelId: string) => void;
+  userTier?: SubscriptionTier;
 }
 
 function SidebarMessageInput({
@@ -377,6 +392,9 @@ function SidebarMessageInput({
   onRemoveTextAttachment,
   sourcesModalOpen: sourcesModalOpenProp,
   setSourcesModalOpen: setSourcesModalOpenProp,
+  selectedModel,
+  onModelChange,
+  userTier,
   ...textareaProps
 }: SidebarMessageInputProps) {
   const [isDragging, setIsDragging] = useState(false);
@@ -597,7 +615,7 @@ function SidebarMessageInput({
                     type="button"
                     size="icon"
                     variant="ghost"
-                    className="h-8 w-8"
+                    className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                     aria-label="Add content"
                     disabled={isGenerating}
                   >
@@ -657,6 +675,17 @@ function SidebarMessageInput({
               align="start"
               disabled={isGenerating}
             />
+
+            {/* Model Selector */}
+            {selectedModel && onModelChange && (
+              <ModelSelector
+                selectedModel={selectedModel}
+                onModelChange={onModelChange}
+                assistantType="editor"
+                userTier={userTier}
+                disabled={isGenerating}
+              />
+            )}
           </div>
 
           {/* Right: Send / Stop button */}

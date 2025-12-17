@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
+import { DEFAULT_MODEL, isValidModelId } from "@/lib/ai/models";
 
 // Default settings when no record exists
 const DEFAULT_SETTINGS = {
@@ -10,6 +11,8 @@ const DEFAULT_SETTINGS = {
   enableKnowledgeBaseEditor: true,
   enableGrantSearchChat: true,
   enableGrantSearchEditor: true,
+  selectedModelChat: DEFAULT_MODEL,
+  selectedModelEditor: DEFAULT_MODEL,
 };
 
 // GET /api/user/ai-context-settings - Get user's AI context settings
@@ -36,6 +39,8 @@ export async function GET() {
         enableKnowledgeBaseEditor: true,
         enableGrantSearchChat: true,
         enableGrantSearchEditor: true,
+        selectedModelChat: true,
+        selectedModelEditor: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -76,10 +81,10 @@ export async function PATCH(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { field, enabled } = body;
+    const { field, enabled, value } = body;
 
     // Validate field name
-    const validFields = [
+    const booleanFields = [
       "enableOrgProfileChat",
       "enableOrgProfileEditor",
       "enableKnowledgeBaseChat",
@@ -88,6 +93,10 @@ export async function PATCH(request: NextRequest) {
       "enableGrantSearchEditor",
     ];
 
+    const modelFields = ["selectedModelChat", "selectedModelEditor"];
+
+    const validFields = [...booleanFields, ...modelFields];
+
     if (!field || !validFields.includes(field)) {
       return NextResponse.json(
         { error: "Invalid field name" },
@@ -95,9 +104,34 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    if (typeof enabled !== "boolean") {
+    // Validate and prepare update value
+    let updateValue: boolean | string;
+    if (booleanFields.includes(field)) {
+      if (typeof enabled !== "boolean") {
+        return NextResponse.json(
+          { error: "enabled must be a boolean for boolean fields" },
+          { status: 400 }
+        );
+      }
+      updateValue = enabled;
+    } else if (modelFields.includes(field)) {
+      if (typeof value !== "string" || !value) {
+        return NextResponse.json(
+          { error: "value must be a non-empty string for model fields" },
+          { status: 400 }
+        );
+      }
+      // Validate model ID
+      if (!isValidModelId(value)) {
+        return NextResponse.json(
+          { error: `Invalid model ID: ${value}` },
+          { status: 400 }
+        );
+      }
+      updateValue = value;
+    } else {
       return NextResponse.json(
-        { error: "enabled must be a boolean" },
+        { error: "Invalid field type" },
         { status: 400 }
       );
     }
@@ -106,13 +140,13 @@ export async function PATCH(request: NextRequest) {
     const updatedSettings = await prisma.userAIContextSettings.upsert({
       where: { userId: user.id },
       update: {
-        [field]: enabled,
+        [field]: updateValue,
         updatedAt: new Date(),
       },
       create: {
         userId: user.id,
         ...DEFAULT_SETTINGS,
-        [field]: enabled,
+        [field]: updateValue,
       },
       select: {
         id: true,
@@ -123,6 +157,8 @@ export async function PATCH(request: NextRequest) {
         enableKnowledgeBaseEditor: true,
         enableGrantSearchChat: true,
         enableGrantSearchEditor: true,
+        selectedModelChat: true,
+        selectedModelEditor: true,
         createdAt: true,
         updatedAt: true,
       },

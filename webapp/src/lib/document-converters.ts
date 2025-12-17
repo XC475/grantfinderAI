@@ -108,43 +108,60 @@ export function tiptapToHTML(jsonString?: string | null): string {
 export function tiptapToStyledHTML(jsonString?: string | null): string {
   const html = tiptapToHTML(jsonString);
 
+  // CSS is structure-only: NO hardcoded font-family or font-size on body
+  // This allows inline styles from Tiptap marks (textStyle) to control typography
   return `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
+  <title>Document Export</title>
   <style>
+    /* Print page setup */
     @page {
       margin: 1in;
+      size: letter;
     }
+    
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+    
+    /* Base layout - NO font overrides so inline styles take precedence */
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      font-size: 12pt;
       line-height: 1.6;
       color: #000;
       max-width: 8.5in;
       margin: 0 auto;
-      padding: 0;
+      padding: 0.5in;
+      background: white;
     }
+    
+    /* Headings: structure only, inherit font from inline styles */
     h1, h2, h3, h4, h5, h6 {
       margin-top: 1em;
       margin-bottom: 0.5em;
       font-weight: bold;
       line-height: 1.2;
     }
-    h1 { font-size: 24pt; }
-    h2 { font-size: 20pt; }
-    h3 { font-size: 16pt; }
-    h4 { font-size: 14pt; }
-    h5 { font-size: 12pt; }
-    h6 { font-size: 11pt; }
+    
+    /* Paragraphs */
     p {
       margin: 0 0 1em 0;
     }
+    
+    /* Inline formatting */
     strong { font-weight: bold; }
     em { font-style: italic; }
     u { text-decoration: underline; }
     s { text-decoration: line-through; }
+    sub { vertical-align: sub; font-size: smaller; }
+    sup { vertical-align: super; font-size: smaller; }
+    
+    /* Code blocks */
     code {
       font-family: 'Courier New', Courier, monospace;
       background-color: #f4f4f4;
@@ -161,6 +178,8 @@ export function tiptapToStyledHTML(jsonString?: string | null): string {
       background: none;
       padding: 0;
     }
+    
+    /* Lists */
     ul, ol {
       margin: 0 0 1em 0;
       padding-left: 2em;
@@ -168,17 +187,34 @@ export function tiptapToStyledHTML(jsonString?: string | null): string {
     li {
       margin: 0.25em 0;
     }
+    
+    /* Task lists (checkboxes) */
+    ul[data-type="taskList"] {
+      list-style: none;
+      padding-left: 0;
+    }
+    ul[data-type="taskList"] li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5em;
+    }
+    
+    /* Blockquote */
     blockquote {
       border-left: 4px solid #ccc;
       margin: 1em 0;
       padding-left: 1em;
-      color: #666;
+      color: #555;
     }
+    
+    /* Horizontal rule */
     hr {
       border: none;
       border-top: 1px solid #ccc;
       margin: 2em 0;
     }
+    
+    /* Tables */
     table {
       border-collapse: collapse;
       width: 100%;
@@ -192,18 +228,29 @@ export function tiptapToStyledHTML(jsonString?: string | null): string {
       background-color: #f4f4f4;
       font-weight: bold;
     }
+    
+    /* Highlight/mark - use inline style color when present */
     mark {
-      background-color: yellow;
       padding: 2px 0;
     }
+    
+    /* Links */
     a {
       color: #0066cc;
       text-decoration: underline;
     }
+    
+    /* Images */
     img {
       max-width: 100%;
       height: auto;
     }
+    
+    /* Text alignment classes (Tiptap generates these) */
+    [style*="text-align: left"] { text-align: left; }
+    [style*="text-align: center"] { text-align: center; }
+    [style*="text-align: right"] { text-align: right; }
+    [style*="text-align: justify"] { text-align: justify; }
   </style>
 </head>
 <body>

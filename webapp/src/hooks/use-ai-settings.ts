@@ -6,6 +6,7 @@ import type {
   UserAIContextSettings,
   AIContextUpdateRequest,
 } from "@/types/ai-settings";
+import { DEFAULT_MODEL, isValidModelId } from "@/lib/ai/models";
 
 // Custom event name for cross-instance sync
 const AI_SETTINGS_UPDATED_EVENT = "ai-settings-updated";
@@ -21,6 +22,8 @@ const DEFAULT_SETTINGS: Omit<
   enableKnowledgeBaseEditor: true,
   enableGrantSearchChat: true,
   enableGrantSearchEditor: true,
+  selectedModelChat: DEFAULT_MODEL,
+  selectedModelEditor: DEFAULT_MODEL,
 };
 
 export type AISettingsField = AIContextUpdateRequest["field"];
@@ -30,6 +33,7 @@ interface UseAISettingsReturn {
   loading: boolean;
   updating: Record<string, boolean>;
   toggleSetting: (field: AISettingsField) => Promise<void>;
+  changeModel: (assistantType: "chat" | "editor", modelId: string) => Promise<void>;
   refetch: () => Promise<void>;
 }
 
@@ -91,7 +95,22 @@ export function useAISettings(): UseAISettingsReturn {
     async (field: AISettingsField) => {
       if (!settings) return;
 
-      const currentValue = settings[field];
+      // Only allow toggling boolean fields
+      const booleanFields: AISettingsField[] = [
+        "enableOrgProfileChat",
+        "enableOrgProfileEditor",
+        "enableKnowledgeBaseChat",
+        "enableKnowledgeBaseEditor",
+        "enableGrantSearchChat",
+        "enableGrantSearchEditor",
+      ];
+
+      if (!booleanFields.includes(field)) {
+        console.error("Cannot toggle non-boolean field:", field);
+        return;
+      }
+
+      const currentValue = settings[field] as boolean;
       const newValue = !currentValue;
 
       // Optimistic update
@@ -126,6 +145,8 @@ export function useAISettings(): UseAISettingsReturn {
           enableKnowledgeBaseEditor: "Knowledge Base",
           enableGrantSearchChat: "Grant Search",
           enableGrantSearchEditor: "Grant Search",
+          selectedModelChat: "Chat Model",
+          selectedModelEditor: "Editor Model",
         };
 
         toast.success(`${newValue ? "Enabled" : "Disabled"} ${labels[field]}`);
@@ -145,11 +166,67 @@ export function useAISettings(): UseAISettingsReturn {
     [settings]
   );
 
+  const changeModel = useCallback(
+    async (assistantType: "chat" | "editor", modelId: string) => {
+      if (!settings) return;
+
+      // Validate model ID
+      if (!isValidModelId(modelId)) {
+        toast.error(`Invalid model ID: ${modelId}`);
+        return;
+      }
+
+      const field: AISettingsField =
+        assistantType === "chat" ? "selectedModelChat" : "selectedModelEditor";
+      const currentValue = settings[field] as string;
+
+      // Optimistic update
+      setSettings((prev) => (prev ? { ...prev, [field]: modelId } : prev));
+      setUpdating((prev) => ({ ...prev, [field]: true }));
+
+      try {
+        const response = await fetch("/api/user/ai-context-settings", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ field, value: modelId }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Failed to update model");
+        }
+
+        const updatedSettings = await response.json();
+        setSettings(updatedSettings);
+
+        // Broadcast to other instances
+        window.dispatchEvent(
+          new CustomEvent(AI_SETTINGS_UPDATED_EVENT, { detail: updatedSettings })
+        );
+
+        toast.success(`Model changed to ${modelId}`);
+      } catch (error) {
+        console.error("Error updating model:", error);
+        // Revert optimistic update on error
+        setSettings((prev) =>
+          prev ? { ...prev, [field]: currentValue } : prev
+        );
+        toast.error(
+          error instanceof Error ? error.message : "Failed to update model"
+        );
+      } finally {
+        setUpdating((prev) => ({ ...prev, [field]: false }));
+      }
+    },
+    [settings]
+  );
+
   return {
     settings,
     loading,
     updating,
     toggleSetting,
+    changeModel,
     refetch: fetchSettings,
   };
 }
