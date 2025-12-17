@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { extractTextFromTiptap } from "@/lib/textExtraction";
 import { triggerDocumentVectorization } from "@/lib/textExtraction";
 import { VectorizationStatus } from "@/generated/prisma";
+import { toJsonSafe } from "@/lib/json";
 
 /**
  * Documents API Endpoint
@@ -181,7 +182,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({
-      data: documents,
+      data: toJsonSafe(documents),
       pagination: {
         total: totalCount,
         limit,

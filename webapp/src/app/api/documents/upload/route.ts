@@ -9,6 +9,7 @@ import { tmpdir } from "os";
 import { randomUUID } from "crypto";
 import { MAX_DOCUMENT_SIZE, validatePageCount } from "@/lib/uploadValidation";
 import { triggerDocumentVectorization } from "@/lib/textExtraction";
+import { toJsonSafe } from "@/lib/json";
 
 // Force Node.js runtime for file processing
 export const runtime = "nodejs";
@@ -213,7 +214,10 @@ export async function POST(req: NextRequest) {
       await triggerDocumentVectorization(document.id, dbUser.organizationId);
     }
 
-    return NextResponse.json({ document }, { status: 201 });
+    return NextResponse.json(
+      { document: toJsonSafe(document) },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error uploading file:", error);
     return NextResponse.json(

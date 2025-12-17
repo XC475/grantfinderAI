@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { getApplicationFolderTree } from "@/lib/folders";
 import { triggerDocumentVectorization } from "@/lib/textExtraction";
+import { toJsonSafe } from "@/lib/json";
 
 // POST /api/documents/[documentId]/move - Move document to folder
 export async function POST(
@@ -140,7 +141,7 @@ export async function POST(
       );
     }
 
-    return NextResponse.json({ document: updatedDocument });
+    return NextResponse.json({ document: toJsonSafe(updatedDocument) });
   } catch (error) {
     console.error("Error moving document:", error);
     return NextResponse.json(

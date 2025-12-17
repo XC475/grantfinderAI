@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { deleteFileFromStorage } from "@/lib/documentStorageCleanup";
 import { extractTextFromTiptap } from "@/lib/textExtraction";
 import { triggerDocumentVectorization } from "@/lib/textExtraction";
+import { toJsonSafe } from "@/lib/json";
 
 // GET /api/documents/[documentId] - Get specific document
 export async function GET(
@@ -49,7 +50,7 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ document });
+    return NextResponse.json({ document: toJsonSafe(document) });
   } catch (error) {
     console.error("Error fetching document:", error);
     return NextResponse.json(
@@ -345,7 +346,7 @@ export async function PUT(
       );
     }
 
-    return NextResponse.json({ document });
+    return NextResponse.json({ document: toJsonSafe(document) });
   } catch (error) {
     console.error("Error updating document:", error);
     return NextResponse.json(

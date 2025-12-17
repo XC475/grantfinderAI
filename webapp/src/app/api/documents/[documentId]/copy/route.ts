@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
+import { toJsonSafe } from "@/lib/json";
 
 // POST /api/documents/[documentId]/copy - Create a copy of a document
 export async function POST(
@@ -112,7 +113,10 @@ export async function POST(
       await triggerDocumentVectorization(newDocument.id, dbUser.organizationId);
     }
 
-    return NextResponse.json({ document: newDocument }, { status: 201 });
+    return NextResponse.json(
+      { document: toJsonSafe(newDocument) },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error copying document:", error);
     return NextResponse.json(
