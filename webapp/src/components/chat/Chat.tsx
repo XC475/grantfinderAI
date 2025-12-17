@@ -7,6 +7,9 @@ import { Chat } from "@/components/chat/chat-container";
 import { Message } from "@/components/chat/chat-message";
 import { type SourceDocument } from "@/components/chat/SourcesModal";
 import { validateMultipleFiles } from "@/lib/clientUploadValidation";
+import { useAISettings } from "@/hooks/use-ai-settings";
+import { useSubscription } from "@/hooks/use-subscription";
+import { useParams } from "next/navigation";
 
 interface FileAttachment {
   id: string;
@@ -41,6 +44,32 @@ export function ChatDemo(props: ChatDemoProps) {
   );
   const hasAutoSent = useRef(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Get organization ID and subscription info
+  const { slug: organizationSlug } = useParams<{ slug: string }>();
+  const [organizationId, setOrganizationId] = useState<string | undefined>(undefined);
+  const { settings, loading: loadingAISettings, changeModel } = useAISettings();
+  const { tier, loading: loadingSubscription } = useSubscription(organizationId);
+
+  // Fetch organization ID from slug
+  useEffect(() => {
+    const fetchOrgId = async () => {
+      try {
+        const response = await fetch(`/api/organizations?slug=${organizationSlug}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.id) {
+            setOrganizationId(data.id);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching organization ID:", error);
+      }
+    };
+    if (organizationSlug) {
+      fetchOrgId();
+    }
+  }, [organizationSlug]);
 
   // Update messages when initialMessages prop changes (e.g., when navigating between chats)
   useEffect(() => {
@@ -188,6 +217,7 @@ export function ChatDemo(props: ChatDemoProps) {
             messages: apiMessages,
             chatId: chatId,
             sourceDocumentIds: sourceDocuments.map((doc) => doc.id),
+            selectedModel: settings?.selectedModelChat || "gpt-4o-mini",
           }),
           signal: abortController.signal,
         });
@@ -380,6 +410,11 @@ export function ChatDemo(props: ChatDemoProps) {
         userName={props.userName}
         sourceDocuments={sourceDocuments}
         onSourceDocumentsChange={setSourceDocuments}
+        selectedModel={settings?.selectedModelChat || "gpt-4o-mini"}
+        onModelChange={settings ? (modelId) => changeModel("chat", modelId) : undefined}
+        userTier={tier}
+        enabledModelIds={settings?.enabledModelsChat || null}
+        loadingModelSettings={loadingAISettings || loadingSubscription}
         suggestions={[
           "Find grants for improving community programs in our organization",
           "Help me find grants for teacher professional development",

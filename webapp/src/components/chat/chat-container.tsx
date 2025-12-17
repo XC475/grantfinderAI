@@ -20,6 +20,7 @@ import { MessageList } from "@/components/chat/message-list";
 import { PromptSuggestions } from "@/components/chat/prompt-suggestions";
 import { ChatGreeting } from "@/components/chat/ChatGreeting";
 import { type SourceDocument } from "@/components/chat/SourcesModal";
+import type { SubscriptionTier } from "@/types/subscriptions";
 
 interface ChatPropsBase {
   handleSubmit: (
@@ -42,6 +43,12 @@ interface ChatPropsBase {
   userName?: string;
   sourceDocuments?: SourceDocument[];
   onSourceDocumentsChange?: (docs: SourceDocument[]) => void;
+  /** Model selector props */
+  selectedModel?: string;
+  onModelChange?: (modelId: string) => void;
+  userTier?: SubscriptionTier;
+  enabledModelIds?: string[] | null;
+  loadingModelSettings?: boolean;
 }
 
 interface ChatPropsWithoutSuggestions extends ChatPropsBase {
@@ -73,6 +80,11 @@ export function Chat({
   userName,
   sourceDocuments,
   onSourceDocumentsChange,
+  selectedModel,
+  onModelChange,
+  userTier,
+  enabledModelIds,
+  loadingModelSettings,
 }: ChatProps) {
   const lastMessage = messages.at(-1);
   const isEmpty = isEmptyProp ?? messages.length === 0;
@@ -234,6 +246,11 @@ export function Chat({
           placeholder={placeholder || "Ask anything..."}
           sourceDocuments={sourceDocuments}
           onSourceDocumentsChange={onSourceDocumentsChange}
+          selectedModel={selectedModel}
+          onModelChange={onModelChange}
+          userTier={userTier}
+          enabledModelIds={enabledModelIds}
+          loadingModelSettings={loadingModelSettings}
         />
         
         <PromptSuggestions
@@ -274,6 +291,11 @@ export function Chat({
             placeholder={placeholder}
             sourceDocuments={sourceDocuments}
             onSourceDocumentsChange={onSourceDocumentsChange}
+            selectedModel={selectedModel}
+            onModelChange={onModelChange}
+            userTier={userTier}
+            enabledModelIds={enabledModelIds}
+            loadingModelSettings={loadingModelSettings}
           />
         )}
       </ChatForm>

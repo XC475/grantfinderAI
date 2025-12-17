@@ -22,6 +22,8 @@ import {
 } from "@/components/chat/SourcesModal";
 import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
 import { AISettingsDropdown } from "./ai-settings-dropdown";
+import { ModelSelector } from "./model-selector";
+import type { SubscriptionTier } from "@/types/subscriptions";
 
 interface MessageInputBaseProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -31,6 +33,12 @@ interface MessageInputBaseProps
   isGenerating: boolean;
   enableInterrupt?: boolean;
   isEmpty?: boolean;
+  /** Model selector props */
+  selectedModel?: string;
+  onModelChange?: (modelId: string) => void;
+  userTier?: SubscriptionTier;
+  enabledModelIds?: string[] | null;
+  loadingModelSettings?: boolean;
 }
 
 interface MessageInputWithoutAttachmentProps extends MessageInputBaseProps {
@@ -418,11 +426,21 @@ export function MessageInput({
                   "setFiles",
                   "sourceDocuments",
                   "onSourceDocumentsChange",
+                  "selectedModel",
+                  "onModelChange",
+                  "userTier",
+                  "enabledModelIds",
+                  "loadingModelSettings",
                 ])
               : omit(props, [
                   "allowAttachments",
                   "sourceDocuments",
                   "onSourceDocumentsChange",
+                  "selectedModel",
+                  "onModelChange",
+                  "userTier",
+                  "enabledModelIds",
+                  "loadingModelSettings",
                 ]))}
           />
 
@@ -498,6 +516,18 @@ export function MessageInput({
                 assistantType="chat"
                 disabled={isGenerating}
               />
+
+              {/* Model Selector */}
+              {props.selectedModel && props.onModelChange && (
+                <ModelSelector
+                  selectedModel={props.selectedModel}
+                  onModelChange={props.onModelChange}
+                  assistantType="chat"
+                  userTier={props.userTier}
+                  enabledModelIds={props.enabledModelIds ?? null}
+                  disabled={isGenerating || props.loadingModelSettings}
+                />
+              )}
             </div>
 
             {/* Send/Stop Button - Bottom right */}

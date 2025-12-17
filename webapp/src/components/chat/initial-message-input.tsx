@@ -18,12 +18,14 @@ import {
 } from "@/components/chat/SourcesModal";
 import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
 import { AISettingsDropdown } from "./ai-settings-dropdown";
+import { ModelSelector } from "./model-selector";
 import {
   BUTTON_ICONS,
   ICON_SIZES,
   getFileTypeIcon,
   getFileTypeIconColor,
 } from "./constants";
+import type { SubscriptionTier } from "@/types/subscriptions";
 
 // Helper function to get document icon based on file type
 function getDocumentIcon(doc: SourceDocument) {
@@ -42,6 +44,12 @@ interface InitialMessageInputProps {
   className?: string;
   sourceDocuments?: SourceDocument[];
   onSourceDocumentsChange?: (docs: SourceDocument[]) => void;
+  /** Model selector props */
+  selectedModel?: string;
+  onModelChange?: (modelId: string) => void;
+  userTier?: SubscriptionTier;
+  enabledModelIds?: string[] | null;
+  loadingModelSettings?: boolean;
 }
 
 export function InitialMessageInput({
@@ -52,6 +60,11 @@ export function InitialMessageInput({
   className,
   sourceDocuments,
   onSourceDocumentsChange,
+  selectedModel,
+  onModelChange,
+  userTier,
+  enabledModelIds,
+  loadingModelSettings,
 }: InitialMessageInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -277,6 +290,18 @@ export function InitialMessageInput({
 
             {/* Settings Button with AI Toggles */}
             <AISettingsDropdown assistantType="chat" />
+
+            {/* Model Selector */}
+            {selectedModel && onModelChange && (
+              <ModelSelector
+                selectedModel={selectedModel}
+                onModelChange={onModelChange}
+                assistantType="chat"
+                userTier={userTier}
+                enabledModelIds={enabledModelIds ?? null}
+                disabled={loadingModelSettings}
+              />
+            )}
           </div>
 
           {/* Send Button - Bottom right (Claude-style) */}
