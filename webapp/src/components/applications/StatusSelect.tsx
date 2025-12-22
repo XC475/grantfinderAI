@@ -29,7 +29,7 @@ interface StatusSelectProps {
   disabled?: boolean;
 }
 
-function getStatusVariant(status: string): string {
+export function getStatusVariant(status: string): string {
   switch (status) {
     case "DRAFT":
       return "bg-purple-100 text-purple-800";
@@ -51,7 +51,7 @@ function getStatusVariant(status: string): string {
   }
 }
 
-function formatStatus(status: string): string {
+export function formatStatus(status: string): string {
   return status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 }
 

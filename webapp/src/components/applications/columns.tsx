@@ -17,7 +17,6 @@ import {
   Pencil,
   Copy,
   Trash,
-  GripVertical,
 } from "lucide-react";
 import { StatusSelect } from "./StatusSelect";
 
@@ -180,34 +179,19 @@ export function createColumns(
       size: 40,
     },
 
-    // Drag Handle Column (optional)
-    {
-      id: "dragHandle",
-      header: "",
-      cell: () => (
-        <div className="cursor-move text-muted-foreground hover:text-foreground">
-          <GripVertical className="h-4 w-4" />
-        </div>
-      ),
-      enableSorting: false,
-      size: 40,
-    },
-
     // Application Name Column (primary)
     {
       accessorKey: "title",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="-ml-4"
-          >
-            Application Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="px-0 justify-start"
+        >
+          Application Name
+          <ArrowUpDown className="ml-1 h-4 w-4" />
+        </Button>
+      ),
       cell: ({ row }) => {
         return (
           <div className="space-y-1 max-w-[200px]">
@@ -232,18 +216,16 @@ export function createColumns(
     // Status Column (badge)
     {
       accessorKey: "status",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="-ml-4"
-          >
-            Status
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="px-0 justify-start"
+        >
+          Status
+          <ArrowUpDown className="ml-1 h-4 w-4" />
+        </Button>
+      ),
       cell: ({ row }) => {
         const application = row.original;
         return (
@@ -260,22 +242,18 @@ export function createColumns(
     // Funding Amount Column
     {
       accessorKey: "funding",
-      header: ({ column }) => {
-        return (
-          <div className="flex justify-end">
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-              className="-mr-4"
-            >
-              Funding Amount
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        );
-      },
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() =>
+            column.toggleSorting(column.getIsSorted() === "asc")
+          }
+          className="px-0 justify-end w-full"
+        >
+          <span className="flex-1 text-right">Funding Amount</span>
+          <ArrowUpDown className="ml-1 h-4 w-4" />
+        </Button>
+      ),
       cell: ({ row }) => {
         const amount = row.original.opportunityTotalFunding;
         return (
@@ -290,18 +268,16 @@ export function createColumns(
     // Deadline Column
     {
       accessorKey: "deadline",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="-ml-4"
-          >
-            Deadline
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="px-0 justify-start"
+        >
+          Deadline
+          <ArrowUpDown className="ml-1 h-4 w-4" />
+        </Button>
+      ),
       cell: ({ row }) => {
         const closeDate = row.original.opportunityCloseDate;
         if (!closeDate) {
@@ -323,18 +299,16 @@ export function createColumns(
     // Last Edited Column
     {
       accessorKey: "lastEditedAt",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="-ml-4"
-          >
-            Last Edited
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="px-0 justify-start"
+        >
+          Last Edited
+          <ArrowUpDown className="ml-1 h-4 w-4" />
+        </Button>
+      ),
       cell: ({ row }) => {
         const date = new Date(row.getValue("lastEditedAt"));
         return (
@@ -353,18 +327,16 @@ export function createColumns(
     // Created At Column
     {
       accessorKey: "createdAt",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="-ml-4"
-          >
-            Created At
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="px-0 justify-start"
+        >
+          Created At
+          <ArrowUpDown className="ml-1 h-4 w-4" />
+        </Button>
+      ),
       cell: ({ row }) => {
         const date = new Date(row.getValue("createdAt"));
         return (

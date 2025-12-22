@@ -15,7 +15,6 @@ import { toast } from "sonner";
 import { ApplicationsTable } from "@/components/applications/ApplicationsTable";
 import { AddApplicationModal } from "@/components/applications/AddApplicationModal";
 import { Application } from "@/components/applications/columns";
-import { useHeaderActions } from "@/contexts/HeaderActionsContext";
 
 export default function ApplicationsPage({
   params,
@@ -24,7 +23,6 @@ export default function ApplicationsPage({
 }) {
   const { slug } = use(params);
   const router = useRouter();
-  const { setHeaderActions } = useHeaderActions();
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -52,19 +50,6 @@ export default function ApplicationsPage({
     fetchApplications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
-
-  // Set header actions
-  useEffect(() => {
-    setHeaderActions(
-      <Button onClick={() => setAddModalOpen(true)}>
-        <Plus className="h-4 w-4 mr-1" />
-        New
-      </Button>
-    );
-
-    // Cleanup on unmount
-    return () => setHeaderActions(null);
-  }, [setHeaderActions]);
 
   if (loading) {
     return (
@@ -117,6 +102,7 @@ export default function ApplicationsPage({
           slug={slug}
           onRefresh={fetchApplications}
           variant="full"
+          onNewApplication={() => setAddModalOpen(true)}
         />
       </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   flexRender,
@@ -12,25 +12,7 @@ import {
   type SortingState,
   type VisibilityState,
   type ColumnDef,
-  type Header,
 } from "@tanstack/react-table";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  horizontalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import {
   Table,
   TableBody,
@@ -45,11 +27,13 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DatePicker } from "@/components/ui/date-picker";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -59,7 +43,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Settings2, Plus, GripVertical } from "lucide-react";
+import {
+  Plus,
+  MoreVertical,
+  Copy,
+  Trash,
+  SlidersHorizontal,
+  ArrowUpDown,
+  Search,
+  ArrowUp,
+  ArrowDown,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   createColumns,
@@ -67,67 +62,14 @@ import {
   type Application,
 } from "./columns";
 import { RenameDialog } from "@/components/folders/RenameDialog";
-
-// Sortable Header Component
-function SortableHeader({
-  header,
-  columnId,
-}: {
-  header: Header<Application, unknown>;
-  columnId: string;
-}) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: columnId, disabled: header.isPlaceholder });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  if (header.isPlaceholder) {
-    return <TableHead />;
-  }
-
-  const columnSize = header.column.getSize();
-
-  return (
-    <TableHead
-      ref={setNodeRef}
-      style={{
-        ...style,
-        width: columnSize,
-        minWidth: columnSize,
-        maxWidth: columnSize,
-      }}
-      className="relative group"
-    >
-      <div className="flex items-center gap-2">
-        <button
-          {...attributes}
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-muted rounded"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <GripVertical className="h-4 w-4 text-muted-foreground" />
-        </button>
-        {flexRender(header.column.columnDef.header, header.getContext())}
-      </div>
-    </TableHead>
-  );
-}
+import { getStatusVariant, formatStatus } from "./StatusSelect";
 
 interface ApplicationsTableProps {
   applications: Application[];
   slug: string;
   onRefresh?: () => void;
   variant?: "dashboard" | "full";
+  onNewApplication?: () => void;
 }
 
 export function ApplicationsTable({
@@ -135,6 +77,7 @@ export function ApplicationsTable({
   slug,
   onRefresh,
   variant = "full",
+  onNewApplication,
 }: ApplicationsTableProps) {
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -145,14 +88,17 @@ export function ApplicationsTable({
   });
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilter, setGlobalFilter] = useState("");
-  const [activeTab, setActiveTab] = useState("all");
 
-  // Visible status filters in the tab row (capped)
-  const MAX_VISIBLE_STATUSES = 5;
-  const [visibleStatusKeys, setVisibleStatusKeys] = useState<string[]>([]);
-
-  // Column order state
-  const [columnOrder, setColumnOrder] = useState<string[]>([]);
+  // New filter state
+  const [selectedStatusFilters, setSelectedStatusFilters] = useState<string[]>([]);
+  const [dateRangeFilter, setDateRangeFilter] = useState<{
+    from: Date | undefined;
+    to: Date | undefined;
+  }>({ from: undefined, to: undefined });
+  const [fundingRangeFilter, setFundingRangeFilter] = useState<{
+    min: number | undefined;
+    max: number | undefined;
+  }>({ min: undefined, max: undefined });
 
   // Delete dialog state
   const [isDeleting, setIsDeleting] = useState(false);
@@ -161,6 +107,9 @@ export function ApplicationsTable({
     id: string;
     title: string | null;
   } | null>(null);
+  const [applicationsToDelete, setApplicationsToDelete] = useState<
+    Array<{ id: string; title: string | null }>
+  >([]);
 
   // Rename dialog state
   const [renameDialog, setRenameDialog] = useState<{
@@ -170,6 +119,58 @@ export function ApplicationsTable({
   }>({ open: false, applicationId: "", currentTitle: "" });
 
   const confirmDelete = async () => {
+    // Handle bulk delete
+    if (applicationsToDelete.length > 0) {
+      setIsDeleting(true);
+      let successCount = 0;
+      let failCount = 0;
+
+      try {
+        for (const app of applicationsToDelete) {
+          try {
+            const response = await fetch(`/api/applications/${app.id}`, {
+              method: "DELETE",
+            });
+
+            if (response.ok) {
+              successCount++;
+            } else {
+              failCount++;
+            }
+          } catch (error) {
+            console.error(`Error deleting application ${app.id}:`, error);
+            failCount++;
+          }
+        }
+
+        if (successCount > 0) {
+          toast.success(
+            `Successfully deleted ${successCount} application${successCount > 1 ? "s" : ""}`
+          );
+        }
+        if (failCount > 0) {
+          toast.error(
+            `Failed to delete ${failCount} application${failCount > 1 ? "s" : ""}`
+          );
+        }
+
+        if (onRefresh) {
+          onRefresh();
+        }
+        // Clear selection
+        setRowSelection({});
+      } catch (error) {
+        console.error("Error in bulk delete:", error);
+        toast.error("Failed to delete applications");
+      } finally {
+        setIsDeleting(false);
+        setDeleteDialogOpen(false);
+        setApplicationsToDelete([]);
+      }
+      return;
+    }
+
+    // Handle single delete
     if (!applicationToDelete) return;
 
     setIsDeleting(true);
@@ -196,6 +197,61 @@ export function ApplicationsTable({
       setIsDeleting(false);
       setDeleteDialogOpen(false);
       setApplicationToDelete(null);
+    }
+  };
+
+  const handleBulkDelete = () => {
+    const selectedRows = table.getFilteredSelectedRowModel().rows;
+    const apps = selectedRows.map((row) => ({
+      id: row.original.id,
+      title: row.original.title,
+    }));
+    setApplicationsToDelete(apps);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleBulkCopy = async () => {
+    const selectedRows = table.getFilteredSelectedRowModel().rows;
+    let successCount = 0;
+    let failCount = 0;
+
+    try {
+      for (const row of selectedRows) {
+        try {
+          const response = await fetch(`/api/applications/${row.original.id}/copy`, {
+            method: "POST",
+          });
+
+          if (response.ok) {
+            successCount++;
+          } else {
+            failCount++;
+          }
+        } catch (error) {
+          console.error(`Error copying application ${row.original.id}:`, error);
+          failCount++;
+        }
+      }
+
+      if (successCount > 0) {
+        toast.success(
+          `Successfully copied ${successCount} application${successCount > 1 ? "s" : ""}`
+        );
+      }
+      if (failCount > 0) {
+        toast.error(
+          `Failed to copy ${failCount} application${failCount > 1 ? "s" : ""}`
+        );
+      }
+
+      if (onRefresh) {
+        onRefresh();
+      }
+      // Clear selection
+      setRowSelection({});
+    } catch (error) {
+      console.error("Error in bulk copy:", error);
+      toast.error("Failed to copy applications");
     }
   };
 
@@ -287,88 +343,13 @@ export function ApplicationsTable({
     onStatusChange: handleStatusUpdate,
   };
 
-  const baseColumns = useMemo(
+  const columns = useMemo(
     () =>
       variant === "dashboard"
         ? createSimpleColumns(actions)
         : createColumns(actions),
     [variant, actions]
   );
-
-  // Initialize column order on first render
-  useEffect(() => {
-    if (columnOrder.length === 0 && baseColumns.length > 0) {
-      setColumnOrder(
-        baseColumns.map((col, index) => {
-          if (col.id) return col.id;
-          // Try to get accessorKey if it exists
-          const accessorKey =
-            "accessorKey" in col
-              ? (col.accessorKey as string | undefined)
-              : undefined;
-          if (typeof accessorKey === "string") return accessorKey;
-          return `col-${index}`;
-        })
-      );
-    }
-  }, [baseColumns, columnOrder.length]);
-
-  // Reorder columns based on columnOrder state
-  const columns = useMemo(() => {
-    if (columnOrder.length === 0) return baseColumns;
-
-    const orderedColumns: ColumnDef<Application>[] = [];
-    const columnMap = new Map(
-      baseColumns.map((col, index) => {
-        const id =
-          col.id ||
-          ("accessorKey" in col
-            ? (col.accessorKey as string | undefined)
-            : undefined) ||
-          `col-${index}`;
-        return [id, col];
-      })
-    );
-
-    // Add columns in the order specified by columnOrder
-    columnOrder.forEach((id) => {
-      const col = columnMap.get(id);
-      if (col) {
-        orderedColumns.push(col);
-        columnMap.delete(id);
-      }
-    });
-
-    // Add any remaining columns that weren't in columnOrder
-    columnMap.forEach((col) => orderedColumns.push(col));
-
-    return orderedColumns;
-  }, [baseColumns, columnOrder]);
-
-  // Drag and drop sensors
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  // Handle drag end
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      setColumnOrder((items) => {
-        const oldIndex = items.indexOf(active.id as string);
-        const newIndex = items.indexOf(over.id as string);
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-  };
 
   // Status filter configuration (tabs)
   const statusFilters = useMemo(
@@ -418,7 +399,7 @@ export function ApplicationsTable({
     []
   );
 
-  // Count applications per status filter (used for badges and defaults)
+  // Count applications per status filter (used for badges)
   const statusCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const filter of statusFilters) {
@@ -429,78 +410,133 @@ export function ApplicationsTable({
     return counts;
   }, [applications, statusFilters]);
 
-  // Initialize visible status tabs on first render (up to MAX_VISIBLE_STATUSES)
-  useEffect(() => {
-    if (visibleStatusKeys.length > 0) return;
-
-    const orderedKeys = statusFilters.map((f) => f.value);
-
-    // Prefer statuses that actually have applications
-    const nonEmptyKeys = orderedKeys.filter(
-      (key) => (statusCounts[key] ?? 0) > 0
-    );
-
-    const initial: string[] = [];
-    for (const key of nonEmptyKeys) {
-      if (initial.length >= MAX_VISIBLE_STATUSES) break;
-      if (!initial.includes(key)) initial.push(key);
-    }
-
-    // If we still have room, fill from remaining statuses (in order)
-    if (initial.length < Math.min(MAX_VISIBLE_STATUSES, orderedKeys.length)) {
-      for (const key of orderedKeys) {
-        if (initial.length >= MAX_VISIBLE_STATUSES) break;
-        if (!initial.includes(key)) initial.push(key);
-      }
-    }
-
-    setVisibleStatusKeys(initial);
-  }, [statusCounts, statusFilters, visibleStatusKeys.length]);
-
-  // Filter applications by active tab
+  // Filter applications using new filter state
   const filteredApplications = useMemo(() => {
-    if (activeTab === "all") return applications;
-    const filter = statusFilters.find((f) => f.value === activeTab);
-    if (!filter) return applications;
-    return applications.filter((app) => filter.statuses.includes(app.status));
-  }, [applications, activeTab, statusFilters]);
+    let filtered = applications;
 
-  // Handle toggling a status in the overflow menu
-  const handleToggleVisibleStatus = (value: string, checked: boolean) => {
-    setVisibleStatusKeys((current) => {
-      // Removing from visible list
-      if (!checked) {
-        const next = current.filter((key) => key !== value);
-        if (activeTab === value) {
-          setActiveTab("all");
-        }
-        return next;
-      }
+    // Status filters (multi-select)
+    if (selectedStatusFilters.length > 0) {
+      filtered = filtered.filter((app) => {
+        // Find which filter group this status belongs to
+        const matchingFilter = statusFilters.find((filter) =>
+          filter.statuses.includes(app.status)
+        );
+        return (
+          matchingFilter && selectedStatusFilters.includes(matchingFilter.value)
+        );
+      });
+    }
 
-      // Adding to visible list
-      if (current.includes(value)) {
-        return current;
-      }
+    // Date range filter (on deadline/closeDate)
+    if (dateRangeFilter.from || dateRangeFilter.to) {
+      filtered = filtered.filter((app) => {
+        if (!app.opportunityCloseDate) return false;
+        const closeDate = new Date(app.opportunityCloseDate);
+        // Reset time to start of day for comparison
+        const fromDate = dateRangeFilter.from
+          ? new Date(
+              dateRangeFilter.from.getFullYear(),
+              dateRangeFilter.from.getMonth(),
+              dateRangeFilter.from.getDate()
+            )
+          : null;
+        const toDate = dateRangeFilter.to
+          ? new Date(
+              dateRangeFilter.to.getFullYear(),
+              dateRangeFilter.to.getMonth(),
+              dateRangeFilter.to.getDate(),
+              23,
+              59,
+              59,
+              999
+            )
+          : null;
+        const appDate = new Date(
+          closeDate.getFullYear(),
+          closeDate.getMonth(),
+          closeDate.getDate()
+        );
 
-      if (current.length >= MAX_VISIBLE_STATUSES) {
-        toast.error("You can show up to 5 filters at a time.");
-        return current;
-      }
+        if (fromDate && appDate < fromDate) return false;
+        if (toDate && appDate > toDate) return false;
+        return true;
+      });
+    }
 
-      // Preserve canonical order by inserting based on statusFilters
-      const orderedKeys = statusFilters.map((f) => f.value);
-      const next = [...current, value];
-      next.sort(
-        (a, b) => orderedKeys.indexOf(a) - orderedKeys.indexOf(b)
-      );
+    // Funding range filter
+    if (fundingRangeFilter.min !== undefined || fundingRangeFilter.max !== undefined) {
+      filtered = filtered.filter((app) => {
+        const amount = app.opportunityTotalFunding
+          ? Number(app.opportunityTotalFunding)
+          : null;
+        if (amount === null) return false;
+        if (
+          fundingRangeFilter.min !== undefined &&
+          amount < fundingRangeFilter.min
+        )
+          return false;
+        if (
+          fundingRangeFilter.max !== undefined &&
+          amount > fundingRangeFilter.max
+        )
+          return false;
+        return true;
+      });
+    }
 
-      return next;
-    });
+    return filtered;
+  }, [
+    applications,
+    selectedStatusFilters,
+    dateRangeFilter,
+    fundingRangeFilter,
+  ]);
 
-    if (checked) {
-      setActiveTab(value);
+  // Calculate active filter count
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (selectedStatusFilters.length > 0) count++;
+    if (dateRangeFilter.from || dateRangeFilter.to) count++;
+    if (
+      fundingRangeFilter.min !== undefined ||
+      fundingRangeFilter.max !== undefined
+    )
+      count++;
+    return count;
+  }, [selectedStatusFilters, dateRangeFilter, fundingRangeFilter]);
+
+  // Clear all filters
+  const clearAllFilters = () => {
+    setSelectedStatusFilters([]);
+    setDateRangeFilter({ from: undefined, to: undefined });
+    setFundingRangeFilter({ min: undefined, max: undefined });
+  };
+
+  // Get current sort state for display
+  const currentSort = useMemo(() => {
+    if (sorting.length === 0) return null;
+    const sort = sorting[0];
+    return {
+      column: sort.id,
+      direction: sort.desc ? "desc" : "asc",
+    };
+  }, [sorting]);
+
+  // Handle sort toggle
+  const handleSortToggle = (columnId: string) => {
+    const current = sorting.find((s) => s.id === columnId);
+    if (!current) {
+      // Set to ascending
+      setSorting([{ id: columnId, desc: false }]);
+    } else if (!current.desc) {
+      // Change to descending
+      setSorting([{ id: columnId, desc: true }]);
+    } else {
+      // Clear sort
+      setSorting([]);
     }
   };
+
 
   const table = useReactTable({
     data: filteredApplications,
@@ -511,14 +547,12 @@ export function ApplicationsTable({
       columnVisibility,
       rowSelection,
       globalFilter,
-      columnOrder,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
-    onColumnOrderChange: setColumnOrder,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -527,316 +561,526 @@ export function ApplicationsTable({
 
   // Dashboard variant (simplified - no tabs, no controls)
   if (variant === "dashboard") {
-    const visibleHeaders =
-      table
-        .getHeaderGroups()[0]
-        ?.headers.filter(
-          (header) =>
-            header.column.id !== "select" &&
-            header.column.id !== "dragHandle" &&
-            header.column.getIsVisible()
-        ) || [];
-
     return (
       <div className="space-y-4">
         <div className="rounded-xl border border-muted-foreground/20 overflow-hidden bg-card/40 backdrop-blur-sm">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <Table className="[&_table]:table-fixed">
-              <TableHeader className="bg-muted/30 border-b border-muted-foreground/10">
-                {table.getHeaderGroups().map((headerGroup) => (
+          <Table className="[&_table]:table-fixed">
+            <TableHeader className="bg-muted/30 border-b border-muted-foreground/10">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow
+                  key={headerGroup.id}
+                  className="hover:bg-transparent border-none"
+                >
+                  {headerGroup.headers
+                    .filter(
+                      (header) =>
+                        header.column.id !== "select" &&
+                        header.column.id !== "dragHandle" &&
+                        header.column.getIsVisible()
+                    )
+                    .map((header) => {
+                      const columnSize = header.column.getSize();
+                      return (
+                        <TableHead
+                          key={header.id}
+                          style={{
+                            width: columnSize,
+                            minWidth: columnSize,
+                            maxWidth: columnSize,
+                          }}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </TableHead>
+                      );
+                    })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
                   <TableRow
-                    key={headerGroup.id}
-                    className="hover:bg-transparent border-none"
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className="cursor-pointer hover:bg-foreground/5 border-b border-muted-foreground/5 transition-colors last:border-none"
+                    onClick={() =>
+                      router.push(
+                        `/private/${slug}/applications/${row.original.id}`
+                      )
+                    }
                   >
-                    <SortableContext
-                      items={visibleHeaders.map((h) => h.column.id || h.id)}
-                      strategy={horizontalListSortingStrategy}
-                    >
-                      {headerGroup.headers
-                        .filter(
-                          (header) =>
-                            header.column.id !== "select" &&
-                            header.column.id !== "dragHandle"
-                        )
-                        .map((header) => (
-                          <SortableHeader
-                            key={header.id}
-                            header={header}
-                            columnId={header.column.id || header.id}
-                          />
-                        ))}
-                    </SortableContext>
+                    {row
+                      .getVisibleCells()
+                      .filter(
+                        (cell) =>
+                          cell.column.id !== "select" &&
+                          cell.column.id !== "dragHandle"
+                      )
+                      .map((cell) => {
+                        const columnSize = cell.column.getSize();
+                        return (
+                          <TableCell
+                            key={cell.id}
+                            className="font-light text-foreground/80"
+                            style={{
+                              width: columnSize,
+                              minWidth: columnSize,
+                              maxWidth: columnSize,
+                            }}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        );
+                      })}
                   </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                      className="cursor-pointer hover:bg-foreground/5 border-b border-muted-foreground/5 transition-colors last:border-none"
-                      onClick={() =>
-                        router.push(
-                          `/private/${slug}/applications/${row.original.id}`
-                        )
-                      }
-                    >
-                      {row
-                        .getVisibleCells()
-                        .filter(
-                          (cell) =>
-                            cell.column.id !== "select" &&
-                            cell.column.id !== "dragHandle"
-                        )
-                        .map((cell) => {
-                          const columnSize = cell.column.getSize();
-                          return (
-                            <TableCell
-                              key={cell.id}
-                              className="font-light text-foreground/80"
-                              style={{
-                                width: columnSize,
-                                minWidth: columnSize,
-                                maxWidth: columnSize,
-                              }}
-                            >
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
-                            </TableCell>
-                          );
-                        })}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length - 2}
-                      className="h-24 text-center text-foreground/60 font-light"
-                    >
-                      No applications found.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </DndContext>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center text-foreground/60 font-light"
+                  >
+                    No applications found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
     );
   }
 
-  // Full variant with tabs and all features
+  // Full variant with compact toolbar
   return (
     <div className="space-y-4">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="mb-4 space-y-2">
-          {/* Top row: Search + Columns (left aligned, above filter bar) */}
-          <div className="flex items-center gap-2">
-            <Input
-              placeholder="Search applications..."
-              value={globalFilter ?? ""}
-              onChange={(event) => setGlobalFilter(event.target.value)}
-              className="w-[260px]"
-            />
+      {/* Bulk Actions - show above table when rows are selected */}
+      {table.getFilteredSelectedRowModel().rows.length > 0 && (
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <MoreVertical className="mr-2 h-4 w-4" />
+                Actions ({table.getFilteredSelectedRowModel().rows.length})
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleBulkCopy();
+                }}
+              >
+                <Copy className="mr-2 h-4 w-4" />
+                Make a Copy
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleBulkDelete();
+                }}
+                className="text-red-600 focus:text-red-600"
+              >
+                <Trash className="mr-2 h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )}
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Settings2 className="mr-2 h-4 w-4" />
-                  Columns
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-[200px]">
-                <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {table
-                  .getAllColumns()
-                  .filter(
-                    (column) => column.getCanHide() && column.id !== "select"
-                  )
-                  .map((column) => {
-                    const columnNames: Record<string, string> = {
-                      dragHandle: "Drag Handle",
-                      title: "Application Name",
-                      status: "Status",
-                      funding: "Funding Amount",
-                      deadline: "Deadline",
-                      lastEditedAt: "Last Edited",
-                      createdAt: "Created At",
-                      actions: "Actions",
-                    };
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className="capitalize"
-                        checked={column.getIsVisible()}
-                        onCheckedChange={(value) =>
-                          column.toggleVisibility(!!value)
-                        }
-                      >
-                        {columnNames[column.id] || column.id}
-                      </DropdownMenuCheckboxItem>
-                    );
-                  })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+      {/* Compact Toolbar - sits directly above table */}
+      <div className="flex items-center justify-end gap-2">
+          {/* Filter Button */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8">
+                <SlidersHorizontal className="h-4 w-4 mr-2" />
+                Filter
+                {activeFilterCount > 0 && (
+                  <Badge
+                    variant="secondary"
+                    className="ml-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                  >
+                    {activeFilterCount}
+                  </Badge>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[260px]">
+              <DropdownMenuLabel>Filters</DropdownMenuLabel>
+              <DropdownMenuSeparator />
 
-          {/* Second row: status bar + More filters (More filters adjacent to bar) */}
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 min-w-0">
-              <TabsList className="flex flex-nowrap gap-1 overflow-x-auto flex-shrink-0">
-                <TabsTrigger value="all">All Applications</TabsTrigger>
-                {statusFilters
-                  .filter((filter) => visibleStatusKeys.includes(filter.value))
-                  .map((filter) => {
-                    const count = statusCounts[filter.value] ?? 0;
-                    return (
-                      <TabsTrigger key={filter.value} value={filter.value}>
-                        {filter.label}
-                        {count > 0 && (
+              {/* Active Filters Display */}
+              {(selectedStatusFilters.length > 0 ||
+                dateRangeFilter.from ||
+                dateRangeFilter.to ||
+                fundingRangeFilter.min !== undefined ||
+                fundingRangeFilter.max !== undefined) && (
+                <>
+                  <div className="px-2 py-1.5 space-y-1">
+                    <div className="text-xs font-medium text-muted-foreground mb-1">
+                      Active Filters:
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {selectedStatusFilters.map((status) => {
+                        const filter = statusFilters.find((f) => f.value === status);
+                        const statusKey = filter?.statuses[0] || status.toUpperCase();
+                        return (
                           <Badge
+                            key={status}
                             variant="secondary"
-                            className="ml-2 px-1.5 py-0.5 text-xs"
+                            className="text-xs flex items-center gap-1"
                           >
-                            {count}
+                            {formatStatus(statusKey)}
+                            <button
+                              type="button"
+                              className="ml-1 hover:bg-muted rounded-full p-0.5"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedStatusFilters((prev) =>
+                                  prev.filter((s) => s !== status)
+                                );
+                              }}
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
                           </Badge>
-                        )}
-                      </TabsTrigger>
-                    );
-                  })}
-              </TabsList>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    More filters
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-[220px]">
-                  <DropdownMenuLabel>Status filters</DropdownMenuLabel>
+                        );
+                      })}
+                      {(dateRangeFilter.from || dateRangeFilter.to) && (
+                        <Badge
+                          variant="secondary"
+                          className="text-xs flex items-center gap-1"
+                        >
+                          Date Range
+                          <button
+                            type="button"
+                            className="ml-1 hover:bg-muted rounded-full p-0.5"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDateRangeFilter({
+                                from: undefined,
+                                to: undefined,
+                              });
+                            }}
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      )}
+                      {(fundingRangeFilter.min !== undefined ||
+                        fundingRangeFilter.max !== undefined) && (
+                        <Badge
+                          variant="secondary"
+                          className="text-xs flex items-center gap-1"
+                        >
+                          Funding Range
+                          <button
+                            type="button"
+                            className="ml-1 hover:bg-muted rounded-full p-0.5"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setFundingRangeFilter({
+                                min: undefined,
+                                max: undefined,
+                              });
+                            }}
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
                   <DropdownMenuSeparator />
+                </>
+              )}
+
+              {/* Status Filters Section */}
+              <div className="px-2 py-1.5">
+                <Label className="text-xs font-medium mb-1.5 block">
+                  Status
+                </Label>
+                <div className="space-y-0.5 max-h-[200px] overflow-y-auto pr-6">
                   {statusFilters.map((filter) => {
                     const count = statusCounts[filter.value] ?? 0;
-                    const checked = visibleStatusKeys.includes(filter.value);
-                    const disabled =
-                      !checked &&
-                      visibleStatusKeys.length >= MAX_VISIBLE_STATUSES;
-
+                    const isSelected = selectedStatusFilters.includes(
+                      filter.value
+                    );
+                    const statusKey = filter.statuses[0]; // Get the actual status key
+                    const statusColorClass = getStatusVariant(statusKey);
                     return (
-                      <DropdownMenuCheckboxItem
+                      <div
                         key={filter.value}
-                        checked={checked}
-                        disabled={disabled}
-                        className="flex items-center justify-between gap-2"
-                        onCheckedChange={(value) =>
-                          handleToggleVisibleStatus(
-                            filter.value,
-                            Boolean(value)
-                          )
-                        }
+                        className="flex items-center justify-between py-0.5"
                       >
-                        <span>{filter.label}</span>
+                        <DropdownMenuCheckboxItem
+                          checked={isSelected}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setSelectedStatusFilters((prev) => [
+                                ...prev,
+                                filter.value,
+                              ]);
+                            } else {
+                              setSelectedStatusFilters((prev) =>
+                                prev.filter((s) => s !== filter.value)
+                              );
+                            }
+                          }}
+                          className="flex-1 min-w-0"
+                        >
+                          <Badge className={statusColorClass}>
+                            {formatStatus(statusKey)}
+                          </Badge>
+                        </DropdownMenuCheckboxItem>
                         {count > 0 && (
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-xs text-muted-foreground ml-2 flex-shrink-0">
                             {count}
                           </span>
                         )}
-                      </DropdownMenuCheckboxItem>
+                      </div>
                     );
                   })}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+                </div>
+              </div>
+
+              <DropdownMenuSeparator />
+
+              {/* Date Range Section */}
+              <div className="px-2 py-1.5 space-y-2">
+                <Label className="text-xs font-medium">Deadline Date Range</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1 min-w-0">
+                    <Label className="text-xs text-muted-foreground">From</Label>
+                    <DatePicker
+                      date={dateRangeFilter.from}
+                      onDateChange={(date) => {
+                        setDateRangeFilter((prev) => ({
+                          ...prev,
+                          from: date,
+                        }));
+                      }}
+                      placeholder="Start date"
+                      className="bg-white"
+                    />
+                  </div>
+                  <div className="space-y-1 min-w-0">
+                    <Label className="text-xs text-muted-foreground">To</Label>
+                    <DatePicker
+                      date={dateRangeFilter.to}
+                      onDateChange={(date) => {
+                        setDateRangeFilter((prev) => ({
+                          ...prev,
+                          to: date,
+                        }));
+                      }}
+                      placeholder="End date"
+                      className="bg-white"
+                    />
+                  </div>
+                </div>
+                {dateRangeFilter.from &&
+                  dateRangeFilter.to &&
+                  dateRangeFilter.from > dateRangeFilter.to && (
+                    <p className="text-xs text-red-600">
+                      Start date must be before end date
+                    </p>
+                  )}
+              </div>
+
+              <DropdownMenuSeparator />
+
+              {/* Funding Amount Section */}
+              <div className="px-2 py-1.5 space-y-2">
+                <Label className="text-xs font-medium">Funding Amount</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">Min</Label>
+                    <Input
+                      type="number"
+                      placeholder="Min"
+                      value={
+                        fundingRangeFilter.min !== undefined
+                          ? fundingRangeFilter.min
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setFundingRangeFilter((prev) => ({
+                          ...prev,
+                          min: value ? Number(value) : undefined,
+                        }));
+                      }}
+                      className="h-8"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">Max</Label>
+                    <Input
+                      type="number"
+                      placeholder="Max"
+                      value={
+                        fundingRangeFilter.max !== undefined
+                          ? fundingRangeFilter.max
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setFundingRangeFilter((prev) => ({
+                          ...prev,
+                          max: value ? Number(value) : undefined,
+                        }));
+                      }}
+                      className="h-8"
+                    />
+                  </div>
+                </div>
+                {fundingRangeFilter.min !== undefined &&
+                  fundingRangeFilter.max !== undefined &&
+                  fundingRangeFilter.min > fundingRangeFilter.max && (
+                    <p className="text-xs text-red-600">
+                      Min amount must be less than max amount
+                    </p>
+                  )}
+              </div>
+
+              <DropdownMenuSeparator />
+
+              {/* Clear All Button */}
+              <div className="px-2 py-2">
+                <Button
+                  variant="outline"
+                  size="default"
+                  className="w-full h-10 font-medium hover:border-red-500 hover:text-red-600 hover:bg-red-50"
+                  onClick={clearAllFilters}
+                  disabled={activeFilterCount === 0}
+                >
+                  Clear all filters
+                </Button>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Sort Button */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8">
+                <ArrowUpDown className="h-4 w-4 mr-2" />
+                {currentSort
+                  ? `${currentSort.column === "title" ? "Name" : currentSort.column === "lastEditedAt" ? "Last Edited" : currentSort.column === "createdAt" ? "Created At" : currentSort.column === "funding" ? "Funding" : currentSort.column === "deadline" ? "Deadline" : currentSort.column} ${
+                      currentSort.direction === "asc" ? "↑" : "↓"
+                    }`
+                  : "Sort"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[200px]">
+              <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {[
+                { id: "title", label: "Application Name" },
+                { id: "status", label: "Status" },
+                { id: "funding", label: "Funding Amount" },
+                { id: "deadline", label: "Deadline" },
+                { id: "lastEditedAt", label: "Last Edited" },
+                { id: "createdAt", label: "Created At" },
+              ].map((column) => {
+                const sortState = sorting.find((s) => s.id === column.id);
+                const isAsc = sortState && !sortState.desc;
+                const isDesc = sortState && sortState.desc;
+                return (
+                  <DropdownMenuItem
+                    key={column.id}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSortToggle(column.id);
+                    }}
+                    className="flex items-center justify-between"
+                  >
+                    <span>{column.label}</span>
+                    {isAsc && <ArrowUp className="h-4 w-4" />}
+                    {isDesc && <ArrowDown className="h-4 w-4" />}
+                    {!isAsc && !isDesc && <span className="h-4 w-4" />}
+                  </DropdownMenuItem>
+                );
+              })}
+              {currentSort && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setSorting([])}>
+                    Clear sort
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Search Input */}
+          <div className="flex items-center gap-2">
+            <Search className="h-4 w-4 text-muted-foreground" />
+            <Input
+              value={globalFilter ?? ""}
+              onChange={(event) => {
+                setGlobalFilter(event.target.value);
+              }}
+              className="w-[200px]"
+              placeholder="Type to search..."
+            />
           </div>
 
-          {/* Spacer to visually separate controls from table */}
-          <div className="h-1" />
-        </div>
+          {/* New Button */}
+          <Button
+            variant="default"
+            size="sm"
+            className="h-8"
+            onClick={() => onNewApplication?.()}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            New
+          </Button>
+      </div>
 
-        <TabsContent value={activeTab} className="mt-0">
-          <div className="rounded-md border">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <Table className="w-full [&_table]:table-fixed">
-                <TableHeader className="bg-muted/50">
-                  {table.getHeaderGroups().map((headerGroup) => {
-                    const selectHeader = headerGroup.headers.find(
-                      (h) => h.column.id === "select"
-                    );
-                    const dragHandleHeader = headerGroup.headers.find(
-                      (h) => h.column.id === "dragHandle"
-                    );
-                    const sortableHeaders = headerGroup.headers.filter(
-                      (header) =>
-                        header.column.getIsVisible() &&
-                        header.column.id !== "select" &&
-                        header.column.id !== "dragHandle"
-                    );
-                    return (
-                      <TableRow key={headerGroup.id}>
-                        {/* Render select column first (not sortable) */}
-                        {selectHeader && (
+      {/* Table container */}
+      <div className="rounded-md border">
+        <Table className="w-full [&_table]:table-fixed">
+              <TableHeader className="bg-muted/50">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers
+                      .filter(
+                        (header) =>
+                          header.column.getIsVisible() &&
+                          header.column.id !== "dragHandle"
+                      )
+                      .map((header) => {
+                        const columnSize = header.column.getSize();
+                        return (
                           <TableHead
-                            key={selectHeader.id}
+                            key={header.id}
                             style={{
-                              width: selectHeader.column.getSize(),
-                              minWidth: selectHeader.column.getSize(),
-                              maxWidth: selectHeader.column.getSize(),
+                              width: columnSize,
+                              minWidth: columnSize,
+                              maxWidth: columnSize,
                             }}
                           >
                             {flexRender(
-                              selectHeader.column.columnDef.header,
-                              selectHeader.getContext()
+                              header.column.columnDef.header,
+                              header.getContext()
                             )}
                           </TableHead>
-                        )}
-                        {/* Render dragHandle column (not sortable) */}
-                        {dragHandleHeader &&
-                          dragHandleHeader.column.getIsVisible() && (
-                            <TableHead
-                              key={dragHandleHeader.id}
-                              style={{
-                                width: dragHandleHeader.column.getSize(),
-                                minWidth: dragHandleHeader.column.getSize(),
-                                maxWidth: dragHandleHeader.column.getSize(),
-                              }}
-                            >
-                              {flexRender(
-                                dragHandleHeader.column.columnDef.header,
-                                dragHandleHeader.getContext()
-                              )}
-                            </TableHead>
-                          )}
-                        {/* Render sortable columns */}
-                        <SortableContext
-                          items={sortableHeaders.map(
-                            (h) => h.column.id || h.id
-                          )}
-                          strategy={horizontalListSortingStrategy}
-                        >
-                          {sortableHeaders.map((header) => (
-                            <SortableHeader
-                              key={header.id}
-                              header={header}
-                              columnId={header.column.id || header.id}
-                            />
-                          ))}
-                        </SortableContext>
-                      </TableRow>
-                    );
-                  })}
-                </TableHeader>
+                        );
+                      })}
+                  </TableRow>
+                ))}
+              </TableHeader>
                 <TableBody>
                   {table.getRowModel().rows?.length ? (
                     table.getRowModel().rows.map((row) => (
@@ -882,8 +1126,7 @@ export function ApplicationsTable({
                   )}
                 </TableBody>
               </Table>
-            </DndContext>
-          </div>
+            </div>
 
           {/* Row count info */}
           <div className="flex items-center justify-between px-2 py-4">
@@ -893,25 +1136,42 @@ export function ApplicationsTable({
                 ` · ${table.getFilteredSelectedRowModel().rows.length} selected`}
             </div>
           </div>
-        </TabsContent>
-      </Tabs>
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Application</DialogTitle>
+            <DialogTitle>
+              {applicationsToDelete.length > 0
+                ? `Delete ${applicationsToDelete.length} Application${applicationsToDelete.length > 1 ? "s" : ""}`
+                : "Delete Application"}
+            </DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete &quot;
-              {applicationToDelete?.title || "this application"}&quot;? This
-              action cannot be undone. Associated documents will also be
-              deleted.
+              {applicationsToDelete.length > 0 ? (
+                <>
+                  Are you sure you want to delete {applicationsToDelete.length}{" "}
+                  application{applicationsToDelete.length > 1 ? "s" : ""}? This
+                  action cannot be undone. Associated documents will also be
+                  deleted.
+                </>
+              ) : (
+                <>
+                  Are you sure you want to delete &quot;
+                  {applicationToDelete?.title || "this application"}&quot;? This
+                  action cannot be undone. Associated documents will also be
+                  deleted.
+                </>
+              )}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button
               variant="outline"
-              onClick={() => setDeleteDialogOpen(false)}
+              onClick={() => {
+                setDeleteDialogOpen(false);
+                setApplicationsToDelete([]);
+                setApplicationToDelete(null);
+              }}
               disabled={isDeleting}
             >
               Cancel
