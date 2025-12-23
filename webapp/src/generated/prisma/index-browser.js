@@ -377,6 +377,9 @@ exports.Prisma.OrganizationSubscriptionScalarFieldEnum = {
   currentPeriodStart: 'currentPeriodStart',
   currentPeriodEnd: 'currentPeriodEnd',
   cancelAtPeriodEnd: 'cancelAtPeriodEnd',
+  stripeCustomerId: 'stripeCustomerId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
+  stripePriceId: 'stripePriceId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

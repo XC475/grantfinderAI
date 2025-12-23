@@ -48,6 +48,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
 import { GoogleDriveConnection } from "@/components/integrations/GoogleDriveConnection";
+import { createCheckoutSession } from "@/actions/stripe";
 
 // Services options matching Prisma enum
 const SERVICES_OPTIONS = [
@@ -130,7 +131,8 @@ export default function OnboardingFlow({
   );
 
   // Payment plan selection (local state only)
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<"base" | "business" | null>(null);
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   // Google Drive connection state
   const [googleDriveConnected, setGoogleDriveConnected] = useState(false);
@@ -181,6 +183,30 @@ export default function OnboardingFlow({
   const handlePrevious = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handlePlanSelection = async (planId: "base" | "business") => {
+    if (!organization || processingPayment) return;
+
+    setSelectedPlan(planId);
+    setProcessingPayment(true);
+
+    try {
+      const checkoutUrl = await createCheckoutSession(
+        planId,
+        organization.id,
+        organizationSlug
+      );
+      window.location.href = checkoutUrl;
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to start checkout. Please try again."
+      );
+      setProcessingPayment(false);
     }
   };
 
@@ -969,14 +995,15 @@ export default function OnboardingFlow({
               <Card
                 className={cn(
                   "cursor-pointer transition-all",
-                  selectedPlan === "basic"
+                  selectedPlan === "base"
                     ? "border-purple-500 ring-2 ring-purple-500"
-                    : "border-gray-200 hover:shadow-md"
+                    : "border-gray-200 hover:shadow-md",
+                  processingPayment && "opacity-50 cursor-not-allowed"
                 )}
-                onClick={() => setSelectedPlan("basic")}
+                onClick={() => !processingPayment && handlePlanSelection("base")}
               >
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold mb-2">Basic Plan</h3>
+                  <h3 className="text-lg font-semibold mb-2">Base Plan</h3>
                   <p className="text-muted-foreground text-sm mb-4">
                     Essential features for small organizations.
                   </p>
@@ -1000,14 +1027,15 @@ export default function OnboardingFlow({
               <Card
                 className={cn(
                   "cursor-pointer transition-all",
-                  selectedPlan === "premium"
+                  selectedPlan === "business"
                     ? "border-purple-500 ring-2 ring-purple-500"
-                    : "border-gray-200 hover:shadow-md"
+                    : "border-gray-200 hover:shadow-md",
+                  processingPayment && "opacity-50 cursor-not-allowed"
                 )}
-                onClick={() => setSelectedPlan("premium")}
+                onClick={() => !processingPayment && handlePlanSelection("business")}
               >
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold mb-2">Premium Plan</h3>
+                  <h3 className="text-lg font-semibold mb-2">Business Plan</h3>
                   <p className="text-muted-foreground text-sm mb-4">
                     Advanced features for growing organizations.
                   </p>

@@ -23573,6 +23573,9 @@ export namespace Prisma {
     currentPeriodStart: Date | null
     currentPeriodEnd: Date | null
     cancelAtPeriodEnd: boolean | null
+    stripeCustomerId: string | null
+    stripeSubscriptionId: string | null
+    stripePriceId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -23585,6 +23588,9 @@ export namespace Prisma {
     currentPeriodStart: Date | null
     currentPeriodEnd: Date | null
     cancelAtPeriodEnd: boolean | null
+    stripeCustomerId: string | null
+    stripeSubscriptionId: string | null
+    stripePriceId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -23597,6 +23603,9 @@ export namespace Prisma {
     currentPeriodStart: number
     currentPeriodEnd: number
     cancelAtPeriodEnd: number
+    stripeCustomerId: number
+    stripeSubscriptionId: number
+    stripePriceId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -23611,6 +23620,9 @@ export namespace Prisma {
     currentPeriodStart?: true
     currentPeriodEnd?: true
     cancelAtPeriodEnd?: true
+    stripeCustomerId?: true
+    stripeSubscriptionId?: true
+    stripePriceId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -23623,6 +23635,9 @@ export namespace Prisma {
     currentPeriodStart?: true
     currentPeriodEnd?: true
     cancelAtPeriodEnd?: true
+    stripeCustomerId?: true
+    stripeSubscriptionId?: true
+    stripePriceId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -23635,6 +23650,9 @@ export namespace Prisma {
     currentPeriodStart?: true
     currentPeriodEnd?: true
     cancelAtPeriodEnd?: true
+    stripeCustomerId?: true
+    stripeSubscriptionId?: true
+    stripePriceId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -23720,6 +23738,9 @@ export namespace Prisma {
     currentPeriodStart: Date | null
     currentPeriodEnd: Date | null
     cancelAtPeriodEnd: boolean
+    stripeCustomerId: string | null
+    stripeSubscriptionId: string | null
+    stripePriceId: string | null
     createdAt: Date
     updatedAt: Date
     _count: OrganizationSubscriptionCountAggregateOutputType | null
@@ -23749,6 +23770,9 @@ export namespace Prisma {
     currentPeriodStart?: boolean
     currentPeriodEnd?: boolean
     cancelAtPeriodEnd?: boolean
+    stripeCustomerId?: boolean
+    stripeSubscriptionId?: boolean
+    stripePriceId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -23762,6 +23786,9 @@ export namespace Prisma {
     currentPeriodStart?: boolean
     currentPeriodEnd?: boolean
     cancelAtPeriodEnd?: boolean
+    stripeCustomerId?: boolean
+    stripeSubscriptionId?: boolean
+    stripePriceId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -23775,6 +23802,9 @@ export namespace Prisma {
     currentPeriodStart?: boolean
     currentPeriodEnd?: boolean
     cancelAtPeriodEnd?: boolean
+    stripeCustomerId?: boolean
+    stripeSubscriptionId?: boolean
+    stripePriceId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -23788,11 +23818,14 @@ export namespace Prisma {
     currentPeriodStart?: boolean
     currentPeriodEnd?: boolean
     cancelAtPeriodEnd?: boolean
+    stripeCustomerId?: boolean
+    stripeSubscriptionId?: boolean
+    stripePriceId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type OrganizationSubscriptionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "tier" | "status" | "currentPeriodStart" | "currentPeriodEnd" | "cancelAtPeriodEnd" | "createdAt" | "updatedAt", ExtArgs["result"]["organizationSubscription"]>
+  export type OrganizationSubscriptionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "tier" | "status" | "currentPeriodStart" | "currentPeriodEnd" | "cancelAtPeriodEnd" | "stripeCustomerId" | "stripeSubscriptionId" | "stripePriceId" | "createdAt" | "updatedAt", ExtArgs["result"]["organizationSubscription"]>
   export type OrganizationSubscriptionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }
@@ -23816,6 +23849,9 @@ export namespace Prisma {
       currentPeriodStart: Date | null
       currentPeriodEnd: Date | null
       cancelAtPeriodEnd: boolean
+      stripeCustomerId: string | null
+      stripeSubscriptionId: string | null
+      stripePriceId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["organizationSubscription"]>
@@ -24249,6 +24285,9 @@ export namespace Prisma {
     readonly currentPeriodStart: FieldRef<"OrganizationSubscription", 'DateTime'>
     readonly currentPeriodEnd: FieldRef<"OrganizationSubscription", 'DateTime'>
     readonly cancelAtPeriodEnd: FieldRef<"OrganizationSubscription", 'Boolean'>
+    readonly stripeCustomerId: FieldRef<"OrganizationSubscription", 'String'>
+    readonly stripeSubscriptionId: FieldRef<"OrganizationSubscription", 'String'>
+    readonly stripePriceId: FieldRef<"OrganizationSubscription", 'String'>
     readonly createdAt: FieldRef<"OrganizationSubscription", 'DateTime'>
     readonly updatedAt: FieldRef<"OrganizationSubscription", 'DateTime'>
   }
@@ -27184,6 +27223,9 @@ export namespace Prisma {
     currentPeriodStart: 'currentPeriodStart',
     currentPeriodEnd: 'currentPeriodEnd',
     cancelAtPeriodEnd: 'cancelAtPeriodEnd',
+    stripeCustomerId: 'stripeCustomerId',
+    stripeSubscriptionId: 'stripeSubscriptionId',
+    stripePriceId: 'stripePriceId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -29157,6 +29199,9 @@ export namespace Prisma {
     currentPeriodStart?: DateTimeNullableFilter<"OrganizationSubscription"> | Date | string | null
     currentPeriodEnd?: DateTimeNullableFilter<"OrganizationSubscription"> | Date | string | null
     cancelAtPeriodEnd?: BoolFilter<"OrganizationSubscription"> | boolean
+    stripeCustomerId?: StringNullableFilter<"OrganizationSubscription"> | string | null
+    stripeSubscriptionId?: StringNullableFilter<"OrganizationSubscription"> | string | null
+    stripePriceId?: StringNullableFilter<"OrganizationSubscription"> | string | null
     createdAt?: DateTimeFilter<"OrganizationSubscription"> | Date | string
     updatedAt?: DateTimeFilter<"OrganizationSubscription"> | Date | string
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
@@ -29170,6 +29215,9 @@ export namespace Prisma {
     currentPeriodStart?: SortOrderInput | SortOrder
     currentPeriodEnd?: SortOrderInput | SortOrder
     cancelAtPeriodEnd?: SortOrder
+    stripeCustomerId?: SortOrderInput | SortOrder
+    stripeSubscriptionId?: SortOrderInput | SortOrder
+    stripePriceId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     organization?: OrganizationOrderByWithRelationInput
@@ -29178,6 +29226,8 @@ export namespace Prisma {
   export type OrganizationSubscriptionWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     organizationId?: string
+    stripeCustomerId?: string
+    stripeSubscriptionId?: string
     AND?: OrganizationSubscriptionWhereInput | OrganizationSubscriptionWhereInput[]
     OR?: OrganizationSubscriptionWhereInput[]
     NOT?: OrganizationSubscriptionWhereInput | OrganizationSubscriptionWhereInput[]
@@ -29186,10 +29236,11 @@ export namespace Prisma {
     currentPeriodStart?: DateTimeNullableFilter<"OrganizationSubscription"> | Date | string | null
     currentPeriodEnd?: DateTimeNullableFilter<"OrganizationSubscription"> | Date | string | null
     cancelAtPeriodEnd?: BoolFilter<"OrganizationSubscription"> | boolean
+    stripePriceId?: StringNullableFilter<"OrganizationSubscription"> | string | null
     createdAt?: DateTimeFilter<"OrganizationSubscription"> | Date | string
     updatedAt?: DateTimeFilter<"OrganizationSubscription"> | Date | string
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
-  }, "id" | "organizationId">
+  }, "id" | "organizationId" | "stripeCustomerId" | "stripeSubscriptionId">
 
   export type OrganizationSubscriptionOrderByWithAggregationInput = {
     id?: SortOrder
@@ -29199,6 +29250,9 @@ export namespace Prisma {
     currentPeriodStart?: SortOrderInput | SortOrder
     currentPeriodEnd?: SortOrderInput | SortOrder
     cancelAtPeriodEnd?: SortOrder
+    stripeCustomerId?: SortOrderInput | SortOrder
+    stripeSubscriptionId?: SortOrderInput | SortOrder
+    stripePriceId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: OrganizationSubscriptionCountOrderByAggregateInput
@@ -29217,6 +29271,9 @@ export namespace Prisma {
     currentPeriodStart?: DateTimeNullableWithAggregatesFilter<"OrganizationSubscription"> | Date | string | null
     currentPeriodEnd?: DateTimeNullableWithAggregatesFilter<"OrganizationSubscription"> | Date | string | null
     cancelAtPeriodEnd?: BoolWithAggregatesFilter<"OrganizationSubscription"> | boolean
+    stripeCustomerId?: StringNullableWithAggregatesFilter<"OrganizationSubscription"> | string | null
+    stripeSubscriptionId?: StringNullableWithAggregatesFilter<"OrganizationSubscription"> | string | null
+    stripePriceId?: StringNullableWithAggregatesFilter<"OrganizationSubscription"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"OrganizationSubscription"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"OrganizationSubscription"> | Date | string
   }
@@ -31166,6 +31223,9 @@ export namespace Prisma {
     currentPeriodStart?: Date | string | null
     currentPeriodEnd?: Date | string | null
     cancelAtPeriodEnd?: boolean
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    stripePriceId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     organization: OrganizationCreateNestedOneWithoutSubscriptionInput
@@ -31179,6 +31239,9 @@ export namespace Prisma {
     currentPeriodStart?: Date | string | null
     currentPeriodEnd?: Date | string | null
     cancelAtPeriodEnd?: boolean
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    stripePriceId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -31190,6 +31253,9 @@ export namespace Prisma {
     currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelAtPeriodEnd?: BoolFieldUpdateOperationsInput | boolean
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organization?: OrganizationUpdateOneRequiredWithoutSubscriptionNestedInput
@@ -31203,6 +31269,9 @@ export namespace Prisma {
     currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelAtPeriodEnd?: BoolFieldUpdateOperationsInput | boolean
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -31215,6 +31284,9 @@ export namespace Prisma {
     currentPeriodStart?: Date | string | null
     currentPeriodEnd?: Date | string | null
     cancelAtPeriodEnd?: boolean
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    stripePriceId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -31226,6 +31298,9 @@ export namespace Prisma {
     currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelAtPeriodEnd?: BoolFieldUpdateOperationsInput | boolean
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -31238,6 +31313,9 @@ export namespace Prisma {
     currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelAtPeriodEnd?: BoolFieldUpdateOperationsInput | boolean
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -32952,6 +33030,9 @@ export namespace Prisma {
     currentPeriodStart?: SortOrder
     currentPeriodEnd?: SortOrder
     cancelAtPeriodEnd?: SortOrder
+    stripeCustomerId?: SortOrder
+    stripeSubscriptionId?: SortOrder
+    stripePriceId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -32964,6 +33045,9 @@ export namespace Prisma {
     currentPeriodStart?: SortOrder
     currentPeriodEnd?: SortOrder
     cancelAtPeriodEnd?: SortOrder
+    stripeCustomerId?: SortOrder
+    stripeSubscriptionId?: SortOrder
+    stripePriceId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -32976,6 +33060,9 @@ export namespace Prisma {
     currentPeriodStart?: SortOrder
     currentPeriodEnd?: SortOrder
     cancelAtPeriodEnd?: SortOrder
+    stripeCustomerId?: SortOrder
+    stripeSubscriptionId?: SortOrder
+    stripePriceId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -35850,6 +35937,9 @@ export namespace Prisma {
     currentPeriodStart?: Date | string | null
     currentPeriodEnd?: Date | string | null
     cancelAtPeriodEnd?: boolean
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    stripePriceId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -35861,6 +35951,9 @@ export namespace Prisma {
     currentPeriodStart?: Date | string | null
     currentPeriodEnd?: Date | string | null
     cancelAtPeriodEnd?: boolean
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    stripePriceId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -36161,6 +36254,9 @@ export namespace Prisma {
     currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelAtPeriodEnd?: BoolFieldUpdateOperationsInput | boolean
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -36172,6 +36268,9 @@ export namespace Prisma {
     currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cancelAtPeriodEnd?: BoolFieldUpdateOperationsInput | boolean
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

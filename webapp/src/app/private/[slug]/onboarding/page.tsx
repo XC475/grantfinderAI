@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
@@ -27,6 +27,7 @@ interface Organization {
 
 export default function OnboardingPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const slug = params.slug as string;
 
   const [saving, setSaving] = useState(false);
@@ -37,6 +38,17 @@ export default function OnboardingPage() {
   useEffect(() => {
     loadOrganization();
   }, []);
+
+  // Handle payment callbacks
+  useEffect(() => {
+    const paymentStatus = searchParams.get("payment");
+
+    if (paymentStatus === "success") {
+      toast.success("Payment successful! Completing onboarding...");
+    } else if (paymentStatus === "cancelled") {
+      toast.info("Payment was cancelled. You can select a plan again.");
+    }
+  }, [searchParams]);
 
   const loadOrganization = async () => {
     try {

@@ -385,16 +385,19 @@ model Folder {
 }
 
 model OrganizationSubscription {
-  id                 String             @id @default(cuid())
-  organizationId     String             @unique
-  tier               SubscriptionTier   @default(FREE)
-  status             SubscriptionStatus @default(ACTIVE)
-  currentPeriodStart DateTime?
-  currentPeriodEnd   DateTime?
-  cancelAtPeriodEnd  Boolean            @default(false)
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-  organization       Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  id                   String             @id @default(cuid())
+  organizationId       String             @unique
+  tier                 SubscriptionTier   @default(FREE)
+  status               SubscriptionStatus @default(ACTIVE)
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean            @default(false)
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+  stripePriceId        String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  organization         Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@map("organization_subscriptions")
   @@schema("app")
