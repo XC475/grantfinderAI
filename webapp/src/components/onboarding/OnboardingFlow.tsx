@@ -114,7 +114,7 @@ export default function OnboardingFlow({
   initialFormData,
   onSaveAndContinue,
   onComplete,
-  onSkip,
+  onSkip: _onSkip,
 }: OnboardingFlowProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] =
@@ -1116,7 +1116,7 @@ export default function OnboardingFlow({
             <CardHeader className="px-0 pt-0">
               <CardTitle>Choose Your Payment Plan</CardTitle>
               <CardDescription>
-                Select the plan that best fits your organization's needs.
+                Select the plan that best fits your organization&apos;s needs.
               </CardDescription>
             </CardHeader>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

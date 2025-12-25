@@ -45,6 +45,13 @@ export async function POST(request: NextRequest) {
       const subscription: Stripe.Subscription =
         await stripe.subscriptions.retrieve(session.subscription as string);
 
+      // Type assertion for period dates (exist at runtime but may not be in types)
+      type SubscriptionWithPeriods = Stripe.Subscription & {
+        current_period_start: number;
+        current_period_end: number;
+      };
+      const subscriptionWithPeriods = subscription as SubscriptionWithPeriods;
+
       // Map planId to SubscriptionTier
       // "base" -> STARTER, "business" -> PROFESSIONAL
       const tierMapping: Record<
@@ -68,10 +75,10 @@ export async function POST(request: NextRequest) {
           stripeSubscriptionId: subscription.id,
           stripePriceId: subscription.items.data[0]?.price.id || null,
           currentPeriodStart: new Date(
-            (subscription as any).current_period_start * 1000
+            subscriptionWithPeriods.current_period_start * 1000
           ),
           currentPeriodEnd: new Date(
-            (subscription as any).current_period_end * 1000
+            subscriptionWithPeriods.current_period_end * 1000
           ),
         },
         update: {
@@ -81,10 +88,10 @@ export async function POST(request: NextRequest) {
           stripeSubscriptionId: subscription.id,
           stripePriceId: subscription.items.data[0]?.price.id || null,
           currentPeriodStart: new Date(
-            (subscription as any).current_period_start * 1000
+            subscriptionWithPeriods.current_period_start * 1000
           ),
           currentPeriodEnd: new Date(
-            (subscription as any).current_period_end * 1000
+            subscriptionWithPeriods.current_period_end * 1000
           ),
         },
       });
@@ -94,6 +101,13 @@ export async function POST(request: NextRequest) {
     if (event.type === "customer.subscription.updated") {
       const subscription = event.data.object as Stripe.Subscription;
       const customerId = subscription.customer as string;
+
+      // Type assertion for period dates (exist at runtime but may not be in types)
+      type SubscriptionWithPeriods = Stripe.Subscription & {
+        current_period_start: number;
+        current_period_end: number;
+      };
+      const subscriptionWithPeriods = subscription as SubscriptionWithPeriods;
 
       // Find organization by stripeCustomerId
       const orgSubscription = await prisma.organizationSubscription.findUnique({
@@ -105,10 +119,10 @@ export async function POST(request: NextRequest) {
           where: { id: orgSubscription.id },
           data: {
             currentPeriodStart: new Date(
-              (subscription as any).current_period_start * 1000
+              subscriptionWithPeriods.current_period_start * 1000
             ),
             currentPeriodEnd: new Date(
-              (subscription as any).current_period_end * 1000
+              subscriptionWithPeriods.current_period_end * 1000
             ),
             cancelAtPeriodEnd: subscription.cancel_at_period_end,
             status:
