@@ -9,7 +9,7 @@ export interface OrganizationInfo {
   state: string | null;
   zipCode: string | null;
   missionStatement: string | null;
-  strategicPlan: string | null;
+  organizationPlan: string | null;
   annualOperatingBudget: string | null;
   fiscalYearEnd: string | null;
   customFields?: Array<{
@@ -218,8 +218,8 @@ function buildOrganizationContext(info: OrganizationInfo): string {
 **Mission Statement:**  
 ${info.missionStatement || "Not provided"}
 
-**Strategic Plan:**  
-${info.strategicPlan || "Not provided"}
+**Organization Plan:**  
+${info.organizationPlan || "Not provided"}
 
 ${
   info.customFields && info.customFields.length > 0

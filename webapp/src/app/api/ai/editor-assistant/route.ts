@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
             state: true,
             zipCode: true,
             missionStatement: true,
-            strategicPlan: true,
+            organizationPlan: true,
             annualOperatingBudget: true,
             fiscalYearEnd: true,
             customFields: {

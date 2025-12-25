@@ -1,20 +1,25 @@
 # PDF Text Extraction API
 
 ## Overview
+
 This API endpoint extracts text from uploaded PDF files and returns the extracted text content.
 
 ## Endpoint
+
 `POST /api/pdf-extract`
 
 ## Authentication
+
 Requires a valid Supabase session (authenticated user).
 
 ## Request
+
 - **Content-Type:** `multipart/form-data`
-- **Body:** 
+- **Body:**
   - `file`: PDF file (required)
 
 ## Validation
+
 - Only PDF files are accepted (`application/pdf`)
 - Maximum file size: 10MB
 - Must contain extractable text
@@ -22,6 +27,7 @@ Requires a valid Supabase session (authenticated user).
 ## Response
 
 ### Success (200 OK)
+
 ```json
 {
   "success": true,
@@ -29,13 +35,14 @@ Requires a valid Supabase session (authenticated user).
   "pageCount": 5,
   "info": {
     "Title": "Document Title",
-    "Author": "Author Name",
+    "Author": "Author Name"
     // ... other PDF metadata
   }
 }
 ```
 
 ### Errors
+
 - **400 Bad Request**
   - No file provided
   - Invalid file type (not PDF)
@@ -66,11 +73,12 @@ console.log(data.pageCount); // Number of pages
 ```
 
 ## Implementation Details
+
 - Uses `pdf-parse` library for text extraction
 - Performs basic text cleaning (normalizes line endings, removes excessive breaks)
 - Returns PDF metadata for reference
 
 ## Related Files
-- API Route: `/webapp/src/app/api/pdf-extract/route.ts`
-- Used in: `/webapp/src/app/private/[slug]/settings/profile/page.tsx` (Strategic Plan upload)
 
+- API Route: `/webapp/src/app/api/pdf-extract/route.ts`
+- Used in: `/webapp/src/app/private/[slug]/settings/profile/page.tsx` (Organization Plan upload)

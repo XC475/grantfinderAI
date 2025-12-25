@@ -216,7 +216,7 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   state: 'state',
   website: 'website',
   zipCode: 'zipCode',
-  strategicPlan: 'strategicPlan',
+  organizationPlan: 'organizationPlan',
   logoUrl: 'logoUrl',
   services: 'services'
 };

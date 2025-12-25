@@ -18,20 +18,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get the strategic plan text from request body
-    const { strategicPlanText } = await req.json();
+    // Get the organization plan text from request body
+    const { organizationPlanText } = await req.json();
 
-    if (!strategicPlanText) {
+    if (!organizationPlanText) {
       return NextResponse.json(
-        { error: "No strategic plan text provided" },
+        { error: "No organization plan text provided" },
         { status: 400 }
       );
     }
 
     // Validate text length
-    if (strategicPlanText.length < 100) {
+    if (organizationPlanText.length < 100) {
       return NextResponse.json(
-        { error: "Strategic plan text is too short to summarize" },
+        { error: "Organization plan text is too short to summarize" },
         { status: 400 }
       );
     }
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       messages: [
         {
           role: "system",
-          content: `You are an expert grant writer and strategic planning analyst. Your task is to analyze strategic plan documents and extract only the most relevant information for funding and grant search purposes.
+          content: `You are an expert grant writer and organizational planning analyst. Your task is to analyze organization plan documents (such as strategic plans, annual reports, or other planning documents) and extract only the most relevant information for funding and grant search purposes.
 
 Focus on extracting and summarizing:
 1. Key organizational goals and priorities
@@ -58,7 +58,7 @@ Output a concise, well-organized summary (500-1000 words) that highlights grant-
         },
         {
           role: "user",
-          content: `Please analyze this strategic plan document and extract only the information relevant for grant applications and funding opportunities:\n\n${strategicPlanText}`,
+          content: `Please analyze this organization plan document and extract only the information relevant for grant applications and funding opportunities:\n\n${organizationPlanText}`,
         },
       ],
       temperature: 0.3,
@@ -80,13 +80,14 @@ Output a concise, well-organized summary (500-1000 words) that highlights grant-
       tokensUsed: completion.usage?.total_tokens || 0,
     });
   } catch (error) {
-    console.error("Error summarizing strategic plan:", error);
+    console.error("Error summarizing organization plan:", error);
     return NextResponse.json(
       {
-        error: "Failed to summarize strategic plan",
+        error: "Failed to summarize organization plan",
         details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }
     );
   }
 }
+

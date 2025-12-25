@@ -78,7 +78,7 @@ interface Organization {
   logoUrl: string | null;
   website: string | null;
   missionStatement: string | null;
-  strategicPlan: string | null;
+  organizationPlan: string | null;
   annualOperatingBudget: string | null;
   fiscalYearEnd: string | null;
   phone: string | null;
@@ -114,16 +114,16 @@ export default function ProfilePage() {
     undefined
   );
 
-  // Strategic Plan state
-  const [strategicPlanState, setStrategicPlanState] = useState<
+  // Organization Plan state
+  const [organizationPlanState, setOrganizationPlanState] = useState<
     "empty" | "loading" | "success"
   >("empty");
-  const [strategicPlanUploadDate, setStrategicPlanUploadDate] =
+  const [organizationPlanUploadDate, setOrganizationPlanUploadDate] =
     useState<Date | null>(null);
-  const [strategicPlanFileName, setStrategicPlanFileName] = useState<
+  const [organizationPlanFileName, setOrganizationPlanFileName] = useState<
     string | null
   >(null);
-  const [showStrategicPlanModal, setShowStrategicPlanModal] = useState(false);
+  const [showOrganizationPlanModal, setShowOrganizationPlanModal] = useState(false);
 
   // Track active tab to conditionally show Save Changes button
   const [activeTab, setActiveTab] = useState("basic-info");
@@ -156,17 +156,17 @@ export default function ProfilePage() {
     }
   }, [organization?.fiscalYearEnd]);
 
-  // Initialize strategic plan state
+  // Initialize organization plan state
   useEffect(() => {
-    if (organization?.strategicPlan && organization.strategicPlan.length > 0) {
-      setStrategicPlanState("success");
+    if (organization?.organizationPlan && organization.organizationPlan.length > 0) {
+      setOrganizationPlanState("success");
       // If there's existing content, use updatedAt as upload date fallback
-      setStrategicPlanUploadDate(new Date(organization.updatedAt));
+      setOrganizationPlanUploadDate(new Date(organization.updatedAt));
     } else {
-      setStrategicPlanState("empty");
-      setStrategicPlanUploadDate(null);
+      setOrganizationPlanState("empty");
+      setOrganizationPlanUploadDate(null);
     }
-  }, [organization?.strategicPlan, organization?.updatedAt]);
+  }, [organization?.organizationPlan, organization?.updatedAt]);
 
   // Helper functions for currency formatting
   const formatCurrency = (value: string | null): string => {
@@ -322,7 +322,7 @@ export default function ProfilePage() {
     }
 
     setUploadingPdf(true);
-    setStrategicPlanState("loading");
+    setOrganizationPlanState("loading");
 
     try {
       // Step 1: Extract text from PDF or DOCX
@@ -348,14 +348,14 @@ export default function ProfilePage() {
       if (extractedText && extractedText.length >= 100) {
         try {
           const summarizeResponse = await fetch(
-            "/api/strategic-plan-summarize",
+            "/api/organization-plan-summarize",
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                strategicPlanText: extractedText,
+                organizationPlanText: extractedText,
               }),
             }
           );
@@ -379,31 +379,31 @@ export default function ProfilePage() {
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ strategicPlan: finalText }),
+          body: JSON.stringify({ organizationPlan: finalText }),
         }
       );
 
       if (!updateResponse.ok) {
-        throw new Error("Failed to save strategic plan to database");
+        throw new Error("Failed to save organization plan to database");
       }
 
-      // Update the strategic plan field
+      // Update the organization plan field
       setOrganization({
         ...organization,
-        strategicPlan: finalText,
+        organizationPlan: finalText,
       });
 
       // Set success state
-      setStrategicPlanState("success");
-      setStrategicPlanUploadDate(new Date());
-      setStrategicPlanFileName(fileName);
+      setOrganizationPlanState("success");
+      setOrganizationPlanUploadDate(new Date());
+      setOrganizationPlanFileName(fileName);
 
       toast.success(
-        `Strategic plan uploaded and summarized successfully from ${extractData.pageCount} page${extractData.pageCount > 1 ? "s" : ""}`
+        `Organization plan uploaded and summarized successfully from ${extractData.pageCount} page${extractData.pageCount > 1 ? "s" : ""}`
       );
     } catch (error) {
       console.error("Error uploading PDF:", error);
-      setStrategicPlanState("empty");
+      setOrganizationPlanState("empty");
       toast.error(
         error instanceof Error ? error.message : "Failed to process PDF"
       );
@@ -446,12 +446,12 @@ export default function ProfilePage() {
     }
   };
 
-  // Handle delete strategic plan
-  const handleDeleteStrategicPlan = async () => {
+  // Handle delete organization plan
+  const handleDeleteOrganizationPlan = async () => {
     if (!organization) return;
 
     const confirmed = window.confirm(
-      "Are you sure you want to delete the strategic plan? This action cannot be undone."
+      "Are you sure you want to delete the organization plan? This action cannot be undone."
     );
 
     if (!confirmed) return;
@@ -460,20 +460,20 @@ export default function ProfilePage() {
       const response = await fetch(`/api/organizations/${organization.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ strategicPlan: null }),
+        body: JSON.stringify({ organizationPlan: null }),
       });
 
-      if (!response.ok) throw new Error("Failed to delete strategic plan");
+      if (!response.ok) throw new Error("Failed to delete organization plan");
 
       // Update local state
-      setOrganization({ ...organization, strategicPlan: null });
-      setStrategicPlanState("empty");
-      setStrategicPlanUploadDate(null);
-      setStrategicPlanFileName(null);
-      toast.success("Strategic plan deleted successfully");
+      setOrganization({ ...organization, organizationPlan: null });
+      setOrganizationPlanState("empty");
+      setOrganizationPlanUploadDate(null);
+      setOrganizationPlanFileName(null);
+      toast.success("Organization plan deleted successfully");
     } catch (error) {
-      console.error("Error deleting strategic plan:", error);
-      toast.error("Failed to delete strategic plan");
+      console.error("Error deleting organization plan:", error);
+      toast.error("Failed to delete organization plan");
     }
   };
 
@@ -838,11 +838,11 @@ export default function ProfilePage() {
         </TabsContent>
 
         <TabsContent value="details" className="space-y-8">
-          {/* Strategic Plan - Most Important, First */}
+          {/* Organization Plan - Most Important, First */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 pb-2 border-b">
               <Target className="h-5 w-5 text-muted-foreground" />
-              <h3 className="font-semibold">Strategic Plan</h3>
+              <h3 className="font-semibold">Organization Plan</h3>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -850,14 +850,15 @@ export default function ProfilePage() {
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
                     <p className="font-semibold mb-1">
-                      Examples of strategic plan documents:
+                      Examples of organization plan documents:
                     </p>
                     <ul className="text-sm space-y-1 list-disc list-inside">
-                      <li>Multi-year strategic plan</li>
+                      <li>Strategic Plan</li>
+                      <li>Annual Report</li>
+                      <li>Multi-year plan</li>
                       <li>School improvement plan</li>
                       <li>District strategic roadmap</li>
                       <li>Long-term goals and objectives</li>
-                      <li>Vision and priorities document</li>
                     </ul>
                   </TooltipContent>
                 </Tooltip>
@@ -865,14 +866,14 @@ export default function ProfilePage() {
             </div>
 
             {/* Empty State */}
-            {strategicPlanState === "empty" && (
+            {organizationPlanState === "empty" && (
               <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg">
                 <Upload className="h-12 w-12 text-muted-foreground mb-4" />
                 <h4 className="text-lg font-semibold mb-2">
                   Upload your document
                 </h4>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Upload your strategic plan document (PDF or Word) to get
+                  Upload your organization plan document (PDF or Word) to get
                   started
                 </p>
                 <input
@@ -894,7 +895,7 @@ export default function ProfilePage() {
             )}
 
             {/* Loading State */}
-            {strategicPlanState === "loading" && (
+            {organizationPlanState === "loading" && (
               <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg">
                 <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
                 <h4 className="text-lg font-semibold mb-2">
@@ -907,7 +908,7 @@ export default function ProfilePage() {
             )}
 
             {/* Success State */}
-            {strategicPlanState === "success" && (
+            {organizationPlanState === "success" && (
               <div className="border rounded-lg p-6">
                 <div className="flex items-start gap-4">
                   <div className="shrink-0">
@@ -918,18 +919,18 @@ export default function ProfilePage() {
                   </div>
                   <div className="flex-1">
                     <h4 className="text-lg font-semibold mb-1">
-                      Strategic plan uploaded successfully
+                      Organization plan uploaded successfully
                     </h4>
-                    {strategicPlanFileName && (
+                    {organizationPlanFileName && (
                       <p className="text-sm font-medium text-foreground mb-1">
-                        {strategicPlanFileName}
+                        {organizationPlanFileName}
                       </p>
                     )}
                     <p className="text-sm text-muted-foreground mb-4">
-                      {strategicPlanUploadDate && (
+                      {organizationPlanUploadDate && (
                         <>
                           Uploaded and summarized on{" "}
-                          {format(strategicPlanUploadDate, "PPP")}
+                          {format(organizationPlanUploadDate, "PPP")}
                         </>
                       )}
                     </p>
@@ -938,7 +939,7 @@ export default function ProfilePage() {
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => setShowStrategicPlanModal(true)}
+                        onClick={() => setShowOrganizationPlanModal(true)}
                       >
                         <FileText className="mr-2 h-4 w-4" />
                         View summarized plan
@@ -969,7 +970,7 @@ export default function ProfilePage() {
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={handleDeleteStrategicPlan}
+                        onClick={handleDeleteOrganizationPlan}
                         className="text-destructive hover:text-destructive"
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
@@ -1136,27 +1137,27 @@ export default function ProfilePage() {
         </TabsContent>
       </Tabs>
 
-      {/* Strategic Plan Modal */}
+      {/* Organization Plan Modal */}
       <Dialog
-        open={showStrategicPlanModal}
-        onOpenChange={setShowStrategicPlanModal}
+        open={showOrganizationPlanModal}
+        onOpenChange={setShowOrganizationPlanModal}
       >
         <DialogContent className="sm:max-w-[800px] max-h-[80vh]">
           <DialogHeader>
-            <DialogTitle>Edit Strategic Plan</DialogTitle>
+            <DialogTitle>Edit Organization Plan</DialogTitle>
             <DialogDescription>
-              Review and edit your AI-summarized strategic plan. This summary
+              Review and edit your AI-summarized organization plan. This summary
               was automatically generated from your uploaded document.
             </DialogDescription>
           </DialogHeader>
           <div className="overflow-y-auto max-h-[50vh] py-4">
             <Textarea
-              value={organization?.strategicPlan || ""}
+              value={organization?.organizationPlan || ""}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 organization &&
                 setOrganization({
                   ...organization,
-                  strategicPlan: e.target.value,
+                  organizationPlan: e.target.value,
                 })
               }
               rows={20}
@@ -1166,15 +1167,15 @@ export default function ProfilePage() {
           <DialogFooter>
             <Button
               variant="outline"
-              onClick={() => setShowStrategicPlanModal(false)}
+              onClick={() => setShowOrganizationPlanModal(false)}
             >
               Cancel
             </Button>
             <Button
               onClick={async () => {
                 await handleSave();
-                setShowStrategicPlanModal(false);
-                toast.success("Strategic plan updated successfully");
+                setShowOrganizationPlanModal(false);
+                toast.success("Organization plan updated successfully");
               }}
               disabled={saving}
             >

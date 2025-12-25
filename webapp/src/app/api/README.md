@@ -190,7 +190,7 @@ Get the current user's organization.
   "logoUrl": "https://...",
   "website": "https://...",
   "missionStatement": "...",
-  "strategicPlan": "...",
+  "organizationPlan": "...",
   "annualOperatingBudget": "5000000",
   "fiscalYearEnd": "June 30",
   "phone": "555-1234",
@@ -554,13 +554,13 @@ List documents with pagination and filters.
   "data": [
     {
       "id": "cuid",
-      "title": "Strategic Plan 2025",
+      "title": "Organization Plan 2025",
       "contentType": "json",
       "fileUrl": null,
       "fileType": null,
       "isKnowledgeBase": true,
       "vectorizationStatus": "COMPLETED",
-      "fileTag": { "id": "...", "name": "Strategic Plans" },
+      "fileTag": { "id": "...", "name": "Organization Plans" },
       "updatedAt": "..."
     }
   ],
@@ -727,7 +727,7 @@ List organization's document tags.
   "tags": [
     {
       "id": "cuid",
-      "name": "Strategic Plans",
+      "name": "Organization Plans",
       "organizationId": "...",
       "_count": { "documents": 5 }
     }
@@ -1176,14 +1176,14 @@ Search school districts (for onboarding).
 
 ---
 
-#### `POST /api/strategic-plan-summarize`
+#### `POST /api/organization-plan-summarize`
 
-AI-summarize a strategic plan document.
+AI-summarize an organization plan document (strategic plan, annual report, etc.).
 
 **Request Body:**
 ```json
 {
-  "content": "Full strategic plan text..."
+  "organizationPlanText": "Full organization plan text..."
 }
 ```
 
@@ -1348,7 +1348,7 @@ src/app/api/
 │   └── route.ts                    # PDF text extraction
 ├── school-districts/
 │   └── route.ts                    # Search districts
-├── strategic-plan-summarize/
+├── organization-plan-summarize/
 │   └── route.ts                    # AI summarization
 └── user/
     ├── route.ts                    # Update user

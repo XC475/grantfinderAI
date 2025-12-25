@@ -108,7 +108,7 @@ interface Organization {
   phone: string | null;
   email: string | null;
   missionStatement: string | null;
-  strategicPlan: string | null;
+  organizationPlan: string | null;
   annualOperatingBudget: number | null;
   fiscalYearEnd: string | null;
 }
@@ -1319,14 +1319,14 @@ function GrantsSearchPage() {
             <>
               {/* Profile Incomplete Warning */}
               {(!organization?.missionStatement ||
-                !organization?.strategicPlan) && (
+                !organization?.organizationPlan) && (
                 <Alert variant="default" className="mb-6">
                   <AlertCircle className="h-4 w-4" />
                   <AlertTitle>Profile Incomplete</AlertTitle>
                   <AlertDescription className="flex items-center justify-between">
                     <span>
                       Recommendations may be more general. Complete your mission
-                      statement and strategic plan for better personalized
+                      statement and organization plan for better personalized
                       results.
                     </span>
                     <Button

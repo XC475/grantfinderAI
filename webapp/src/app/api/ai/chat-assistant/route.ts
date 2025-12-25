@@ -236,7 +236,7 @@ export async function POST(req: NextRequest) {
             state: organization.state,
             zipCode: organization.zipCode,
             missionStatement: organization.missionStatement,
-            strategicPlan: organization.strategicPlan,
+            organizationPlan: organization.organizationPlan,
             annualOperatingBudget: organization.annualOperatingBudget
               ? organization.annualOperatingBudget.toString()
               : null,

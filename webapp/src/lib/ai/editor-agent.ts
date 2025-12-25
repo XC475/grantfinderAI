@@ -28,7 +28,7 @@ function toGrantSearchOrgInfo(org: OrganizationInfo | undefined): GrantSearchOrg
     state: org.state,
     zipCode: org.zipCode,
     missionStatement: org.missionStatement,
-    strategicPlan: org.strategicPlan,
+    organizationPlan: org.organizationPlan,
     annualOperatingBudget: org.annualOperatingBudget?.toString() ?? null,
     fiscalYearEnd: org.fiscalYearEnd,
     customFields: org.customFields,

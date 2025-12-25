@@ -27,7 +27,7 @@ export async function GET() {
             logoUrl: true,
             website: true,
             missionStatement: true,
-            strategicPlan: true,
+            organizationPlan: true,
             annualOperatingBudget: true,
             fiscalYearEnd: true,
             phone: true,

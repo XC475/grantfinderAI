@@ -58,7 +58,7 @@ export async function PATCH(
         logoUrl: body.logoUrl,
         website: body.website,
         missionStatement: body.missionStatement,
-        strategicPlan: body.strategicPlan,
+        organizationPlan: body.organizationPlan,
         annualOperatingBudget: body.annualOperatingBudget
           ? parseFloat(body.annualOperatingBudget)
           : null,
@@ -79,7 +79,7 @@ export async function PATCH(
         logoUrl: true,
         website: true,
         missionStatement: true,
-        strategicPlan: true,
+        organizationPlan: true,
         annualOperatingBudget: true,
         fiscalYearEnd: true,
         phone: true,

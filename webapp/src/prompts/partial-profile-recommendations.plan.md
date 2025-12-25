@@ -2,7 +2,7 @@
 
 ## Overview
 
-Remove the profile completeness requirement for generating recommendations. Only require organization name to exist. Show a non-blocking warning when profile is incomplete (missing mission statement or strategic plan).
+Remove the profile completeness requirement for generating recommendations. Only require organization name to exist. Show a non-blocking warning when profile is incomplete (missing mission statement or organization plan).
 
 ---
 
@@ -17,13 +17,13 @@ Remove the profile completeness requirement for generating recommendations. Only
 // 4. Validate organization profile completeness
 if (
   !organization.missionStatement ||
-  !organization.strategicPlan ||
+  !organization.organizationPlan ||
   !organization.state
 ) {
   return NextResponse.json(
     {
       error:
-        "Organization profile incomplete. Please complete your mission statement, strategic plan, and location information.",
+        "Organization profile incomplete. Please complete your mission statement, organization plan, and location information.",
     },
     { status: 400 }
   );
@@ -49,7 +49,7 @@ const isProfileComplete = useMemo(() => {
     organization.phone &&
     organization.email &&
     organization.missionStatement &&
-    organization.strategicPlan &&
+    organization.organizationPlan &&
     organization.annualOperatingBudget &&
     organization.fiscalYearEnd
   );
@@ -86,14 +86,14 @@ const isProfileComplete = useMemo(() => {
 )}
 
 // TO (warning - non-blocking):
-{(!organization?.missionStatement || !organization?.strategicPlan) && (
+{(!organization?.missionStatement || !organization?.organizationPlan) && (
   <Alert variant="default">
     <AlertCircle className="h-4 w-4" />
     <AlertTitle>Profile Incomplete</AlertTitle>
     <AlertDescription className="flex items-center justify-between">
       <span>
         Recommendations may be more general. Complete your mission statement
-        and strategic plan for better personalized results.
+        and organization plan for better personalized results.
       </span>
       <Button
         variant="outline"

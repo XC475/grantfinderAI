@@ -10,7 +10,7 @@ interface Organization {
   id: string;
   name: string;
   missionStatement: string | null;
-  strategicPlan: string | null;
+  organizationPlan: string | null;
   annualOperatingBudget: string | null;
   fiscalYearEnd: string | null;
   organizationLeaderName: string | null;
@@ -23,6 +23,7 @@ interface Organization {
   website: string | null;
   slug: string;
   services: string[] | null;
+  updatedAt?: string;
 }
 
 export default function OnboardingPage() {
@@ -59,7 +60,7 @@ export default function OnboardingPage() {
         setFormData({
           name: org.name,
           missionStatement: org.missionStatement || "",
-          strategicPlan: org.strategicPlan || "",
+          organizationPlan: org.organizationPlan || "",
           annualOperatingBudget: org.annualOperatingBudget || "",
           fiscalYearEnd: org.fiscalYearEnd || "",
           organizationLeaderName: org.organizationLeaderName || "",

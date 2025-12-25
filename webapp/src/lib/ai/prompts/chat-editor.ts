@@ -10,7 +10,7 @@ export interface OrganizationInfo {
   state: string | null;
   zipCode: string | null;
   missionStatement: string | null;
-  strategicPlan: string | null;
+  organizationPlan: string | null;
   annualOperatingBudget: Decimal | null;
   fiscalYearEnd: string | null;
   customFields?: Array<{
@@ -102,7 +102,7 @@ export function buildEditorSystemPrompt(options: EditorPromptOptions): string {
 ORGANIZATION CONTEXT:
 You are assisting ${organizationInfo.name}${organizationInfo.city && organizationInfo.state ? ` located in ${organizationInfo.city}, ${organizationInfo.state}` : ""}.
 ${organizationInfo.missionStatement ? `\nMission Statement: ${organizationInfo.missionStatement}` : ""}
-${organizationInfo.strategicPlan ? `\nStrategic Plan: ${organizationInfo.strategicPlan}` : ""}
+${organizationInfo.organizationPlan ? `\nOrganization Plan: ${organizationInfo.organizationPlan}` : ""}
 ${organizationInfo.annualOperatingBudget ? `\nAnnual Operating Budget: $${Number(organizationInfo.annualOperatingBudget).toLocaleString()}` : ""}
 ${organizationInfo.fiscalYearEnd ? `Fiscal Year End: ${organizationInfo.fiscalYearEnd}` : ""}
 ${
@@ -129,7 +129,7 @@ You are helping the user with their document titled "${documentTitle}".
 - Help users write, edit, and improve their grant proposals and documents
 - Search for relevant grants using the grants database
 - Access the organization's knowledge base of uploaded institutional documents
-- Provide suggestions based on organizational context, past proposals, budgets, and strategic plans
+- Provide suggestions based on organizational context, past proposals, budgets, and organization plans
 - Reference relevant organizational materials to ensure consistency and alignment
 
 ## Available Tools
@@ -172,7 +172,7 @@ actual content when relevant. Use the organization context to provide tailored s
 that align with the organization's mission, size, and needs. When application context is 
 available, ensure your suggestions align with the grant opportunity's requirements and guidelines.
 
-When users ask about organizational resources, budgets, strategic plans, past proposals, or 
+When users ask about organizational resources, budgets, organization plans, past proposals, or 
 uploaded materials, acknowledge that you can access their knowledge base and use it to provide 
 accurate, contextually relevant assistance for grant management.
 

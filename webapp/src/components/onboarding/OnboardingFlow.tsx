@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import {
   ChevronLeft,
   ChevronRight,
   Check,
   Building2,
   Target,
-  TrendingUp,
-  Users,
   CheckCircle2,
   Loader2,
   Upload,
@@ -42,6 +40,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Calendar } from "@/components/ui/calendar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { format, parse } from "date-fns";
 import { toast } from "sonner";
@@ -64,7 +70,7 @@ interface Organization {
   id: string;
   name: string;
   missionStatement: string | null;
-  strategicPlan: string | null;
+  organizationPlan: string | null;
   annualOperatingBudget: string | null;
   fiscalYearEnd: string | null;
   organizationLeaderName: string | null;
@@ -77,6 +83,7 @@ interface Organization {
   website: string | null;
   slug: string;
   services: string[] | null;
+  updatedAt?: string;
 }
 
 interface OnboardingFlowProps {
@@ -115,15 +122,17 @@ export default function OnboardingFlow({
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const pdfInputRef = useRef<HTMLInputElement>(null);
 
-  // Strategic Plan state
-  const [strategicPlanState, setStrategicPlanState] = useState<
+  // Organization Plan state
+  const [organizationPlanState, setOrganizationPlanState] = useState<
     "empty" | "loading" | "success"
   >("empty");
-  const [strategicPlanUploadDate, setStrategicPlanUploadDate] =
+  const [organizationPlanUploadDate, setOrganizationPlanUploadDate] =
     useState<Date | null>(null);
-  const [strategicPlanFileName, setStrategicPlanFileName] = useState<
+  const [organizationPlanFileName, setOrganizationPlanFileName] = useState<
     string | null
   >(null);
+  const [showOrganizationPlanModal, setShowOrganizationPlanModal] =
+    useState(false);
 
   // Budget state
   const [budgetDisplayValue, setBudgetDisplayValue] = useState("");
@@ -132,22 +141,85 @@ export default function OnboardingFlow({
   );
 
   // Payment plan selection (local state only)
-  const [selectedPlan, setSelectedPlan] = useState<"base" | "business" | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<"base" | "business" | null>(
+    null
+  );
   const [processingPayment, setProcessingPayment] = useState(false);
 
   // Google Drive connection state
   const [googleDriveConnected, setGoogleDriveConnected] = useState(false);
 
+  // Track initial form data to detect changes
+  const initialFormDataRef = useRef<Partial<Organization>>(initialFormData);
+
+  // Check if form data has changed from initial
+  const hasFormDataChanged = useMemo(() => {
+    const current = formData;
+    const initial = initialFormDataRef.current;
+
+    // Compare all fields
+    const fieldsToCheck: (keyof Organization)[] = [
+      "name",
+      "missionStatement",
+      "organizationPlan",
+      "annualOperatingBudget",
+      "fiscalYearEnd",
+      "organizationLeaderName",
+      "phone",
+      "email",
+      "address",
+      "city",
+      "state",
+      "zipCode",
+      "website",
+      "services",
+    ];
+
+    for (const field of fieldsToCheck) {
+      const currentValue = current[field];
+      const initialValue = initial[field];
+
+      // Handle arrays (services)
+      if (field === "services") {
+        const currentArr = (currentValue as string[]) || [];
+        const initialArr = (initialValue as string[]) || [];
+        if (
+          currentArr.length !== initialArr.length ||
+          !currentArr.every((val) => initialArr.includes(val))
+        ) {
+          return true;
+        }
+      } else {
+        // Handle strings and null values
+        const currentStr = currentValue?.toString().trim() || "";
+        const initialStr = initialValue?.toString().trim() || "";
+        if (currentStr !== initialStr) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }, [formData]);
+
   useEffect(() => {
     setFormData(initialFormData);
+    initialFormDataRef.current = initialFormData;
 
-    // Initialize strategic plan state
-    if (organization?.strategicPlan && organization.strategicPlan.length > 0) {
-      setStrategicPlanState("success");
-      setStrategicPlanUploadDate(new Date());
+    // Initialize organization plan state
+    if (
+      organization?.organizationPlan &&
+      organization.organizationPlan.length > 0
+    ) {
+      setOrganizationPlanState("success");
+      // If there's existing content, use updatedAt as upload date fallback
+      setOrganizationPlanUploadDate(
+        new Date(organization.updatedAt || Date.now())
+      );
     } else {
-      setStrategicPlanState("empty");
-      setStrategicPlanUploadDate(null);
+      setOrganizationPlanState("empty");
+      setOrganizationPlanUploadDate(null);
+      setOrganizationPlanFileName(null);
     }
 
     // Initialize budget display value
@@ -164,14 +236,23 @@ export default function OnboardingFlow({
       const parsed = parseFiscalYearEnd(organization.fiscalYearEnd);
       setFiscalYearEndDate(parsed);
     }
-  }, [initialFormData, organization]);
+  }, [
+    initialFormData,
+    organization?.organizationPlan,
+    organization?.updatedAt,
+    organization?.annualOperatingBudget,
+    organization?.fiscalYearEnd,
+  ]);
 
   const handleNext = async () => {
     if (currentStep < steps.length) {
       // Save data for current step before proceeding (except step 1)
-      if (currentStep > 1) {
+      // Only save if data has actually changed
+      if (currentStep > 1 && hasFormDataChanged) {
         try {
           await onSaveAndContinue(formData);
+          // Update initial ref after successful save
+          initialFormDataRef.current = { ...formData };
         } catch (error) {
           console.error("Error saving data:", error);
           return; // Don't proceed if save fails
@@ -286,7 +367,7 @@ export default function OnboardingFlow({
     }
 
     setUploadingPdf(true);
-    setStrategicPlanState("loading");
+    setOrganizationPlanState("loading");
 
     try {
       const formData = new FormData();
@@ -309,14 +390,14 @@ export default function OnboardingFlow({
       if (extractedText && extractedText.length >= 100) {
         try {
           const summarizeResponse = await fetch(
-            "/api/strategic-plan-summarize",
+            "/api/organization-plan-summarize",
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                strategicPlanText: extractedText,
+                organizationPlanText: extractedText,
               }),
             }
           );
@@ -332,21 +413,26 @@ export default function OnboardingFlow({
         }
       }
 
-      await onSaveAndContinue({ strategicPlan: finalText });
-      setFormData((prev) => ({ ...prev, strategicPlan: finalText }));
+      await onSaveAndContinue({ organizationPlan: finalText });
+      setFormData((prev) => ({ ...prev, organizationPlan: finalText }));
+      // Update initial ref after successful save
+      initialFormDataRef.current = {
+        ...initialFormDataRef.current,
+        organizationPlan: finalText,
+      };
 
-      setStrategicPlanState("success");
-      setStrategicPlanUploadDate(new Date());
-      setStrategicPlanFileName(fileName);
+      setOrganizationPlanState("success");
+      setOrganizationPlanUploadDate(new Date());
+      setOrganizationPlanFileName(fileName);
 
       toast.success(
-        `Strategic plan uploaded and summarized successfully from ${extractData.pageCount} page${
+        `Organization plan uploaded and summarized successfully from ${extractData.pageCount} page${
           extractData.pageCount > 1 ? "s" : ""
         }`
       );
     } catch (error) {
       console.error("Error uploading PDF:", error);
-      setStrategicPlanState("empty");
+      setOrganizationPlanState("empty");
       toast.error(
         error instanceof Error ? error.message : "Failed to process PDF"
       );
@@ -365,7 +451,7 @@ export default function OnboardingFlow({
   ) => {
     if (!organization) return;
 
-    setStrategicPlanState("loading");
+    setOrganizationPlanState("loading");
     setUploadingPdf(true);
 
     try {
@@ -413,14 +499,14 @@ export default function OnboardingFlow({
       if (extractedText && extractedText.length >= 100) {
         try {
           const summarizeResponse = await fetch(
-            "/api/strategic-plan-summarize",
+            "/api/organization-plan-summarize",
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                strategicPlanText: extractedText,
+                organizationPlanText: extractedText,
               }),
             }
           );
@@ -436,21 +522,26 @@ export default function OnboardingFlow({
         }
       }
 
-      await onSaveAndContinue({ strategicPlan: finalText });
-      setFormData((prev) => ({ ...prev, strategicPlan: finalText }));
+      await onSaveAndContinue({ organizationPlan: finalText });
+      setFormData((prev) => ({ ...prev, organizationPlan: finalText }));
+      // Update initial ref after successful save
+      initialFormDataRef.current = {
+        ...initialFormDataRef.current,
+        organizationPlan: finalText,
+      };
 
-      setStrategicPlanState("success");
-      setStrategicPlanUploadDate(new Date());
-      setStrategicPlanFileName(fileName);
+      setOrganizationPlanState("success");
+      setOrganizationPlanUploadDate(new Date());
+      setOrganizationPlanFileName(fileName);
 
       toast.success(
-        `Strategic plan imported and summarized successfully from Google Drive (${extractData.pageCount} page${
+        `Organization plan imported and summarized successfully from Google Drive (${extractData.pageCount} page${
           extractData.pageCount > 1 ? "s" : ""
         })`
       );
     } catch (error) {
       console.error("Error importing from Google Drive:", error);
-      setStrategicPlanState("empty");
+      setOrganizationPlanState("empty");
       toast.error(
         error instanceof Error
           ? error.message
@@ -458,6 +549,34 @@ export default function OnboardingFlow({
       );
     } finally {
       setUploadingPdf(false);
+    }
+  };
+
+  // Handle delete organization plan
+  const handleDeleteOrganizationPlan = async () => {
+    if (!organization) return;
+
+    const confirmed = window.confirm(
+      "Are you sure you want to delete the organization plan? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await onSaveAndContinue({ organizationPlan: null });
+      setFormData((prev) => ({ ...prev, organizationPlan: null }));
+      // Update initial ref after successful save
+      initialFormDataRef.current = {
+        ...initialFormDataRef.current,
+        organizationPlan: null,
+      };
+      setOrganizationPlanState("empty");
+      setOrganizationPlanUploadDate(null);
+      setOrganizationPlanFileName(null);
+      toast.success("Organization plan deleted successfully");
+    } catch (error) {
+      console.error("Error deleting organization plan:", error);
+      toast.error("Failed to delete organization plan");
     }
   };
 
@@ -815,11 +934,11 @@ export default function OnboardingFlow({
                 />
               </div>
 
-              {/* Strategic Plan Section */}
+              {/* Organization Plan Section */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2 pb-2 border-b">
                   <Target className="h-5 w-5 text-muted-foreground" />
-                  <h3 className="font-semibold">Strategic Plan</h3>
+                  <h3 className="font-semibold">Organization Plan</h3>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -827,29 +946,30 @@ export default function OnboardingFlow({
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
                         <p className="font-semibold mb-1">
-                          Examples of strategic plan documents:
+                          Examples of organization plan documents:
                         </p>
                         <ul className="text-sm space-y-1 list-disc list-inside">
-                          <li>Multi-year strategic plan</li>
+                          <li>Strategic Plan</li>
+                          <li>Annual Report</li>
+                          <li>Multi-year plan</li>
                           <li>School improvement plan</li>
                           <li>District strategic roadmap</li>
                           <li>Long-term goals and objectives</li>
-                          <li>Vision and priorities document</li>
                         </ul>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </div>
 
-                {strategicPlanState === "empty" && (
+                {organizationPlanState === "empty" && (
                   <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg">
                     <Upload className="h-12 w-12 text-muted-foreground mb-4" />
                     <h4 className="text-lg font-semibold mb-2">
                       Upload your document
                     </h4>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Upload your strategic plan document (PDF or Word) to get
-                      started
+                      Upload your organization plan document (PDF or Word) to
+                      get started
                     </p>
                     <input
                       ref={pdfInputRef}
@@ -900,7 +1020,7 @@ export default function OnboardingFlow({
                   </div>
                 )}
 
-                {strategicPlanState === "loading" && (
+                {organizationPlanState === "loading" && (
                   <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg">
                     <Loader2 className="h-12 w-12 text-purple-600 animate-spin mb-4" />
                     <h4 className="text-lg font-semibold mb-2">
@@ -912,7 +1032,7 @@ export default function OnboardingFlow({
                   </div>
                 )}
 
-                {strategicPlanState === "success" && (
+                {organizationPlanState === "success" && (
                   <div className="border rounded-lg p-6">
                     <div className="flex items-start gap-4">
                       <div className="shrink-0">
@@ -923,22 +1043,31 @@ export default function OnboardingFlow({
                       </div>
                       <div className="flex-1">
                         <h4 className="text-lg font-semibold mb-1">
-                          Strategic plan uploaded successfully
+                          Organization plan uploaded successfully
                         </h4>
-                        {strategicPlanFileName && (
+                        {organizationPlanFileName && (
                           <p className="text-sm font-medium text-foreground mb-1">
-                            {strategicPlanFileName}
+                            {organizationPlanFileName}
                           </p>
                         )}
                         <p className="text-sm text-muted-foreground mb-4">
-                          {strategicPlanUploadDate && (
+                          {organizationPlanUploadDate && (
                             <>
                               Uploaded and summarized on{" "}
-                              {format(strategicPlanUploadDate, "PPP")}
+                              {format(organizationPlanUploadDate, "PPP")}
                             </>
                           )}
                         </p>
                         <div className="flex gap-2 flex-wrap">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowOrganizationPlanModal(true)}
+                          >
+                            <FileText className="mr-2 h-4 w-4" />
+                            View summarized plan
+                          </Button>
                           <input
                             type="file"
                             accept="application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -960,6 +1089,16 @@ export default function OnboardingFlow({
                           >
                             <Upload className="mr-2 h-4 w-4" />
                             Replace Document
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={handleDeleteOrganizationPlan}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
                           </Button>
                         </div>
                       </div>
@@ -989,14 +1128,16 @@ export default function OnboardingFlow({
                     : "border-gray-200 hover:shadow-md",
                   processingPayment && "opacity-50 cursor-not-allowed"
                 )}
-                onClick={() => !processingPayment && handlePlanSelection("base")}
+                onClick={() =>
+                  !processingPayment && handlePlanSelection("base")
+                }
               >
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold mb-2">Base Plan</h3>
                   <p className="text-muted-foreground text-sm mb-4">
                     Essential features for small organizations.
                   </p>
-                  <p className="text-2xl font-bold mb-4">$29/month</p>
+                  <p className="text-2xl font-bold mb-4">$50/month</p>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-center">
                       <Check className="h-4 w-4 mr-2 text-green-500" />
@@ -1021,14 +1162,16 @@ export default function OnboardingFlow({
                     : "border-gray-200 hover:shadow-md",
                   processingPayment && "opacity-50 cursor-not-allowed"
                 )}
-                onClick={() => !processingPayment && handlePlanSelection("business")}
+                onClick={() =>
+                  !processingPayment && handlePlanSelection("business")
+                }
               >
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold mb-2">Business Plan</h3>
                   <p className="text-muted-foreground text-sm mb-4">
                     Advanced features for growing organizations.
                   </p>
-                  <p className="text-2xl font-bold mb-4">$99/month</p>
+                  <p className="text-2xl font-bold mb-4">$100/month</p>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-center">
                       <Check className="h-4 w-4 mr-2 text-green-500" />
@@ -1156,7 +1299,7 @@ export default function OnboardingFlow({
                   disabled={
                     saving ||
                     (currentStep === 3 && !formData.name) || // Require organization name for Profile Setup
-                    (currentStep === 5 && strategicPlanState === "loading") // Disable if strategic plan is still processing
+                    (currentStep === 5 && organizationPlanState === "loading") // Disable if organization plan is still processing
                   }
                 >
                   {saving ? (
@@ -1196,6 +1339,70 @@ export default function OnboardingFlow({
           </div>
         </CardContent>
       </Card>
+
+      {/* Organization Plan Modal */}
+      <Dialog
+        open={showOrganizationPlanModal}
+        onOpenChange={setShowOrganizationPlanModal}
+      >
+        <DialogContent className="sm:max-w-[800px] max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle>Edit Organization Plan</DialogTitle>
+            <DialogDescription>
+              Review and edit your AI-summarized organization plan. This summary
+              was automatically generated from your uploaded document.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="overflow-y-auto max-h-[50vh] py-4">
+            <Textarea
+              value={formData.organizationPlan || ""}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                updateFormData("organizationPlan", e.target.value)
+              }
+              rows={20}
+              className="font-mono text-sm min-h-[400px]"
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowOrganizationPlanModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={async () => {
+                // Only save if the plan text actually changed
+                const currentPlan = formData.organizationPlan || "";
+                const initialPlan =
+                  initialFormDataRef.current.organizationPlan || "";
+                if (currentPlan.trim() !== initialPlan.trim()) {
+                  await onSaveAndContinue({
+                    organizationPlan: formData.organizationPlan,
+                  });
+                  // Update initial ref after successful save
+                  initialFormDataRef.current = {
+                    ...initialFormDataRef.current,
+                    organizationPlan: formData.organizationPlan,
+                  };
+                  toast.success("Organization plan updated successfully");
+                }
+                setShowOrganizationPlanModal(false);
+              }}
+              disabled={saving}
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                "Save Changes"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

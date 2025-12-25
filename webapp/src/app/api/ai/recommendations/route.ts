@@ -68,7 +68,7 @@ export async function POST(_req: NextRequest) {
           state: organization.state,
           zipCode: organization.zipCode,
           missionStatement: organization.missionStatement,
-          strategicPlan: organization.strategicPlan,
+          organizationPlan: organization.organizationPlan,
           annualOperatingBudget: organization.annualOperatingBudget
             ? organization.annualOperatingBudget.toString()
             : null,
@@ -309,8 +309,8 @@ Below is the user's organization information. This data is pulled from their aut
 **Mission Statement:** 
 ${organizationInfo.missionStatement || "Not provided"}
 
-**Strategic Plan:** 
-${organizationInfo.strategicPlan || "Not provided"}
+**Organization Plan:** 
+${organizationInfo.organizationPlan || "Not provided"}
 </context>
 
 <available_tools>
@@ -325,7 +325,7 @@ ${organizationInfo.strategicPlan || "Not provided"}
   </goal>
   
   <search_input>
-    You should ALWAYS use the organization profile's strategic plan, mission statement to generate the best semantic search input for the tool.
+    You should ALWAYS use the organization profile's organization plan, mission statement to generate the best semantic search input for the tool.
     The input should represent the essence of what the user or organization is seeking funding for, expressed in natural language that aligns with the provided vector store's embedded grants structures.
     
     When generating the query, extract and incorporate from context:
