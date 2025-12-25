@@ -49,6 +49,7 @@ import Image from "next/image";
 import { GoogleDriveImportPicker } from "@/components/google-drive/ImportPicker";
 import { GoogleDriveConnection } from "@/components/integrations/GoogleDriveConnection";
 import { createCheckoutSession } from "@/actions/stripe";
+import { AddressAutocomplete } from "@/components/organization/AddressAutocomplete";
 
 // Services options matching Prisma enum
 const SERVICES_OPTIONS = [
@@ -215,6 +216,22 @@ export default function OnboardingFlow({
     value: string | string[] | null
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Update all address fields in a single state update to avoid race conditions
+  const updateAddressFields = (parsedAddress: {
+    address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  }) => {
+    setFormData((prev) => ({
+      ...prev,
+      address: parsedAddress.address,
+      city: parsedAddress.city,
+      state: parsedAddress.state,
+      zipCode: parsedAddress.zipCode,
+    }));
   };
 
   const formatCurrency = (value: string | null): string => {
@@ -647,47 +664,19 @@ export default function OnboardingFlow({
                 </Popover>
               </div>
               <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="address">Street Address</Label>
-                  <Input
-                    id="address"
-                    value={formData.address || ""}
-                    onChange={(e) => updateFormData("address", e.target.value)}
-                    placeholder="123 Main Street"
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="city">City</Label>
-                    <Input
-                      id="city"
-                      value={formData.city || ""}
-                      onChange={(e) => updateFormData("city", e.target.value)}
-                      placeholder="Boston"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="state">State</Label>
-                    <Input
-                      id="state"
-                      value={formData.state || ""}
-                      onChange={(e) => updateFormData("state", e.target.value)}
-                      placeholder="MA"
-                      maxLength={2}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="zipCode">ZIP Code</Label>
-                    <Input
-                      id="zipCode"
-                      value={formData.zipCode || ""}
-                      onChange={(e) =>
-                        updateFormData("zipCode", e.target.value)
-                      }
-                      placeholder="02101"
-                    />
-                  </div>
-                </div>
+                <AddressAutocomplete
+                  value={{
+                    address: formData.address || undefined,
+                    city: formData.city || undefined,
+                    state: formData.state || undefined,
+                    zipCode: formData.zipCode || undefined,
+                  }}
+                  onChange={(parsedAddress) => {
+                    updateAddressFields(parsedAddress);
+                  }}
+                  placeholder="Start typing your address..."
+                  label="Address"
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="website">Website (Optional)</Label>

@@ -67,7 +67,6 @@ export async function POST(_req: NextRequest) {
           city: organization.city,
           state: organization.state,
           zipCode: organization.zipCode,
-          countyName: organization.countyName,
           missionStatement: organization.missionStatement,
           strategicPlan: organization.strategicPlan,
           annualOperatingBudget: organization.annualOperatingBudget
@@ -305,7 +304,6 @@ Below is the user's organization information. This data is pulled from their aut
 
 **Current Organization:** ${organizationInfo.name}
 - **Location:** ${organizationInfo.city || "N/A"}, ${stateCode}, ${organizationInfo.zipCode || "N/A"}
-- **County:** ${organizationInfo.countyName || "N/A"}
 - **Annual Operating Budget:** ${organizationInfo.annualOperatingBudget ? `$${organizationInfo.annualOperatingBudget}` : "N/A"}
 
 **Mission Statement:** 

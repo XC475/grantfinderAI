@@ -316,7 +316,6 @@ export async function GET() {
             name: true,
             state: true,
             city: true,
-            countyName: true,
           },
         },
       },

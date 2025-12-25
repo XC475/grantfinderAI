@@ -235,7 +235,6 @@ export async function POST(req: NextRequest) {
             city: organization.city,
             state: organization.state,
             zipCode: organization.zipCode,
-            countyName: organization.countyName,
             missionStatement: organization.missionStatement,
             strategicPlan: organization.strategicPlan,
             annualOperatingBudget: organization.annualOperatingBudget

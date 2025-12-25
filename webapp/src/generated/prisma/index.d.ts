@@ -8112,7 +8112,6 @@ export namespace Prisma {
     website: string | null
     zipCode: string | null
     strategicPlan: string | null
-    countyName: string | null
     logoUrl: string | null
   }
 
@@ -8134,7 +8133,6 @@ export namespace Prisma {
     website: string | null
     zipCode: string | null
     strategicPlan: string | null
-    countyName: string | null
     logoUrl: string | null
   }
 
@@ -8156,7 +8154,6 @@ export namespace Prisma {
     website: number
     zipCode: number
     strategicPlan: number
-    countyName: number
     logoUrl: number
     services: number
     _all: number
@@ -8189,7 +8186,6 @@ export namespace Prisma {
     website?: true
     zipCode?: true
     strategicPlan?: true
-    countyName?: true
     logoUrl?: true
   }
 
@@ -8211,7 +8207,6 @@ export namespace Prisma {
     website?: true
     zipCode?: true
     strategicPlan?: true
-    countyName?: true
     logoUrl?: true
   }
 
@@ -8233,7 +8228,6 @@ export namespace Prisma {
     website?: true
     zipCode?: true
     strategicPlan?: true
-    countyName?: true
     logoUrl?: true
     services?: true
     _all?: true
@@ -8343,7 +8337,6 @@ export namespace Prisma {
     website: string | null
     zipCode: string | null
     strategicPlan: string | null
-    countyName: string | null
     logoUrl: string | null
     services: $Enums.opportunity_services_enum[]
     _count: OrganizationCountAggregateOutputType | null
@@ -8385,7 +8378,6 @@ export namespace Prisma {
     website?: boolean
     zipCode?: boolean
     strategicPlan?: boolean
-    countyName?: boolean
     logoUrl?: boolean
     services?: boolean
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
@@ -8419,7 +8411,6 @@ export namespace Prisma {
     website?: boolean
     zipCode?: boolean
     strategicPlan?: boolean
-    countyName?: boolean
     logoUrl?: boolean
     services?: boolean
   }, ExtArgs["result"]["organization"]>
@@ -8442,7 +8433,6 @@ export namespace Prisma {
     website?: boolean
     zipCode?: boolean
     strategicPlan?: boolean
-    countyName?: boolean
     logoUrl?: boolean
     services?: boolean
   }, ExtArgs["result"]["organization"]>
@@ -8465,12 +8455,11 @@ export namespace Prisma {
     website?: boolean
     zipCode?: boolean
     strategicPlan?: boolean
-    countyName?: boolean
     logoUrl?: boolean
     services?: boolean
   }
 
-  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "slug" | "address" | "annualOperatingBudget" | "city" | "email" | "fiscalYearEnd" | "missionStatement" | "organizationLeaderName" | "phone" | "state" | "website" | "zipCode" | "strategicPlan" | "countyName" | "logoUrl" | "services", ExtArgs["result"]["organization"]>
+  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "slug" | "address" | "annualOperatingBudget" | "city" | "email" | "fiscalYearEnd" | "missionStatement" | "organizationLeaderName" | "phone" | "state" | "website" | "zipCode" | "strategicPlan" | "logoUrl" | "services", ExtArgs["result"]["organization"]>
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     aiChats?: boolean | Organization$aiChatsArgs<ExtArgs>
     applications?: boolean | Organization$applicationsArgs<ExtArgs>
@@ -8519,7 +8508,6 @@ export namespace Prisma {
       website: string | null
       zipCode: string | null
       strategicPlan: string | null
-      countyName: string | null
       logoUrl: string | null
       services: $Enums.opportunity_services_enum[]
     }, ExtArgs["result"]["organization"]>
@@ -8972,7 +8960,6 @@ export namespace Prisma {
     readonly website: FieldRef<"Organization", 'String'>
     readonly zipCode: FieldRef<"Organization", 'String'>
     readonly strategicPlan: FieldRef<"Organization", 'String'>
-    readonly countyName: FieldRef<"Organization", 'String'>
     readonly logoUrl: FieldRef<"Organization", 'String'>
     readonly services: FieldRef<"Organization", 'opportunity_services_enum[]'>
   }
@@ -27024,7 +27011,6 @@ export namespace Prisma {
     website: 'website',
     zipCode: 'zipCode',
     strategicPlan: 'strategicPlan',
-    countyName: 'countyName',
     logoUrl: 'logoUrl',
     services: 'services'
   };
@@ -28075,7 +28061,6 @@ export namespace Prisma {
     website?: StringNullableFilter<"Organization"> | string | null
     zipCode?: StringNullableFilter<"Organization"> | string | null
     strategicPlan?: StringNullableFilter<"Organization"> | string | null
-    countyName?: StringNullableFilter<"Organization"> | string | null
     logoUrl?: StringNullableFilter<"Organization"> | string | null
     services?: Enumopportunity_services_enumNullableListFilter<"Organization">
     aiChats?: AiChatListRelationFilter
@@ -28108,7 +28093,6 @@ export namespace Prisma {
     website?: SortOrderInput | SortOrder
     zipCode?: SortOrderInput | SortOrder
     strategicPlan?: SortOrderInput | SortOrder
-    countyName?: SortOrderInput | SortOrder
     logoUrl?: SortOrderInput | SortOrder
     services?: SortOrder
     aiChats?: AiChatOrderByRelationAggregateInput
@@ -28144,7 +28128,6 @@ export namespace Prisma {
     website?: StringNullableFilter<"Organization"> | string | null
     zipCode?: StringNullableFilter<"Organization"> | string | null
     strategicPlan?: StringNullableFilter<"Organization"> | string | null
-    countyName?: StringNullableFilter<"Organization"> | string | null
     logoUrl?: StringNullableFilter<"Organization"> | string | null
     services?: Enumopportunity_services_enumNullableListFilter<"Organization">
     aiChats?: AiChatListRelationFilter
@@ -28177,7 +28160,6 @@ export namespace Prisma {
     website?: SortOrderInput | SortOrder
     zipCode?: SortOrderInput | SortOrder
     strategicPlan?: SortOrderInput | SortOrder
-    countyName?: SortOrderInput | SortOrder
     logoUrl?: SortOrderInput | SortOrder
     services?: SortOrder
     _count?: OrganizationCountOrderByAggregateInput
@@ -28208,7 +28190,6 @@ export namespace Prisma {
     website?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     zipCode?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     strategicPlan?: StringNullableWithAggregatesFilter<"Organization"> | string | null
-    countyName?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     logoUrl?: StringNullableWithAggregatesFilter<"Organization"> | string | null
     services?: Enumopportunity_services_enumNullableListFilter<"Organization">
   }
@@ -29990,7 +29971,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
@@ -30023,7 +30003,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30056,7 +30035,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
@@ -30089,7 +30067,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -30122,7 +30099,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
   }
@@ -30145,7 +30121,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
   }
@@ -30168,7 +30143,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
   }
@@ -32225,7 +32199,6 @@ export namespace Prisma {
     website?: SortOrder
     zipCode?: SortOrder
     strategicPlan?: SortOrder
-    countyName?: SortOrder
     logoUrl?: SortOrder
     services?: SortOrder
   }
@@ -32252,7 +32225,6 @@ export namespace Prisma {
     website?: SortOrder
     zipCode?: SortOrder
     strategicPlan?: SortOrder
-    countyName?: SortOrder
     logoUrl?: SortOrder
   }
 
@@ -32274,7 +32246,6 @@ export namespace Prisma {
     website?: SortOrder
     zipCode?: SortOrder
     strategicPlan?: SortOrder
-    countyName?: SortOrder
     logoUrl?: SortOrder
   }
 
@@ -35252,7 +35223,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
@@ -35284,7 +35254,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
@@ -35434,7 +35403,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
@@ -35466,7 +35434,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -36293,7 +36260,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
@@ -36325,7 +36291,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
@@ -36373,7 +36338,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
@@ -36405,7 +36369,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -36437,7 +36400,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
@@ -36469,7 +36431,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
@@ -36564,7 +36525,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
@@ -36596,7 +36556,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -36681,7 +36640,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
@@ -36713,7 +36671,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
@@ -36761,7 +36718,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
@@ -36793,7 +36749,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -36859,7 +36814,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
@@ -36891,7 +36845,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
@@ -37040,7 +36993,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
@@ -37072,7 +37024,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -37232,7 +37183,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationCreateNestedManyWithoutOrganizationInput
@@ -37264,7 +37214,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -37446,7 +37395,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationUpdateManyWithoutOrganizationNestedInput
@@ -37478,7 +37426,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     applications?: ApplicationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -37627,7 +37574,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
@@ -37659,7 +37605,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
@@ -37707,7 +37652,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
@@ -37739,7 +37683,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -37908,7 +37851,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
@@ -37940,7 +37882,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
@@ -38140,7 +38081,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
@@ -38172,7 +38112,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -38501,7 +38440,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
@@ -38533,7 +38471,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
@@ -38715,7 +38652,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
@@ -38747,7 +38683,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -38828,7 +38763,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatCreateNestedManyWithoutOrganizationInput
@@ -38860,7 +38794,6 @@ export namespace Prisma {
     website?: string | null
     zipCode?: string | null
     strategicPlan?: string | null
-    countyName?: string | null
     logoUrl?: string | null
     services?: OrganizationCreateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedCreateNestedManyWithoutOrganizationInput
@@ -38908,7 +38841,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUpdateManyWithoutOrganizationNestedInput
@@ -38940,7 +38872,6 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     zipCode?: NullableStringFieldUpdateOperationsInput | string | null
     strategicPlan?: NullableStringFieldUpdateOperationsInput | string | null
-    countyName?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     services?: OrganizationUpdateservicesInput | $Enums.opportunity_services_enum[]
     aiChats?: AiChatUncheckedUpdateManyWithoutOrganizationNestedInput

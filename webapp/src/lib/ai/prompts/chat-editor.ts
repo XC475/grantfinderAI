@@ -9,7 +9,6 @@ export interface OrganizationInfo {
   city: string | null;
   state: string | null;
   zipCode: string | null;
-  countyName: string | null;
   missionStatement: string | null;
   strategicPlan: string | null;
   annualOperatingBudget: Decimal | null;

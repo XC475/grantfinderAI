@@ -60,6 +60,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CustomFieldsManager } from "@/components/organization/CustomFieldsManager";
+import { AddressAutocomplete } from "@/components/organization/AddressAutocomplete";
 
 // Services options matching Prisma enum
 const SERVICES_OPTIONS = [
@@ -790,65 +791,25 @@ export default function ProfilePage() {
               <h3 className="font-semibold">Primary Office Address</h3>
             </div>
             <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="address">Street Address</Label>
-                <Input
-                  id="address"
-                  value={organization.address || ""}
-                  onChange={(e) =>
-                    setOrganization({
-                      ...organization,
-                      address: e.target.value,
-                    })
-                  }
-                  placeholder="123 Main Street"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="city">City</Label>
-                  <Input
-                    id="city"
-                    value={organization.city || ""}
-                    onChange={(e) =>
-                      setOrganization({ ...organization, city: e.target.value })
-                    }
-                    placeholder="Boston"
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <Label htmlFor="state">State</Label>
-                  <Input
-                    id="state"
-                    value={organization.state || ""}
-                    onChange={(e) =>
-                      setOrganization({
-                        ...organization,
-                        state: e.target.value,
-                      })
-                    }
-                    placeholder="MA"
-                    maxLength={2}
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <Label htmlFor="zipCode">ZIP Code</Label>
-                  <Input
-                    id="zipCode"
-                    value={organization.zipCode || ""}
-                    onChange={(e) =>
-                      setOrganization({
-                        ...organization,
-                        zipCode: e.target.value,
-                      })
-                    }
-                    placeholder="02101"
-                  />
-                </div>
-              </div>
+              <AddressAutocomplete
+                value={{
+                  address: organization.address || undefined,
+                  city: organization.city || undefined,
+                  state: organization.state || undefined,
+                  zipCode: organization.zipCode || undefined,
+                }}
+                onChange={(parsedAddress) => {
+                  setOrganization({
+                    ...organization,
+                    address: parsedAddress.address,
+                    city: parsedAddress.city,
+                    state: parsedAddress.state,
+                    zipCode: parsedAddress.zipCode,
+                  });
+                }}
+                placeholder="Start typing your address..."
+                label="Address"
+              />
             </div>
           </div>
 

@@ -83,7 +83,6 @@ export async function POST(req: NextRequest) {
             city: true,
             state: true,
             zipCode: true,
-            countyName: true,
             missionStatement: true,
             strategicPlan: true,
             annualOperatingBudget: true,

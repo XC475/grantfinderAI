@@ -46,7 +46,6 @@ interface User {
     name: string;
     state: string | null;
     city: string | null;
-    countyName: string | null;
   };
 }
 

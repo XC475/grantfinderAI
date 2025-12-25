@@ -127,7 +127,6 @@ model Organization {
   website                String?
   zipCode                String?
   strategicPlan          String?
-  countyName             String?
   logoUrl                String?
   services               opportunity_services_enum[] @default([k12_education])
   aiChats                AiChat[]

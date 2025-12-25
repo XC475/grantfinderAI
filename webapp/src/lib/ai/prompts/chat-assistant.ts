@@ -8,7 +8,6 @@ export interface OrganizationInfo {
   city: string | null;
   state: string | null;
   zipCode: string | null;
-  countyName: string | null;
   missionStatement: string | null;
   strategicPlan: string | null;
   annualOperatingBudget: string | null;
@@ -213,7 +212,6 @@ function buildOrganizationContext(info: OrganizationInfo): string {
 
 **Current Organization:** ${info.name}
 - **Location:** ${info.city || "N/A"}, ${info.state || "N/A"}, ${info.zipCode || "N/A"}
-- **County:** ${info.countyName || "N/A"}
 - **Annual Operating Budget:** ${info.annualOperatingBudget ? `$${info.annualOperatingBudget}` : "N/A"}
 - **Fiscal Year End:** ${info.fiscalYearEnd || "N/A"}
 
