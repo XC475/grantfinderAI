@@ -42,9 +42,8 @@ export async function POST(request: NextRequest) {
       }
 
       // Retrieve subscription from Stripe
-      const subscription = await stripe.subscriptions.retrieve(
-        session.subscription as string
-      );
+      const subscription: Stripe.Subscription =
+        await stripe.subscriptions.retrieve(session.subscription as string);
 
       // Map planId to SubscriptionTier
       // "base" -> STARTER, "business" -> PROFESSIONAL
@@ -69,9 +68,11 @@ export async function POST(request: NextRequest) {
           stripeSubscriptionId: subscription.id,
           stripePriceId: subscription.items.data[0]?.price.id || null,
           currentPeriodStart: new Date(
-            subscription.current_period_start * 1000
+            (subscription as any).current_period_start * 1000
           ),
-          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+          currentPeriodEnd: new Date(
+            (subscription as any).current_period_end * 1000
+          ),
         },
         update: {
           tier: mappedTier,
@@ -80,9 +81,11 @@ export async function POST(request: NextRequest) {
           stripeSubscriptionId: subscription.id,
           stripePriceId: subscription.items.data[0]?.price.id || null,
           currentPeriodStart: new Date(
-            subscription.current_period_start * 1000
+            (subscription as any).current_period_start * 1000
           ),
-          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+          currentPeriodEnd: new Date(
+            (subscription as any).current_period_end * 1000
+          ),
         },
       });
     }
@@ -102,9 +105,11 @@ export async function POST(request: NextRequest) {
           where: { id: orgSubscription.id },
           data: {
             currentPeriodStart: new Date(
-              subscription.current_period_start * 1000
+              (subscription as any).current_period_start * 1000
             ),
-            currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+            currentPeriodEnd: new Date(
+              (subscription as any).current_period_end * 1000
+            ),
             cancelAtPeriodEnd: subscription.cancel_at_period_end,
             status:
               subscription.status === "active"
